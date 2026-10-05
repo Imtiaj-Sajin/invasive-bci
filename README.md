@@ -7,7 +7,6 @@ What changes in chronic Utah-array recordings over days to years, which of those
 
 - Topic and rationale: [docs/decisions/0002](docs/decisions/0002-pivot-chronic-drift-anatomy-and-simulator.md),
   which supersedes [0001](docs/decisions/0001-research-topic.md).
-
 - Paper plan: [docs/paper/OUTLINE.md](docs/paper/OUTLINE.md).
 - Everything done and found, with dates: [docs/RESEARCH_LOG.md](docs/RESEARCH_LOG.md).
 
