@@ -387,3 +387,23 @@ At 1 day with 10 trials, CV gives 0.103, history gives 0.193, and renorm gives 0
   - Per-channel gains recover much more for the LSTM (L3/own 0.74 vs 0.45 at 30 days).
   - The full input remap recovers somewhat less (L5/own lower by 0.051 [−0.079, −0.035]; 0.67 vs 0.83 at 480 days).
   - Both point to input-scale sensitivity of the nonlinear network, and to a harder optimization of a remap in front of it.
+
+## 2026-10-06 ~04:50 — Simulator calibration: two bugs found and fixed (lessons)
+
+1. **Silencing applied to every channel.** The alive/silent process must act only on channels that are *alive in the base session* (threshold-crossing rate > 2 Hz).
+   Most channels are already silent on any given day, so applying it to all of them double-degraded the signal.
+   - Fix: `Sess.alive`; `sample_drift(..., alive=)`.
+2. **Regularization mismatch between the real and simulated ladders.** On real pairs, CV mostly selects λ_L3 = 1e-5
+   and λ_L5 = 1e-3 (or 1e-4). The calibration used fixed λ_L3 = 1e-2 and λ_L5 = 1e-1, i.e. 100–1000× stronger.
+   - That handicapped the simulated corrections. The fit (loss 0.663, `results/sim_calib_split_badlam`) could not reproduce
+     the real signature: remap recovery stays high while renormalized performance collapses. The optimizer distorted the parameters to
+     compensate (high turnover).
+   - Fix: the calibration now uses the modal real λ.
+   - Probe: with real λ, a mixing-dominated simulator gives, at 480 days, L2/own −0.2 to −0.37 and L5/own 0.58–0.70,
+     against real values of −0.32 and 0.78.
+
+**Lesson for the paper:** the simulator must be scored with *exactly* the same correction procedure as the real data
+(same regularization, same CV), or calibration silently compensates for pipeline differences.
+
+**Optimizer:** coarse Sobol search (24–32 points) followed by Nelder–Mead with a wide initial simplex. Default
+Nelder–Mead with about 5% simplex steps barely moved (loss stuck at about 2.4 after 24 evaluations).

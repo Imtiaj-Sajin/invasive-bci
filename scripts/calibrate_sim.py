@@ -4,7 +4,9 @@ Targets (from scripts/drift_anatomy.py output): for each gap, the median over re
     L2/own  (renormalized fixed decoder),  L3/own  (+ per-channel gains),  L5/own  (+ full input remap)
 Simulation: for base sessions b, a decoder trained on real day b is evaluated on a simulated day b+gap obtained by
 applying one sampled drift realization to day b's own training and test segments; the same three rungs and the
-simulated own-day decoder are computed, using fixed regularization (the median selected on real data).
+simulated own-day decoder are computed, using fixed regularization equal to the value most often selected by CV on the
+real pairs at n=300 (L3: 1e-5, L5: 1e-3; see results/anatomy/ladder.csv lam_* columns). An earlier run used 100-1000x
+stronger values, which handicapped the simulated corrections and distorted the fit.
 Parameters fitted (Nelder-Mead in transformed space, common random numbers): s_mix0, s_mix, tau_mix, rho0,
 rho_inf, tau_rho (instant + slow components of mixing and turnover).
 Alive/silent switching rates come from scripts/failure_stats_xdata.py (--failure-json), not from the ladder.
@@ -43,7 +45,7 @@ def real_targets(ladder_csv, gaps, max_day=None):
     return out
 
 
-def sim_ladder(sessions, base_idx, gaps, p: sim.SimParams, dist, seed=0, lam_gain=1e-2, lam_remap=1e-1, iters=30):
+def sim_ladder(sessions, base_idx, gaps, p: sim.SimParams, dist, seed=0, lam_gain=1e-5, lam_remap=1e-3, iters=30):
     res = {g: {r: [] for r in RUNGS} for g in gaps}
     for b in base_idx:
         s = sessions[b]
