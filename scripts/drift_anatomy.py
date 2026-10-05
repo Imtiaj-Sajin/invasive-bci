@@ -14,7 +14,8 @@ decoder frozen unless stated:
   L6p prior     ridge on day j shrunk toward the day-i decoder           (practical recalibration)
 
 Supervised rungs use day j's first n labelled trials (n in --n-trials); normalization always uses day j's first 300
-trials without labels. The regularization strength is picked on the last 20% of the labelled trials, then refit.
+trials without labels. Regularization strengths are chosen by k-fold CV over contiguous blocks of the labelled
+trials (5 folds; 3 for the L-BFGS remap), logged as lam_<rung>_n<n>, then the rung is refit on all labelled trials.
 
 Usage: python scripts/drift_anatomy.py [--gaps 1 2 4 7 14 30 60 120 240 480 900] [--n-trials 300] [--out results/anatomy]
 """

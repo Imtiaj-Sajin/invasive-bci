@@ -9,7 +9,7 @@ from .preprocess import ZScore, split_bins
 
 N_LAGS, ALPHA, K_LAT = 8, 0.1, 16
 DEV = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-LAMS = np.array([1e-3, 1e-2, 1e-1, 1.0, 10.0, 100.0])
+LAMS = np.array([1e-3, 1e-2, 1e-1, 1.0, 10.0, 100.0])  # used by remap_locality.py
 
 
 class Sess:
@@ -94,7 +94,7 @@ def pred_latent(G, base, params):
 
 # ---- L5: full input remap (torch, L-BFGS) ----------------------------------------------------------------------
 def fit_remap(Z, Y, dec, lam, iters=60, mask=None):
-    """Learn x~ = (I + D * mask) z + h in front of the frozen decoder; penalty lam * ||D||^2.
+    """Learn x~ = (I + D * mask) z + h in front of the frozen decoder; penalty lam * (||D||^2 + ||h||^2).
 
     ``mask`` (C, C) restricts which channel pairs may mix (None = full map)."""
     Zt = torch.tensor(Z, device=DEV)
@@ -118,7 +118,7 @@ def fit_remap(Z, Y, dec, lam, iters=60, mask=None):
     def closure():
         opt.zero_grad()
         # same scaling as the closed-form rungs: mean over bins of summed squared error + lam * ||D||^2
-        loss = ((predict(Zt) - Yt) ** 2).sum(1).mean() + lam * ((D * mk) ** 2).sum()
+        loss = ((predict(Zt) - Yt) ** 2).sum(1).mean() + lam * (((D * mk) ** 2).sum() + (h ** 2).sum())
         loss.backward()
         return loss
 
@@ -139,46 +139,178 @@ def holdout_split(trial_id, n):
     return lab, lab & (trial_id < cut), lab & (trial_id >= cut)
 
 
-def ladder(si: Sess, sj: Sess, n_list):
+def cv_pick(fit_fn, err_fn, trial_id, n, grid, k=5):
+    """Pick a regularization value by k-fold CV over contiguous blocks of the first n trials.
+
+    fit_fn(mask, lam) -> params; err_fn(params, mask) -> summed squared error on mask."""
+    k = max(2, min(k, n // 2))
+    blocks = np.array_split(np.arange(n), k)
+    err = np.zeros(len(grid))
+    for blk in blocks:
+        val = np.isin(trial_id, blk)
+        fit = (trial_id < n) & ~val
+        for g_i, lam in enumerate(grid):
+            err[g_i] += err_fn(fit_fn(fit, lam), val)
+    return grid[int(np.argmin(err))]
+
+
+# ---- fast CV for shrunk least squares (one eigendecomposition per fold, all regularization values) ---------------
+def _fold_blocks(trial_id, n, k):
+    k = max(2, min(k, n // 2))
+    return [np.isin(trial_id, blk) for blk in np.array_split(np.arange(n), k)]
+
+
+def _with_intercept(F):
+    """Append intercept columns: (T, P, K) -> (T, P+K, K) with one-hot ones; (T, P) -> (T, P+1)."""
+    T = F.shape[0]
+    if F.ndim == 3:
+        K = F.shape[2]
+        ones = np.broadcast_to(np.eye(K, dtype=F.dtype), (T, K, K))
+        return np.concatenate([F, ones], axis=1)
+    return np.concatenate([F, np.ones((T, 1), F.dtype)], axis=1)
+
+
+def _eig_solver(F, r, fit, center=True):
+    """Normal equations on rows ``fit`` (centered unless center=False). F (T, P, K) stacked-output features or
+    (T, P) shared features with r (T, K). Returns (evals, evecs, Q^T F^T r, means) for (A + lam I) theta = F^T r + lam*anchor."""
+    if not center:
+        Fz = np.zeros(F.shape[1:], F.dtype)
+        rz = np.zeros(r.shape[1], r.dtype)
+        if F.ndim == 3:
+            Ff = F[fit].transpose(2, 0, 1).reshape(-1, F.shape[1]).astype(np.float64)
+            A, b = Ff.T @ Ff, Ff.T @ r[fit].T.reshape(-1).astype(np.float64)
+        else:
+            Ff = F[fit].astype(np.float64)
+            A, b = Ff.T @ Ff, Ff.T @ r[fit]
+        ev, Q = np.linalg.eigh(A)
+        return ev, Q, Q.T @ b, Fz, rz
+    if F.ndim == 3:   # stacked outputs share theta: sum_k Fc_k^T Fc_k
+        Fm = F[fit].mean(0)                                   # (P, K)
+        rm = r[fit].mean(0)                                   # (K,)
+        Fc = (F[fit] - Fm).transpose(2, 0, 1).reshape(-1, F.shape[1]).astype(np.float64)
+        rc = (r[fit] - rm).T.reshape(-1).astype(np.float64)
+        A, b = Fc.T @ Fc, Fc.T @ rc
+    else:             # shared features, separate weights per output (ridge)
+        Fm, rm = F[fit].mean(0), r[fit].mean(0)
+        Fc = (F[fit] - Fm).astype(np.float64)
+        A, b = Fc.T @ Fc, Fc.T @ (r[fit] - rm)
+    ev, Q = np.linalg.eigh(A)
+    return ev, Q, Q.T @ b, Fm, rm
+
+
+def _solve(eig, lam, anchor):
+    ev, Q, Qtb, Fm, rm = eig
+    rhs = Qtb + lam * (Q.T @ anchor)
+    theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+    return theta, Fm, rm
+
+
+def _predict(F, theta, Fm, rm):
+    if F.ndim == 3:
+        return np.einsum("tpk,p->tk", F - Fm, theta) + rm
+    return (F - Fm) @ theta + rm
+
+
+def cv_shrunk(F, r, trial_id, n, grid, anchor, k=5, scale_by_rows=True, intercept_anchor=None):
+    """k-fold CV (contiguous trial blocks within the first n trials) for argmin ||r - F theta - d||^2 + lam' ||theta - anchor||^2
+    with lam' = lam * n_fit_rows (if scale_by_rows). Intercepts d are unpenalised, unless ``intercept_anchor`` (K,) is
+    given: then d is shrunk toward it with the same lam' (everything shrinks toward the previous decoder, so tiny
+    calibration sets cannot shift the output offset). Returns (best_lam, predict_fn(F_new) fitted on all n trials)."""
+    lab = trial_id < n
+    center = intercept_anchor is None
+    if not center:
+        ia = np.asarray(intercept_anchor, dtype=np.float64)
+        anchor = (np.concatenate([anchor, ia]) if F.ndim == 3 else np.vstack([anchor, ia[None]]))
+        F = _with_intercept(F)
+    err = np.zeros(len(grid))
+    for val in _fold_blocks(trial_id, n, k):
+        fit = lab & ~val
+        eig = _eig_solver(F, r, fit, center)
+        mult = fit.sum() if scale_by_rows else 1.0
+        for g_i, lam in enumerate(grid):
+            th, Fm, rm = _solve(eig, lam * mult, anchor)
+            err[g_i] += float(((_predict(F[val], th, Fm, rm) - r[val]) ** 2).sum())
+    best = grid[int(np.argmin(err))]
+    eig = _eig_solver(F, r, lab, center)
+    th, Fm, rm = _solve(eig, best * (lab.sum() if scale_by_rows else 1.0), anchor)
+    if center:
+        return best, (lambda Fn: _predict(Fn, th, Fm, rm))
+    return best, (lambda Fn: _predict(_with_intercept(Fn), th, Fm, rm))
+
+
+LAMS_CF = np.array([1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1.0, 10.0, 100.0])  # closed-form input corrections
+LAMS_REMAP = np.array([1e-4, 1e-3, 1e-2, 1e-1, 1.0])            # L-BFGS remap (coarser grid)
+ALPHAS = np.array([0.1, 1, 10, 100, 1e3, 1e4, 1e5, 1e6])          # ridge / ridge-to-prior
+
+
+def procrustes_latent_map(Vj, Vi):
+    """Q mapping day-j latent coordinates to day-i coordinates (Vj R ~ Vi  =>  Q = R^T)."""
+    U_, _, Wt_ = np.linalg.svd(Vj.T @ Vi)
+    return (U_ @ Wt_).T
+
+
+def stable_procrustes_map(Vj, Vi, keep=0.6, iters=5):
+    """Degenhart-style alignment: Procrustes on the loadings of 'stable' channels only.
+
+    Iteratively fits R on the current stable set and keeps the ``keep`` fraction of channels with the smallest
+    loading residual ||Vj[c] R - Vi[c]||. Returns Q = R^T (day-j latent coords -> day-i coords) and the stable mask."""
+    C = Vj.shape[0]
+    stable = np.ones(C, bool)
+    for _ in range(iters):
+        U_, _, Wt_ = np.linalg.svd(Vj[stable].T @ Vi[stable])
+        R = U_ @ Wt_
+        res = np.linalg.norm(Vj @ R - Vi, axis=1)
+        stable = res <= np.quantile(res, keep)
+    return R.T, stable
+
+
+def ladder(si: Sess, sj: Sess, n_list, k_folds=5, k_folds_remap=3):
     out = {}
     zf = (sj.x_te - si.z.mean) / si.z.std
     out["L0"] = r2(si.dec.predict(zf), sj.y_te)
     out["L1"] = r2(si.dec.predict((sj.x_te - sj.z.mean) / si.z.std), sj.y_te)
     out["L2"] = r2(si.dec.predict(sj.zte), sj.y_te)
     # unsupervised Procrustes latent alignment (L4u)
-    U_, _, Wt_ = np.linalg.svd(sj.V.T @ si.V)
-    R = U_ @ Wt_
+    Q0 = procrustes_latent_map(sj.V, si.V)
     G_te, B_te = latent_features(sj.zte, sj.V, si.V, si.dec)
-    out["L4u"] = r2(pred_latent(G_te, B_te, (R.reshape(-1), si.dec.b)), sj.y_te)
+    out["L4u"] = r2(pred_latent(G_te, B_te, (Q0.reshape(-1), si.dec.b)), sj.y_te)
+    Qs, _ = stable_procrustes_map(sj.V, si.V)
+    out["L4s"] = r2(pred_latent(G_te, B_te, (Qs.reshape(-1), si.dec.b)), sj.y_te)
 
     F_tr, F_te = gain_features(sj.ztr, si.dec), gain_features(sj.zte, si.dec)
     G_tr, B_tr = latent_features(sj.ztr, sj.V, si.V, si.dec)
     H_tr = lagged(sj.ztr, N_LAGS)
     H_te = lagged(sj.zte, N_LAGS)
+    Y = sj.y_tr
+    tid = sj.trial_id
+
+    def sse(p, m):
+        return float(((p - Y[m]) ** 2).sum())
+
+    C = sj.ztr.shape[1]
     for n in n_list:
-        lab, fit_m, val_m = holdout_split(sj.trial_id, n)
-        Y = sj.y_tr
-        sse = lambda p, m: float(((p - Y[m]) ** 2).sum())  # noqa: E731
+        lab = tid < n
+        lam, f = cv_shrunk(F_tr, Y, tid, n, LAMS_CF, np.ones(C), k_folds, intercept_anchor=si.dec.b)
+        out[f"L3_n{n}"] = r2(f(F_te), sj.y_te)
+        out[f"lam_L3_n{n}"] = float(lam)
 
-        lam = pick_lam(lambda m, l: fit_gain(F_tr[m], Y[m], l), lambda prm, m: sse(pred_gain(F_tr[m], prm), m), fit_m, val_m)
-        out[f"L3_n{n}"] = r2(pred_gain(F_te, fit_gain(F_tr[lab], Y[lab], lam)), sj.y_te)
+        lam, f = cv_shrunk(G_tr, Y - B_tr, tid, n, LAMS_CF, Q0.reshape(-1), k_folds, intercept_anchor=si.dec.b)
+        out[f"L4_n{n}"] = r2(B_te + f(G_te), sj.y_te)
+        out[f"lam_L4_n{n}"] = float(lam)
 
-        lam = pick_lam(lambda m, l: fit_latent(G_tr[m], B_tr[m], Y[m], R, l),
-                       lambda prm, m: sse(pred_latent(G_tr[m], B_tr[m], prm), m), fit_m, val_m)
-        out[f"L4_n{n}"] = r2(pred_latent(G_te, B_te, fit_latent(G_tr[lab], B_tr[lab], Y[lab], R, lam)), sj.y_te)
-
-        lam = pick_lam(lambda m, l: fit_remap(sj.ztr[m], Y[m], si.dec, l),
-                       lambda prm, m: sse(pred_remap(sj.ztr[m], prm), m), fit_m, val_m)
+        lam = cv_pick(lambda m, l: fit_remap(sj.ztr[m], Y[m], si.dec, l),
+                      lambda prm, m: sse(pred_remap(sj.ztr[m], prm), m), tid, n, LAMS_REMAP, k_folds_remap)
         out[f"L5_n{n}"] = r2(pred_remap(sj.zte, fit_remap(sj.ztr[lab], Y[lab], si.dec, lam)), sj.y_te)
+        out[f"lam_L5_n{n}"] = float(lam)
 
-        alphas = np.array([0.1, 1, 10, 100, 1e3, 1e4])
-        a = alphas[np.argmin([sse(H_tr[val_m] @ W + b, val_m) for W, b in [ridge(H_tr[fit_m], Y[fit_m], a) for a in alphas]])]
-        W, b = ridge(H_tr[lab], Y[lab], a)
-        out[f"L6_n{n}"] = r2(H_te @ W + b, sj.y_te)
-        a = alphas[np.argmin([sse(H_tr[val_m] @ W + b, val_m)
-                              for W, b in [ridge_to_prior(H_tr[fit_m], Y[fit_m], si.dec.W, si.dec.b, a) for a in alphas]])]
-        W, b = ridge_to_prior(H_tr[lab], Y[lab], si.dec.W, si.dec.b, a)
-        out[f"L6p_n{n}"] = r2(H_te @ W + b, sj.y_te)
+        a, f = cv_shrunk(H_tr, Y, tid, n, ALPHAS, np.zeros((H_tr.shape[1], Y.shape[1])), k_folds, scale_by_rows=False)
+        out[f"L6_n{n}"] = r2(f(H_te), sj.y_te)
+        out[f"lam_L6_n{n}"] = float(a)
+
+        a, f = cv_shrunk(H_tr, Y, tid, n, ALPHAS, si.dec.W.astype(np.float64), k_folds, scale_by_rows=False,
+                         intercept_anchor=si.dec.b)
+        out[f"L6p_n{n}"] = r2(f(H_te), sj.y_te)
+        out[f"lam_L6p_n{n}"] = float(a)
     out["own"] = r2(sj.dec.predict(sj.zte), sj.y_te)
     return out
 
