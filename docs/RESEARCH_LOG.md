@@ -86,3 +86,29 @@ label-free failure prediction for intracortical decoders.**
 **Environment:** created `.venv` (with `--system-site-packages`, so the CUDA torch is reused) because
 `C:\Python311\Scripts` is not writable. Installed pynwb 4.2.0 and dandi 0.81.0. Pip cache is at `G:\pip-cache`.
 Datasets live under `D:/ibci-data` (env var `IBCI_DATA`).
+
+## 2026-10-05 (cont.) — Dataset sweep done; TOPIC FIXED
+
+- Sweep 2 (datasets) saved to `docs/knowledge/04_public_datasets.md`.
+  - Biggest find: the **BrainGate 20-year release** (Dryad dryad.x0k6djj1h, 2026-09-09, CC0): 14 humans,
+    729 closed-loop cursor sessions, up to 7.6 years each, 84.7 GB split per participant. Not yet benchmarked by anyone.
+  - Dryad file downloads are behind bot protection (the API returns 401 without a token; the web endpoint serves a JS
+    challenge), so the owner must download these files manually in a browser. File IDs and sizes are listed in the decision record.
+- Other long-term data:
+  - DANDI 000688: Chewie 68 sessions over about 3 years; Mihili 28 sessions over about 1.5 years.
+  - FALCON H2: T5 handwriting, about 17 months.
+  - T15 Brain-to-Text '25: 20 months.
+- Final novelty checks:
+  - No intracortical "when to recalibrate" work found.
+  - Closest classic is Perge et al. 2013 J Neural Eng (about 190 citations), which reports intra-day instabilities
+    but no label-free prediction.
+- Citation precedents (OpenAlex): Sussillo 2016 has 235, Degenhart 2020 has 237, Gallego 2020 has 452.
+
+**DECISION (see `docs/decisions/0001-research-topic.md`):** *Knowing when an intracortical BCI decoder fails:
+label-free reliability monitoring across years of recordings.*
+- Primary data: LINK.
+- Replication: 000688.
+- Human: FALCON H2, plus BrainGate-20 if the owner downloads it.
+
+**Next:** finish the LINK download, build the cache, and run a pilot. The pilot trains a ridge/Wiener decoder per day,
+tests it on all later days, and checks how simple label-free shift metrics correlate with the R² drop.
