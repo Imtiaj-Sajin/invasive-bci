@@ -4,6 +4,8 @@ For the data-efficiency pairs, with day j's first n labelled trials (n in --n-tr
   full        ridge-to-prior on all 96 channels (weights + intercept shrunk to the old decoder)
   stats_k     re-learn only the k channels with the largest label-free change (|mean shift| in day-i sd units +
               |log sd ratio|), all other weights frozen (shrunk to the old weights)
+  importance_k  the k channels the old decoder relies on most (weight norm) - control for "important channels"
+  wstats_k    label-free change x importance (decoder-weighted change)
   random_k    same with k random channels (control)
 Shrinkage alpha for every method is chosen from history (leave-one-training-session-out median-best on the grid),
 the policy that proved safe in scripts/recal_policy.py. Also reports renormalization only (no labels).
@@ -53,7 +55,9 @@ def main():
         H_tr, H_te = lagged(sj.ztr, N_LAGS), lagged(sj.zte, N_LAGS)
         C = sj.ztr.shape[1]
         score = np.abs(sj.z.mean - si.z.mean) / si.z.std + np.abs(np.log(sj.z.std / si.z.std))
-        order = np.argsort(-score)
+        importance = np.linalg.norm(si.dec.W3, axis=(0, 2))        # how much the old decoder relies on each channel
+        orders = {"stats": np.argsort(-score), "importance": np.argsort(-importance),
+                  "wstats": np.argsort(-score * importance)}        # decoder-weighted label-free change
         rand = [rng.choice(C, max(args.ks), replace=False) for _ in range(3)]
         for n in args.n_trials:
             lab = sj.trial_id < n
@@ -62,14 +66,15 @@ def main():
             for a in GRID:
                 row = dict(base, alpha=a, full=r2(refit(H_tr[lab], sj.y_tr[lab], H_te, si.dec, np.arange(C), a), sj.y_te))
                 for k in args.ks:
-                    row[f"stats_k{k}"] = r2(refit(H_tr[lab], sj.y_tr[lab], H_te, si.dec, order[:k], a), sj.y_te)
+                    for name, order in orders.items():
+                        row[f"{name}_k{k}"] = r2(refit(H_tr[lab], sj.y_tr[lab], H_te, si.dec, order[:k], a), sj.y_te)
                     row[f"random_k{k}"] = float(np.mean([r2(refit(H_tr[lab], sj.y_tr[lab], H_te, si.dec, rc[:k], a), sj.y_te)
                                                          for rc in rand]))
                 rows.append(row)
         print(f"{p.train} -> {p.test} done", flush=True)
     df = pd.DataFrame(rows)
     df.to_csv(os.path.join(args.out, "grid.csv"), index=False)
-    methods = ["full"] + [f"{m}_k{k}" for m in ("stats", "random") for k in args.ks]
+    methods = ["full"] + [f"{m}_k{k}" for m in ("stats", "importance", "wstats", "random") for k in args.ks]
     out = []
     for (tr, te, n), d in df.groupby(["train", "test", "n"]):
         others = df[(df.n == n) & (df.train != tr)]
@@ -81,7 +86,8 @@ def main():
     res = pd.DataFrame(out)
     res.to_csv(os.path.join(args.out, "history_policy.csv"), index=False)
     print(res.groupby("n")[["renorm"] + methods + ["own"]].median().round(3).to_string())
-    print(res.groupby(["gap_target", "n"])[["renorm", "full", "stats_k16", "random_k16"]].median().round(3).to_string())
+    print(res.groupby(["gap_target", "n"])[["renorm", "full", "stats_k16", "wstats_k16", "importance_k16", "random_k16"]]
+          .median().round(3).to_string())
 
 
 if __name__ == "__main__":
