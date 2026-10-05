@@ -9,7 +9,8 @@ Y), so the behaviour and latent dynamics stay realistic while the recording chan
                  is a random rotation (in the session's top-k latent space) of a randomly chosen channel's loadings,
                  plus private noise -> genuinely new tuning on that electrode
   3. failure     channels switch between alive and silent (two-state Markov process with rates h_off, h_on; most
-                 channel losses in LINK are transient); a silent channel carries only low-variance noise. Plus abrupt
+                 channel losses in LINK are transient); a silent channel keeps a fraction silent_signal_frac of its
+                 signal variance (sub-threshold multi-unit activity still shows in SBP) and the rest is noise. Plus abrupt
                  per-channel gain jumps (heavy-tailed) at rate h_jump
   4. raw-unit    per-channel offset and log-scale random walks (only matter for decoders that do not renormalize)
 
@@ -34,6 +35,8 @@ class SimParams:
     rho_conc: float = 5.0     # Beta concentration of per-channel turnover
     h_off: float = 2e-3       # alive -> silent switching rate (per channel per day); fitted from activity data
     h_on: float = 2e-3        # silent -> alive switching rate (per channel per day)
+    silent_signal_frac: float = 0.37  # share of signal variance a TC-silent channel keeps in SBP (LINK: median
+                                      # within-channel ratio of SBP tuning R2, silent vs active = 0.366)
     h_jump: float = 5e-3      # abrupt gain-jump events per channel per day
     jump_sd: float = 0.5      # log-gain sd of a jump
     rw_offset: float = 0.02   # raw offset random walk sd per sqrt(day), in units of channel sd
@@ -73,6 +76,7 @@ class Drift:
     dead: np.ndarray         # (C,) bool
     offset: np.ndarray       # (C,) raw-unit offset (channel-sd units)
     logscale: np.ndarray     # (C,) raw-unit log-scale change
+    silent_frac: float = 0.37  # signal share kept by silent channels
 
 
 def sample_drift(Z_base: np.ndarray, dt: float, p: SimParams, dist: np.ndarray, rng: np.random.Generator) -> Drift:
@@ -103,7 +107,7 @@ def sample_drift(Z_base: np.ndarray, dt: float, p: SimParams, dist: np.ndarray, 
     gain = np.exp(np.array([rng.normal(0, p.jump_sd, n).sum() for n in n_jumps]))
     offset = rng.normal(0, p.rw_offset * np.sqrt(dt), C)
     logscale = rng.normal(0, p.rw_logscale * np.sqrt(dt), C)
-    return Drift(np.eye(C) + E, rho, src, Q, V, mean, resid_sd, gain, dead, offset, logscale)
+    return Drift(np.eye(C) + E, rho, src, Q, V, mean, resid_sd, gain, dead, offset, logscale, p.silent_signal_frac)
 
 
 def apply_drift(Z: np.ndarray, d: Drift, rng: np.random.Generator) -> np.ndarray:
@@ -117,7 +121,9 @@ def apply_drift(Z: np.ndarray, d: Drift, rng: np.random.Generator) -> np.ndarray
     X = np.sqrt(1 - d.rho) * X + np.sqrt(d.rho) * new_unit * sd
     X = X * d.gain
     if d.dead.any():
-        X[:, d.dead] = rng.standard_normal((T, int(d.dead.sum()))) * 0.1
+        k = d.silent_frac
+        nd = int(d.dead.sum())
+        X[:, d.dead] = np.sqrt(k) * X[:, d.dead] + np.sqrt(1 - k) * rng.standard_normal((T, nd)) * X[:, d.dead].std(0)
     return X.astype(np.float32)
 
 
