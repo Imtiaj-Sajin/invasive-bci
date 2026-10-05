@@ -35,3 +35,11 @@ targets {
 [3] 251s loss=2.5301 s_mix0=0.3 s_mix=0.483 tau_mix=30 rho0=0.119 rho_inf=0.356 tau_rho=200
 [4] 334s loss=2.5258 s_mix0=0.3 s_mix=0.5 tau_mix=35.6 rho0=0.119 rho_inf=0.356 tau_rho=200
 [5] 418s loss=2.4013 s_mix0=0.3 s_mix=0.5 tau_mix=30 rho0=0.109 rho_inf=0.349 tau_rho=200
+[6] 505s loss=2.4279 s_mix0=0.3 s_mix=0.5 tau_mix=30 rho0=0.119 rho_inf=0.348 tau_rho=200
+[7] 589s loss=2.4024 s_mix0=0.3 s_mix=0.5 tau_mix=30 rho0=0.119 rho_inf=0.356 tau_rho=261
+[8] 673s loss=2.3323 s_mix0=0.319 s_mix=0.494 tau_mix=31.7 rho0=0.116 rho_inf=0.351 tau_rho=218
+[9] 765s loss=2.3787 s_mix0=0.338 s_mix=0.491 tau_mix=32.7 rho0=0.114 rho_inf=0.348 tau_rho=228
+[10] 860s loss=2.4109 s_mix0=0.306 s_mix=0.516 tau_mix=32.4 rho0=0.115 rho_inf=0.349 tau_rho=225
+[11] 947s loss=2.3514 s_mix0=0.308 s_mix=0.503 tau_mix=26.4 rho0=0.113 rho_inf=0.347 tau_rho=234
+[12] 1037s loss=2.4000 s_mix0=0.311 s_mix=0.504 tau_mix=30.1 rho0=0.111 rho_inf=0.343 tau_rho=247
+[13] 1121s loss=2.1843 s_mix0=0.315 s_mix=0.506 tau_mix=30.1 rho0=0.109 rho_inf=0.351 tau_rho=264
