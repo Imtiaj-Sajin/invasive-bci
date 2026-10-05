@@ -10,22 +10,32 @@ What changes in chronic Utah-array recordings over days to years, which of those
 - Paper plan: [docs/paper/OUTLINE.md](docs/paper/OUTLINE.md).
 - Everything done and found, with dates: [docs/RESEARCH_LOG.md](docs/RESEARCH_LOG.md).
 
-## Findings so far (LINK, monkey N, 312 sessions over 3.4 years; details and caveats in the log)
+## Findings so far
 
-- **Label-free monitoring does not beat the calendar under natural drift.**
-  - Day-to-day decoder performance varies reliably beyond the time trend (split-half reliability 0.84).
-  - None of 14 label-free statistics captures that variation (pilot, 2026-10-05).
-- **Drift anatomy (interim):**
-  - With daily renormalization, a fixed ridge decoder loses about 30% of R² overnight.
-  - Per-channel gain changes explain little of the loss.
-  - A full linear input remap in front of the frozen decoder recovers about 60–75%.
-  - At gaps over a year, the decoder itself must change.
-  - Ridge shrunk toward the previous decoder is the most data-efficient recalibration.
-- **Electrode failure process:**
-  - Impedance falls by about 45% over 3 years (302 → 171 kΩ). Active channels halve (36 → 18).
-  - Most channel losses are **transient**. Alive/silent switching rates are 0.0031/day off and 0.0008/day on.
-  - Abrupt single-electrode changes are common (heavy tails survive removal of session-wide events).
-  - Spiking activity declines faster at **array edges** in both arrays, while spike-band power declines uniformly.
+Details, numbers, caveats and corrections are in [docs/RESEARCH_LOG.md](docs/RESEARCH_LOG.md).
+
+- **Decoder decay under daily renormalization is fast and broadly conserved.** Three monkeys, two labs, two tasks and two feature types
+  (LINK monkey N; DANDI 000688 Chewie and Mihili) give a similar pattern:
+  - about 25% of own-day R² lost after 1 day and about half after a week;
+  - close to nothing left by about 4 months.
+- **Label-free fixes don't recover the loss.** Procrustes and stable-channel subspace alignment never beat simple
+  renormalization. Label-free statistics also cannot predict a decoder's day-to-day performance beyond elapsed time,
+  even though that variation is reliable (split-half 0.84).
+- **Per-channel gain changes are a minor part of drift.** Re-learning 96 channel gains recovers about 15–50% of the loss.
+  A free 96×96 input remap is *not* an anatomical test: it can represent any new decoder. That claim was withdrawn
+  on 2026-10-06.
+- **Recalibration recipe:**
+  - Use ridge shrunk toward the previous decoder, including its intercept, with the shrinkage strength *borrowed from past sessions*.
+  - About 100 labelled trials (about 3 minutes) recover 80–90% of own-day R², and harmful recalibrations at 10–20 trials drop from about 10% to about 1%.
+  - With 10–50 trials, re-learning only the decoder's 32 most-used channels is slightly better still.
+- **LSTM vs ridge (matched pairs):** the LSTM is more accurate (+0.13 R²) and modestly more drift-robust in relative terms.
+- **Electrode failure process** (3.4 years of LINK; replicated in Chewie, Mihili and human T5):
+  - Impedance falls about 45% (302 → 171 kΩ) and active channels halve.
+  - Most channel losses are **transient** (alive/silent switching).
+  - Abrupt single-electrode changes are common.
+  - Spiking declines faster at **array edges** in both arrays, while spike-band power declines uniformly.
+- **Simulator** (in progress): a feature-level model of drift and electrode failure. It is calibrated so that its oracle
+  ladder matches the real one, with time-split validation.
 
 ## Repository map
 
