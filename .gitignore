@@ -1,0 +1,26 @@
+# datasets and large artefacts
+data/
+*.nwb
+*.h5
+*.hdf5
+*.mat
+*.npz
+*.pt
+*.ckpt
+*.safetensors
+checkpoints/
+runs/
+wandb/
+lightning_logs/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# os/editor
+.DS_Store
+Thumbs.db
+.vscode/
