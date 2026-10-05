@@ -79,8 +79,12 @@ class Drift:
     silent_frac: float = 0.37  # signal share kept by silent channels
 
 
-def sample_drift(Z_base: np.ndarray, dt: float, p: SimParams, dist: np.ndarray, rng: np.random.Generator) -> Drift:
-    """Sample a drift realization for a simulated day ``dt`` days after the base session Z_base (T, C)."""
+def sample_drift(Z_base: np.ndarray, dt: float, p: SimParams, dist: np.ndarray, rng: np.random.Generator,
+                 alive: np.ndarray = None) -> Drift:
+    """Sample a drift realization for a simulated day ``dt`` days after the base session Z_base (T, C).
+
+    ``alive`` (C,) bool marks channels with spiking activity in the base session; only those can switch to silent
+    (channels already silent on the base day carry their silent-state signal already). Default: all alive."""
     T, C = Z_base.shape
     K = local_kernel(dist)
     n_nb = np.maximum(K.sum(1, keepdims=True), 1)
@@ -102,7 +106,8 @@ def sample_drift(Z_base: np.ndarray, dt: float, p: SimParams, dist: np.ndarray, 
     Q, _ = np.linalg.qr(rng.standard_normal((k, k)))
     src = rng.integers(0, C, size=C)
 
-    dead = rng.random(C) < p_silent(dt, p.h_off, p.h_on)
+    alive = np.ones(C, bool) if alive is None else np.asarray(alive, bool)
+    dead = alive & (rng.random(C) < p_silent(dt, p.h_off, p.h_on))
     n_jumps = rng.poisson(p.h_jump * dt, size=C)
     gain = np.exp(np.array([rng.normal(0, p.jump_sd, n).sum() for n in n_jumps]))
     offset = rng.normal(0, p.rw_offset * np.sqrt(dt), C)

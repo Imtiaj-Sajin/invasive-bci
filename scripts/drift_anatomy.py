@@ -29,7 +29,7 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from ibci.anatomy import Sess, ladder  # noqa: E402
+from ibci.anatomy import SessCache, SessMeta, ladder  # noqa: E402
 from ibci.data import link  # noqa: E402
 
 
@@ -53,18 +53,15 @@ def main():
     ap.add_argument("--n-trials", type=int, nargs="+", default=[300])
     ap.add_argument("--max-train", type=int, default=0, help="subsample train sessions (0 = all)")
     ap.add_argument("--pairs-from", default=None, help="CSV with train/test/gap_target columns: evaluate exactly these pairs")
+    ap.add_argument("--resume", action="store_true", help="skip pairs already in <out>/ladder.csv and append")
     ap.add_argument("--out", default="results/anatomy")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
 
     link.build_cache(verbose=False)
     keys = link.list_sessions()
-    sessions = []
-    for k in keys:
-        try:
-            sessions.append(Sess(k))
-        except ValueError:
-            pass
+    sessions = [SessMeta(k) for k in keys]
+    cache = SessCache()
     pairs = select_pairs(sessions, args.gaps)
     if args.pairs_from:
         idx = {s.key: i for i, s in enumerate(sessions)}
@@ -74,12 +71,18 @@ def main():
         rng = np.random.default_rng(0)
         keep = set(rng.choice(len(sessions), min(args.max_train, len(sessions)), replace=False))
         pairs = [p for p in pairs if p[0] in keep]
-    print(f"{len(sessions)} sessions, {len(pairs)} pairs, n_trials={args.n_trials}", flush=True)
-
-    rows, t0 = [], time.time()
     out_csv = os.path.join(args.out, "ladder.csv")
+    rows = []
+    if args.resume and os.path.exists(out_csv):
+        rows = pd.read_csv(out_csv).to_dict("records")
+        done = {(r["train"], r["test"], int(r["gap_target"])) for r in rows}
+        pairs = [p for p in pairs if (sessions[p[0]].key, sessions[p[1]].key, p[2]) not in done]
+        print(f"resume: {len(rows)} pairs already done", flush=True)
+    print(f"{len(sessions)} sessions, {len(pairs)} pairs to run, n_trials={args.n_trials}", flush=True)
+
+    t0 = time.time()
     for c, (i, j, g) in enumerate(pairs):
-        si, sj = sessions[i], sessions[j]
+        si, sj = cache[sessions[i].key], cache[sessions[j].key]
         res = ladder(si, sj, args.n_trials)
         rows.append(dict(train=si.key, test=sj.key, style=si.style, gap_target=g, days=sj.day - si.day,
                          train_day=si.day, **res))
