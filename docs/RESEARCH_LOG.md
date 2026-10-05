@@ -407,3 +407,31 @@ At 1 day with 10 trials, CV gives 0.103, history gives 0.193, and renorm gives 0
 
 **Optimizer:** coarse Sobol search (24–32 points) followed by Nelder–Mead with a wide initial simplex. Default
 Nelder–Mead with about 5% simplex steps barely moved (loss stuck at about 2.4 after 24 evaluations).
+
+## 2026-10-06 ~05:00 — CORRECTION: the "full input remap" rung (L5) is retraining in disguise
+
+**Retraction of the 03:50 headline.** The L5 rung learns M (96×96) in front of the frozen decoder, so the effective
+weights become W'_l = Mᵀ W_l. The 8 lags × 4 outputs give a 96×32 readout matrix A. If rank(A) = 32 ≤ 96, then Mᵀ A can equal
+*any* 96×32 target. **L5 can therefore represent any new decoder of the same form.** It is full recalibration with a different
+regularizer (shrink toward the identity remap), not a constrained "channel re-mixing" model.
+
+- Its about 80% recovery reflects that regularizer and finite data, *not* evidence that drift is linear channel re-mixing.
+- Chewie, where L5 ≈ own, is consistent with this.
+- The 03:50 claim "drift is predominantly channel-level linear re-mixing" is **withdrawn**.
+
+**What stands:**
+- The renormalization decay curve.
+- Label-free Procrustes alignments don't help.
+- L3 per-channel gains (96 parameters, genuinely constrained) recover 14–50% of the loss.
+- L4 rank-16 rotation (256 parameters, constrained) recovers more than L3.
+- Data efficiency, the recalibration policy, and the LSTM-vs-ridge comparison.
+- The simulator calibration targets the L5 *statistic*, which is still well defined, but it must not be read as "mixing only."
+
+**New, properly constrained anatomy** (next):
+1. Rank-r input remaps M = I + U Vᵀ with r = 1, 2, 4, 8. These confine the decoder change to an r-dimensional channel subspace.
+2. Re-learning only k channels' weights (k = 4–96), with the others frozen. Channels are chosen by:
+   - supervised weight change (an upper bound);
+   - a *label-free* change in each channel's correlation profile;
+   - random choice (a control).
+
+The question becomes: **how many degrees of freedom (subspace dimensions, or electrodes) does decoder-relevant drift occupy?**
