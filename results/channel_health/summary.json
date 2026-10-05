@@ -1,0 +1,95 @@
+{
+ "n_sessions": 312,
+ "n_days": 303,
+ "span_days": 1242,
+ "trends": {
+  "tc_rate": {
+   "year0": 0.8410287201404572,
+   "year1": 0.8078107237815857,
+   "year2": 0.5981715321540833,
+   "year3": 0.5487436652183533,
+   "spearman_vs_day": -0.45039669529866894
+  },
+  "sbp_mean": {
+   "year0": 2.869823455810547,
+   "year1": 2.2965859174728394,
+   "year2": 2.04550302028656,
+   "year3": 1.9558337926864624,
+   "spearman_vs_day": -0.8956988152631923
+  },
+  "tune_r2": {
+   "year0": 0.004647258951891831,
+   "year1": 0.0030269355924096297,
+   "year2": 0.003356187721252568,
+   "year3": 0.009250493578725982,
+   "spearman_vs_day": 0.09181192605144096
+  },
+  "imp": {
+   "year0": 302000.0,
+   "year1": 248000.0,
+   "year2": 192000.0,
+   "year3": 170500.0,
+   "spearman_vs_day": -0.8771369403900067
+  },
+  "n_active": {
+   "year0": 30.0,
+   "year1": 23.0,
+   "year2": 18.0,
+   "year3": 18.0
+  },
+  "n_tuned_r2>0.05": {
+   "year0": 12.0,
+   "year1": 8.0,
+   "year2": 8.0,
+   "year3": 7.5
+  }
+ },
+ "deaths": {
+  "initially_active": 40,
+  "died": 34,
+  "revived_after_death": 25,
+  "death_day_quartiles": [
+   51.25,
+   186.0,
+   460.75
+  ]
+ },
+ "tc_change_short_gaps": {
+  "n": 20256,
+  "sd": 0.804364695410943,
+  "kurtosis_excess": 9.770724531038296,
+  "frac_abs_gt_1": 0.12825829383886256
+ },
+ "spatial": {
+  "slope_absdiff_neighbours_median": 0.11122475188326149,
+  "slope_absdiff_far_median": 0.23260460640396402,
+  "mannwhitney_p_neighbours_more_similar": 3.7401797243114073e-25,
+  "dead_neighbour_pair_fraction": 0.7241379310344828,
+  "perm_p_clustered": 0.4895
+ },
+ "edge_vs_interior": {
+  "n_edge": 42,
+  "n_interior": 54,
+  "slope_logtc_per_year_edge_median": -0.24193309577424688,
+  "slope_logtc_per_year_interior_median": -0.08306398182571798,
+  "mannwhitney_p_edge_declines_faster": 0.0016636649249243817,
+  "died_frac_edge": 0.8,
+  "died_frac_interior": 0.9
+ },
+ "by_array": {
+  "Lateral": {
+   "slope_logtc_per_year_median": 0.009192538369710802,
+   "died": 10
+  },
+  "Medial": {
+   "slope_logtc_per_year_median": -0.22299266168454676,
+   "died": 24
+  }
+ },
+ "impedance": {
+  "days_with_impedance": 228,
+  "spearman_imp_vs_tc_rate_pooled": 0.04028685549844133,
+  "spearman_logimp_vs_day_median_channel": -0.8771369403900064,
+  "within_channel_spearman_median": 0.1414415776113715
+ }
+}

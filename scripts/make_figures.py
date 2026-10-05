@@ -111,18 +111,23 @@ def fig_health(table_csv, out, alive_hz=2.0):
     cb = fig.colorbar(im, ax=ax, pad=0.01, fraction=0.03)
     cb.set_label("log10 rate (Hz)")
     ax = axes[1]
-    ax.plot(tc.index, (tc > alive_hz).sum(1), color=P.CAT[0], lw=1.2)
+    n_act = (tc > alive_hz).sum(axis=1)
+    dlog = np.log(tc + 0.1).diff()
+    glob = dlog.median(axis=1).abs() > 1                     # session-wide jumps (all channels at once)
+    ax.plot(tc.index[~glob], n_act[~glob], ".", color=P.CAT[0], ms=3)
+    ax.plot(tc.index[glob], n_act[glob], "x", color=P.INK2, ms=5, mew=1)
     ax.set_ylabel(f"channels > {alive_hz:g} Hz")
-    ax.set_title("B  Active channels", fontweight="normal")
+    ax.set_title("B  Active channels (× = session-wide event, all channels jump together)", fontweight="normal")
     ax = axes[2]
     imp = daily.pivot(index="day", columns="ch", values="imp")
-    m = imp.notna().any(1)
-    ax.plot(imp.index[m], imp[m].median(1) / 1e3, color=P.CAT[1], marker="o", ms=2.5, lw=1)
-    ax.fill_between(imp.index[m], imp[m].quantile(0.25, axis=1) / 1e3, imp[m].quantile(0.75, axis=1) / 1e3,
-                    color=P.CAT[1], alpha=0.15, lw=0)
+    med = imp.median(axis=1)
+    m = imp.notna().any(axis=1) & (med > 50e3)              # medians < 50 kOhm are failed measurements
+    ax.plot(imp.index[m], med[m] / 1e3, ".", color=P.CAT[1], ms=3)
+    ax.vlines(imp.index[m], imp[m].quantile(0.25, axis=1) / 1e3, imp[m].quantile(0.75, axis=1) / 1e3,
+              color=P.CAT[1], alpha=0.25, lw=1)
     ax.set_ylabel("impedance (kΩ)")
     ax.set_xlabel("days since first session")
-    ax.set_title("C  Electrode impedance (median, IQR)", fontweight="normal")
+    ax.set_title("C  Electrode impedance (median, IQR; failed measurements removed)", fontweight="normal")
     P.save(fig, os.path.join(out, "fig_health"))
 
 
