@@ -1,0 +1,77 @@
+{
+ "n_pairs": 283,
+ "n_sessions": 61,
+ "spearman_logdays": -0.5576572274035907,
+ "f_align_dis": {
+  "spearman": -0.177,
+  "partial_given_days": -0.027
+ },
+ "f_procrustes_res": {
+  "spearman": -0.297,
+  "partial_given_days": -0.027
+ },
+ "f_readout_offsub": {
+  "spearman": 0.076,
+  "partial_given_days": -0.022
+ },
+ "f_posvel": {
+  "spearman": 0.268,
+  "partial_given_days": 0.094
+ },
+ "f_smooth_ratio": {
+  "spearman": 0.169,
+  "partial_given_days": 0.0
+ },
+ "f_out_w1": {
+  "spearman": 0.043,
+  "partial_given_days": -0.054
+ },
+ "f_out_var": {
+  "spearman": 0.343,
+  "partial_given_days": 0.269
+ },
+ "f_dis_tc": {
+  "spearman": -0.284,
+  "partial_given_days": -0.01
+ },
+ "f_dis_lag": {
+  "spearman": 0.25,
+  "partial_given_days": 0.222
+ },
+ "f_subspace": {
+  "spearman": -0.318,
+  "partial_given_days": -0.027
+ },
+ "f_modulation": {
+  "spearman": -0.176,
+  "partial_given_days": -0.095
+ },
+ "cv_predict_r2": {
+  "days_only": {
+   "mae": 0.0637,
+   "spearman": 0.378
+  },
+  "label_free": {
+   "mae": 0.0707,
+   "spearman": 0.216
+  },
+  "days+label_free": {
+   "mae": 0.0695,
+   "spearman": 0.268
+  }
+ },
+ "unexpected_bad_auroc": {
+  "n_bad": 43,
+  "f_align_dis": 0.58,
+  "f_procrustes_res": 0.56,
+  "f_readout_offsub": 0.563,
+  "f_posvel": 0.562,
+  "f_smooth_ratio": 0.501,
+  "f_out_w1": 0.565,
+  "f_out_var": 0.581,
+  "f_dis_tc": 0.516,
+  "f_dis_lag": 0.531,
+  "f_subspace": 0.542,
+  "f_modulation": 0.532
+ }
+}
