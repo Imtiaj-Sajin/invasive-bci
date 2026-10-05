@@ -1,0 +1,16 @@
+{
+ "n_sessions": 152,
+ "n_pairs": 4,
+ "args": {
+  "gaps": [
+   1,
+   30
+  ],
+  "n_trials": [
+   20,
+   300
+  ],
+  "max_train": 3,
+  "out": "results/test_ladder"
+ }
+}
