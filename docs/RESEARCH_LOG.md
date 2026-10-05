@@ -235,3 +235,51 @@ So locality has a weak advantage, and parameter count dominates. Needs the full 
 - Median impedance falls over time (Spearman −0.37), with a weak within-channel link to activity (median ρ = −0.15).
 - Bug fixed: the per-channel tuning model must use *future* kinematics (motor cortex leads movement) and SBP smoothed
   over 100 ms. Before the fix, tuning R² was about 0 for almost all channels.
+
+## 2026-10-06 ~01:15 — LINK fully downloaded (312/312); electrode failure results on all 3.4 years
+
+**Ladder fixes before the full runs:**
+1. The Procrustes rotation was applied in the wrong direction (Q must be Rᵀ). This made the latent rungs worse than nothing.
+2. λ is now chosen by k-fold CV over contiguous trial blocks, using an eigendecomposition per fold. The selected λ values are logged.
+3. Grids were widened; λ was hitting the grid edge.
+4. Intercepts and offsets are now **shrunk toward the previous decoder**. Previously a free intercept fitted on only
+   10–20 trials could push recalibration below "do nothing."
+5. Added L4s: a Degenhart-style stable-channel Procrustes alignment, without labels.
+
+Remap L-BFGS converges in about 0.1 s regardless of the iteration count (15–120 iterations give identical R²).
+
+**Channel health** (`scripts/channel_health.py` → `results/channel_health`; 312 sessions over 1,242 days):
+
+| Measure | Year 0 | Year 1 | Year 2 | Year 3 |
+|---|---|---|---|---|
+| Median impedance (kΩ) | 302 | 248 | 192 | 171 |
+| Active channels (>2 Hz) | 30 | 23 | 18 | 18 |
+| Tuned channels (CV R² > 0.05, 100 ms-smoothed SBP) | 12 | 8 | 8 | 7.5 |
+
+- Impedance has Spearman ρ = −0.88 with time, the same direction as in BrainGate humans.
+- 34 of 40 initially active channels went silent (3 or more sessions below 2 Hz); **25 of those revived**.
+- Spatial: neighbours have more similar decline slopes than distant pairs (p = 4e-25). Silent channels are not clustered (permutation p = 0.49).
+- **Edge vs interior, within each array** (log threshold-crossing slope per year; `results/channel_health/channel_slopes.csv`):
+
+| Array | Edge | Interior | Mann–Whitney p |
+|---|---|---|---|
+| Medial | −0.27 (n = 28) | −0.18 (n = 36) | 0.046 (permutation of the median: 0.12) |
+| Lateral | −0.12 (n = 14) | +0.04 (n = 18) | 0.0001 |
+
+  - Medial array, distance from centre vs slope: ρ = −0.24 (p = 0.057).
+  - **Spike-band-power slopes show no edge effect** (p = 0.66 and 0.37).
+  - Interpretation: isolated spiking is lost faster at array edges, consistent with micromotion strain (Forrest
+    2025), while broadband power declines uniformly. One animal, so this is suggestive.
+
+**Failure process** (`scripts/failure_stats_xdata.py` → `results/failure_xdata`, LINK):
+- Two-state alive/silent Markov rates: h_off = 0.0031/day and h_on = 0.0008/day. These now set the simulator's failure
+  parameters, independently of the ladder calibration.
+- Silencing rate: 0.66 per channel-year. Active channels went from 36 to 18 (−4.9 per year).
+- Abruptness for sessions ≤ 7 days apart: raw excess kurtosis 7.2 (15.6% of changes have |Δlog| > 1).
+- After removing **session-wide common-mode events** (10 of 274 short-gap session pairs, where all channels jump
+  together, probably threshold or noise events), channel-level kurtosis is 10.2 (14.0% have |Δ| > 1). Abrupt
+  *single-electrode* changes are real.
+- Figure: `results/figures/fig_health.png`. Session-wide events are marked, and impedance medians below 50 kΩ (failed
+  measurements) are removed.
+
+**Running:** full anatomy (537 pairs, n = 300), data efficiency (86 pairs, n = 10–300), and the 000688 download.

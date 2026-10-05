@@ -10,7 +10,8 @@ Per session and channel we compute the event rate (Hz). Statistics (same definit
     sessions; revivals: dead channels that later exceed 2x threshold for >= 3 consecutive sessions,
   - alive<->silent switching rates (two-state Markov chain fitted to channels active in >= 3 sessions),
   - death rate per channel-year (Kaplan-Meier-free crude rate: deaths / channel-years at risk),
-  - abruptness: excess kurtosis and tail share of log-rate changes between sessions <= 7 days apart.
+  - abruptness: excess kurtosis and tail share of log-rate changes between sessions <= 7 days apart, both raw and
+    after removing the session-wide (common-mode, median across channels) change, plus the count of global events.
 
 Usage: python scripts/failure_stats_xdata.py [--datasets link perich h2] [--out results/failure_xdata]
 """
@@ -113,6 +114,10 @@ def summarize(rows, alive_hz):
     lr = np.log(R + 0.1)
     dl = np.diff(lr, axis=0)[np.diff(days) <= 7]
     v = dl[:, init].ravel() if dl.size else np.array([])
+    # session-wide (common-mode) events: median log change across channels; channel-level = deviation from it
+    cm = np.median(dl, axis=1, keepdims=True) if dl.size else np.zeros((0, 1))
+    v_ch = (dl - cm)[:, init].ravel() if dl.size else np.array([])
+    global_events = int((np.abs(cm.ravel()) > 1).sum())
     ever = (R > alive_hz).sum(0) >= 3                 # channels that were active in >= 3 sessions
     h_off, h_on = fit_switching(days, (R > alive_hz)[:, ever])
     return {
@@ -126,6 +131,10 @@ def summarize(rows, alive_hz):
         "median_death_day": float(np.nanmedian(death_t)) if dead.any() else None,
         "lograte_change_kurtosis": float(stats.kurtosis(v)) if v.size > 10 else None,
         "frac_abs_logchange_gt1": float((np.abs(v) > 1).mean()) if v.size else None,
+        "channel_level_kurtosis": float(stats.kurtosis(v_ch)) if v_ch.size > 10 else None,
+        "channel_level_frac_gt1": float((np.abs(v_ch) > 1).mean()) if v_ch.size else None,
+        "global_events_abs_median_change_gt1": global_events,
+        "n_short_gap_session_pairs": int(dl.shape[0]),
         "n_changes": int(v.size),
     }
 
