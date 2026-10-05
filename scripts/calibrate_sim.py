@@ -7,7 +7,7 @@ applying one sampled drift realization to day b's own training and test segments
 simulated own-day decoder are computed, using fixed regularization (the median selected on real data).
 Parameters fitted (Nelder-Mead in transformed space, common random numbers): s_mix0, s_mix, tau_mix, rho0,
 rho_inf, tau_rho (instant + slow components of mixing and turnover).
-Failure hazards are set from scripts/channel_health.py, not from the ladder.
+Alive/silent switching rates come from scripts/failure_stats_xdata.py (--failure-json), not from the ladder.
 
 Usage: python scripts/calibrate_sim.py --ladder results/anatomy/ladder.csv [--n-base 16] [--out results/sim_calib]
 """
@@ -79,7 +79,8 @@ def main():
     ap.add_argument("--gaps", type=int, nargs="+", default=[1, 7, 30, 120, 480])
     ap.add_argument("--n-base", type=int, default=16)
     ap.add_argument("--maxiter", type=int, default=60)
-    ap.add_argument("--h-die", type=float, default=None, help="per-channel daily death hazard (from channel_health)")
+    ap.add_argument("--failure-json", default=None, help="failure_stats.json with fitted h_off / h_on for the subject")
+    ap.add_argument("--subject", default="N (LINK)")
     ap.add_argument("--max-day", type=int, default=None, help="use only sessions before this day (time-split calibration)")
     ap.add_argument("--out", default="results/sim_calib")
     args = ap.parse_args()
@@ -99,8 +100,9 @@ def main():
     sessions = {i: Sess(keys[i]) for i in pick}
 
     base = sim.SimParams()
-    if args.h_die is not None:
-        base.h_die = args.h_die
+    if args.failure_json:
+        fs = json.load(open(args.failure_json))[args.subject]
+        base.h_off, base.h_on = fs["h_off"], fs["h_on"]
     history = []
     t0 = time.time()
 

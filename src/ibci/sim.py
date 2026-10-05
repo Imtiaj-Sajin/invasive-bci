@@ -8,8 +8,9 @@ Y), so the behaviour and latent dynamics stay realistic while the recording chan
   2. turnover    a fraction rho_c ~ Beta(mean=rho(dt)) of each channel's signal is replaced by a new unit whose tuning
                  is a random rotation (in the session's top-k latent space) of a randomly chosen channel's loadings,
                  plus private noise -> genuinely new tuning on that electrode
-  3. failure     channels die with hazard h_die per day (signal -> low-variance noise); dead channels revive with
-                 probability p_revive; plus abrupt per-channel gain jumps (heavy-tailed) at rate h_jump
+  3. failure     channels switch between alive and silent (two-state Markov process with rates h_off, h_on; most
+                 channel losses in LINK are transient); a silent channel carries only low-variance noise. Plus abrupt
+                 per-channel gain jumps (heavy-tailed) at rate h_jump
   4. raw-unit    per-channel offset and log-scale random walks (only matter for decoders that do not renormalize)
 
 Each magnitude has an instant session-to-session component (present for any dt >= 1) plus a slow component that
@@ -31,8 +32,8 @@ class SimParams:
     rho_inf: float = 0.3      # asymptotic turnover fraction per channel
     tau_rho: float = 200.0    # days
     rho_conc: float = 5.0     # Beta concentration of per-channel turnover
-    h_die: float = 1e-3       # per channel per day
-    p_revive: float = 0.2     # probability a dead channel is alive again at the simulated day
+    h_off: float = 2e-3       # alive -> silent switching rate (per channel per day); fitted from activity data
+    h_on: float = 2e-3        # silent -> alive switching rate (per channel per day)
     h_jump: float = 5e-3      # abrupt gain-jump events per channel per day
     jump_sd: float = 0.5      # log-gain sd of a jump
     rw_offset: float = 0.02   # raw offset random walk sd per sqrt(day), in units of channel sd
@@ -45,6 +46,12 @@ class SimParams:
 
 def _sat(dt, tau):
     return 1.0 - np.exp(-dt / max(tau, 1e-6))
+
+
+def p_silent(dt, h_off, h_on):
+    """P(silent at dt | alive at 0) for a two-state continuous-time Markov chain."""
+    tot = h_off + h_on
+    return 0.0 if tot <= 0 else h_off / tot * (1.0 - np.exp(-tot * dt))
 
 
 def local_kernel(dist: np.ndarray) -> np.ndarray:
@@ -91,7 +98,7 @@ def sample_drift(Z_base: np.ndarray, dt: float, p: SimParams, dist: np.ndarray, 
     Q, _ = np.linalg.qr(rng.standard_normal((k, k)))
     src = rng.integers(0, C, size=C)
 
-    dead = rng.random(C) < (1 - np.exp(-p.h_die * dt)) * (1 - p.p_revive)
+    dead = rng.random(C) < p_silent(dt, p.h_off, p.h_on)
     n_jumps = rng.poisson(p.h_jump * dt, size=C)
     gain = np.exp(np.array([rng.normal(0, p.jump_sd, n).sum() for n in n_jumps]))
     offset = rng.normal(0, p.rw_offset * np.sqrt(dt), C)
