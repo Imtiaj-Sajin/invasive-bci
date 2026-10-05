@@ -1,0 +1,22 @@
+{
+ "N (LINK)": {
+  "h_off": 0.003541833047182082,
+  "h_on": 0.0014595355974163164,
+  "silent_fraction_stationary": 0.7081727620713081,
+  "n_ever_active": 69,
+  "n_sessions": 180,
+  "span_days": 779,
+  "n_channels": 96,
+  "active_first3_median": 36.0,
+  "active_last3_median": 17.0,
+  "active_trend_per_year": -7.64873261021469,
+  "initially_active": 37,
+  "died": 30,
+  "revived": 17,
+  "deaths_per_channel_year": 0.7859909619109102,
+  "median_death_day": 217.5,
+  "lograte_change_kurtosis": 5.565859794616699,
+  "frac_abs_logchange_gt1": 0.15091489004532482,
+  "n_changes": 5957
+ }
+}

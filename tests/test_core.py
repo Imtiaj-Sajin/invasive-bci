@@ -54,7 +54,7 @@ def test_sim_identity_at_zero_drift():
     rng = np.random.default_rng(4)
     Z = rng.standard_normal((500, 96)).astype(np.float32)
     dist = np.ones((96, 96))
-    p = sim.SimParams(s_mix0=0, s_mix=0, rho0=0, rho_inf=0, h_die=0, h_jump=0)
+    p = sim.SimParams(s_mix0=0, s_mix=0, rho0=0, rho_inf=0, h_off=0, h_jump=0)
     d = sim.sample_drift(Z, 30.0, p, dist, rng)
     X = sim.apply_drift(Z, d, rng)
     # rho is clipped to >= 1e-4, so the output is the input up to a negligible mixture
@@ -65,7 +65,7 @@ def test_sim_more_drift_with_time():
     rng = np.random.default_rng(5)
     Z = rng.standard_normal((2000, 96)).astype(np.float32)
     dist = np.ones((96, 96))
-    p = sim.SimParams(h_die=0, h_jump=0)
+    p = sim.SimParams(h_off=0, h_jump=0)
     sims = []
     for dt in (1, 30, 1000):
         r = np.random.default_rng(7)
