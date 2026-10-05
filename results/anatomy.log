@@ -1,3 +1,9 @@
 312 sessions, 537 pairs, n_trials=[300]
 25/537 pairs, 366s
 50/537 pairs, 758s
+75/537 pairs, 1211s
+100/537 pairs, 1740s
+125/537 pairs, 2271s
+150/537 pairs, 2799s
+175/537 pairs, 3360s
+200/537 pairs, 3986s

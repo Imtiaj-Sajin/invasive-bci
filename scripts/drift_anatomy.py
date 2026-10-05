@@ -52,6 +52,7 @@ def main():
     ap.add_argument("--gaps", type=int, nargs="+", default=[1, 2, 4, 7, 14, 30, 60, 120, 240, 480, 900])
     ap.add_argument("--n-trials", type=int, nargs="+", default=[300])
     ap.add_argument("--max-train", type=int, default=0, help="subsample train sessions (0 = all)")
+    ap.add_argument("--pairs-from", default=None, help="CSV with train/test/gap_target columns: evaluate exactly these pairs")
     ap.add_argument("--out", default="results/anatomy")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
@@ -65,7 +66,11 @@ def main():
         except ValueError:
             pass
     pairs = select_pairs(sessions, args.gaps)
-    if args.max_train:
+    if args.pairs_from:
+        idx = {s.key: i for i, s in enumerate(sessions)}
+        ref = pd.read_csv(args.pairs_from)
+        pairs = [(idx[a], idx[b], int(g)) for a, b, g in zip(ref.train, ref.test, ref.gap_target)]
+    elif args.max_train:
         rng = np.random.default_rng(0)
         keep = set(rng.choice(len(sessions), min(args.max_train, len(sessions)), replace=False))
         pairs = [p for p in pairs if p[0] in keep]
