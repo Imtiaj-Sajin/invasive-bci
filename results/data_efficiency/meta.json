@@ -1,0 +1,22 @@
+{
+ "n_sessions": 312,
+ "n_pairs": 86,
+ "args": {
+  "gaps": [
+   1,
+   7,
+   30,
+   120,
+   480
+  ],
+  "n_trials": [
+   10,
+   20,
+   50,
+   100,
+   300
+  ],
+  "max_train": 30,
+  "out": "results/data_efficiency"
+ }
+}

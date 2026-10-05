@@ -78,10 +78,10 @@ def fig_efficiency(ladder_csv, out):
     fig, axes = plt.subplots(1, len(gaps), figsize=(1.9 * len(gaps) + 1.2, 2.6), sharey=True)
     for ax, g in zip(np.atleast_1d(axes), gaps):
         d = df[df.gap_target == g]
+        labels = []
         for (m, lab), c in zip(methods, P.CAT):
             ax.plot(ns, [d[f"{m}_n{n}"].median() for n in ns], color=c, marker="o", ms=3)
-            if g == gaps[-1]:
-                ax.text(ns[-1] * 1.15, d[f"{m}_n{ns[-1]}"].median(), lab, fontsize=7, va="center")
+            labels.append((d[f"{m}_n{ns[-1]}"].median(), lab))
         ax.axhline(d["L2"].median(), color=P.NEUTRAL, ls=":", lw=1)
         ax.set_xscale("log")
         ax.set_xticks(ns)
@@ -89,9 +89,11 @@ def fig_efficiency(ladder_csv, out):
         ax.minorticks_off()
         ax.set_title(f"{g} day{'s' if g > 1 else ''} later", fontweight="normal")
         ax.set_xlabel("labelled trials")
+        if g == gaps[-1]:
+            P.end_labels(ax, ns[-1] * 1.25, labels + [(d["L2"].median(), "no labels (renormalize)")], min_gap_frac=0.07)
     np.atleast_1d(axes)[0].set_ylabel("decoding R² (median)")
-    np.atleast_1d(axes)[0].text(ns[0], df["L2"].median(), "no labels (renorm)", fontsize=7, color=P.INK2, va="bottom")
-    fig.suptitle("How much calibration data does each correction need?", x=0.02, ha="left", fontweight="bold", fontsize=10)
+    fig.suptitle("How much calibration data does each correction need?", x=0.01, y=1.04, ha="left",
+                 fontweight="bold", fontsize=10)
     P.save(fig, os.path.join(out, "fig_efficiency"))
 
 
