@@ -283,3 +283,36 @@ Remap L-BFGS converges in about 0.1 s regardless of the iteration count (15–12
   measurements) are removed.
 
 **Running:** full anatomy (537 pairs, n = 300), data efficiency (86 pairs, n = 10–300), and the 000688 download.
+
+## 2026-10-06 ~02:45 — LSTM ladder, human (T5) failure statistics, 000688 and H2 downloaded
+
+**LSTM oracle ladder** (`scripts/drift_anatomy_nn.py` → `results/anatomy_nn`; LINK; 25 training sessions, 79 pairs,
+LSTM with hidden size 256 and a 20-bin window). Median R²:
+
+| gap (days) | L2 renorm | L3 gains | L5 remap | L6p fine-tune to prior | own |
+|---|---|---|---|---|---|
+| 1 | 0.21 | 0.29 | 0.30 | 0.34 | 0.34 |
+| 30 | 0.18 | 0.28 | 0.32 | 0.40 | 0.42 |
+| 120 | 0.09 | 0.27 | 0.35 | 0.41 | 0.44 |
+| 480 | −0.05 | 0.17 | 0.28 | 0.35 | 0.42 |
+
+- Same anatomy as ridge: renormalization is insufficient, the remap recovers most of the loss, and fine-tuning toward the prior approaches own-day.
+- **Per-channel gains recover much more for the LSTM than for ridge**, consistent with network nonlinearities being
+  sensitive to input scale.
+- The LSTM is more accurate within a day (0.34–0.44 vs 0.29–0.31 for ridge).
+- Relative retention on *matched* pairs: only 5 overlapping pairs so far, and they look similar to ridge. **"LSTM is more drift-robust" is NOT
+  established.** A matched ridge run on the exact LSTM pairs is queued (`drift_anatomy.py --pairs-from`).
+
+**FALCON H2, human T5** (`results/failure_xdata_h2`):
+- The 2023 sessions show session-wide rate inflation, up to a median of 115 Hz per channel on 2023-10-09. That is a
+  threshold or preprocessing change, so a dataset-agnostic rule now drops sessions whose median channel rate exceeds 3× the median over sessions.
+- The held-out calibration files are about 80 s snippets, so only the 20 full held-in sessions are used (2022-05 to 2022-12, 211 days).
+- Results:
+  - Active channels: 97 → 93.
+  - 21 of 99 initially active channels went silent, 3 revived (0.43 per channel-year).
+  - Switching rates: h_off = 0.0099/day, h_on = 0.028/day, i.e. faster turnover than monkey N (the T5 array was about 6 years old).
+  - Abruptness: excess kurtosis 2.6, 24% of changes have |Δlog| > 1.
+- **Silencing and revival replicate in a human. The span is short, so this is modest evidence.**
+
+**Time-split failure fit** (LINK days < 700; `results/failure_xdata_cal700`): h_off = 0.0038/day, h_on = 0.0018/day.
+The simulator calibration (`results/sim_calib_split`) uses only these rates and pairs inside days 0–700.
