@@ -61,7 +61,7 @@ def main():
         day0 = np.datetime64(raw[0].date)
         sessions = [PerichSess(s, x, day0, args.alpha) for s, x in zip(raw, X)]
         pairs = select_pairs(sessions, args.gaps)
-        print(f"{subj}: {len(sessions)} sessions over {sessions[-1].day} days, {len(labels)} channels, {len(pairs)} pairs",
+        print(f"{subj}: {len(sessions)} sessions over {max(s.day for s in sessions)} days, {len(labels)} channels, {len(pairs)} pairs",
               flush=True)
         rows, t0 = [], time.time()
         for c, (i, j, g) in enumerate(pairs):

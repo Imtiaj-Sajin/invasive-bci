@@ -17,14 +17,49 @@ class Sess:
         s = link.load_session(key)
         self.key, self.day, self.style = key, s.day, s.style
         tr, te = split_bins(s.trial_start, s.sbp.shape[0])
-        self.x_tr, self.x_te = s.sbp[tr], s.sbp[te]
+        x_tr, x_te = s.sbp[tr], s.sbp[te]
         self.y_tr, self.y_te = s.kin[tr], s.kin[te]
+        self.alive = s.tc.mean(0) / link.BIN_S > 2.0   # channels with threshold-crossing activity (> 2 Hz)
         starts = np.r_[s.trial_start[:300], tr.stop]
         self.trial_id = np.repeat(np.arange(300), np.diff(starts))  # trial index of each training bin
-        self.z = ZScore().fit(self.x_tr)
-        self.ztr, self.zte = self.z.transform(self.x_tr), self.z.transform(self.x_te)
+        self.z = ZScore().fit(x_tr)
+        # only the z-scored copies are stored (memory); raw features are recomputed on demand
+        self.ztr, self.zte = self.z.transform(x_tr).astype(np.float32), self.z.transform(x_te).astype(np.float32)
         self.dec = LagDecoder.fit(self.ztr, self.y_tr, N_LAGS, ALPHA)
         self.V = np.linalg.svd(self.ztr, full_matrices=False)[2][:K_LAT].T  # (C, k)
+
+    @property
+    def x_tr(self):
+        return self.ztr * self.z.std + self.z.mean
+
+    @property
+    def x_te(self):
+        return self.zte * self.z.std + self.z.mean
+
+
+class SessMeta:
+    """Session key, day and style without loading data (for pair selection)."""
+
+    def __init__(self, key):
+        self.key, self.style = key, key[-2:]
+        self.day = int((np.datetime64(key[:10]) - np.datetime64("2020-01-27")).astype(int))
+
+
+class SessCache:
+    """Load Sess objects on demand, keeping at most ``maxsize`` in memory (least recently used evicted)."""
+
+    def __init__(self, maxsize=120):
+        from collections import OrderedDict
+        self.maxsize, self.d = maxsize, OrderedDict()
+
+    def __getitem__(self, key):
+        if key in self.d:
+            self.d.move_to_end(key)
+        else:
+            self.d[key] = Sess(key)
+            if len(self.d) > self.maxsize:
+                self.d.popitem(last=False)
+        return self.d[key]
 
 
 def r2(pred, y):

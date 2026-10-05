@@ -10,3 +10,22 @@
 225/537 pairs, 4401s
 250/537 pairs, 4768s
 275/537 pairs, 5157s
+300/537 pairs, 5555s
+325/537 pairs, 5995s
+350/537 pairs, 6446s
+Traceback (most recent call last):
+  File "G:\codes\invasive bci\scripts\drift_anatomy.py", line 97, in <module>
+    with open(os.path.join(args.out, "meta.json"), "w") as f:
+    ^^^^^^
+  File "G:\codes\invasive bci\scripts\drift_anatomy.py", line 78, in main
+    
+  File "G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py", line 297, in ladder
+    lam, f = cv_shrunk(G_tr, Y - B_tr, tid, n, LAMS_CF, Q0.reshape(-1), k_folds, intercept_anchor=si.dec.b)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py", line 228, in cv_shrunk
+    eig = _eig_solver(F, r, fit, center)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py", line 180, in _eig_solver
+    Ff = F[fit].transpose(2, 0, 1).reshape(-1, F.shape[1]).astype(np.float64)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+numpy._core._exceptions._ArrayMemoryError: Unable to allocate 56.0 MiB for an array with shape (4, 14105, 260) and data type float32

@@ -49,7 +49,7 @@ def sim_ladder(sessions, base_idx, gaps, p: sim.SimParams, dist, seed=0, lam_gai
         s = sessions[b]
         for g in gaps:
             rng = np.random.default_rng([seed, b, g])
-            d = sim.sample_drift(s.ztr, g, p, dist, rng)
+            d = sim.sample_drift(s.ztr, g, p, dist, rng, alive=getattr(s, "alive", None))
             xtr, xte = sim.apply_drift(s.ztr, d, rng), sim.apply_drift(s.zte, d, rng)
             z = ZScore().fit(xtr)                                   # renormalize on the simulated day (unlabelled)
             ztr, zte = z.transform(xtr), z.transform(xte)
@@ -79,6 +79,7 @@ def main():
     ap.add_argument("--gaps", type=int, nargs="+", default=[1, 7, 30, 120, 480])
     ap.add_argument("--n-base", type=int, default=16)
     ap.add_argument("--maxiter", type=int, default=60)
+    ap.add_argument("--n-global", type=int, default=32, help="Sobol points for the coarse global search")
     ap.add_argument("--failure-json", default=None, help="failure_stats.json with fitted h_off / h_on for the subject")
     ap.add_argument("--subject", default="N (LINK)")
     ap.add_argument("--max-day", type=int, default=None, help="use only sessions before this day (time-split calibration)")
@@ -116,8 +117,16 @@ def main():
               + " ".join(f"{k}={getattr(p, k):.3g}" for k in fitted_keys), flush=True)
         return err
 
-    x0 = np.array([np.log(0.3), np.log(0.5), np.log(30.0), -2.0, -1.0, np.log(200.0)])
-    opt = minimize(loss, x0, method="Nelder-Mead", options={"maxiter": args.maxiter, "xatol": 0.05, "fatol": 1e-4})
+    # stage 1: coarse global search (Sobol points in the transformed space); stage 2: Nelder-Mead from the best point
+    from scipy.stats import qmc
+    lo = np.array([np.log(0.02), np.log(0.02), np.log(2.0), -5.0, -4.0, np.log(10.0)])
+    hi = np.array([np.log(2.0), np.log(2.0), np.log(500.0), 0.0, 3.0, np.log(3000.0)])
+    pts = qmc.scale(qmc.Sobol(6, seed=0).random(args.n_global), lo, hi)
+    vals = [loss(x) for x in pts]
+    x0 = pts[int(np.argmin(vals))]
+    simplex = np.vstack([x0] + [x0 + np.eye(6)[k] * 0.4 * (hi - lo)[k] / 2 for k in range(6)])
+    opt = minimize(loss, x0, method="Nelder-Mead",
+                   options={"maxiter": args.maxiter, "xatol": 0.02, "fatol": 1e-4, "initial_simplex": simplex})
     best = unpack(opt.x, base)
     fitted = sim_ladder(sessions, pick, gaps, best, dist, seed=1)   # fresh noise for the reported fit
     out = {"params": best.to_dict(), "loss": float(opt.fun), "targets": targets, "sim_fresh_seed": fitted,
