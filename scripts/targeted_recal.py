@@ -26,16 +26,28 @@ from ibci.linear import lagged  # noqa: E402
 GRID = [1, 10, 100, 1e3, 1e4, 1e5]
 
 
-def refit(H_tr, Y, H_te, dec, chans, alpha):
-    L, C, K = dec.W3.shape
-    cols = np.array([l * C + c for l in range(L) for c in chans])
-    frozen = np.setdiff1d(np.arange(L * C), cols)
-    off_tr = H_tr[:, frozen] @ dec.W[frozen] if len(frozen) else 0.0
-    Ha = np.c_[H_tr[:, cols], np.ones(len(H_tr))].astype(np.float64)
-    th = np.linalg.solve(Ha.T @ Ha + alpha * np.eye(Ha.shape[1]),
-                         Ha.T @ (Y - off_tr) + alpha * np.vstack([dec.W[cols], dec.b[None]]))
-    pred = H_te[:, cols] @ th[:-1] + th[-1]
-    return pred + (H_te[:, frozen] @ dec.W[frozen] if len(frozen) else 0.0)
+class GramRefit:
+    """All ridge-to-prior refits for one labelled set from a single Gram matrix.
+
+    Re-learning channels S (all lags) with the rest frozen solves (G_SS + a I) th = r_S - G_SF W_F + a * prior_S,
+    where G = Ha^T Ha and r = Ha^T Y over the labelled bins (Ha = lagged features plus an intercept column)."""
+
+    def __init__(self, H_tr, Y, dec):
+        self.Ha = np.c_[H_tr, np.ones(len(H_tr))].astype(np.float64)
+        self.G = self.Ha.T @ self.Ha
+        self.r = self.Ha.T @ Y.astype(np.float64)
+        self.prior = np.vstack([dec.W, dec.b[None]]).astype(np.float64)   # (L*C + 1, K)
+        self.L, self.C = dec.W3.shape[0], dec.W3.shape[1]
+
+    def predict(self, H_te, chans, alpha):
+        D = self.L * self.C
+        cols = np.r_[np.array([l * self.C + c for l in range(self.L) for c in chans], dtype=int), D]  # + intercept
+        frozen = np.setdiff1d(np.arange(D), cols)
+        rhs = self.r[cols] - self.G[np.ix_(cols, frozen)] @ self.prior[frozen] + alpha * self.prior[cols]
+        th = np.linalg.solve(self.G[np.ix_(cols, cols)] + alpha * np.eye(len(cols)), rhs)
+        W = self.prior.copy()
+        W[cols] = th
+        return np.c_[H_te, np.ones(len(H_te))] @ W
 
 
 def main():
@@ -61,15 +73,15 @@ def main():
         rand = [rng.choice(C, max(args.ks), replace=False) for _ in range(3)]
         for n in args.n_trials:
             lab = sj.trial_id < n
+            gr = GramRefit(H_tr[lab], sj.y_tr[lab], si.dec)
             base = dict(train=p.train, test=p.test, gap_target=p.gap_target, n=n,
                         renorm=r2(si.dec.predict(sj.zte), sj.y_te), own=r2(sj.dec.predict(sj.zte), sj.y_te))
             for a in GRID:
-                row = dict(base, alpha=a, full=r2(refit(H_tr[lab], sj.y_tr[lab], H_te, si.dec, np.arange(C), a), sj.y_te))
+                row = dict(base, alpha=a, full=r2(gr.predict(H_te, np.arange(C), a), sj.y_te))
                 for k in args.ks:
                     for name, order in orders.items():
-                        row[f"{name}_k{k}"] = r2(refit(H_tr[lab], sj.y_tr[lab], H_te, si.dec, order[:k], a), sj.y_te)
-                    row[f"random_k{k}"] = float(np.mean([r2(refit(H_tr[lab], sj.y_tr[lab], H_te, si.dec, rc[:k], a), sj.y_te)
-                                                         for rc in rand]))
+                        row[f"{name}_k{k}"] = r2(gr.predict(H_te, order[:k], a), sj.y_te)
+                    row[f"random_k{k}"] = float(np.mean([r2(gr.predict(H_te, rc[:k], a), sj.y_te) for rc in rand]))
                 rows.append(row)
         print(f"{p.train} -> {p.test} done", flush=True)
     df = pd.DataFrame(rows)
