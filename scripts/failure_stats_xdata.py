@@ -4,7 +4,8 @@ Uses each dataset's channel-level spike counts per 20 ms bin:
   link   LINK threshold crossings (monkey N, 96 ch, 3.5 years)
   perich DANDI 000688 spikes summed per electrode (monkeys C and M; sorted units, so 'activity' = isolated units)
   h2     FALCON H2 threshold crossings (human T5, 192 ch, ~17 months)
-Per session and channel we compute the event rate (Hz). Statistics (same definitions for every subject):
+Per session and channel we compute the event rate (Hz). Sessions with session-wide rate inflation (median channel rate
+> 3x the median over sessions; threshold/preprocessing changes) are dropped first. Statistics (same for every subject):
   - active channels per session (rate > --alive-hz) and its trend per year,
   - deaths: initially active channels (first 3 sessions) that later stay below threshold for >= 3 consecutive
     sessions; revivals: dead channels that later exceed 2x threshold for >= 3 consecutive sessions,
@@ -59,7 +60,8 @@ def rates_perich():
 
 def rates_h2():
     from ibci.data import falcon_h2
-    files = falcon_h2.list_files("calib")
+    # full-length held-in sessions only: the held-out calibration files are ~80 s snippets with inflated rates
+    files = [f for f in falcon_h2.list_files("calib") if "held-in" in os.path.basename(f)]
     rows, d0 = [], None
     for f in files:
         date, tc, _ = falcon_h2.load_tc(f)
@@ -93,7 +95,16 @@ def fit_switching(days, alive, max_gap=400):
     return [float(v) for v in np.exp(res.x)]
 
 
+def drop_inflated(rows, factor=3.0):
+    """Remove sessions with session-wide rate inflation (median channel rate > factor x the median over sessions),
+    e.g. threshold/preprocessing changes; returns (kept rows, number dropped)."""
+    med = np.array([np.median(r[1]) for r in rows])
+    ok = med <= factor * np.median(med)
+    return [r for r, k in zip(rows, ok) if k], int((~ok).sum())
+
+
 def summarize(rows, alive_hz):
+    rows, n_dropped = drop_inflated(rows)
     rows = sorted(rows, key=lambda r: r[0])
     days = np.array([r[0] for r in rows], dtype=float)
     # merge same-day sessions
@@ -126,6 +137,7 @@ def summarize(rows, alive_hz):
     ever = (R > alive_hz).sum(0) >= 3                 # channels that were active in >= 3 sessions
     h_off, h_on = fit_switching(days, (R > alive_hz)[:, ever])
     return {
+        "sessions_dropped_rate_inflation": n_dropped,
         "h_off": h_off, "h_on": h_on, "silent_fraction_stationary": h_off / (h_off + h_on),
         "n_ever_active": int(ever.sum()),
         "n_sessions": int(len(days)), "span_days": int(days[-1] - days[0]), "n_channels": int(C),

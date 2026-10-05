@@ -30,3 +30,8 @@ targets {
   "n": 12
  }
 }
+[1] 86s loss=2.4986 s_mix0=0.3 s_mix=0.5 tau_mix=30 rho0=0.119 rho_inf=0.356 tau_rho=200
+[2] 167s loss=2.5351 s_mix0=0.282 s_mix=0.5 tau_mix=30 rho0=0.119 rho_inf=0.356 tau_rho=200
+[3] 251s loss=2.5301 s_mix0=0.3 s_mix=0.483 tau_mix=30 rho0=0.119 rho_inf=0.356 tau_rho=200
+[4] 334s loss=2.5258 s_mix0=0.3 s_mix=0.5 tau_mix=35.6 rho0=0.119 rho_inf=0.356 tau_rho=200
+[5] 418s loss=2.4013 s_mix0=0.3 s_mix=0.5 tau_mix=30 rho0=0.109 rho_inf=0.349 tau_rho=200

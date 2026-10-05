@@ -1,0 +1,27 @@
+{
+ "T5 (FALCON H2)": {
+  "sessions_dropped_rate_inflation": 1,
+  "h_off": 0.009937855517225326,
+  "h_on": 0.028351689244147917,
+  "silent_fraction_stationary": 0.25954488566421147,
+  "n_ever_active": 122,
+  "n_sessions": 20,
+  "span_days": 211,
+  "n_channels": 192,
+  "active_first3_median": 97.0,
+  "active_last3_median": 93.0,
+  "active_trend_per_year": -4.524937135505548,
+  "initially_active": 99,
+  "died": 21,
+  "revived": 3,
+  "deaths_per_channel_year": 0.4302120141342756,
+  "median_death_day": 21.0,
+  "lograte_change_kurtosis": 2.6064109802246094,
+  "frac_abs_logchange_gt1": 0.24175084175084174,
+  "channel_level_kurtosis": 2.7546324729919434,
+  "channel_level_frac_gt1": 0.235016835016835,
+  "global_events_abs_median_change_gt1": 0,
+  "n_short_gap_session_pairs": 15,
+  "n_changes": 1485
+ }
+}
