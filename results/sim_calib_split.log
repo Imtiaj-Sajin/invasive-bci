@@ -79,3 +79,4 @@ targets {
 [47] 2673s loss=0.7707 s_mix0=0.281 s_mix=0.64 tau_mix=3.06 rho0=0.22 rho_inf=0.468 tau_rho=32
 [48] 2724s loss=0.9266 s_mix0=0.281 s_mix=0.404 tau_mix=3.06 rho0=0.22 rho_inf=0.468 tau_rho=56.6
 [49] 2774s loss=0.9179 s_mix0=0.207 s_mix=0.508 tau_mix=4.04 rho0=0.266 rho_inf=0.417 tau_rho=42.6
+[50] 2826s loss=0.7319 s_mix0=0.281 s_mix=0.404 tau_mix=3.06 rho0=0.317 rho_inf=0.534 tau_rho=32

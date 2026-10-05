@@ -25,7 +25,7 @@ import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from ibci import sim  # noqa: E402
-from ibci.anatomy import Sess, r2  # noqa: E402
+from ibci.anatomy import Sess, SessCache, SessMeta, r2  # noqa: E402
 from ibci.data import link  # noqa: E402
 from ibci.linear import LagDecoder, lagged, ridge  # noqa: E402
 from ibci.preprocess import ZScore  # noqa: E402
@@ -56,11 +56,11 @@ def pert_copies(Z, k, rng, p_drop=0.1, gain_sd=0.2):
     return out
 
 
-def sim_copies(Z, k, p, dist, rng, dt_max):
+def sim_copies(Z, k, p, dist, rng, dt_max, alive=None):
     out = []
     for _ in range(k):
         dt = float(np.exp(rng.uniform(0, np.log(dt_max))))
-        d = sim.sample_drift(Z, dt, p, dist, rng)
+        d = sim.sample_drift(Z, dt, p, dist, rng, alive=alive)
         out.append(renorm(sim.apply_drift(Z, d, rng)))
     return out
 
@@ -112,7 +112,7 @@ def main():
             "ridge_reg": LagDecoder.fit(si.ztr, si.y_tr, N_LAGS, a_reg),
             "pert": aug_ridge([si.ztr] + pert_copies(si.ztr, args.k_copies, rng), [si.y_tr] * (args.k_copies + 1), 0.1),
         }
-        sims = sim_copies(si.ztr, args.k_copies, p, dist, rng, args.dt_max)
+        sims = sim_copies(si.ztr, args.k_copies, p, dist, rng, args.dt_max, alive=si.alive)
         decs["sim"] = aug_ridge([si.ztr] + sims, [si.y_tr] * (args.k_copies + 1), 0.1)
         decs["sim_reg"] = aug_ridge([si.ztr] + sims, [si.y_tr] * (args.k_copies + 1), a_reg)
         if prev:
