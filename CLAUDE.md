@@ -7,7 +7,7 @@ researchers will reuse and cite for years. Read this file first, then `docs/RESE
 ## Where knowledge lives
 
 | Path | What it holds |
-|---|---|
+| --- | --- |
 | `docs/RESEARCH_LOG.md` | Chronological log of what was done, found, and decided. Append, never rewrite history. |
 | `docs/knowledge/` | Curated reference notes (field landscape, datasets, methods, hardware/electrode facts). Each claim should carry a source URL. |
 | `docs/decisions/` | Decision records: why a topic/method/dataset was chosen and what was rejected. |
@@ -17,6 +17,9 @@ researchers will reuse and cite for years. Read this file first, then `docs/RESE
 | `data/` | Downloaded datasets. **Git-ignored.** Recreate with the download scripts. |
 
 ## Rules of the road
+
+- **Commits:** author as the configured git user (Imtiaj Sajin). Do **not** add any "Co-Authored-By: Claude" or other
+  AI attribution trailer. This is the owner's explicit instruction (2026-10-05). Pushing to `origin` is allowed.
 
 - Log every meaningful step in `docs/RESEARCH_LOG.md` with the date (YYYY-MM-DD).
 - Put sources (URLs, DOIs) next to factual claims in `docs/knowledge/`. Mark unverified claims `[UNVERIFIED]`.
