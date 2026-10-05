@@ -1,0 +1,80 @@
+targets {
+ "1": {
+  "L2": 0.6200124301492831,
+  "L3_n300": 0.7234807761178959,
+  "L5_n300": 0.909393443366976,
+  "n": 13
+ },
+ "7": {
+  "L2": 0.49744150391902353,
+  "L3_n300": 0.6163446598244804,
+  "L5_n300": 0.86580702733759,
+  "n": 23
+ },
+ "30": {
+  "L2": 0.019621495016137684,
+  "L3_n300": 0.30433691134573215,
+  "L5_n300": 0.8349325570846063,
+  "n": 32
+ },
+ "120": {
+  "L2": -0.11800118267109122,
+  "L3_n300": 0.23586824081303845,
+  "L5_n300": 0.7948300923027192,
+  "n": 31
+ },
+ "480": {
+  "L2": -0.31955012480202283,
+  "L3_n300": 0.22676922871147376,
+  "L5_n300": 0.7846844341551518,
+  "n": 12
+ }
+}
+[1] 65s loss=1.1683 s_mix0=1.01 s_mix=1.46 tau_mix=14.8 rho0=0.04 rho_inf=0.0847 tau_rho=245
+[2] 126s loss=1.2461 s_mix0=0.186 s_mix=0.0377 tau_mix=70.2 rho0=0.121 rho_inf=0.591 tau_rho=45.1
+[3] 187s loss=12.5393 s_mix0=0.0553 s_mix=0.632 tau_mix=5.89 rho0=0.00844 rho_inf=0.856 tau_rho=15.6
+[4] 250s loss=1.7995 s_mix0=0.325 s_mix=0.158 tau_mix=157 rho0=0.269 rho_inf=0.443 tau_rho=1.23e+03
+[5] 311s loss=0.9820 s_mix0=0.591 s_mix=0.237 tau_mix=41.9 rho0=0.42 rho_inf=0.498 tau_rho=398
+[6] 370s loss=14.2779 s_mix0=0.0345 s_mix=0.0685 tau_mix=25 rho0=0.0146 rho_inf=0.946 tau_rho=105
+[7] 426s loss=9.4463 s_mix0=0.107 s_mix=0.989 tau_mix=272 rho0=0.202 rho_inf=0.817 tau_rho=40.7
+[8] 483s loss=3.8145 s_mix0=1.98 s_mix=0.0297 tau_mix=3.65 rho0=0.0745 rho_inf=0.0967 tau_rho=2.24e+03
+[9] 539s loss=1.5101 s_mix0=1.48 s_mix=0.36 tau_mix=416 rho0=0.0189 rho_inf=0.469 tau_rho=907
+[10] 595s loss=0.9483 s_mix0=0.0801 s_mix=0.144 tau_mix=2.8 rho0=0.436 rho_inf=0.481 tau_rho=11.5
+[11] 650s loss=2.4883 s_mix0=0.0259 s_mix=1.53 tau_mix=54.5 rho0=0.0447 rho_inf=0.386 tau_rho=61.9
+[12] 706s loss=2.5471 s_mix0=0.442 s_mix=0.0589 tau_mix=16.3 rho0=0.143 rho_inf=0.841 tau_rho=336
+[13] 762s loss=1.7726 s_mix0=0.243 s_mix=0.724 tau_mix=4.57 rho0=0.0874 rho_inf=0.906 tau_rho=1.49e+03
+[14] 818s loss=4.2547 s_mix0=0.0416 s_mix=0.0242 tau_mix=242 rho0=0.0234 rho_inf=0.18 tau_rho=27.1
+[15] 874s loss=2.0857 s_mix0=0.139 s_mix=0.297 tau_mix=9.57 rho0=0.287 rho_inf=0.308 tau_rho=156
+[16] 931s loss=1.6586 s_mix0=0.751 s_mix=0.103 tau_mix=90.4 rho0=0.0103 rho_inf=0.631 tau_rho=592
+[17] 986s loss=0.8241 s_mix0=0.706 s_mix=0.321 tau_mix=2.33 rho0=0.18 rho_inf=0.382 tau_rho=24.1
+[18] 1041s loss=4.1585 s_mix0=0.122 s_mix=0.0963 tau_mix=488 rho0=0.0625 rho_inf=0.895 tau_rho=1.9e+03
+[19] 1098s loss=0.8330 s_mix0=0.0405 s_mix=0.782 tau_mix=18.9 rho0=0.37 rho_inf=0.717 tau_rho=673
+[20] 1154s loss=4.6348 s_mix0=0.22 s_mix=0.0226 tau_mix=44.8 rho0=0.0134 rho_inf=0.072 tau_rho=124
+[21] 1210s loss=2.4148 s_mix0=0.38 s_mix=1.91 tau_mix=207 rho0=0.00674 rho_inf=0.0267 tau_rho=13.5
+[22] 1266s loss=1.7101 s_mix0=0.0207 s_mix=0.0477 tau_mix=5.52 rho0=0.249 rho_inf=0.772 tau_rho=746
+[23] 1322s loss=5.1206 s_mix0=0.0664 s_mix=0.449 tau_mix=110 rho0=0.0355 rho_inf=0.939 tau_rho=283
+[24] 1378s loss=0.9621 s_mix0=1.14 s_mix=0.116 tau_mix=8.27 rho0=0.104 rho_inf=0.191 tau_rho=74.3
+[25] 1434s loss=16.1484 s_mix0=1.52 s_mix=0.916 tau_mix=84.6 rho0=0.326 rho_inf=0.87 tau_rho=90.1
+[26] 1490s loss=4.4366 s_mix0=0.0883 s_mix=0.0318 tau_mix=12.7 rho0=0.0119 rho_inf=0.302 tau_rho=491
+[27] 1546s loss=4.4295 s_mix0=0.0275 s_mix=0.219 tau_mix=135 rho0=0.0948 rho_inf=0.163 tau_rho=2.58e+03
+[28] 1603s loss=1.4562 s_mix0=0.506 s_mix=0.0733 tau_mix=7.18 rho0=0.0285 rho_inf=0.413 tau_rho=32.7
+[29] 1659s loss=3.0348 s_mix0=0.294 s_mix=0.506 tau_mix=29.3 rho0=0.0497 rho_inf=0.684 tau_rho=50
+[30] 1714s loss=3.3353 s_mix0=0.0538 s_mix=0.195 tau_mix=34.7 rho0=0.173 rho_inf=0.207 tau_rho=191
+[31] 1769s loss=1.0505 s_mix0=0.162 s_mix=1.17 tau_mix=2.99 rho0=0.0222 rho_inf=0.2 tau_rho=1.12e+03
+[32] 1825s loss=34.5815 s_mix0=0.943 s_mix=0.0466 tau_mix=315 rho0=0.468 rho_inf=0.962 tau_rho=20.3
+[33] 1880s loss=0.8241 s_mix0=0.706 s_mix=0.321 tau_mix=2.33 rho0=0.18 rho_inf=0.382 tau_rho=24.1
+[34] 1937s loss=5.5343 s_mix0=1.77 s_mix=0.321 tau_mix=2.33 rho0=0.18 rho_inf=0.382 tau_rho=24.1
+[35] 1993s loss=1.0874 s_mix0=0.706 s_mix=0.806 tau_mix=2.33 rho0=0.18 rho_inf=0.382 tau_rho=24.1
+[36] 2049s loss=0.8210 s_mix0=0.706 s_mix=0.321 tau_mix=7.02 rho0=0.18 rho_inf=0.382 tau_rho=24.1
+[37] 2106s loss=1.3538 s_mix0=0.706 s_mix=0.321 tau_mix=2.33 rho0=0.374 rho_inf=0.528 tau_rho=24.1
+[38] 2162s loss=2.5961 s_mix0=0.706 s_mix=0.321 tau_mix=2.33 rho0=0.18 rho_inf=0.648 tau_rho=24.1
+[39] 2219s loss=1.1245 s_mix0=0.706 s_mix=0.321 tau_mix=2.33 rho0=0.18 rho_inf=0.382 tau_rho=75.3
+[40] 2276s loss=0.8024 s_mix0=0.281 s_mix=0.436 tau_mix=3.36 rho0=0.235 rho_inf=0.497 tau_rho=35.2
+[41] 2333s loss=0.7446 s_mix0=0.112 s_mix=0.508 tau_mix=4.04 rho0=0.266 rho_inf=0.558 tau_rho=42.6
+[42] 2389s loss=1.1606 s_mix0=0.382 s_mix=0.508 tau_mix=4.04 rho0=0.266 rho_inf=0.334 tau_rho=42.6
+[43] 2446s loss=1.2611 s_mix0=0.311 s_mix=0.593 tau_mix=4.85 rho0=0.101 rho_inf=0.298 tau_rho=51.5
+[44] 2504s loss=1.4978 s_mix0=0.382 s_mix=0.508 tau_mix=4.04 rho0=0.146 rho_inf=0.339 tau_rho=42.6
+[45] 2561s loss=0.8673 s_mix0=0.281 s_mix=0.404 tau_mix=5.32 rho0=0.22 rho_inf=0.468 tau_rho=32
+[46] 2617s loss=0.8607 s_mix0=0.281 s_mix=0.404 tau_mix=3.06 rho0=0.22 rho_inf=0.468 tau_rho=32
+[47] 2673s loss=0.7707 s_mix0=0.281 s_mix=0.64 tau_mix=3.06 rho0=0.22 rho_inf=0.468 tau_rho=32
+[48] 2724s loss=0.9266 s_mix0=0.281 s_mix=0.404 tau_mix=3.06 rho0=0.22 rho_inf=0.468 tau_rho=56.6
