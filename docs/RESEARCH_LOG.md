@@ -435,3 +435,41 @@ regularizer (shrink toward the identity remap), not a constrained "channel re-mi
    - random choice (a control).
 
 The question becomes: **how many degrees of freedom (subspace dimensions, or electrodes) does decoder-relevant drift occupy?**
+
+## 2026-10-06 ~05:20 — Replication in two more monkeys (000688), and constrained drift DOF
+
+**Replication** (`scripts/replicate_perich.py` → `results/replication/{C,M}_ladder.csv`). Another lab, a reaching task,
+sorted units summed per electrode (192 channels), cursor kinematics. Chewie: 145 pairs; Mihili: 44 pairs.
+
+| gap | ret L2 (N / C / M) | ret L3 gains (N / C / M) |
+|---|---|---|
+| 1 d | 0.73 / 0.72 / 0.77 | 0.78 / 0.81 / 0.84 |
+| 7 d | 0.54 / 0.56 / 0.61 | 0.63 / 0.72 / 0.70 |
+| 30 d | 0.19 / 0.25 / 0.55 | 0.43 / 0.51 / 0.69 |
+| 120 d | 0.04 / −0.09 / 0.04 | 0.34 / 0.33 / 0.35 |
+| 480 d | −0.36 / −0.27 / 0.02 | 0.22 / 0.11 / 0.20 |
+
+(ret = median rung R² divided by own-day R²)
+
+- L4u (label-free Procrustes) is ≤ L2 in all three monkeys.
+- **The drift timescale is broadly conserved across 3 monkeys, 2 labs, 2 tasks and 2 feature types:** about 25% of
+  performance lost overnight, about half by one week, and near zero by about 4 months. Per-channel gains recover a similar,
+  modest share everywhere.
+
+**Constrained drift degrees of freedom** (`scripts/drift_dof.py` → `results/drift_dof`; LINK; 150 pairs, 30 per gap).
+Share of the drift loss recovered, relative to full ridge-to-prior with 300 trials:
+
+| channels re-learned (k of 96) | 8 | 16 | 32 | 64 |
+|---|---|---|---|---|
+| supervised selection (largest weight change) | 0.56 | 0.74 | 0.90 | 0.98 |
+| **label-free** (mean shift + log-sd ratio) | 0.31 | 0.46 | 0.68 | 0.86 |
+| label-free (correlation-profile change) | 0.17 | 0.29 | 0.40 | 0.78 |
+| random | 0.18 | 0.28 | 0.45 | 0.75 |
+
+- The pattern is consistent across gaps (1–480 days).
+- Decoder-relevant drift is concentrated on a minority of electrodes, and simple label-free per-channel statistics
+  identify part of them (0.46 vs 0.28 for random at k = 16).
+- **Caveat being tested:** supervised selection may reflect channel *importance*. An `importance` control (old-decoder
+  weight norm) and a decoder-weighted label-free score (`wstats` = change × importance) are added in `scripts/targeted_recal.py`.
+- **Rank-r input remaps are not informative:** recovery plateaus at rank 2 (0.64) because the ridge readout itself is
+  effectively rank 2 (top-2 singular values carry 94–95% of the energy). Dropped as a drift measure.
