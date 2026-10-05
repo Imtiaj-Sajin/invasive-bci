@@ -316,3 +316,40 @@ LSTM with hidden size 256 and a 20-bin window). Median R²:
 
 **Time-split failure fit** (LINK days < 700; `results/failure_xdata_cal700`): h_off = 0.0038/day, h_on = 0.0018/day.
 The simulator calibration (`results/sim_calib_split`) uses only these rates and pairs inside days 0–700.
+
+## 2026-10-06 ~03:50 — FULL drift anatomy (LINK, 537 pairs, 80 training sessions, gaps 1–900 days)
+
+- An out-of-memory crash at pair 351 (too many concurrent jobs holding all sessions in RAM) was fixed by:
+  - memory-lean `Sess` objects (only z-scored copies stored);
+  - an LRU `SessCache` that loads sessions on demand;
+  - `--resume`.
+- Results: `results/anatomy/ladder.csv`, `results/anatomy/table_ci.csv` (cluster-bootstrap 95% CIs over training
+  sessions), and `results/figures/fig_anatomy.png`.
+
+**Median R²:**
+
+| gap (days) | 1 | 7 | 30 | 120 | 480 | 900 |
+|---|---|---|---|---|---|---|
+| own-day | 0.29 | 0.29 | 0.28 | 0.29 | 0.29 | 0.29 |
+| L2 renorm (no labels) | 0.20 | 0.15 | 0.05 | 0.01 | −0.10 | −0.14 |
+| L3 + channel gains (96 parameters) | 0.22 | 0.17 | 0.11 | 0.08 | 0.06 | 0.07 |
+| L5 + full input remap | 0.27 | 0.25 | 0.22 | 0.22 | 0.23 | 0.22 |
+| L6p ridge-to-prior (300 trials) | 0.31 | 0.30 | 0.29 | 0.29 | 0.29 | 0.29 |
+
+**Retention and recovery** (median [95% CI]):
+
+| | 1 day | 900 days |
+|---|---|---|
+| L2/own (renorm retention) | 0.73 [0.62, 0.78] | −0.52 |
+| L5/own (remap retention) | 0.93 | 0.80 [0.76, 0.83] |
+
+- Share of the drift loss (own − L2) recovered by the full remap: **0.71–0.86 at every gap**.
+- Share recovered by per-channel gains: 0.14–0.50.
+- L4u (label-free Procrustes) never beats renormalization.
+- L4 (supervised rank-16 rotation) sits between L3 and L5, so the remix is not confined to the dominant subspace.
+
+**Headline:** with the decoder frozen, a linear remix of the input channels restores about 80% of own-day performance
+whether the decoder is 4 days or 2.5 years old. Chronic drift on this array is predominantly *channel-level linear
+re-mixing* onto a decoder-relevant code that stays stable for years. This is the decoder-level counterpart of
+"stable latent dynamics" (Gallego 2020), shown here over 900 days. Per-channel gain changes are a minor part, and the
+label-free alignments tested do not recover the remix.

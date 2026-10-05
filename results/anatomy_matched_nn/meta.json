@@ -1,0 +1,25 @@
+{
+ "n_sessions": 312,
+ "n_pairs": 79,
+ "args": {
+  "gaps": [
+   1,
+   2,
+   4,
+   7,
+   14,
+   30,
+   60,
+   120,
+   240,
+   480,
+   900
+  ],
+  "n_trials": [
+   300
+  ],
+  "max_train": 0,
+  "pairs_from": "results/anatomy_nn/ladder_nn.csv",
+  "out": "results/anatomy_matched_nn"
+ }
+}
