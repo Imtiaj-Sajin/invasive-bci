@@ -473,3 +473,29 @@ Share of the drift loss recovered, relative to full ridge-to-prior with 300 tria
   weight norm) and a decoder-weighted label-free score (`wstats` = change × importance) are added in `scripts/targeted_recal.py`.
 - **Rank-r input remaps are not informative:** recovery plateaus at rank 2 (0.64) because the ridge readout itself is
   effectively rank 2 (top-2 singular values carry 94–95% of the energy). Dropped as a drift measure.
+
+## 2026-10-06 ~05:35 — Targeted recalibration; CORRECTION to the "concentrated drift" reading
+
+`scripts/targeted_recal.py` → `results/targeted_recal`. 86 pairs. Shrinkage chosen from history (leave-one-session-out).
+All refits come from one Gram matrix per labelled set, verified identical to a direct solve (max difference 1.5e-7).
+
+Median R² by labelled trials n:
+
+| n | renorm | full refit | stats k=32 | importance k=32 | wstats k=32 | random k=32 |
+|---|---|---|---|---|---|---|
+| 10 | 0.052 | 0.111 | 0.085 | **0.124** | 0.113 | 0.090 |
+| 20 | 0.052 | 0.133 | 0.127 | **0.154** | 0.149 | 0.101 |
+| 50 | 0.052 | 0.183 | 0.136 | **0.199** | 0.196 | 0.121 |
+| 100 | 0.052 | 0.227 | 0.182 | 0.226 | 0.214 | 0.139 |
+
+- At n = 100, re-learning the old decoder's 16 most-used channels already recovers about 76% of the loss, i.e.
+  (0.185 − 0.052) / (0.227 − 0.052). That is as much as the *supervised* top-16 selection in `drift_dof` (74%).
+- Label-free change statistics are worse than importance, and "change × importance" is no better than importance.
+
+**Correction:** the 05:20 reading "decoder-relevant drift is concentrated on a minority of electrodes, partly
+identifiable without labels" is **not supported** beyond the decoder's own reliance on a subset of channels. The k-channel
+recovery mostly reflects *decoder importance*, not where drift happens.
+
+**What survives (practical):** with 10–50 labelled trials, re-learning only the 32 channels the old decoder relies on
+most is slightly better than a full refit (+0.013 to +0.021 median R²), because fewer parameters are fitted. At n ≥ 100 the
+full refit is as good.
