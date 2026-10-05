@@ -1,0 +1,105 @@
+{
+ "n_sessions": 52,
+ "fixed": {
+  "n_pairs": 731,
+  "within_day_r2_median": 0.2993079423904419,
+  "crossday_r2_median": -1.3506228923797607,
+  "features": {
+   "f_mean_shift": {
+    "n": 731,
+    "spearman": -0.06642804939752263,
+    "partial_given_days": -0.08674478039194286
+   },
+   "f_std_logratio": {
+    "n": 731,
+    "spearman": -0.027487855372252467,
+    "partial_given_days": -0.014911991962322995
+   },
+   "f_subspace": {
+    "n": 731,
+    "spearman": -0.20956381946968228,
+    "partial_given_days": -0.2166034859009044
+   },
+   "f_disagree": {
+    "n": 731,
+    "spearman": -0.26717121183309,
+    "partial_given_days": -0.2677653157519773
+   },
+   "f_pred_vel_bias": {
+    "n": 731,
+    "spearman": -0.45930615029815897,
+    "partial_given_days": -0.4588937801931942
+   },
+   "f_pred_pos_var": {
+    "n": 731,
+    "spearman": -0.4063284470144629,
+    "partial_given_days": -0.4549438747442366
+   },
+   "f_imp_logratio": {
+    "n": 442,
+    "spearman": 0.08138643819895457,
+    "partial_given_days": 0.07481315719847194
+   },
+   "f_dead": {
+    "n": 731,
+    "spearman": 0.042211276229462705,
+    "partial_given_days": 0.05647767684550529
+   },
+   "logdays": {
+    "n": 731,
+    "spearman": -0.023105042077049113
+   }
+  }
+ },
+ "renorm": {
+  "n_pairs": 731,
+  "within_day_r2_median": 0.3021724969148636,
+  "crossday_r2_median": 0.02998875081539154,
+  "features": {
+   "f_mean_shift": {
+    "n": 731,
+    "spearman": 0.1069347935862234,
+    "partial_given_days": 0.0065044457336908956
+   },
+   "f_std_logratio": {
+    "n": 731,
+    "spearman": -0.04426076881612854,
+    "partial_given_days": -0.0384862342129195
+   },
+   "f_subspace": {
+    "n": 731,
+    "spearman": -0.4497136377725956,
+    "partial_given_days": -0.07184574624506006
+   },
+   "f_disagree": {
+    "n": 731,
+    "spearman": -0.16544265490026092,
+    "partial_given_days": -0.06136177660486926
+   },
+   "f_pred_vel_bias": {
+    "n": 731,
+    "spearman": 0.024515789321698005,
+    "partial_given_days": 0.02487286566997658
+   },
+   "f_pred_pos_var": {
+    "n": 731,
+    "spearman": 0.08969513781729406,
+    "partial_given_days": 0.15300027495142066
+   },
+   "f_imp_logratio": {
+    "n": 442,
+    "spearman": -0.55912255072192,
+    "partial_given_days": -0.12218056364363769
+   },
+   "f_dead": {
+    "n": 731,
+    "spearman": -0.3195017575979971,
+    "partial_given_days": -0.02567630064946921
+   },
+   "logdays": {
+    "n": 731,
+    "spearman": -0.7483198415911391
+   }
+  }
+ }
+}

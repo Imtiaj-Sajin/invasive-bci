@@ -112,3 +112,60 @@ label-free reliability monitoring across years of recordings.*
 
 **Next:** finish the LINK download, build the cache, and run a pilot. The pilot trains a ridge/Wiener decoder per day,
 tests it on all later days, and checks how simple label-free shift metrics correlate with the R² drop.
+
+## 2026-10-05 (cont.) — PILOT: the label-free monitoring hypothesis FAILS on natural drift
+
+Scripts: `scripts/pilot_link_crossday.py` and `scripts/explore_monitor_features.py`. Data: the first 46–61 LINK
+sessions (2020-01-27 to about 2021-03; the full download was still running). Decoder: ridge with 8 lags of
+spike-band power, alpha 0.1, trained on the first 300 trials and tested on the rest. This follows the LINK paper.
+
+**Baseline sanity check:** within-day R² median is 0.30 (correlation of about 0.55). The LINK tutorial reports per-output
+Pearson r of 0.42–0.64, so our numbers are consistent.
+
+**Fixed decoder** (day-i normalization reused on later days): cross-day R² median is **−1.29**, i.e. immediate
+collapse. Baseline shifts dominate, as the LINK paper also reports.
+
+**Renormalized decoder** (day-j z-scoring from day j's own *unlabelled* first 300 trials; the realistic deployment):
+
+| Days since training | 0 | 1 | 7 | 21 | 45–60 | 90–120 | 120–180 | >180 |
+|---|---|---|---|---|---|---|---|---|
+| Median R² | 0.30 | 0.21 | 0.20 | 0.14 | 0.11 | 0.05 | 0.01 | −0.05 |
+
+- R² drops about 30% overnight.
+- Elapsed days predicts R² strongly: Spearman ρ = −0.75 across all pairs and −0.56 within 60 days.
+
+**14 label-free features tested.** The pair-level shift and model features, and the hardware features:
+- input mean shift and standard-deviation shift;
+- principal-angle subspace shift;
+- bootstrap-ensemble disagreement;
+- disagreement between decoders built on different views (SBP vs threshold crossings, 8-lag vs 1-lag);
+- predicted-output statistics (velocity bias, variance ratio, Wasserstein distance to the training kinematics, smoothness);
+- position/velocity self-consistency;
+- Procrustes alignment disagreement, Procrustes residual, readout off-subspace energy;
+- neural modulation;
+- impedance log-ratio and dead-channel count.
+
+**Results:**
+- Partial Spearman with R² given log(days) is at most about 0.27 (output variance) and mostly under 0.1.
+- In time-blocked cross-validated prediction of R² (283 pairs, at most 60 days apart):
+  - days only: MAE 0.064;
+  - label-free only: MAE 0.067–0.071;
+  - days plus label-free: MAE 0.067–0.070.
+  - **Label-free features do not beat elapsed time.**
+- Predicting the *recalibration gain* (own-day R² minus cross-day R²) instead: days only MAE 0.045, label-free 0.054.
+- Detecting "unexpectedly bad days" (residual below −1 SD from the time curve): AUROC 0.50–0.58 for every feature.
+
+**Is the leftover variation just noise?** No.
+- Split-half reliability of the time-residuals, using alternating *pairs* of trials:
+  r = 0.72, so Spearman–Brown reliability is **0.84**.
+- (Odd/even single-trial splits gave a negative correlation. That is an artifact: center-out trials alternate
+  between outward and centre targets.)
+- So day-to-day performance variation beyond the time trend is *real and reliable*, but **invisible to every
+  label-free signal tried**.
+- Test-day difficulty (own-day R²) raises explained R² variance from 0.29 (days alone) to 0.56.
+
+**Conclusion:** the central claim of decision 0001 (label-free signals predict decoder failure beyond elapsed time)
+is not supported for natural drift. The pilot did its job before months of work were sunk. The negative result is
+worth keeping, for example as a section or short note: "under gradual drift, a calendar-based schedule is a strong
+baseline; label-free statistics do not capture the reliable residual." Abrupt *channel-level* faults remain detectable
+by construction. **Decision 0001 will be superseded; see decision 0002.**
