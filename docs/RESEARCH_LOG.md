@@ -353,3 +353,37 @@ whether the decoder is 4 days or 2.5 years old. Chronic drift on this array is p
 re-mixing* onto a decoder-relevant code that stays stable for years. This is the decoder-level counterpart of
 "stable latent dynamics" (Gallego 2020), shown here over 900 days. Per-channel gain changes are a minor part, and the
 label-free alignments tested do not recover the remix.
+
+## 2026-10-06 ~04:00 — Small-budget recalibration policy; matched LSTM vs ridge
+
+**Recalibration policy** (`scripts/recal_policy.py` → `results/recal_policy`; 86 data-efficiency pairs). Ridge-to-prior
+shrinks both weights and intercept toward the previous decoder. The shrinkage α is chosen per pair by CV, *or* from
+history (the α maximizing median R² over pairs from other training sessions; leave-one-session-out, so no leakage).
+
+Median R²:
+
+| n trials | renorm | CV | history | history by gap | oracle |
+|---|---|---|---|---|---|
+| 10 | 0.052 | 0.089 | 0.111 | 0.103 | 0.114 |
+| 20 | 0.052 | 0.129 | 0.133 | 0.136 | 0.142 |
+| 50 | 0.052 | 0.184 | 0.183 | 0.187 | 0.197 |
+
+Share of pairs where recalibration is **worse than doing nothing** (by more than 0.01):
+
+| n trials | CV | history |
+|---|---|---|
+| 10 | 10.5% | 1.2% |
+| 20 | 8.1% | 0% |
+
+At 1 day with 10 trials, CV gives 0.103, history gives 0.193, and renorm gives 0.190.
+
+**Practical recipe:** borrow the shrinkage strength from past sessions; harmful recalibrations essentially disappear.
+
+**Matched LSTM vs ridge** (same 79 pairs; `results/anatomy_nn/matched_vs_ridge.csv`; cluster-bootstrap CIs):
+- Own-day: the LSTM is higher by 0.128 [0.111, 0.141] (higher on 100% of training sessions).
+- Renormalized, absolute: the LSTM is higher by 0.056 [0.043, 0.073].
+- Relative retention (L2/own): the LSTM is higher by 0.072 [0.010, 0.114], so it is *modestly* more drift-robust.
+- The anatomy differs in detail:
+  - Per-channel gains recover much more for the LSTM (L3/own 0.74 vs 0.45 at 30 days).
+  - The full input remap recovers somewhat less (L5/own lower by 0.051 [−0.079, −0.035]; 0.67 vs 0.83 at 480 days).
+  - Both point to input-scale sensitivity of the nonlinear network, and to a harder optimization of a remap in front of it.
