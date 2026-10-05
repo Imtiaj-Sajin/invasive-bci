@@ -1,0 +1,83 @@
+{
+ "n_sessions": 77,
+ "n_days": 77,
+ "span_days": 470,
+ "trends": {
+  "tc_rate": {
+   "year0": 0.8410287201404572,
+   "year1": 1.1421284079551697,
+   "spearman_vs_day": 0.4435301540564698
+  },
+  "sbp_mean": {
+   "year0": 2.869823455810547,
+   "year1": 2.5116831064224243,
+   "spearman_vs_day": -0.8601135706398864
+  },
+  "tune_r2": {
+   "year0": 0.0009021264421659736,
+   "year1": 0.000301225810736494,
+   "spearman_vs_day": -0.23650034176349966
+  },
+  "imp": {
+   "year0": 302000.0,
+   "year1": 279000.0,
+   "spearman_vs_day": -0.3702235673427469
+  },
+  "n_active": {
+   "year0": 30.0,
+   "year1": 32.0
+  },
+  "n_tuned_r2>0.05": {
+   "year0": 3.0,
+   "year1": 1.0
+  }
+ },
+ "deaths": {
+  "initially_active": 40,
+  "died": 25,
+  "revived_after_death": 8,
+  "death_day_quartiles": [
+   46.0,
+   151.0,
+   249.0
+  ]
+ },
+ "tc_change_short_gaps": {
+  "n": 4032,
+  "sd": 0.7113755592518823,
+  "kurtosis_excess": 8.582443093804581,
+  "frac_abs_gt_1": 0.1130952380952381
+ },
+ "spatial": {
+  "slope_absdiff_neighbours_median": 0.5449481092919174,
+  "slope_absdiff_far_median": 0.7859601212347928,
+  "mannwhitney_p_neighbours_more_similar": 2.669579077534419e-10,
+  "dead_neighbour_pair_fraction": 0.42528735632183906,
+  "perm_p_clustered": 0.2105
+ },
+ "edge_vs_interior": {
+  "n_edge": 42,
+  "n_interior": 54,
+  "slope_logtc_per_year_edge_median": 0.16618850150731798,
+  "slope_logtc_per_year_interior_median": 0.06640240189749441,
+  "mannwhitney_p_edge_declines_faster": 0.7732624146755749,
+  "died_frac_edge": 0.55,
+  "died_frac_interior": 0.7
+ },
+ "by_array": {
+  "Lateral": {
+   "slope_logtc_per_year_median": 0.0015167603504297779,
+   "died": 9
+  },
+  "Medial": {
+   "slope_logtc_per_year_median": 0.22136359545945306,
+   "died": 16
+  }
+ },
+ "impedance": {
+  "days_with_impedance": 63,
+  "spearman_imp_vs_tc_rate_pooled": -0.045475337313204925,
+  "spearman_logimp_vs_day_median_channel": -0.3702235673427469,
+  "within_channel_spearman_median": -0.14800554287895798
+ }
+}

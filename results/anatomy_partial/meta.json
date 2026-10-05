@@ -1,0 +1,24 @@
+{
+ "n_sessions": 61,
+ "n_pairs": 47,
+ "args": {
+  "gaps": [
+   1,
+   2,
+   4,
+   7,
+   14,
+   30,
+   60,
+   120,
+   240,
+   480,
+   900
+  ],
+  "n_trials": [
+   300
+  ],
+  "max_train": 12,
+  "out": "results/anatomy_partial"
+ }
+}

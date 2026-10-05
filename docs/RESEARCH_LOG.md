@@ -169,3 +169,69 @@ is not supported for natural drift. The pilot did its job before months of work 
 worth keeping, for example as a section or short note: "under gradual drift, a calendar-based schedule is a strong
 baseline; label-free statistics do not capture the reliable residual." Abrupt *channel-level* faults remain detectable
 by construction. **Decision 0001 will be superseded; see decision 0002.**
+
+## 2026-10-05/06 (night) — Decision 0002 executed: first anatomy, locality, channel-health and simulator code
+
+The owner went to sleep and authorised full autonomy. Commits must be authored by Imtiaj Sajin with no AI
+co-author trailer; see `CLAUDE.md`.
+
+**Housekeeping (owner-approved):**
+- Stopped EA Desktop, NVIDIA Broadcast and qBittorrent. qBittorrent was saturating the uplink and throttling
+  downloads: DANDI throughput went from about 0.03–0.18 to about 2.2–2.7 MB/s. *The owner should restart qBittorrent if needed.*
+- EABackgroundService needs admin rights, so it was left running.
+
+**Code added:**
+- `src/ibci/linear.py`: lag decoders, ridge, ridge-to-prior, CV alpha.
+- `src/ibci/anatomy.py`: oracle-ladder rungs.
+- `scripts/drift_anatomy.py`: ladder over session pairs at target gaps, and data-efficiency curves.
+- `scripts/remap_locality.py`: are learned remaps spatially local?
+- `scripts/channel_health.py`: per-channel 3.5-year trajectories and the failure process.
+- `src/ibci/sim.py`: drift/failure simulator (mixing, turnover, death/revival, gain jumps, raw offset/scale walks;
+  instant plus slow components).
+- `scripts/calibrate_sim.py`: Nelder–Mead fit of the simulator so its *ladder* matches the real one; supports time splits.
+- `scripts/sim_augment.py`: "train on simulated futures" against regularization-only, ad hoc perturbation and multi-day controls.
+- `src/ibci/data/perich.py`: DANDI 000688 loader (spikes summed per electrode, 20 ms bins, cursor position and velocity).
+- `scripts/download_dandi.py`: generic DANDI downloader.
+- `src/ibci/plotting.py` and `scripts/make_figures.py`: validated palette, figure generation.
+
+**Interim anatomy** (`results/anatomy_partial`; 12 training sessions, 47 pairs, data up to about 2021-03).
+Median R² at n = 300 labelled trials:
+
+| gap (days) | L0 fixed | L2 renorm | L3 gains | L5 full remap | L6p ridge-to-prior | own |
+|---|---|---|---|---|---|---|
+| 1 | −0.62 | 0.24 | 0.26 | 0.30 | 0.33 | 0.33 |
+| 14 | −2.94 | 0.19 | 0.22 | 0.28 | 0.30 | 0.29 |
+| 120 | −1.13 | 0.06 | 0.12 | 0.19 | 0.28 | 0.28 |
+| 480 | −2.46 | −0.15 | 0.04 | 0.12 | 0.26 | 0.25 |
+
+What this shows:
+- Per-channel gain changes explain little of the drift loss (about 20–40% of the loss beyond renorm).
+- A full linear input remap in front of the frozen decoder recovers about 60–75%.
+- At long gaps, a large share needs a *changed decoder*.
+- With 300 trials, ridge shrunk to the previous decoder matches the own-day decoder.
+- The latent-rotation rung was broken (projection loss), so it was reformulated as a rotation inside the dominant
+  subspace with identity elsewhere. Not re-run yet.
+
+**Interim locality** (`results/locality_partial`; 19 pairs). Remaps restricted to grid neighbours vs parameter-matched
+random *distant* channels (local1 vs far1, 704 parameters):
+
+| gap (days) | local1 | far1 |
+|---|---|---|
+| 1 | 0.224 | 0.222 |
+| 7 | 0.230 | 0.218 |
+| 30 | 0.186 | 0.167 |
+| 120 | 0.176 | 0.144 |
+| 480 | 0.008 | −0.026 |
+
+So locality has a weak advantage, and parameter count dominates. Needs the full data and paired tests before any claim.
+
+**Interim channel health** (`results/channel_health_partial`; first 470 days, 77 sessions):
+- Of 40 initially active channels (>2 Hz), 25 "died" (3 or more consecutive sessions below 2 Hz). Median death day was 151, and 8 died then revived.
+- Session-to-session log threshold-crossing changes are heavy-tailed (excess kurtosis 8.6; 11% of changes have |Δlog| > 1), so abrupt events are common.
+- Neighbouring electrodes have more similar decline slopes than distant pairs (Mann–Whitney p = 3e-10).
+- Dead channels are not significantly clustered (permutation p = 0.21).
+- No evidence that edge electrodes decline faster (p = 0.77).
+- The medial array declines faster than the lateral one.
+- Median impedance falls over time (Spearman −0.37), with a weak within-channel link to activity (median ρ = −0.15).
+- Bug fixed: the per-channel tuning model must use *future* kinematics (motor cortex leads movement) and SBP smoothed
+  over 100 ms. Before the fix, tuning R² was about 0 for almost all channels.
