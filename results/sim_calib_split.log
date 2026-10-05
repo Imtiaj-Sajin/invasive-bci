@@ -60,3 +60,4 @@ C:\Python311\Lib\site-packages\scipy\stats\_qmc.py:993: UserWarning: The balance
 [26] 1690s loss=2.7314 s_mix0=2.52 s_mix=1.46 tau_mix=14.8 rho0=0.04 rho_inf=0.0847 tau_rho=245
 [27] 1757s loss=1.7991 s_mix0=1.01 s_mix=3.66 tau_mix=14.8 rho0=0.04 rho_inf=0.0847 tau_rho=245
 [28] 1813s loss=0.2666 s_mix0=1.01 s_mix=1.46 tau_mix=44.7 rho0=0.04 rho_inf=0.0847 tau_rho=245
+[29] 1869s loss=0.1217 s_mix0=1.01 s_mix=1.46 tau_mix=14.8 rho0=0.102 rho_inf=0.144 tau_rho=245

@@ -1,2 +1,0 @@
-,h_off,h_on,silent_fraction_stationary,n_ever_active,n_sessions,span_days,n_channels,active_first3_median,active_last3_median,active_trend_per_year,initially_active,died,revived,deaths_per_channel_year,median_death_day,lograte_change_kurtosis,frac_abs_logchange_gt1,n_changes
-N (LINK),0.003541833047182082,0.0014595355974163164,0.7081727620713081,69.0,180.0,779.0,96.0,36.0,17.0,-7.64873261021469,37.0,30.0,17.0,0.7859909619109102,217.5,5.565859794616699,0.15091489004532482,5957.0

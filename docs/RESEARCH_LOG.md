@@ -194,7 +194,7 @@ co-author trailer; see `CLAUDE.md`.
 - `scripts/download_dandi.py`: generic DANDI downloader.
 - `src/ibci/plotting.py` and `scripts/make_figures.py`: validated palette, figure generation.
 
-**Interim anatomy** (`results/anatomy_partial`; 12 training sessions, 47 pairs, data up to about 2021-03).
+**Interim anatomy** (`results/archive/anatomy_partial`; 12 training sessions, 47 pairs, data up to about 2021-03).
 Median R² at n = 300 labelled trials:
 
 | gap (days) | L0 fixed | L2 renorm | L3 gains | L5 full remap | L6p ridge-to-prior | own |
@@ -212,7 +212,7 @@ What this shows:
 - The latent-rotation rung was broken (projection loss), so it was reformulated as a rotation inside the dominant
   subspace with identity elsewhere. Not re-run yet.
 
-**Interim locality** (`results/locality_partial`; 19 pairs). Remaps restricted to grid neighbours vs parameter-matched
+**Interim locality** (`results/archive/locality_partial`; 19 pairs). Remaps restricted to grid neighbours vs parameter-matched
 random *distant* channels (local1 vs far1, 704 parameters):
 
 | gap (days) | local1 | far1 |
@@ -225,7 +225,7 @@ random *distant* channels (local1 vs far1, 704 parameters):
 
 So locality has a weak advantage, and parameter count dominates. Needs the full data and paired tests before any claim.
 
-**Interim channel health** (`results/channel_health_partial`; first 470 days, 77 sessions):
+**Interim channel health** (`results/archive/channel_health_partial`; first 470 days, 77 sessions):
 - Of 40 initially active channels (>2 Hz), 25 "died" (3 or more consecutive sessions below 2 Hz). Median death day was 151, and 8 died then revived.
 - Session-to-session log threshold-crossing changes are heavy-tailed (excess kurtosis 8.6; 11% of changes have |Δlog| > 1), so abrupt events are common.
 - Neighbouring electrodes have more similar decline slopes than distant pairs (Mann–Whitney p = 3e-10).
@@ -395,7 +395,7 @@ At 1 day with 10 trials, CV gives 0.103, history gives 0.193, and renorm gives 0
    - Fix: `Sess.alive`; `sample_drift(..., alive=)`.
 2. **Regularization mismatch between the real and simulated ladders.** On real pairs, CV mostly selects λ_L3 = 1e-5
    and λ_L5 = 1e-3 (or 1e-4). The calibration used fixed λ_L3 = 1e-2 and λ_L5 = 1e-1, i.e. 100–1000× stronger.
-   - That handicapped the simulated corrections. The fit (loss 0.663, `results/sim_calib_split_badlam`) could not reproduce
+   - That handicapped the simulated corrections. The fit (loss 0.663, `results/archive/sim_calib_split_badlam`) could not reproduce
      the real signature: remap recovery stays high while renormalized performance collapses. The optimizer distorted the parameters to
      compensate (high turnover).
    - Fix: the calibration now uses the modal real λ.
