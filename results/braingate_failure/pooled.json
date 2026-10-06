@@ -1,10 +1,10 @@
 {
- "n_arrays": 5,
- "median_h_off": 0.01627519641905484,
- "median_h_on": 0.010898257082681396,
- "revived_over_silenced": 0.6966292134831461,
- "median_channel_kurtosis": 3.4016626770470952,
- "arrays_edge_declines_faster_p<0.05": 2,
- "fisher_combined_p_edge": 0.04096683897033501,
- "median_edge_minus_interior_slope": -0.10271566148623551
+ "n_arrays": 11,
+ "median_h_off": 0.014918456754319244,
+ "median_h_on": 0.009070905407979472,
+ "revived_over_silenced": 0.7791878172588832,
+ "median_channel_kurtosis": 4.0932517149695204,
+ "arrays_edge_declines_faster_p<0.05": 5,
+ "fisher_combined_p_edge": 0.0012284002275561442,
+ "median_edge_minus_interior_slope": -0.07989594221639032
 }

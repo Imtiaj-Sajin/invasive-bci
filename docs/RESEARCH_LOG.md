@@ -633,3 +633,32 @@ This confirms the regularization finding inside the ladder.
 - Impedance declines wherever it was measured.
 
 **Preliminary:** S1 and S2 had almost no active electrodes. The remaining 9 participants (T2, T3, T5–T11) hold most of the long-term data.
+
+## 2026-10-06 ~08:10 — BrainGate humans: 11 arrays (9 participants, 1,027 sessions)
+
+The owner downloaded the remaining files as smaller zips; the large streamed zips stall at 30–40%. Zip 2 (T2, T3, T10,
+T11) passed testzip and was extracted. Zip 3 (T5–T9) is still downloading; a watcher will verify and extract it.
+
+`results/braingate_failure` (per array):
+
+| Array | Span (d) | Silenced / revived | Impedance ρ vs day | Edge vs interior p |
+|---|---|---|---|---|
+| T2 | 914 | 67 / 50 | −0.98 (1,394 → 83 kΩ) | 0.97 |
+| T3 | 399 | 0 / 0 (no active channels) | −0.98 (607 → 118 kΩ) | 0.13 |
+| T10 MFG | 329 | 59 / 56 | −0.70 | 0.88 |
+| T10 dPCG | 329 | 31 / 26 | −0.21 | **0.006** |
+| T11 lateral | 1,677 | 24 / 16 | −0.95 | **0.025** |
+| T11 medial | 1,677 | 35 / 35 | −0.99 | **0.039** |
+| (plus A1, S1, S2, S3, T1 as before) | | | | |
+
+**Pooled over 11 arrays:**
+- Revived/silenced = **0.78** (monkey N 0.74).
+- Median channel-level kurtosis 4.1.
+- Edge electrodes decline faster in 5/11 arrays at p < 0.05. **Fisher-combined p = 0.0012**; median edge − interior slope = −0.08 log-rate per year.
+- Impedance declines in every array with measurements.
+
+**The electrode failure process replicates across species:**
+- Transient silencing.
+- Abrupt single-electrode changes.
+- Faster loss of spiking at array edges, consistent with micromotion strain (Forrest 2025).
+- Falling impedance.
