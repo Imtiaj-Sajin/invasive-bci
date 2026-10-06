@@ -7,12 +7,15 @@ sessions with replacement (2,000 draws).
 Usage: python scripts/decay_summary.py [--out results/decay_summary.csv]
 """
 import argparse
+import os
 
 import numpy as np
 import pandas as pd
 
 SUBJ = [("monkey N", "results/anatomy/ladder.csv"), ("monkey C", "results/replication/C_ladder.csv"),
         ("monkey M", "results/replication/M_ladder.csv"), ("human T6", "results/replication_bg/T6_ladder.csv")]
+SUBJ += [(f"human {p}", f"results/replication_bg/{p}_ladder.csv") for p in ("T5", "T9")
+         if os.path.exists(f"results/replication_bg/{p}_ladder.csv")]
 GAPS = [1, 7, 30, 120, 480]
 
 

@@ -17,6 +17,8 @@ from ibci.stats import cluster_bootstrap  # noqa: E402
 
 LADDERS = {"Monkey N": "results/anatomy/ladder.csv", "Monkey C": "results/replication/C_ladder.csv",
            "Monkey M": "results/replication/M_ladder.csv", "Human T6": "results/replication_bg/T6_ladder.csv"}
+LADDERS.update({f"Human {p}": f"results/replication_bg/{p}_ladder.csv" for p in ("T5", "T9")
+                if os.path.exists(f"results/replication_bg/{p}_ladder.csv")})
 GAPS = [1, 7, 30, 120, 480]
 
 
@@ -162,7 +164,8 @@ def mindful_table(out):
 
 def reg_table(out):
     r = pd.read_csv("results/reg_tradeoff/rule_across_subjects.csv")
-    names = {"N (LINK)": "Monkey N", "C": "Monkey C", "M": "Monkey M", "T6 (human)": "Human T6"}
+    names = {"N (LINK)": "Monkey N", "C": "Monkey C", "M": "Monkey M", "T6 (human)": "Human T6",
+             "T5 (human)": "Human T5", "T9 (human)": "Human T9"}
     rows = []
     for _, x in r.iterrows():
         lo, hi = [float(v) for v in x.ci.strip("[]").split(",")]
