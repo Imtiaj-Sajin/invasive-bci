@@ -83,6 +83,7 @@ def main():
     ap.add_argument("--root", default=os.path.join(os.environ.get("IBCI_DATA", "D:/ibci-data"), "braingate"))
     ap.add_argument("--gaps", type=int, nargs="+", default=[1, 7, 30, 120, 480])
     ap.add_argument("--out", default="results/replication_bg")
+    ap.add_argument("--resume", action="store_true", help="continue an interrupted run from its CSV")
     ap.add_argument("--skip", nargs="*", default=[], help="supervised rungs to skip, e.g. L4 L5 (not reported for humans)")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
@@ -100,9 +101,18 @@ def main():
     print(f"{args.participant}: {len(sessions)} sessions over {sessions[-1].day - sessions[0].day} days", flush=True)
     pairs = select_pairs(sessions, args.gaps)
     print(f"{len(pairs)} pairs", flush=True)
-    rows, t0 = [], time.time()
+    out_csv = os.path.join(args.out, f"{args.participant}_ladder.csv")
+    rows, done = [], set()
+    if args.resume and os.path.exists(out_csv):                 # keep pairs finished by an interrupted run
+        prev = pd.read_csv(out_csv)
+        rows = prev.to_dict("records")
+        done = set(zip(prev.train, prev.test, prev.gap_target))
+        print(f"resuming: {len(done)} pairs already done", flush=True)
+    t0 = time.time()
     for c, (i, j, g) in enumerate(pairs):
         si, sj = sessions[i], sessions[j]
+        if (si.key, sj.key, g) in done:
+            continue
         rows.append(dict(participant=args.participant, train=si.key, test=sj.key, gap_target=g, days=sj.day - si.day,
                          train_day=si.day, **ladder(si, sj, [300], skip=tuple(args.skip))))
         if (c + 1) % 20 == 0 or c + 1 == len(pairs):
