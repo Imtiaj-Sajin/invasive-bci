@@ -5,11 +5,12 @@ A feature-level generative model of how chronic intracortical recordings change 
 parameters are **calibrated to real long-term data** rather than chosen by hand.
 
 ## Model
+
 `sample_drift(Z_base, dt, params, dist, rng, alive)` draws one realization of change. `apply_drift(Z, drift, rng)`
 applies it to any segment of the base session (z-scored features, `T × C`). `to_raw` maps back to raw units.
 
 | Component | What it does | Parameters | Source |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Mixing | Z ← (I + E) Z; E is Gaussian, partly restricted to grid neighbours | `s_mix0` (session-to-session), `s_mix`, `tau_mix` (slow), `beta_local` | Ladder calibration |
 | Turnover | A fraction ρ of each channel's signal is replaced by a new unit with rotated tuning in the session's latent space | `rho0`, `rho_inf`, `tau_rho`, `rho_conc` | Ladder calibration |
 | Silencing | Channels alive on the base day (TC > 2 Hz) switch to silent through a two-state Markov chain; a silent channel keeps a fraction of its SBP signal | `h_off`, `h_on`, `silent_signal_frac` | Activity statistics (`failure_stats_xdata.py`); LINK within-channel tuning ratio (0.37) |
@@ -19,6 +20,7 @@ applies it to any segment of the base session (z-scored features, `T × C`). `to
 Magnitudes grow with elapsed days as `instant + slow * (1 - exp(-dt / tau))`.
 
 ## Calibration (`scripts/calibrate_sim.py`)
+
 - The simulator's own **oracle ladder** is matched to the real one at gaps of 1, 7, 30, 120 and 480 days. The three rungs
   matched are renormalized frozen decoder, + per-channel gains, and + full input remap, each as a ratio to the own-day decoder.
 - The simulated ladder uses exactly the same correction procedure and regularization as the real data. *An earlier run that
@@ -27,11 +29,29 @@ Magnitudes grow with elapsed days as `instant + slow * (1 - exp(-dt / tau))`.
 - The current fit (`results/sim_calib_split/calibration.json`) uses LINK days < 700 only, so later days are held out
   for validation. The loss is 0.074.
 
+## Presets: implant age matters (simulator v2)
+
+`sim.load_preset("early" | "late")` returns parameters calibrated on LINK days < 700 (loss 0.074) or days ≥ 700 (loss 0.063).
+
+| Parameter | Early | Late |
+| --- | --- | --- |
+| s_mix0 (session-to-session mixing) | 0.96 | 0.77 |
+| s_mix (slow mixing) | 1.48 | 1.32 |
+| tau_mix (days) | 15 | 12 |
+| rho0 → rho_inf (turnover) | 0.042 → 0.12 | 0.032 → 0.13 |
+| tau_rho (days) | 360 | 527 |
+| h_off / h_on (per day) | 0.0038 / 0.0018 | 0.0034 / 0.0017 |
+
+Drift is smaller and slower in the mature implant, while electrode switching is similar. Validation of the early preset on
+held-out late days showed exactly this mismatch (see the log, 2026-10-06 07:40).
+
 ## Validation (`scripts/validate_sim.py`)
+
 Uses held-out time (days ≥ 700), rungs that were not fitted (label-free Procrustes, stable-channel alignment, latent
 rotation, ridge-to-prior) and data budgets that were not fitted (20, 50, 100 trials). Results are in `results/sim_validation`.
 
 ## Usage
+
 ```python
 import json, numpy as np
 from ibci import sim
@@ -46,6 +66,7 @@ future_test = sim.apply_drift(base.zte, d, np.random.default_rng(1))   # simulat
 A complete example is `examples/simulate_drift.py`.
 
 ## Intended uses and limits
+
 - **Use it for** stress-testing decoders and unsupervised stabilizers under controlled drift and electrode failure, studying
   recalibration policies, and as augmentation (being evaluated in `scripts/sim_augment.py`).
 - **Limits:**
