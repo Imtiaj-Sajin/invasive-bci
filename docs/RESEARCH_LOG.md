@@ -939,3 +939,39 @@ was advised to reset the Dryad API credentials afterwards.
   - The long-term rate and the share explained by gains differ between subjects.
   - Report the conserved overnight drop and the subject-specific long-term course. Per-channel gain recalibration (96 parameters) is
     especially effective in the human.
+
+## 2026-10-06 ~12:15 — "Regularize for the future" holds in a human (T6)
+
+`scripts/reg_tradeoff.py --dataset braingate --subject T6` → `results/reg_tradeoff_T6`; 40 training sessions.
+
+**Median R², α = 0.1 vs 1e4:**
+
+| gap | α = 0.1 | α = 1e4 |
+| --- | --- | --- |
+| same day | 0.224 | 0.240 |
+| 1 d | 0.129 | 0.168 |
+| 7 d | 0.105 | 0.137 |
+| 30 d | 0.160 | 0.172 |
+| 120 d | 0.133 | 0.170 |
+| 480 d | 0.106 | 0.123 |
+
+**1% rule** (α = 1e4), paired gain with cluster-bootstrap CI:
+
+| gap | gain | 95% CI |
+| --- | --- | --- |
+| same day | +0.008 | [0.003, 0.013] |
+| 1 d | +0.011 | [0.002, 0.075] |
+| 7 d | +0.025 | [0.016, 0.032] |
+| 30 d | +0.016 | [0.013, 0.030] |
+| 120 d | +0.018 | [0.009, 0.030] |
+| 480 d | +0.017 | [0.005, 0.027] |
+
+- All CIs exclude 0, and 89–100% of training sessions improve.
+- **Across subjects** (`results/reg_tradeoff/rule_across_subjects.csv`): monkey N gains a lot, human T6 clearly, Chewie moderately, Mihili negligibly.
+  Same-day accuracy never drops (T6 even improves).
+
+**Figure:** `fig_decay_xsubject` now includes human T6.
+
+- The overnight retention of about 0.73 is shared by all four subjects.
+- The human decays more slowly long-term.
+- Per-channel gains recover the human almost fully (0.81–0.96).

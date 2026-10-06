@@ -29,7 +29,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--gaps", type=int, nargs="+", default=[1, 7, 30, 120, 480])
     ap.add_argument("--max-train", type=int, default=40)
-    ap.add_argument("--dataset", choices=["link", "perich"], default="link")
+    ap.add_argument("--dataset", choices=["link", "perich", "braingate"], default="link")
     ap.add_argument("--subject", default="C", help="000688 subject when --dataset perich")
     ap.add_argument("--out", default="results/reg_tradeoff")
     args = ap.parse_args()
@@ -37,6 +37,18 @@ def main():
     if args.dataset == "link":
         meta = [SessMeta(k) for k in link.list_sessions()]
         cache = SessCache(maxsize=60)
+    elif args.dataset == "braingate":  # BrainGate decoding sessions (intended-direction decoding), e.g. --subject T6
+        import glob
+        import re
+        from replicate_braingate_decoding import BGSess, load_session
+        root = os.path.join(os.environ.get("IBCI_DATA", "D:/ibci-data"), "braingate", "decoding", args.subject)
+        files = sorted(glob.glob(os.path.join(root, "*_decoding.mat")), key=lambda p: int(re.search(r"_day_(\d+)_", p).group(1)))
+        meta = []
+        for f in files:
+            day, X, Y, T = load_session(f)
+            if T.max() + 1 >= 20:
+                meta.append(BGSess(f"{args.subject}_day{day}", day, X, Y, T))
+        cache = {s.key: s for s in meta}
     else:  # DANDI 000688: all sessions of one subject, channels aligned by electrode label
         from ibci.data import perich
         from replicate_perich import PerichSess

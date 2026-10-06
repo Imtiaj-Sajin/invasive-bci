@@ -1,4 +1,4 @@
-"""Decoder decay across subjects: retention (rung R2 / own-day R2) vs days, monkeys N (LINK), C and M (000688).
+"""Decoder decay across subjects: retention (rung R2 / own-day R2) vs days, monkeys N (LINK), C and M (000688), human T6.
 
 A  renormalized frozen decoder (no labels)      B  + per-channel gains (96 labelled parameters)
 Medians with cluster-bootstrap 95% CIs over training sessions.
@@ -19,7 +19,8 @@ from ibci.stats import cluster_bootstrap  # noqa: E402
 
 SUBJECTS = [("monkey N (LINK, SBP)", "results/anatomy/ladder.csv"),
             ("monkey C (000688, units)", "results/replication/C_ladder.csv"),
-            ("monkey M (000688, units)", "results/replication/M_ladder.csv")]
+            ("monkey M (000688, units)", "results/replication/M_ladder.csv"),
+            ("human T6 (BrainGate, SBP)", "results/replication_bg/T6_ladder.csv")]
 GAPS = [1, 7, 30, 120, 480]
 
 
