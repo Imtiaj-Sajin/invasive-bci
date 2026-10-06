@@ -678,3 +678,25 @@ Zip 3 (T5, T6, T7) passed testzip and was extracted. T8 and T9 are still downloa
 - Individually significant in 6/16 arrays. Fisher-combined p = 2.3e-6; median edge − interior slope = −0.064 log-rate per year.
 - In arrays with at least 10 initially active channels: the edge declines faster in **10/13** (sign test p = 0.046; Fisher p = 5.9e-6).
 - With LINK's 2/2 monkey arrays, that is **12 of 15 arrays across species**.
+
+## 2026-10-06 ~08:50 — BrainGate humans: ALL 20 arrays (14 participants, 2,289 sessions)
+
+Zip 4 (T8, T9) passed testzip and was extracted. Every yield archive is now in `D:/ibci-data/braingate/yield/`.
+The `.tar.gz` copies were deleted after extraction; the owner's zips in `D:/Downloads` remain as a backup.
+
+`results/braingate_failure/per_array.csv` and `pooled.json`:
+- **Transient silencing:** 584 of 730 silenced electrodes later revived (**0.80**). Monkey N: 0.74.
+- **Abrupt changes:** median channel-level kurtosis 3.6.
+- **Switching rates:** median h_off = 0.0098/day, h_on = 0.0065/day (monkey N: 0.0031 and 0.0008).
+- **Impedance declines in 17/18 arrays with measurements** (median ρ = −0.92). The exception is T9 lateral.
+- **Edge effect:**
+  - Individually significant in 8/20 arrays. Fisher-combined p = **2.0e-8**; median edge − interior slope −0.064/yr.
+  - In arrays with at least 10 initially active channels: 12/17 (sign test p = 0.072; Fisher p = 4.9e-8).
+  - With LINK monkey N (2/2 arrays), that is 14/19 arrays across species.
+- **Long spans:** T5, 7.3 years (yield 60 → 30% lateral, 51 → 40% medial); S3, 5.4 years (84 → 10%); T11, 4.6 years; T6, 3.2 years.
+
+**Conclusion:** the electrode-failure process measured in one monkey generalizes to 20 human arrays:
+- channel loss is mostly transient;
+- abrupt single-electrode changes are common;
+- spiking is lost faster at array edges (consistent with micromotion strain);
+- impedance falls over the years.
