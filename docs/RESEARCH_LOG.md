@@ -913,3 +913,29 @@ was advised to reset the Dryad API credentials afterwards.
    Report time-partialled statistics.
 
 **Credit:** MINDFUL's decoder-output component is the useful part. The raw correlation of the neural component is largely a time confound.
+
+## 2026-10-06 ~11:58 — HUMAN decoder drift: BrainGate T6
+
+- Data: `decoding_T6` (124 closed-loop cursor sessions over 1,123 days), obtained through the owner's VPS and verified by gzip CRC.
+- Script: `scripts/replicate_braingate_decoding.py` → `results/replication_bg/T6_ladder.csv`; 369 pairs.
+- Setup: intended movement direction (unit vector from cursor to target) during go periods; 20 ms SBP; the same ridge decoder and ladder.
+
+| gap | L2/own (renorm) [95% CI] | L3/own (+ gains) [95% CI] | own R² |
+| --- | --- | --- | --- |
+| 1 d | 0.73 [0.38, 0.88] | 0.90 [0.79, 0.98] | 0.28 |
+| 7 d | 0.66 [0.51, 0.83] | 0.96 [0.87, 1.05] | 0.21 |
+| 30 d | 0.71 [0.59, 0.83] | 0.94 [0.88, 0.98] | 0.23 |
+| 120 d | 0.51 [0.32, 0.61] | 0.84 [0.79, 0.88] | 0.23 |
+| 480 d | 0.30 [0.16, 0.41] | 0.81 [0.78, 0.90] | 0.29 |
+
+- **The overnight loss is conserved across species:** a human retains 0.73, against 0.72–0.77 in the three monkeys.
+- **Long-term decay is slower in this human:** 0.51 at 4 months and 0.30 at 16 months, against about 0 at 4 months in the monkeys.
+  - Possible causes: species or array, closed-loop intended-direction labels vs measured kinematics, or task consistency. This needs care.
+- **Per-channel gain changes explain most of the human loss** (L3 retention 0.81–0.96), unlike the monkeys (0.1–0.4 at long gaps).
+  This is consistent with Bishop 2014 ("tuning parameters on the same electrode move together between days").
+- L4u (Procrustes) ≤ L2 again. L1 (mean-only) is far below L2 (e.g. 0.007 vs 0.111 at 7 d), the same pattern as in the monkeys.
+- **Revised C1 and C3:**
+  - The overnight drop (about 25–30%) replicates in 3 monkeys and 1 human.
+  - The long-term rate and the share explained by gains differ between subjects.
+  - Report the conserved overnight drop and the subject-specific long-term course. Per-channel gain recalibration (96 parameters) is
+    especially effective in the human.
