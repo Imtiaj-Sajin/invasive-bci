@@ -24,3 +24,8 @@ venv/
 .DS_Store
 Thumbs.db
 .vscode/
+
+# packaging build artefacts
+*.egg-info/
+build/
+dist/
