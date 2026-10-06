@@ -3,7 +3,7 @@
 The manuscript uses \\val{key}; a key missing here prints as a red '??' in the PDF (and is listed by this script's
 --check option), so stale or missing numbers cannot slip into the text unnoticed.
 
-Usage: python scripts/make_numbers_tex.py [--check manuscript/main.tex]
+Usage: python scripts/make_numbers_tex.py [--check manuscript/natcomms/main.tex] [--out FILE ...]
 """
 import argparse
 import json
@@ -58,6 +58,7 @@ def load(p):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", default=None)
+    ap.add_argument("--out", nargs="+", default=["manuscript/natcomms/numbers.tex"])
     args = ap.parse_args()
     s = load("results/v2_summary.json")
     for k in IND:
@@ -280,8 +281,10 @@ def write(args):
     for k, v in sorted(V.items()):
         lines.append(rf"\expandafter\def\csname val@{k}\endcsname{{{v}}}")
     lines.append(r"\makeatother")
-    open("manuscript/numbers.tex", "w", encoding="utf-8").write("\n".join(lines) + "\n")
-    print(f"{len(V)} numbers written to manuscript/numbers.tex")
+    for out in args.out:
+        os.makedirs(os.path.dirname(out), exist_ok=True)
+        open(out, "w", encoding="utf-8").write("\n".join(lines) + "\n")
+    print(f"{len(V)} numbers written to " + ", ".join(args.out))
     if args.check:
         used = set(re.findall(r"\\val\{([^}]+)\}", open(args.check, encoding="utf-8").read()))
         missing = sorted(used - set(V))

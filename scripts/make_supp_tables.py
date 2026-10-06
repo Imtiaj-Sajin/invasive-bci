@@ -2,7 +2,7 @@
 
 Every number in the Supplementary Information comes from this script, so tables and result files cannot disagree.
 
-Usage: python scripts/make_supp_tables.py [--out manuscript/supp]
+Usage: python scripts/make_supp_tables.py [--out manuscript/natcomms/supp]
 """
 import argparse
 import json
@@ -187,7 +187,7 @@ def lstm_table(out):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default="manuscript/supp")
+    ap.add_argument("--out", default="manuscript/natcomms/supp")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
     for fn in (ladder_table, failure_table, efficiency_table, policy_table, targeted_table, sim_table, augment_table,

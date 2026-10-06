@@ -3,7 +3,7 @@
 Journal articles come from refs_meta.json (OpenAlex metadata, checked against Crossref on 2026-10-06); datasets,
 conference papers, books and items without registered metadata are written out in MANUAL.
 
-Usage: python manuscript/make_bib.py [--tex manuscript/main.tex] [--out manuscript/refs.tex]
+Usage: python manuscript/tools/make_bib.py [--tex manuscript/natcomms/main.tex] [--out manuscript/natcomms/refs.tex]
 """
 import argparse
 import json
@@ -187,10 +187,11 @@ def cite_order(tex):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--tex", default=os.path.join(HERE, "main.tex"))
-    ap.add_argument("--out", default=os.path.join(HERE, "refs.tex"))
+    ap.add_argument("--tex", default=os.path.join(HERE, "..", "natcomms", "main.tex"))
+    ap.add_argument("--out", default=None, help="default: refs.tex next to the .tex file")
     args = ap.parse_args()
     meta = json.load(open(os.path.join(HERE, "refs_meta.json"), encoding="utf-8"))
+    args.out = args.out or os.path.join(os.path.dirname(os.path.abspath(args.tex)), "refs.tex")
     keys = cite_order(open(args.tex, encoding="utf-8").read())
     lines = [r"\begin{thebibliography}{99}", ""]
     for k in keys:

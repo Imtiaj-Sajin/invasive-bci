@@ -34,7 +34,7 @@ def sentences(txt):
 
 
 def main():
-    tex = open(sys.argv[1] if len(sys.argv) > 1 else "manuscript/main.tex", encoding="utf-8").read()
+    tex = open(sys.argv[1] if len(sys.argv) > 1 else "manuscript/natcomms/main.tex", encoding="utf-8").read()
     abstract = strip(section(tex, "\\abstract{", "\\keywords"))
     title = re.search(r"\\title\[[^\]]*\]\{(.*?)\}\n", tex, flags=re.S).group(1)
     main_txt = strip(section(tex, "\\section*{Introduction}", "\\section*{Methods}"))
