@@ -5,6 +5,7 @@ grid and evaluated on the same day's held-out trials and on later same-style ses
 renormalization). The LINK-paper default is alpha = 0.1.
 
 Usage: python scripts/reg_tradeoff.py [--max-train 40] [--out results/reg_tradeoff]
+       python scripts/reg_tradeoff.py --dataset perich --subject C --out results/reg_tradeoff_C
 """
 import argparse
 import os
@@ -28,14 +29,26 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--gaps", type=int, nargs="+", default=[1, 7, 30, 120, 480])
     ap.add_argument("--max-train", type=int, default=40)
+    ap.add_argument("--dataset", choices=["link", "perich"], default="link")
+    ap.add_argument("--subject", default="C", help="000688 subject when --dataset perich")
     ap.add_argument("--out", default="results/reg_tradeoff")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
-    meta = [SessMeta(k) for k in link.list_sessions()]
+    if args.dataset == "link":
+        meta = [SessMeta(k) for k in link.list_sessions()]
+        cache = SessCache(maxsize=60)
+    else:  # DANDI 000688: all sessions of one subject, channels aligned by electrode label
+        from ibci.data import perich
+        from replicate_perich import PerichSess
+        raw = [perich.load_session(k) for k in perich.list_sessions(args.subject)]
+        X, _ = perich.aligned_counts(raw)
+        day0 = np.datetime64(raw[0].date)
+        meta = [PerichSess(s, x, day0) for s, x in zip(raw, X)]
+        cache = {s.key: s for s in meta}
     pairs = select_pairs(meta, args.gaps)
     rng = np.random.default_rng(3)
-    train_idx = sorted(rng.choice(sorted({i for i, _, _ in pairs}), args.max_train, replace=False))
-    cache = SessCache(maxsize=60)
+    cand = sorted({i for i, _, _ in pairs})
+    train_idx = sorted(rng.choice(cand, min(args.max_train, len(cand)), replace=False))
     rows = []
     for i in train_idx:
         si = cache[meta[i].key]
