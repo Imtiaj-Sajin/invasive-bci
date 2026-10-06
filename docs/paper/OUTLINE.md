@@ -1,101 +1,60 @@
-# Paper outline (living document)
+# Paper outline (living document; updated 2026-10-06 morning)
 
-**Working title:** *Anatomy of chronic neural drift in intracortical BCIs, and a calibrated simulator for building
-decoders that survive it*
+**Working title:** *How intracortical BCIs age: conserved decoder drift, a cross-species electrode failure process, and
+a calibrated simulator, with practical recipes for robust decoding*
 
 **Target venues:**
-- Primary: Journal of Neural Engineering or IEEE TNSRE.
-- Stretch: Nature Communications or Communications Engineering, if the human replication via BrainGate-20 lands.
-- Companion: NeurIPS Datasets & Benchmarks, for the simulator plus benchmark.
+- Primary: Journal of Neural Engineering or IEEE TNSRE (Q1).
+- Stretch: Nature Communications or Communications Engineering (multi-species, 20 human arrays, open simulator).
+- Companion option: NeurIPS Datasets & Benchmarks (simulator plus benchmark).
 
-## One-paragraph story
-Every implanted BCI decoder degrades as recordings drift. The field treats the result with recalibration, alignment and
-foundation models, but the *anatomy* of the drift has never been decomposed: which changes in the signal break which
-decoders, on which timescale, and how much labelled data each fix needs. We decompose decoder loss over 3.5 years of
-daily Utah-array recordings (LINK) with an *oracle ladder* of increasingly powerful corrections, characterize the
-electrode failure process, and replicate in two more monkeys from another lab (DANDI 000688). From these measurements
-we build the first *calibrated* simulator of chronic drift and electrode failure. It is fitted so that its own oracle
-ladder matches the real one, and validated on held-out years and animals. We show what it is good for: stress-testing
-decoders and stabilizers, training decoders on simulated futures, and explaining why label-free monitoring of decoder
-health fails under natural drift.
+## Story in one paragraph
+Implanted BCIs degrade as recordings change. Using public multi-year data from 3 monkeys (2 labs) and 20 human Utah arrays
+(BrainGate, 14 participants), we show four things:
+1. Decoder decay under standard daily renormalization follows a broadly conserved time course. About 25% of performance is
+   lost overnight and about half within a week, and the decoder is near useless by about 4 months.
+2. Label-free fixes (subspace alignment) and label-free health monitoring do not recover or predict the loss.
+3. Electrodes fail through a common process: losses are mostly *transient* (about 80% of silenced electrodes revive), abrupt
+   single-electrode changes are frequent, spiking declines faster at array *edges* (consistent with micromotion strain), and
+   impedance falls over years.
+4. A simulator calibrated to these measurements reproduces held-out decoder decay 3–4× better than a no-drift null, and
+   exposes that drift slows later in an implant's life.
 
-## Contributions (target)
-1. **Drift anatomy.** A quantitative decomposition of decoder loss into:
-   - per-channel offset and scale (fixed by renormalization);
-   - per-channel gain;
-   - cross-channel remixing;
-   - changes that need a new decoder.
+We turn the measurements into recipes:
+- **regularize for the future:** free in same-day accuracy, sizeable cross-day gains for SBP decoders;
+- **history-informed ridge-to-prior recalibration:** about 100 trials recover 80–90%, and harmful recalibrations disappear.
 
-   Each is measured as a function of days elapsed, with the labelled-trial budget each correction needs (calibration burden).
-2. **Electrode failure process.** Per-channel activity, tuning and impedance trajectories over 3.5 years:
-   - death and revival rates;
-   - abrupt vs gradual changes (heavy tails);
-   - spatial correlation of decline;
-   - edge vs interior electrodes (a test of the micromotion-strain hypothesis);
-   - links to impedance.
-3. **A calibrated simulator** (open source): instant plus slow components of mixing and turnover, death and revival,
-   gain jumps, raw offset and scale walks. It is calibrated by matching the ladder (simulation-based calibration) and validated on
-   held-out time and held-out animals.
-4. **Uses:**
-   1. A benchmark of decoders and unsupervised stabilizers under controlled drift and failure severity.
-   2. "Train on simulated futures," compared against regularization-only, ad hoc perturbations (Sussillo 2016) and multi-day training.
-   3. An explanation of the negative label-free monitoring result. The pilot found reliable day-to-day variation
-      (split-half reliability 0.84) that 14 label-free statistics cannot see.
-5. **Practical guidance.** How often and with how much data to recalibrate, and which recalibration parameterization to use
-   (e.g. ridge shrunk toward the previous decoder).
+## Results sections and figures
 
-## Figure plan
-1. Data and protocol: LINK timeline, the oracle-ladder schematic, and an example of decay.
-2. **Anatomy:** R² per rung vs gap, plus share of loss recovered (`make_figures.py anatomy`).
-3. **Calibration burden:** R² vs labelled trials per correction and gap (`make_figures.py efficiency`).
-4. **Electrode failure:** activity heatmap, active channels, impedance, spatial and edge analyses (`make_figures.py health`).
-5. **Simulator:** schematic plus the calibrated fit, with real vs simulated ladders on held-out years and held-out monkeys.
-6. **Uses:** the augmentation results, the stabilizer stress test, and the monitoring explanation.
-7. Replication in Chewie and Mihili (000688).
+| # | Section | Key result | Figure / file |
+|---|---|---|---|
+| 1 | Data and protocol | LINK 3.4 y, 312 sessions; 000688 Chewie and Mihili; BrainGate 20 arrays and 2,289 sessions; FALCON H2 | schematic (to do) |
+| 2 | Conserved decoder decay | retention 0.73/0.54/0.19/0.04 (N); similar in C and M; LSTM more accurate, modestly more robust | `fig_anatomy` (+ replication panel, to do) |
+| 3 | Label-free fixes and monitoring fail | Procrustes and stable-channel alignment ≤ renormalization in 3 monkeys; 14 label-free features ≤ calendar (split-half 0.84) | pilot and ladder tables |
+| 4 | What does fix it, and at what cost | per-channel gains recover 15–50%; ridge-to-prior with history shrinkage; 100 trials → 80–90%; decoder's top-32 channels slightly better at ≤ 50 trials | `fig_efficiency`; recal_policy and targeted_recal tables |
+| 5 | Regularize for the future | α = 1e4: same-day +0.003; cross-day +0.02 to +0.09 (N), +0.01 to +0.03 (C), about +0.001 (M) | `fig_reg_tradeoff`; `rule_across_subjects.csv` |
+| 6 | Electrode failure across species | revival 0.80 (humans) vs 0.74 (N); edge effect Fisher p = 2e-8, 14/19 arrays; impedance falls in 17/18 arrays | `fig_failure_xspecies`, `fig_health` |
+| 7 | Calibrated simulator | fit loss 0.074; held-out error 3–4× below a no-drift null; drift slower late in implant life (v2: age-dependent parameters) | sim figure (to do) |
+| 8 | Uses of the simulator | augmentation < regularization control (honest negative); benchmarking and policy evaluation | augment table |
+
+## Pending items
+- **Human decoder drift:** BrainGate decoding T6 (124 sessions over 3.1 y). The owner will download it.
+  The script `replicate_braingate_decoding.py` is ready.
+- **Simulator v2:** late-period calibration (running), then an age-dependent parameterization and validation.
+- **Figures:** the replication panel for figure 2, the simulator figure, and the schematic.
+- **Literature check before writing:** what Hahn et al. *Nat Med* 2026 already report on edge effects, impedance and
+  revivals in the same BrainGate data, so the novelty is stated precisely.
+  - Expected new: the cross-species comparison, the Markov switching rates, abruptness, and the link to decoder drift and the simulator.
+
+## Corrections made during analysis (keep in the paper's methods and limitations)
+- A free 96×96 input remap is retraining-equivalent, so it is not a structural test of drift.
+- k-channel recovery reflects decoder importance, not localized drift.
+- The simulator must be scored with exactly the same correction and regularization pipeline as the real data.
 
 ## Related work to position against
-- **Stability and alignment:**
-  - Sussillo 2016 (Nat Commun; robustness to future variability through perturbations).
-  - Degenhart 2020 (Nat BME; stabilizer).
-  - Gallego 2020 (Nat Neurosci; stable latent dynamics).
-  - Farshchian 2019 and Ma 2023 (ADAN, CycleGAN).
-  - NoMAD (Karpowicz 2025).
-  - Wilson 2025 (PRI-T, Nat BME).
-  - CORP (Fan 2023).
-  - SPINT (NeurIPS 2025).
-  - FALCON (NeurIPS 2024).
-- **Long-term recording quality:**
-  - Sponheim 2021.
-  - Hahn 2025/2026 (BrainGate 14 participants).
-  - Colachis 2021.
-  - Chen 2023 (1,024-channel V1/V4).
-  - Barrese 2013/2016.
-  - Woeppel 2021.
-  - Bjånes 2025.
-  - Forrest 2025 (micromotion strain).
-- **Intra-day instability:** Perge 2013 (J Neural Eng).
-- **Simulation:**
-  - MEArec.
-  - SpikeInterface generation.
-  - Kilosort4 drift simulation.
-  - Wan 2023 (firing-rate degradation with "relatively arbitrary" parameters; it calls for data-derived models).
-  - Stephens 2021 (GAN channel loss).
-- **Data:**
-  - LINK (Temmar et al., NeurIPS 2025 D&B), the source of the primary data.
-  - DANDI 000688 (Perich/Miller).
-  - LINK's own analyses cover mean SBP, active channels, participation ratio, tuning, cross-day decoding,
-    continual learning and multi-day training. **They include no loss decomposition and no failure-process model.**
-- **Label-free accuracy estimation (ML):**
-  - ATC (Garg 2022).
-  - Agreement-on-the-line.
-  - MANO.
-  - ProjNorm.
-  - Probabilistic Co-Control (Huang et al. 2026, speech calibration).
-
-## Threats to validity (address explicitly)
-- **One monkey for the anatomy:** replicate on 000688 (2 monkeys, sorted-unit features, different lab and task).
-- **Offline only:** state it. The anatomy is about recorded signals and needs no closed loop. Note the
-  closed-loop co-adaptation literature.
-- **Target style (CO/RD) confound:** pairs are always same-style.
-- **Regularization choices in the supervised rungs:** λ is selected on held-out labelled trials. Report sensitivity.
-- **Leakage in simulator validation:** time-split calibration (`--max-day`) and evaluation on later days only.
+- **Stability:** Sussillo 2016; Degenhart 2020; Gallego 2020; ADAN and CycleGAN (Ma 2023); NoMAD 2025; PRI-T (Wilson 2025,
+  which includes a closed-loop drift simulator); CORP; SPINT; FALCON.
+- **Recording longevity:** Sponheim 2021; Hahn 2025/2026; Colachis 2021; Chen 2023; Barrese 2013/2016; Woeppel 2021;
+  Bjånes 2025; Forrest 2025 (edge strain); Perge 2013.
+- **Simulation:** MEArec; SpikeInterface; Wan 2023 ("relatively arbitrary" parameters).
+- **Data:** LINK (Temmar 2025); 000688 (Perich/Miller); BrainGate release (Hahn 2026); FALCON (Karpowicz 2024).
