@@ -1,3 +1,32 @@
+Metadata-Version: 2.4
+Name: ibci-drift
+Version: 0.1.0
+Summary: Chronic drift and electrode failure in intracortical BCIs: oracle-ladder analysis, failure statistics, and a calibrated drift/failure simulator.
+Author-email: Imtiaj Sajin <imtiajsajin@gmail.com>
+License: MIT
+Project-URL: Repository, https://github.com/Imtiaj-Sajin/invasive-bci
+Keywords: brain-computer interface,intracortical,Utah array,neural drift,decoder,simulation
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Topic :: Scientific/Engineering :: Medical Science Apps.
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy>=1.23
+Requires-Dist: scipy>=1.9
+Requires-Dist: pandas>=1.5
+Requires-Dist: scikit-learn>=1.1
+Requires-Dist: matplotlib>=3.6
+Provides-Extra: gpu
+Requires-Dist: torch>=2.0; extra == "gpu"
+Provides-Extra: data
+Requires-Dist: pynwb>=2.0; extra == "data"
+Requires-Dist: dandi>=0.60; extra == "data"
+Requires-Dist: requests>=2.28; extra == "data"
+Provides-Extra: dev
+Requires-Dist: pytest>=7; extra == "dev"
+Dynamic: license-file
+
 # Anatomy of chronic neural drift in intracortical BCIs
 
 What changes in chronic Utah-array recordings over days to years, which of those changes break BCI decoders, and a
@@ -50,36 +79,14 @@ Details, numbers, caveats and corrections are in [docs/RESEARCH_LOG.md](docs/RES
 - `scripts/`: entry points. `scripts/run_all.sh` lists the full pipeline in order.
 - `results/`: small result tables and figures. `tests/`: unit tests (`python -m pytest tests -q`).
 
-## Install
+## Setup (Windows, as used here)
 
 ```bash
-git clone https://github.com/Imtiaj-Sajin/invasive-bci.git
-cd invasive-bci
-pip install -e ".[data,dev]"          # add ",gpu" for the GPU-based corrections (PyTorch)
-python -m pytest tests -q
+python -m venv --system-site-packages .venv      # reuses the system CUDA torch
+.venv/Scripts/python -m pip install pynwb dandi pytest
+export IBCI_DATA=D:/ibci-data                     # datasets live outside the repo
+.venv/Scripts/python scripts/download_link.py     # LINK, DANDI 001201, about 12.6 GB
 ```
-
-## Quick start: simulate chronic drift on a real session
-
-```python
-import numpy as np
-from ibci import sim
-from ibci.anatomy import Sess
-from ibci.data import link
-
-p = sim.load_preset("early")            # calibrated on implant days < 700 ("late" for days >= 700)
-base = Sess("2020-03-10_CO")            # a LINK session (download with scripts/download_link.py)
-dist = link.chebyshev_distance(link.electrode_layout())
-drift = sim.sample_drift(base.ztr, 30, p, dist, np.random.default_rng(0), alive=base.alive)
-future = sim.apply_drift(base.zte, drift, np.random.default_rng(1))   # the session 30 days later
-```
-
-More detail: [docs/SIMULATOR.md](docs/SIMULATOR.md) and `examples/simulate_drift.py`. The full analysis pipeline is
-listed in `scripts/run_all.sh`.
-
-## Citation
-
-See [CITATION.cff](CITATION.cff). Licence: MIT.
 
 ## Data (please cite the original papers)
 

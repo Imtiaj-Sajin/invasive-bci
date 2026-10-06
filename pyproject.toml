@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ibci-drift"
+version = "0.1.0"
+description = "Chronic drift and electrode failure in intracortical BCIs: oracle-ladder analysis, failure statistics, and a calibrated drift/failure simulator."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Imtiaj Sajin", email = "imtiajsajin@gmail.com" }]
+keywords = ["brain-computer interface", "intracortical", "Utah array", "neural drift", "decoder", "simulation"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+dependencies = ["numpy>=1.23", "scipy>=1.9", "pandas>=1.5", "scikit-learn>=1.1", "matplotlib>=3.6"]
+
+[project.optional-dependencies]
+gpu = ["torch>=2.0"]
+data = ["pynwb>=2.0", "dandi>=0.60", "requests>=2.28"]
+dev = ["pytest>=7"]
+
+[project.urls]
+Repository = "https://github.com/Imtiaj-Sajin/invasive-bci"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ibci = ["sim_presets.json"]
