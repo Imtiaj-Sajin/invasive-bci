@@ -18,8 +18,8 @@ echo "== $(date +%T) convert $ARCHIVE -> $ROOT/decoding/$P"
 fi
 
 echo "== $(date +%T) correction ladder"
-"$PY" scripts/replicate_braingate_decoding.py --participant "$P" --root "$ROOT" --skip L4 L5 \
-  > "results/replication_bg_$P.log" 2>&1
+"$PY" scripts/replicate_braingate_decoding.py --participant "$P" --root "$ROOT" --skip L4 L5 --resume \
+  >> "results/replication_bg_$P.log" 2>&1
 
 echo "== $(date +%T) regularization trade-off"
 IBCI_DATA="$(dirname "$ROOT")" "$PY" scripts/reg_tradeoff.py --dataset braingate --subject "$P" \

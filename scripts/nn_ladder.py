@@ -1,8 +1,10 @@
 """Correction ladder for a recurrent-network decoder in any subject, on the same pairs as the linear ladder.
 
 Tests whether the main findings hold for a nonlinear decoder. For a random subset of training sessions (fixed seed),
-every pair at the five main gaps from the linear ladder is evaluated with an LSTM (hidden 256, 20-bin causal window,
-as in scripts/drift_anatomy_nn.py), trained on z-scored features of each session's training segment:
+every pair at the five main gaps from the linear ladder is evaluated with an LSTM on 20-bin causal windows of z-scored
+features. The network is regularized for small closed-loop datasets: 64 hidden units, input dropout 0.5, AdamW with
+weight decay 0.01, and early stopping on the last 20% of training trials (checked every 100 of at most 4,000
+iterations). Without this, a 256-unit network memorized the human training sessions (training R2 0.97, test R2 -1.1).
   L2     renormalized inputs, frozen network                               (no labels)
   L3     + one gain and offset per channel in front of the frozen network  (labels)
   L6p    fine-tune all weights with an L2 penalty toward the old network   (labels)
@@ -20,6 +22,7 @@ import time
 import numpy as np
 import pandas as pd
 import torch
+import torch.nn as nn
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 sys.path.insert(0, os.path.dirname(__file__))
@@ -28,6 +31,45 @@ from drift_anatomy_nn import DEV, batched_predict, fit_decoder, fit_front, windo
 from ibci.anatomy import r2  # noqa: E402
 
 BASE_ALPHA = {"N": 0.1, "C": 1.0, "M": 1.0}
+HID, P_DROP, WD, MAX_IT = 64, 0.5, 1e-2, 4000
+
+
+class RegLSTM(nn.Module):
+    def __init__(self, c, k, hid=HID, pdrop=P_DROP):
+        super().__init__()
+        self.drop = nn.Dropout(pdrop)
+        self.lstm = nn.LSTM(c, hid, batch_first=True)
+        self.out = nn.Linear(hid, k)
+
+    def forward(self, x):
+        h, _ = self.lstm(self.drop(x))
+        return self.out(h[:, -1])
+
+
+def fit_es(X, Y, tid, seed=0):
+    """Train RegLSTM with early stopping on the last 20% of training trials."""
+    n = int(tid.max()) + 1
+    fm = torch.tensor(tid < int(0.8 * n), device=DEV)
+    Xf, Yf, Xv, Yv = X[fm], Y[fm], X[~fm], Y[~fm]
+    torch.manual_seed(seed)
+    m = RegLSTM(X.shape[2], Y.shape[1]).to(DEV)
+    opt = torch.optim.AdamW(m.parameters(), lr=1e-3, weight_decay=WD)
+    g = torch.Generator().manual_seed(seed)
+    best, state = float("inf"), None
+    for it in range(MAX_IT):
+        m.train()
+        idx = torch.randint(0, len(Xf), (256,), generator=g)
+        loss = ((m(Xf[idx]) - Yf[idx]) ** 2).mean()
+        opt.zero_grad()
+        loss.backward()
+        opt.step()
+        if (it + 1) % 100 == 0:
+            m.eval()
+            v = float(((batched_predict(m, Xv) - Yv) ** 2).mean())
+            if v < best:
+                best, state = v, {k: x.detach().clone() for k, x in m.state_dict().items()}
+    m.load_state_dict(state)
+    return m.eval()
 
 
 def main():
@@ -60,7 +102,8 @@ def main():
         si, sj = sess[r.train], sess[r.test]
         for s in (si, sj):
             if s.key not in models:
-                models[s.key] = fit_decoder(*data(s)[:2])
+                X_, Y_, _, _, tid_ = data(s)
+                models[s.key] = fit_es(X_, Y_, tid_)
         Xtr, Ytr, Xte, yte, tid = data(sj)
         n_lab = int(tid.max()) + 1
         fit_m = torch.tensor(tid < int(0.8 * n_lab), device=DEV)
