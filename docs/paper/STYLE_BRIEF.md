@@ -33,3 +33,33 @@ The full report is summarized in the log.*
 - **Re-analysis of prior work** (MINDFUL): state what they reported, what we computed and how the two differ, in a neutral tone.
 - **Simulator claims:** limited to what was calibrated and validated.
 - **Spelling:** US English throughout.
+
+## Reference voice: Frank Willett (Stanford NPTL; Scholar profile g1x3RKgAAAAJ, provided by the owner)
+
+Notes from first-author papers: Nature 2021 (handwriting), Nature 2023 (speech), Cell 2020, Sci Rep 2019, JNE 2016.
+
+- **Abstract pattern:**
+  1. A patient-centred promise.
+  2. "However/So far…" gap.
+  3. One "Here we…" sentence.
+  4. Numbers tied to benchmarks a reader can picture.
+  5. Optionally "Finally,…" with a secondary insight.
+  6. A measured close ("These results show a feasible path…").
+- **Hedged priority:** "To our knowledge…", "we are aware of no prior work that…".
+- **Paragraphs:** context → content → conclusion. Open with an aim ("We tested this by…", "Next, we asked whether…").
+  Close with a takeaway ("Taken together, these results suggest…").
+- **Voice:** active "we". Participants are identified by code with brief clinical context. Hedges are moderate.
+- **Our adaptation:** keep his structure, but use *shorter* sentences than his (about 20 words on average versus his 24–30) and no em dashes.
+
+## Evidence-based readability rules (Gopen & Swan 1990; Mensh & Kording 2017; Plavén-Sigray 2017; Ryba 2021; Martínez & Mammola 2021)
+
+1. **Sentence order:** the verb comes right after the subject; old information first, new information last (stress position).
+2. **One stress-worthy point per sentence.** Split a sentence when a second key fact appears.
+3. **Abstract style:** no noun stacks, no acronyms, "we", about 110–150 words. This tested as most readable and most understood (Ryba 2021).
+4. **Jargon:** none in the title or abstract. Defining jargon does not remove its cost.
+5. **Terms:** one term per concept, never synonyms.
+6. **Paragraphs:** context-content-conclusion. Cover each topic in one place, and use parallel syntax for parallel points.
+7. **Signposts:** "Next", "First… Finally", "In contrast", "Taken together".
+8. **Titles:** declarative, results-stating; not questions; short and with common words.
+9. **Figures:** each title states the conclusion; the legend explains the method.
+10. **Reviewers:** match claims to the evidence, address alternatives, give complete methods, and avoid stacked defensive caveats.
