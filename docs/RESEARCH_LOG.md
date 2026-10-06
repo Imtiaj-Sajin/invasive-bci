@@ -700,3 +700,21 @@ The `.tar.gz` copies were deleted after extraction; the owner's zips in `D:/Down
 - abrupt single-electrode changes are common;
 - spiking is lost faster at array edges (consistent with micromotion strain);
 - impedance falls over the years.
+
+## 2026-10-06 ~09:10 — Regularization finding replicated in Chewie and Mihili (smaller effect)
+
+The owner will download `decoding_T6` later. Work continues without it.
+
+`scripts/reg_tradeoff.py --dataset perich` → `results/reg_tradeoff_{C,M}`. The **1% rule** picks the largest α whose
+same-day median R² is within 1% of the best (chosen per subject, using same-day data only). Its paired gain over α = 0.1,
+from `results/reg_tradeoff/rule_across_subjects.csv`, with cluster-bootstrap CIs:
+
+| Subject | Rule α | Same day | 1 d | 7 d | 30 d | 120 d | 480 d |
+|---|---|---|---|---|---|---|---|
+| N (LINK, SBP) | 1e4 | +0.003 | +0.021 | +0.035 | +0.042 | +0.056 | +0.090 |
+| C (sorted units) | 1e4 | +0.002 | +0.008 | +0.012 | +0.001 (n.s.) | +0.031 | +0.032 |
+| M (sorted units) | 1e3 | +0.000 | +0.001 | +0.000 | +0.001 | +0.001 | +0.001 |
+
+**Conclusion:** regularizing for the future never costs same-day accuracy and always helps cross-day in direction.
+The effect is large for dense SBP features (LINK), moderate for Chewie, and negligible for Mihili. Report it as a
+recommended default with a dataset-dependent effect size, not a universal large gain.
