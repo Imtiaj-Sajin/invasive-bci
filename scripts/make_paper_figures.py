@@ -29,6 +29,9 @@ SUBJ = [("Monkey N", "results/anatomy/ladder.csv", P.CAT[0]),
         ("Monkey C", "results/replication/C_ladder.csv", P.CAT[1]),
         ("Monkey M", "results/replication/M_ladder.csv", P.CAT[2]),
         ("Human T6", "results/replication_bg/T6_ladder.csv", P.CAT[3])]
+# further BrainGate participants join automatically once their ladders exist
+SUBJ += [(f"Human {p}", f"results/replication_bg/{p}_ladder.csv", P.CAT[c]) for p, c in (("T5", 4), ("T9", 6))
+         if os.path.exists(f"results/replication_bg/{p}_ladder.csv")]
 
 
 def boot_curve(d, col, gaps=GAPS, ref="own"):
@@ -175,8 +178,10 @@ def fig4(out):
     ax = axes[2]
     t = pd.read_csv("results/reg_tradeoff/rule_across_subjects.csv")
     names = {"N (LINK)": ("Monkey N", P.CAT[0]), "C": ("Monkey C", P.CAT[1]), "M": ("Monkey M", P.CAT[2]),
-             "T6 (human)": ("Human T6", P.CAT[3])}
-    offs = {k: o for k, o in zip(names, [-0.09, -0.03, 0.03, 0.09])}
+             "T6 (human)": ("Human T6", P.CAT[3]), "T5 (human)": ("Human T5", P.CAT[4]),
+             "T9 (human)": ("Human T9", P.CAT[6])}
+    names = {k: v for k, v in names.items() if (t.subject == k).any()}
+    offs = {k: o for k, o in zip(names, np.linspace(-0.09, 0.09, len(names)) if len(names) > 1 else [0.0])}
     for key, (lab, c) in names.items():
         s = t[t.subject == key]
         xs = np.log10([max(g, 0.5) for g in s.gap]) + offs[key]

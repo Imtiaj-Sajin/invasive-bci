@@ -299,7 +299,9 @@ def stable_procrustes_map(Vj, Vi, keep=0.6, iters=5):
     return R.T, stable
 
 
-def ladder(si: Sess, sj: Sess, n_list, k_folds=5, k_folds_remap=3):
+def ladder(si: Sess, sj: Sess, n_list, k_folds=5, k_folds_remap=3, skip=()):
+    """Oracle ladder for decoder si tested on session sj. ``skip`` may name supervised rungs to leave out
+    (e.g. ("L4", "L5") when only the reported rungs are needed; L5 dominates run time for 192 channels)."""
     out = {}
     zf = (sj.x_te - si.z.mean) / si.z.std
     out["L0"] = r2(si.dec.predict(zf), sj.y_te)
@@ -329,14 +331,16 @@ def ladder(si: Sess, sj: Sess, n_list, k_folds=5, k_folds_remap=3):
         out[f"L3_n{n}"] = r2(f(F_te), sj.y_te)
         out[f"lam_L3_n{n}"] = float(lam)
 
-        lam, f = cv_shrunk(G_tr, Y - B_tr, tid, n, LAMS_CF, Q0.reshape(-1), k_folds, intercept_anchor=si.dec.b)
-        out[f"L4_n{n}"] = r2(B_te + f(G_te), sj.y_te)
-        out[f"lam_L4_n{n}"] = float(lam)
+        if "L4" not in skip:
+            lam, f = cv_shrunk(G_tr, Y - B_tr, tid, n, LAMS_CF, Q0.reshape(-1), k_folds, intercept_anchor=si.dec.b)
+            out[f"L4_n{n}"] = r2(B_te + f(G_te), sj.y_te)
+            out[f"lam_L4_n{n}"] = float(lam)
 
-        lam = cv_pick(lambda m, l: fit_remap(sj.ztr[m], Y[m], si.dec, l),
-                      lambda prm, m: sse(pred_remap(sj.ztr[m], prm), m), tid, n, LAMS_REMAP, k_folds_remap)
-        out[f"L5_n{n}"] = r2(pred_remap(sj.zte, fit_remap(sj.ztr[lab], Y[lab], si.dec, lam)), sj.y_te)
-        out[f"lam_L5_n{n}"] = float(lam)
+        if "L5" not in skip:
+            lam = cv_pick(lambda m, l: fit_remap(sj.ztr[m], Y[m], si.dec, l),
+                          lambda prm, m: sse(pred_remap(sj.ztr[m], prm), m), tid, n, LAMS_REMAP, k_folds_remap)
+            out[f"L5_n{n}"] = r2(pred_remap(sj.zte, fit_remap(sj.ztr[lab], Y[lab], si.dec, lam)), sj.y_te)
+            out[f"lam_L5_n{n}"] = float(lam)
 
         a, f = cv_shrunk(H_tr, Y, tid, n, ALPHAS, np.zeros((H_tr.shape[1], Y.shape[1])), k_folds, scale_by_rows=False)
         out[f"L6_n{n}"] = r2(f(H_te), sj.y_te)

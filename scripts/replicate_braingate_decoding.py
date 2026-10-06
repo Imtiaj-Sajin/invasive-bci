@@ -83,6 +83,7 @@ def main():
     ap.add_argument("--root", default=os.path.join(os.environ.get("IBCI_DATA", "D:/ibci-data"), "braingate"))
     ap.add_argument("--gaps", type=int, nargs="+", default=[1, 7, 30, 120, 480])
     ap.add_argument("--out", default="results/replication_bg")
+    ap.add_argument("--skip", nargs="*", default=[], help="supervised rungs to skip, e.g. L4 L5 (not reported for humans)")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
     files = sorted(glob.glob(os.path.join(args.root, "decoding", args.participant, "*_decoding.mat")),
@@ -103,7 +104,7 @@ def main():
     for c, (i, j, g) in enumerate(pairs):
         si, sj = sessions[i], sessions[j]
         rows.append(dict(participant=args.participant, train=si.key, test=sj.key, gap_target=g, days=sj.day - si.day,
-                         train_day=si.day, **ladder(si, sj, [300])))
+                         train_day=si.day, **ladder(si, sj, [300], skip=tuple(args.skip))))
         if (c + 1) % 20 == 0 or c + 1 == len(pairs):
             pd.DataFrame(rows).to_csv(os.path.join(args.out, f"{args.participant}_ladder.csv"), index=False)
             print(f"  {c + 1}/{len(pairs)} pairs, {time.time() - t0:.0f}s", flush=True)

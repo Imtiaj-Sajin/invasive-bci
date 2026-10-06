@@ -3,6 +3,7 @@
 Writes results/paper_stats.json.
 """
 import json
+import os
 
 import numpy as np
 import pandas as pd
@@ -11,6 +12,8 @@ from scipy import stats
 out = {}
 SUBJ = {"N": "results/anatomy/ladder.csv", "C": "results/replication/C_ladder.csv",
         "M": "results/replication/M_ladder.csv", "T6": "results/replication_bg/T6_ladder.csv"}
+HUMANS = ["T6"] + [p for p in ("T5", "T9") if os.path.exists(f"results/replication_bg/{p}_ladder.csv")]
+SUBJ.update({p: f"results/replication_bg/{p}_ladder.csv" for p in HUMANS})
 L = {k: pd.read_csv(v) for k, v in SUBJ.items()}
 
 # 1. Overnight retention: does it differ across subjects? (one value per training session: mean over its 1-day pairs)
@@ -23,7 +26,7 @@ h = stats.kruskal(*grp)
 out["overnight_kruskal"] = {"H": float(h.statistic), "df": len(grp) - 1, "P": float(h.pvalue)}
 
 # 2. Renormalization vs label-free alignment and vs mean-only (session-level means across gaps <= 120 d), Wilcoxon two-sided
-for k in ("N", "T6"):
+for k in ["N"] + HUMANS:
     d = L[k][L[k].gap_target <= 120]
     s = d.groupby("train")[["L1", "L2", "L4u"]].mean()
     for a, b in (("L2", "L4u"), ("L4u", "L1"), ("L2", "L1")):
@@ -32,8 +35,10 @@ for k in ("N", "T6"):
             "n_sessions": int(len(s)), "median_diff": float(np.median(s[a] - s[b])), "W": float(w.statistic), "P": float(w.pvalue)}
 
 # 3. Regularization (1% rule alpha vs 0.1): session-level mean cross-day gain, Wilcoxon two-sided, per subject
-for name, path in (("N", "results/reg_tradeoff/tradeoff.csv"), ("C", "results/reg_tradeoff_C/tradeoff.csv"),
-                   ("M", "results/reg_tradeoff_M/tradeoff.csv"), ("T6", "results/reg_tradeoff_T6/tradeoff.csv")):
+for name, path in [("N", "results/reg_tradeoff/tradeoff.csv"), ("C", "results/reg_tradeoff_C/tradeoff.csv"),
+                   ("M", "results/reg_tradeoff_M/tradeoff.csv")] + [
+                      (p, f"results/reg_tradeoff_{p}/tradeoff.csv") for p in HUMANS
+                      if os.path.exists(f"results/reg_tradeoff_{p}/tradeoff.csv")]:
     d = pd.read_csv(path)
     same = d[d.gap_target == 0].groupby("alpha").r2.median()
     a_rule = max(a for a, v in same.items() if v >= 0.99 * same.max())
