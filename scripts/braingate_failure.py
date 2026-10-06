@@ -33,6 +33,8 @@ ALIVE_HZ = 2.0
 def load_yield(path):
     d = loadmat(path, simplify_cells=True)
     el = pd.DataFrame(d["electrodes"])
+    if "impedance" not in el.columns:                      # impedance is only stored for some sessions
+        el["impedance"] = np.nan
     fr = pd.DataFrame(d["firing_rates"])
     fr = fr[fr["threshold_description"].astype(str).isin(["-4.5", "-4.50"])]
     rate = fr.set_index("electrode_id")["firing_rate"]
