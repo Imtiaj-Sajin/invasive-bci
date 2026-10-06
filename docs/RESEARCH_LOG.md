@@ -662,3 +662,19 @@ T11) passed testzip and was extracted. Zip 3 (T5–T9) is still downloading; a w
 - Abrupt single-electrode changes.
 - Faster loss of spiking at array edges, consistent with micromotion strain (Forrest 2025).
 - Falling impedance.
+
+## 2026-10-06 ~08:40 — BrainGate humans: 16 arrays (12 participants)
+
+Zip 3 (T5, T6, T7) passed testzip and was extracted. T8 and T9 are still downloading.
+`results/braingate_failure` now covers 16 arrays with yield files from 2,000+ sessions.
+
+**Pooled:**
+- Revived/silenced = **0.78**.
+- Median channel-level kurtosis 3.6.
+- Impedance falls in every array with measurements (ρ mostly −0.82 to −0.99).
+- T5 over 7.3 years: lateral yield 60 → 30%, medial 51 → 40%.
+
+**Edge effect:**
+- Individually significant in 6/16 arrays. Fisher-combined p = 2.3e-6; median edge − interior slope = −0.064 log-rate per year.
+- In arrays with at least 10 initially active channels: the edge declines faster in **10/13** (sign test p = 0.046; Fisher p = 5.9e-6).
+- With LINK's 2/2 monkey arrays, that is **12 of 15 arrays across species**.
