@@ -530,3 +530,37 @@ generative fit, not proof of the mechanism.)
 **Running now:**
 - `validate_sim.py`: held-out days ≥ 700, untargeted rungs and n = 20/50/100.
 - `sim_augment.py`: train on simulated futures; evaluated on days ≥ 700 only.
+
+## 2026-10-06 ~06:50 — "Train on simulated futures" (negative vs a regularization control); regularization trade-off
+
+**Augmentation** (`scripts/sim_augment.py` → `results/augment`). Simulator calibrated on days < 700; 25 training
+sessions after day 700; 77 pairs; daily renormalization. Paired gain over base ridge (α = 0.1), cluster-bootstrap 95% CI:
+
+| Method | Gain |
+|---|---|
+| Ad hoc perturbations (Sussillo-style: channel dropout plus gain noise) | +0.000 [−0.003, +0.002] |
+| Simulated-futures augmentation | +0.010 [+0.005, +0.013]; +0.012 at gaps ≥ 30 d; beats perturbations by +0.005 [0.001, 0.019] |
+| **Ridge with α = 10⁴ (chosen on the calibration period)** | **+0.042 [+0.033, +0.050]**, positive for 100% of sessions |
+| Simulated futures + α = 10⁴ | +0.015; worse than α = 10⁴ alone by −0.024 [−0.030, −0.019] |
+| Multi-day real training (3 previous sessions; more labels) | +0.056 [+0.041, +0.073] |
+
+**Conclusion:** for linear decoders, simulator augmentation beats ad hoc perturbations but **not** plain stronger
+regularization. The simulator's value is in benchmarking and policy evaluation, not as augmentation for ridge. Network
+decoders are untested.
+
+**Regularization trade-off** (`scripts/reg_tradeoff.py` → `results/reg_tradeoff`, `results/figures/fig_reg_tradeoff.png`;
+40 training sessions). Median R² by α:
+
+| gap | α = 0.1 (LINK default) | α = 1e3 | α = 1e4 | α = 3e4 | α = 1e5 |
+|---|---|---|---|---|---|
+| same day | 0.304 | 0.307 | **0.305** | 0.268 | 0.178 |
+| 1 d | 0.267 | 0.272 | 0.275 | 0.242 | 0.166 |
+| 7 d | 0.143 | 0.156 | 0.178 | 0.165 | 0.120 |
+| 30 d | 0.098 | 0.112 | 0.145 | 0.149 | 0.106 |
+| 120 d | 0.039 | 0.057 | 0.101 | 0.111 | 0.083 |
+| 480 d | −0.097 | −0.080 | −0.002 | 0.040 | 0.046 |
+
+- **Free lunch:** α = 10⁴ leaves same-day accuracy unchanged, but cross-day R² is about 50% higher at 30 d and 2.6× higher at 120 d.
+- Same-day CV is flat between α = 0.1 and 10⁴, so it gives no reason to choose the larger value; hence small defaults.
+- **Simple rule:** choose the largest α that keeps same-day R² within about 1%.
+- Note: the anatomy ladder used α = 0.1 base decoders, so its absolute decay numbers describe that common default.
