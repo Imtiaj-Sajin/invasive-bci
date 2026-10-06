@@ -31,6 +31,7 @@ from channel_health import runs_below  # noqa: E402
 
 
 MAX_DAY = None  # set from --max-day (time-split fitting, LINK only)
+MIN_DAY = None  # set from --min-day
 
 
 def rates_link():
@@ -38,7 +39,7 @@ def rates_link():
     rows = []
     for k in link.list_sessions():
         s = link.load_session(k)
-        if MAX_DAY is not None and s.day >= MAX_DAY:
+        if (MAX_DAY is not None and s.day >= MAX_DAY) or (MIN_DAY is not None and s.day < MIN_DAY):
             continue
         rows.append((s.day, s.tc.mean(0) / link.BIN_S))
     return {"N (LINK)": rows}
@@ -161,10 +162,11 @@ def main():
     ap.add_argument("--datasets", nargs="+", default=["link", "perich", "h2"])
     ap.add_argument("--alive-hz", type=float, default=2.0)
     ap.add_argument("--max-day", type=int, default=None, help="LINK only: use sessions before this day")
+    ap.add_argument("--min-day", type=int, default=None, help="LINK only: use sessions from this day on")
     ap.add_argument("--out", default="results/failure_xdata")
     args = ap.parse_args()
-    global MAX_DAY
-    MAX_DAY = args.max_day
+    global MAX_DAY, MIN_DAY
+    MAX_DAY, MIN_DAY = args.max_day, args.min_day
     os.makedirs(args.out, exist_ok=True)
     loaders = {"link": rates_link, "perich": rates_perich, "h2": rates_h2}
     res = {}

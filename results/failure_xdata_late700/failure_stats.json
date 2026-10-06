@@ -1,0 +1,27 @@
+{
+ "N (LINK)": {
+  "sessions_dropped_rate_inflation": 5,
+  "h_off": 0.0033773029864234733,
+  "h_on": 0.0017065601680744872,
+  "silent_fraction_stationary": 0.6643182327666306,
+  "n_ever_active": 51,
+  "n_sessions": 139,
+  "span_days": 528,
+  "n_channels": 96,
+  "active_first3_median": 19.0,
+  "active_last3_median": 18.0,
+  "active_trend_per_year": -1.0043856055987093,
+  "initially_active": 20,
+  "died": 11,
+  "revived": 5,
+  "deaths_per_channel_year": 0.20271190716448031,
+  "median_death_day": 742.0,
+  "lograte_change_kurtosis": 9.286104202270508,
+  "frac_abs_logchange_gt1": 0.1373015873015873,
+  "channel_level_kurtosis": 11.071541786193848,
+  "channel_level_frac_gt1": 0.1246031746031746,
+  "global_events_abs_median_change_gt1": 4,
+  "n_short_gap_session_pairs": 126,
+  "n_changes": 2520
+ }
+}

@@ -33,10 +33,12 @@ from ibci.preprocess import ZScore  # noqa: E402
 RUNGS = ["L2", "L3_n300", "L5_n300"]
 
 
-def real_targets(ladder_csv, gaps, max_day=None):
+def real_targets(ladder_csv, gaps, max_day=None, min_day=None):
     df = pd.read_csv(ladder_csv)
     if max_day is not None:  # both sessions of a pair must lie in the calibration period
         df = df[df.train_day + df.days < max_day]
+    if min_day is not None:
+        df = df[df.train_day >= min_day]
     out = {}
     for g in gaps:
         d = df[df.gap_target == g]
@@ -85,19 +87,23 @@ def main():
     ap.add_argument("--failure-json", default=None, help="failure_stats.json with fitted h_off / h_on for the subject")
     ap.add_argument("--subject", default="N (LINK)")
     ap.add_argument("--max-day", type=int, default=None, help="use only sessions before this day (time-split calibration)")
+    ap.add_argument("--min-day", type=int, default=None, help="use only sessions from this day on (late-implant calibration)")
     ap.add_argument("--out", default="results/sim_calib")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
 
-    targets = real_targets(args.ladder, args.gaps, args.max_day)
+    targets = real_targets(args.ladder, args.gaps, args.max_day, args.min_day)
     gaps = [g for g in args.gaps if targets[g]["n"] >= 3]
     print("targets", json.dumps(targets, indent=1), flush=True)
 
     link.build_cache(verbose=False)
     dist = link.chebyshev_distance(link.electrode_layout())
     keys = link.list_sessions()
+    day_of = lambda k: (np.datetime64(k[:10]) - np.datetime64("2020-01-27")).astype(int)  # noqa: E731
     if args.max_day is not None:
-        keys = [k for k in keys if (np.datetime64(k[:10]) - np.datetime64("2020-01-27")).astype(int) < args.max_day]
+        keys = [k for k in keys if day_of(k) < args.max_day]
+    if args.min_day is not None:
+        keys = [k for k in keys if day_of(k) >= args.min_day]
     rng = np.random.default_rng(0)
     pick = sorted(rng.choice(len(keys), size=min(args.n_base, len(keys)), replace=False))
     sessions = {i: Sess(keys[i]) for i in pick}
