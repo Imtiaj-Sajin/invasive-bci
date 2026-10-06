@@ -77,3 +77,178 @@ C:\Python311\Lib\site-packages\scipy\stats\_qmc.py:993: UserWarning: The balance
 [43] 2725s loss=0.1471 s_mix0=1.02 s_mix=1.17 tau_mix=16.1 rho0=0.0526 rho_inf=0.117 tau_rho=339
 [44] 2786s loss=0.1028 s_mix0=0.988 s_mix=1.32 tau_mix=16.5 rho0=0.0511 rho_inf=0.113 tau_rho=328
 [45] 2842s loss=0.1631 s_mix0=0.905 s_mix=1.48 tau_mix=20.1 rho0=0.0667 rho_inf=0.154 tau_rho=452
+[46] 2893s loss=0.1061 s_mix0=0.979 s_mix=1.46 tau_mix=16 rho0=0.0455 rho_inf=0.0986 tau_rho=285
+[47] 2941s loss=0.1505 s_mix0=0.897 s_mix=1.49 tau_mix=20.6 rho0=0.0695 rho_inf=0.0851 tau_rho=476
+[48] 2990s loss=0.0892 s_mix0=0.977 s_mix=1.47 tau_mix=16.1 rho0=0.046 rho_inf=0.138 tau_rho=289
+[49] 3038s loss=0.1942 s_mix0=0.949 s_mix=1.42 tau_mix=9.61 rho0=0.0627 rho_inf=0.126 tau_rho=420
+[50] 3086s loss=0.1017 s_mix0=0.955 s_mix=1.49 tau_mix=20.7 rho0=0.0488 rho_inf=0.103 tau_rho=310
+[51] 3134s loss=0.1800 s_mix0=1.24 s_mix=1.27 tau_mix=14.7 rho0=0.0555 rho_inf=0.108 tau_rho=362
+[52] 3183s loss=0.1003 s_mix0=0.879 s_mix=1.53 tau_mix=17.3 rho0=0.0515 rho_inf=0.11 tau_rho=331
+[53] 3231s loss=0.1241 s_mix0=0.923 s_mix=1.45 tau_mix=19.1 rho0=0.021 rho_inf=0.102 tau_rho=526
+[54] 3279s loss=0.1366 s_mix0=0.984 s_mix=1.46 tau_mix=15.8 rho0=0.0696 rho_inf=0.12 tau_rho=296
+[55] 3327s loss=0.0897 s_mix0=0.991 s_mix=1.46 tau_mix=15.4 rho0=0.0429 rho_inf=0.107 tau_rho=471
+[56] 3375s loss=0.0868 s_mix0=0.926 s_mix=1.5 tau_mix=16.7 rho0=0.0487 rho_inf=0.122 tau_rho=309
+[57] 3423s loss=0.0994 s_mix0=0.966 s_mix=1.48 tau_mix=18.3 rho0=0.0474 rho_inf=0.119 tau_rho=300
+[58] 3472s loss=0.0902 s_mix0=0.983 s_mix=1.39 tau_mix=16.3 rho0=0.0485 rho_inf=0.124 tau_rho=308
+[59] 3520s loss=0.0767 s_mix0=0.978 s_mix=1.46 tau_mix=16 rho0=0.0458 rho_inf=0.116 tau_rho=287
+[60] 3568s loss=0.1595 s_mix0=0.991 s_mix=1.46 tau_mix=15.4 rho0=0.0689 rho_inf=0.132 tau_rho=266
+[61] 3617s loss=0.1036 s_mix0=0.949 s_mix=1.46 tau_mix=17.5 rho0=0.0312 rho_inf=0.118 tau_rho=390
+[62] 3665s loss=0.0893 s_mix0=0.96 s_mix=1.46 tau_mix=17 rho0=0.0381 rho_inf=0.118 tau_rho=354
+[63] 3713s loss=0.0765 s_mix0=0.972 s_mix=1.44 tau_mix=14.5 rho0=0.0425 rho_inf=0.123 tau_rho=366
+[64] 3761s loss=0.0949 s_mix0=0.975 s_mix=1.42 tau_mix=12.9 rho0=0.0402 rho_inf=0.126 tau_rho=405
+[65] 3809s loss=0.0918 s_mix0=0.952 s_mix=1.54 tau_mix=15.6 rho0=0.0397 rho_inf=0.117 tau_rho=377
+[66] 3857s loss=0.0990 s_mix0=0.975 s_mix=1.43 tau_mix=16.1 rho0=0.0461 rho_inf=0.122 tau_rho=324
+[67] 3905s loss=0.0906 s_mix0=0.975 s_mix=1.45 tau_mix=15.2 rho0=0.0441 rho_inf=0.119 tau_rho=324
+[68] 3953s loss=0.0919 s_mix0=0.949 s_mix=1.47 tau_mix=15.5 rho0=0.0455 rho_inf=0.122 tau_rho=337
+[69] 4002s loss=0.1002 s_mix0=0.974 s_mix=1.45 tau_mix=15.2 rho0=0.0442 rho_inf=0.13 tau_rho=325
+[70] 4050s loss=0.0852 s_mix0=0.966 s_mix=1.45 tau_mix=15.7 rho0=0.0402 rho_inf=0.121 tau_rho=360
+[71] 4098s loss=0.1018 s_mix0=0.981 s_mix=1.45 tau_mix=14.9 rho0=0.0427 rho_inf=0.115 tau_rho=415
+[72] 4147s loss=0.1024 s_mix0=0.977 s_mix=1.41 tau_mix=15.4 rho0=0.0454 rho_inf=0.123 tau_rho=336
+[73] 4195s loss=0.0754 s_mix0=0.962 s_mix=1.49 tau_mix=15 rho0=0.041 rho_inf=0.12 tau_rho=372
+[74] 4243s loss=0.0894 s_mix0=0.954 s_mix=1.53 tau_mix=14.8 rho0=0.039 rho_inf=0.118 tau_rho=391
+[75] 4292s loss=0.1059 s_mix0=0.951 s_mix=1.46 tau_mix=15.4 rho0=0.0431 rho_inf=0.131 tau_rho=290
+[76] 4340s loss=0.0787 s_mix0=0.974 s_mix=1.45 tau_mix=15.1 rho0=0.0428 rho_inf=0.119 tau_rho=380
+[77] 4389s loss=0.1084 s_mix0=0.958 s_mix=1.46 tau_mix=15.1 rho0=0.0411 rho_inf=0.111 tau_rho=389
+[78] 4438s loss=0.0980 s_mix0=0.97 s_mix=1.45 tau_mix=15.2 rho0=0.0434 rho_inf=0.125 tau_rho=340
+[79] 4486s loss=0.0906 s_mix0=0.962 s_mix=1.46 tau_mix=15.1 rho0=0.0419 rho_inf=0.116 tau_rho=372
+[80] 4534s loss=0.1014 s_mix0=0.988 s_mix=1.44 tau_mix=14.6 rho0=0.0389 rho_inf=0.117 tau_rho=389
+[81] 4582s loss=0.0805 s_mix0=0.959 s_mix=1.46 tau_mix=15.3 rho0=0.0437 rho_inf=0.121 tau_rho=349
+[82] 4631s loss=0.1028 s_mix0=0.956 s_mix=1.46 tau_mix=15 rho0=0.04 rho_inf=0.12 tau_rho=414
+[83] 4679s loss=0.0820 s_mix0=0.97 s_mix=1.45 tau_mix=15.2 rho0=0.043 rho_inf=0.12 tau_rho=345
+[84] 4727s loss=0.0962 s_mix0=0.972 s_mix=1.45 tau_mix=15.1 rho0=0.0425 rho_inf=0.125 tau_rho=352
+[85] 4776s loss=0.0773 s_mix0=0.964 s_mix=1.46 tau_mix=15.1 rho0=0.042 rho_inf=0.118 tau_rho=367
+[86] 4824s loss=0.0800 s_mix0=0.968 s_mix=1.47 tau_mix=14.4 rho0=0.0449 rho_inf=0.119 tau_rho=366
+[87] 4872s loss=0.0760 s_mix0=0.962 s_mix=1.47 tau_mix=14.6 rho0=0.0426 rho_inf=0.12 tau_rho=389
+[88] 4920s loss=0.0950 s_mix0=0.975 s_mix=1.46 tau_mix=14.2 rho0=0.0415 rho_inf=0.119 tau_rho=399
+[89] 4969s loss=0.0809 s_mix0=0.963 s_mix=1.46 tau_mix=15 rho0=0.0432 rho_inf=0.12 tau_rho=361
+[90] 5017s loss=0.0756 s_mix0=0.962 s_mix=1.48 tau_mix=14.8 rho0=0.0418 rho_inf=0.12 tau_rho=381
+[91] 5065s loss=0.0768 s_mix0=0.967 s_mix=1.46 tau_mix=14.7 rho0=0.0417 rho_inf=0.121 tau_rho=369
+[92] 5113s loss=0.0763 s_mix0=0.963 s_mix=1.47 tau_mix=15 rho0=0.0415 rho_inf=0.119 tau_rho=369
+[93] 5161s loss=0.0766 s_mix0=0.968 s_mix=1.47 tau_mix=15 rho0=0.0419 rho_inf=0.119 tau_rho=376
+[94] 5209s loss=0.0789 s_mix0=0.965 s_mix=1.48 tau_mix=14.7 rho0=0.0429 rho_inf=0.12 tau_rho=369
+[95] 5258s loss=0.0740 s_mix0=0.96 s_mix=1.47 tau_mix=15.1 rho0=0.0424 rho_inf=0.12 tau_rho=360
+[96] 5308s loss=0.0804 s_mix0=0.962 s_mix=1.47 tau_mix=15.2 rho0=0.0406 rho_inf=0.12 tau_rho=374
+[97] 5356s loss=0.0770 s_mix0=0.964 s_mix=1.48 tau_mix=14.8 rho0=0.0423 rho_inf=0.12 tau_rho=370
+[98] 5405s loss=0.0762 s_mix0=0.963 s_mix=1.47 tau_mix=15.1 rho0=0.0411 rho_inf=0.12 tau_rho=372
+[99] 5453s loss=0.0857 s_mix0=0.959 s_mix=1.49 tau_mix=15.3 rho0=0.0415 rho_inf=0.118 tau_rho=374
+[100] 5502s loss=0.0762 s_mix0=0.965 s_mix=1.47 tau_mix=14.9 rho0=0.0417 rho_inf=0.121 tau_rho=370
+[101] 5551s loss=0.0755 s_mix0=0.957 s_mix=1.48 tau_mix=15 rho0=0.0413 rho_inf=0.121 tau_rho=366
+[102] 5599s loss=0.0756 s_mix0=0.96 s_mix=1.48 tau_mix=14.9 rho0=0.0416 rho_inf=0.122 tau_rho=371
+[103] 5647s loss=0.0754 s_mix0=0.959 s_mix=1.48 tau_mix=14.8 rho0=0.0421 rho_inf=0.121 tau_rho=368
+[104] 5696s loss=0.0751 s_mix0=0.955 s_mix=1.49 tau_mix=15 rho0=0.0417 rho_inf=0.121 tau_rho=369
+[105] 5744s loss=0.0753 s_mix0=0.959 s_mix=1.49 tau_mix=15 rho0=0.0419 rho_inf=0.119 tau_rho=367
+[106] 5793s loss=0.0754 s_mix0=0.955 s_mix=1.49 tau_mix=15.2 rho0=0.0416 rho_inf=0.121 tau_rho=354
+[107] 5841s loss=0.0755 s_mix0=0.959 s_mix=1.49 tau_mix=15.1 rho0=0.0423 rho_inf=0.12 tau_rho=364
+[108] 5889s loss=0.0755 s_mix0=0.959 s_mix=1.49 tau_mix=15 rho0=0.042 rho_inf=0.12 tau_rho=364
+[109] 5938s loss=0.0756 s_mix0=0.958 s_mix=1.48 tau_mix=15.1 rho0=0.042 rho_inf=0.121 tau_rho=364
+[110] 5986s loss=0.0758 s_mix0=0.959 s_mix=1.48 tau_mix=15.1 rho0=0.0421 rho_inf=0.12 tau_rho=364
+[111] 6035s loss=0.0759 s_mix0=0.96 s_mix=1.48 tau_mix=15 rho0=0.0422 rho_inf=0.121 tau_rho=364
+[112] 6083s loss=0.0759 s_mix0=0.958 s_mix=1.48 tau_mix=15.2 rho0=0.042 rho_inf=0.12 tau_rho=357
+[113] 6132s loss=0.0757 s_mix0=0.961 s_mix=1.48 tau_mix=15.1 rho0=0.0417 rho_inf=0.12 tau_rho=366
+[114] 6180s loss=0.0760 s_mix0=0.959 s_mix=1.48 tau_mix=15.1 rho0=0.0418 rho_inf=0.121 tau_rho=363
+[115] 6228s loss=0.0759 s_mix0=0.96 s_mix=1.48 tau_mix=15.1 rho0=0.0423 rho_inf=0.12 tau_rho=362
+[116] 6277s loss=0.0759 s_mix0=0.959 s_mix=1.48 tau_mix=15.1 rho0=0.0422 rho_inf=0.12 tau_rho=362
+[117] 6325s loss=0.0760 s_mix0=0.959 s_mix=1.48 tau_mix=15.1 rho0=0.0422 rho_inf=0.12 tau_rho=362
+[118] 6373s loss=0.0762 s_mix0=0.961 s_mix=1.48 tau_mix=15.1 rho0=0.042 rho_inf=0.12 tau_rho=363
+[119] 6421s loss=0.0761 s_mix0=0.96 s_mix=1.48 tau_mix=15.1 rho0=0.0422 rho_inf=0.12 tau_rho=362
+[120] 6470s loss=0.0760 s_mix0=0.96 s_mix=1.48 tau_mix=15.1 rho0=0.0423 rho_inf=0.121 tau_rho=362
+[121] 6518s loss=0.0738 s_mix0=0.959 s_mix=1.48 tau_mix=15.2 rho0=0.0422 rho_inf=0.12 tau_rho=359
+[122] 6567s loss=0.0761 s_mix0=0.959 s_mix=1.48 tau_mix=15.1 rho0=0.0421 rho_inf=0.12 tau_rho=362
+[123] 6615s loss=0.0738 s_mix0=0.958 s_mix=1.48 tau_mix=15.1 rho0=0.0424 rho_inf=0.121 tau_rho=359
+[124] 6663s loss=0.0737 s_mix0=0.959 s_mix=1.48 tau_mix=15.1 rho0=0.0425 rho_inf=0.12 tau_rho=360
+[125] 6712s loss=0.0757 s_mix0=0.959 s_mix=1.48 tau_mix=15.1 rho0=0.0427 rho_inf=0.12 tau_rho=359
+[126] 6760s loss=0.0737 s_mix0=0.959 s_mix=1.48 tau_mix=15.1 rho0=0.0424 rho_inf=0.121 tau_rho=359
+{
+ "params": {
+  "s_mix0": 0.9592219541752854,
+  "s_mix": 1.4783653200354872,
+  "tau_mix": 15.133524921383799,
+  "beta_local": 0.5,
+  "rho0": 0.042485260931543686,
+  "rho_inf": 0.12031565508259505,
+  "tau_rho": 359.84691406816336,
+  "rho_conc": 5.0,
+  "h_off": 0.0038207531843768502,
+  "h_on": 0.0018015961064157598,
+  "silent_signal_frac": 0.37,
+  "h_jump": 0.005,
+  "jump_sd": 0.5,
+  "rw_offset": 0.02,
+  "rw_logscale": 0.02,
+  "k_latent": 20
+ },
+ "loss": 0.07372020688293031,
+ "targets": {
+  "1": {
+   "L2": 0.6200124301492831,
+   "L3_n300": 0.7234807761178959,
+   "L5_n300": 0.909393443366976,
+   "n": 13
+  },
+  "7": {
+   "L2": 0.49744150391902353,
+   "L3_n300": 0.6163446598244804,
+   "L5_n300": 0.86580702733759,
+   "n": 23
+  },
+  "30": {
+   "L2": 0.019621495016137684,
+   "L3_n300": 0.30433691134573215,
+   "L5_n300": 0.8349325570846063,
+   "n": 32
+  },
+  "120": {
+   "L2": -0.11800118267109122,
+   "L3_n300": 0.23586824081303845,
+   "L5_n300": 0.7948300923027192,
+   "n": 31
+  },
+  "480": {
+   "L2": -0.31955012480202283,
+   "L3_n300": 0.22676922871147376,
+   "L5_n300": 0.7846844341551518,
+   "n": 12
+  }
+ },
+ "sim_fresh_seed": {
+  "1": {
+   "L2": 0.6124382328924252,
+   "L3_n300": 0.7318234063558782,
+   "L5_n300": 0.918256269370517
+  },
+  "7": {
+   "L2": 0.451725965164905,
+   "L3_n300": 0.7085526786110528,
+   "L5_n300": 0.8843148983579915
+  },
+  "30": {
+   "L2": 0.28134505350515837,
+   "L3_n300": 0.40321725193725255,
+   "L5_n300": 0.8220987404503783
+  },
+  "120": {
+   "L2": -0.06509971905511823,
+   "L3_n300": 0.35935792784762766,
+   "L5_n300": 0.7492075070220086
+  },
+  "480": {
+   "L2": -0.351086919062269,
+   "L3_n300": 0.29337869095927394,
+   "L5_n300": 0.7252637792309045
+  }
+ },
+ "base_sessions": [
+  "2020-02-04_CO",
+  "2020-02-22_CO",
+  "2020-03-10_RD",
+  "2020-09-24_CO",
+  "2020-12-11_CO",
+  "2021-01-11_CO",
+  "2021-05-04_CO",
+  "2021-06-29_RD",
+  "2021-07-12_RD",
+  "2021-08-19_CO",
+  "2021-08-23_RD",
+  "2021-10-15_CO"
+ ]
+}

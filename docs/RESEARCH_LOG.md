@@ -499,3 +499,34 @@ recovery mostly reflects *decoder importance*, not where drift happens.
 **What survives (practical):** with 10–50 labelled trials, re-learning only the 32 channels the old decoder relies on
 most is slightly better than a full refit (+0.013 to +0.021 median R²), because fewer parameters are fitted. At n ≥ 100 the
 full refit is as good.
+
+## 2026-10-06 ~06:40 — Simulator calibrated (time split: LINK days < 700)
+
+`results/sim_calib_split/calibration.json`. 24-point Sobol search followed by Nelder–Mead; real-matched λ; alive-only
+silencing; failure rates from days < 700 (h_off = 0.0038/day, h_on = 0.0018/day). **Final loss 0.074**, against 0.663 for
+the mis-regularized run.
+
+Fit on a fresh random seed (ratio to own-day, L2 / L3 / L5):
+
+| gap | real | simulated |
+|---|---|---|
+| 1 d | 0.62 / 0.72 / 0.91 | 0.61 / 0.73 / 0.92 |
+| 7 d | 0.50 / 0.62 / 0.87 | 0.45 / 0.71 / 0.88 |
+| 30 d | 0.02 / 0.30 / 0.83 | 0.28 / 0.40 / 0.82 |
+| 120 d | −0.12 / 0.24 / 0.79 | −0.07 / 0.36 / 0.75 |
+| 480 d | −0.32 / 0.23 / 0.78 | −0.35 / 0.29 / 0.73 |
+
+The worst point is L2 at 30 d: the simulator decays too slowly around one month.
+
+**Fitted parameters:**
+- Instant (session-to-session) mixing s_mix0 = 0.96.
+- Slow mixing s_mix = 1.48 with τ_mix = 15 days.
+- Turnover rho: 0.04 instant, rising to 0.12 with τ = 360 days.
+
+Reading: most simulated drift is a large session-to-session component plus a fast (about 2-week) accumulating component,
+with little slow turnover. (The simulated mechanisms reproduce the measured statistics. Given the L5 caveat, this is a
+generative fit, not proof of the mechanism.)
+
+**Running now:**
+- `validate_sim.py`: held-out days ≥ 700, untargeted rungs and n = 20/50/100.
+- `sim_augment.py`: train on simulated futures; evaluated on days ≥ 700 only.
