@@ -1,0 +1,31 @@
+{
+ "n_pairs": 537,
+ "spearman_r2_logdays": -0.6727258143154359,
+ "kl_neural": {
+  "raw_spearman_with_r2": -0.34493346385675794,
+  "partial_given_logdays": -0.15899149123198852,
+  "spearman_with_logdays": 0.348860566044663
+ },
+ "kl_output": {
+  "raw_spearman_with_r2": -0.2245173516660238,
+  "partial_given_logdays": -0.16017142961246825,
+  "spearman_with_logdays": 0.1598445962418425
+ },
+ "kl_sum": {
+  "raw_spearman_with_r2": -0.3612049019514776,
+  "partial_given_logdays": -0.17472061918104861,
+  "spearman_with_logdays": 0.3574589162832242
+ },
+ "cv_days_only": {
+  "mae": 0.08478982731662951,
+  "spearman": 0.5993417737309705
+ },
+ "cv_kl_only": {
+  "mae": 0.11442679333058363,
+  "spearman": 0.13292411917224617
+ },
+ "cv_days+kl": {
+  "mae": 0.08964646732059711,
+  "spearman": 0.5830250127252616
+ }
+}
