@@ -54,10 +54,14 @@ def main():
     ap.add_argument("--max-train", type=int, default=0, help="subsample train sessions (0 = all)")
     ap.add_argument("--pairs-from", default=None, help="CSV with train/test/gap_target columns: evaluate exactly these pairs")
     ap.add_argument("--resume", action="store_true", help="skip pairs already in <out>/ladder.csv and append")
+    ap.add_argument("--base-alpha", type=float, default=None, help="ridge alpha of the day-i decoders (default 0.1)")
     ap.add_argument("--out", default="results/anatomy")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
 
+    if args.base_alpha is not None:
+        import ibci.anatomy as anatomy_mod
+        anatomy_mod.ALPHA = args.base_alpha
     link.build_cache(verbose=False)
     keys = link.list_sessions()
     sessions = [SessMeta(k) for k in keys]
