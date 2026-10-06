@@ -608,3 +608,28 @@ L2/own for α = 0.1 vs α = 1e4:
 This confirms the regularization finding inside the ladder.
 
 **Waiting on the owner:** a browser download of the BrainGate yield files (Dryad zip of README plus 14 `yield_*.tar.gz`, 5.3 GB).
+
+## 2026-10-06 ~08:00 — BrainGate 20-year human release: first 5 participants
+
+- The owner downloaded the Dryad zip in a browser (Dryad blocks automated downloads).
+- **The streamed zip was truncated.** It contains only README plus yield A1, S1, S2, S3 and T1 (392 MB) instead of 14 archives
+  (5.3 GB). The owner is downloading the remaining 9 yield archives individually.
+- Extracted to `D:/ibci-data/braingate/yield/`. The README text confirms the format: 10 ms bins; per-electrode rates at −3 to
+  −5.5 RMS; impedance in kΩ (only in some sessions); grid x/y on a 10×10 array; "spiking" means at least 2 Hz at −4.5 RMS, the same definition as ours.
+- `scripts/braingate_failure.py` → `results/braingate_failure` (368 sessions):
+
+| Array | Span (d) | Yield first → last (%) | Silenced / revived | Impedance trend (ρ) | Edge vs interior decline p |
+|---|---|---|---|---|---|
+| A1 | 252 | 81 → 55 | 68 / 44 | −0.27 | 0.32 |
+| S1 | 337 | 3 → 1 | 4 / 1 | — | 0.017 |
+| S2 | 458 | 1 → 6 | 1 / 0 | — | 0.93 |
+| S3 | 1,954 | 84 → 10 | 88 / 68 | −0.91 | 0.040 |
+| T1 | 277 | 65 → 86 | 17 / 11 | −0.93 | 0.38 |
+
+**Pooled so far:**
+- Revived/silenced = 0.70 (LINK monkey N: 23/31 = 0.74).
+- Median channel-level kurtosis 3.4.
+- Edge declines faster: Fisher-combined p = 0.041, median edge − interior slope −0.10/yr.
+- Impedance declines wherever it was measured.
+
+**Preliminary:** S1 and S2 had almost no active electrodes. The remaining 9 participants (T2, T3, T5–T11) hold most of the long-term data.
