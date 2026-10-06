@@ -975,3 +975,21 @@ was advised to reset the Dryad API credentials afterwards.
 - The overnight retention of about 0.73 is shared by all four subjects.
 - The human decays more slowly long-term.
 - Per-channel gains recover the human almost fully (0.81–0.96).
+
+## 2026-10-06 ~13:00 — Manuscript preparation: venue, template, decay summary
+
+- **Venue:** Nature Communications, the owner's suggestion, agreed. Brief saved to `docs/paper/STYLE_BRIEF.md`.
+- **Template:** Springer Nature LaTeX template (sn-jnl v3.1, `sn-nature`) in `manuscript/`; it compiles with MiKTeX.
+- **Packaging:** `pyproject.toml` (distribution `ibci-drift`), MIT licence, `CITATION.cff`, `.zenodo.json`.
+- **Figure 1** (`fig1_overview`): 2,833 sessions from 17 individuals, plus the analysis design.
+
+**Decay summary** (`scripts/decay_summary.py` → `results/decay_summary.csv`; cluster-bootstrap CIs):
+
+| Subject | Overnight retention | Time to 50% retention |
+| --- | --- | --- |
+| Monkey N | 0.73 [0.62, 0.78] | 8.1 d [3.7, 10.1] |
+| Monkey C | 0.72 [0.62, 0.78] | 9.2 d [4.6, 19.5] |
+| Monkey M | 0.77 [0.71, 0.85] | 33.9 d [9.5, 44.0] |
+| Human T6 | 0.73 [0.41, 0.87] | 125 d [56, 240] |
+
+**Headline:** the overnight drop is conserved (overlapping CIs), while the half-time varies from about 1 week to about 4 months.
