@@ -1,0 +1,70 @@
+calibration-period alpha scores {0.1: np.float64(0.068), 1: np.float64(0.068), 10: np.float64(0.068), 100: np.float64(0.073), 1000: np.float64(0.091), 10000.0: np.float64(0.141)} -> alpha 10000.0
+train 2022-01-10_CO done (5 rows, 5s)
+train 2022-01-14_CO done (9 rows, 10s)
+train 2022-01-20_CO done (13 rows, 16s)
+train 2022-01-31_CO done (17 rows, 21s)
+train 2022-03-18_CO done (20 rows, 27s)
+train 2022-04-08_RD done (24 rows, 32s)
+train 2022-04-18_CO done (29 rows, 38s)
+train 2022-06-10_CO done (31 rows, 42s)
+train 2022-07-27_RD done (34 rows, 48s)
+train 2022-08-08_CO done (37 rows, 52s)
+train 2022-08-25_RD done (41 rows, 58s)
+train 2022-08-31_RD done (45 rows, 63s)
+train 2022-09-07_CO done (49 rows, 68s)
+train 2022-09-19_CO done (51 rows, 72s)
+train 2022-09-21_CO done (54 rows, 76s)
+train 2022-10-27_CO done (55 rows, 81s)
+train 2022-11-02_RD done (59 rows, 86s)
+train 2023-01-13_RD done (61 rows, 92s)
+train 2023-01-23_RD done (65 rows, 97s)
+train 2023-02-14_RD done (68 rows, 103s)
+train 2023-03-14_RD done (71 rows, 108s)
+train 2023-04-17_RD done (73 rows, 114s)
+train 2023-06-08_RD done (74 rows, 119s)
+train 2023-06-12_RD done (76 rows, 124s)
+train 2023-06-13_RD done (77 rows, 129s)
+             base  ridge_reg   pert    sim  sim_reg  multi    own   n
+gap_target                                                           
+1           0.206      0.222  0.200  0.197    0.200  0.228  0.287   9
+7           0.180      0.213  0.181  0.191    0.197  0.229  0.335  20
+30          0.084      0.130  0.078  0.092    0.100  0.155  0.280  18
+120         0.069      0.122  0.065  0.073    0.080  0.138  0.303  18
+240         0.050      0.101  0.063  0.076    0.082  0.108  0.292  12
+{
+ "ridge_reg": {
+  "1": 0.0284,
+  "7": 0.0377,
+  "30": 0.0464,
+  "120": 0.0515,
+  "240": 0.0529
+ },
+ "pert": {
+  "1": 0.0019,
+  "7": -0.0046,
+  "30": 0.0023,
+  "120": 0.0006,
+  "240": 0.0017
+ },
+ "sim": {
+  "1": 0.0002,
+  "7": -0.0012,
+  "30": 0.0108,
+  "120": 0.0108,
+  "240": 0.0142
+ },
+ "sim_reg": {
+  "1": 0.004,
+  "7": 0.0071,
+  "30": 0.0163,
+  "120": 0.0182,
+  "240": 0.0224
+ },
+ "multi": {
+  "1": 0.034,
+  "7": 0.037,
+  "30": 0.0744,
+  "120": 0.0595,
+  "240": 0.0454
+ }
+}
