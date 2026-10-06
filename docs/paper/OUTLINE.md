@@ -4,13 +4,16 @@
 a calibrated simulator, with practical recipes for robust decoding*
 
 **Target venues:**
+
 - Primary: Journal of Neural Engineering or IEEE TNSRE (Q1).
 - Stretch: Nature Communications or Communications Engineering (multi-species, 20 human arrays, open simulator).
 - Companion option: NeurIPS Datasets & Benchmarks (simulator plus benchmark).
 
 ## Story in one paragraph
+
 Implanted BCIs degrade as recordings change. Using public multi-year data from 3 monkeys (2 labs) and 20 human Utah arrays
 (BrainGate, 14 participants), we show four things:
+
 1. Decoder decay under standard daily renormalization follows a broadly conserved time course. About 25% of performance is
    lost overnight and about half within a week, and the decoder is near useless by about 4 months.
 2. Label-free fixes (subspace alignment) and label-free health monitoring do not recover or predict the loss.
@@ -21,13 +24,14 @@ Implanted BCIs degrade as recordings change. Using public multi-year data from 3
    exposes that drift slows later in an implant's life.
 
 We turn the measurements into recipes:
+
 - **regularize for the future:** free in same-day accuracy, sizeable cross-day gains for SBP decoders;
 - **history-informed ridge-to-prior recalibration:** about 100 trials recover 80–90%, and harmful recalibrations disappear.
 
 ## Results sections and figures
 
 | # | Section | Key result | Figure / file |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | 1 | Data and protocol | LINK 3.4 y, 312 sessions; 000688 Chewie and Mihili; BrainGate 20 arrays and 2,289 sessions; FALCON H2 | schematic (to do) |
 | 2 | Conserved decoder decay | retention 0.73/0.54/0.19/0.04 (N); similar in C and M; LSTM more accurate, modestly more robust | `fig_anatomy` (+ replication panel, to do) |
 | 3 | Label-free fixes and monitoring fail | Procrustes and stable-channel alignment ≤ renormalization in 3 monkeys; 14 label-free features ≤ calendar (split-half 0.84) | pilot and ladder tables |
@@ -38,6 +42,7 @@ We turn the measurements into recipes:
 | 8 | Uses of the simulator | augmentation < regularization control (honest negative); benchmarking and policy evaluation | augment table |
 
 ## Pending items
+
 - **Human decoder drift:** BrainGate decoding T6 (124 sessions over 3.1 y). The owner will download it.
   The script `replicate_braingate_decoding.py` is ready.
 - **Simulator v2:** late-period calibration (running), then an age-dependent parameterization and validation.
@@ -47,11 +52,13 @@ We turn the measurements into recipes:
   - Expected new: the cross-species comparison, the Markov switching rates, abruptness, and the link to decoder drift and the simulator.
 
 ## Corrections made during analysis (keep in the paper's methods and limitations)
+
 - A free 96×96 input remap is retraining-equivalent, so it is not a structural test of drift.
 - k-channel recovery reflects decoder importance, not localized drift.
 - The simulator must be scored with exactly the same correction and regularization pipeline as the real data.
 
 ## Related work to position against
+
 - **Stability:** Sussillo 2016; Degenhart 2020; Gallego 2020; ADAN and CycleGAN (Ma 2023); NoMAD 2025; PRI-T (Wilson 2025,
   which includes a closed-loop drift simulator); CORP; SPINT; FALCON.
 - **Recording longevity:** Sponheim 2021; Hahn 2025/2026; Colachis 2021; Chen 2023; Barrese 2013/2016; Woeppel 2021;
