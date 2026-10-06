@@ -9,6 +9,7 @@ journal and, above all, be *useful to others in future* (high reuse and citation
 Owner trusts the agent to choose, then carry out the full work in this repo.
 
 **Constraints found:**
+
 - Repo was empty at start.
 - Hardware: RTX 3060 Ti 8 GB, 24 GB RAM, about 85 GB usable disk across G: and D: (see `CLAUDE.md`).
   This rules out training large neural foundation models from scratch and any topic that needs
@@ -16,6 +17,7 @@ Owner trusts the agent to choose, then carry out the full work in this repo.
 - No wet lab and no patients, so the work must use public data or simulation.
 
 **Research plan:** four parallel literature/data sweeps:
+
 1. Field landscape 2024–2026 and clinical bottlenecks.
 2. Inventory of public intracortical datasets (sizes, time spans, licences).
 3. ML state of the art for iBCI decoding (foundation models, recalibration, speech, low-power, robustness).
@@ -24,6 +26,7 @@ Owner trusts the agent to choose, then carry out the full work in this repo.
 Results will be saved under `docs/knowledge/`.
 
 **Early findings:**
+
 - DANDI API reachable. Exact sizes:
   - NLB: MC_Maze 000128 (0.69 GB), MC_RTT 000129 (0.05 GB), MC_Maze_Large/Medium/Small 000138/139/140
     (0.15/0.08/0.03 GB), Area2_Bump 000127 (1.82 GB).
@@ -37,6 +40,7 @@ Results will be saved under `docs/knowledge/`.
 ## 2026-10-05 (cont.) — Sweeps 1, 3 and 4 done; novelty checks
 
 Reports saved:
+
 - `docs/knowledge/01_landscape_and_bottlenecks.md`
 - `docs/knowledge/02_ml_state_of_the_art.md`
 - `docs/knowledge/03_electrodes_degradation_compression.md`
@@ -47,12 +51,14 @@ silently stopped working. Two of the three sweeps independently found **no work 
 label-free failure prediction for intracortical decoders.**
 
 **Saturated or crowded (avoid):**
+
 - Chasing Brain-to-Text word error rate.
 - Pretraining new foundation models (also impossible on 8 GB).
 - Spiking-network leaderboards on Indy/Loco.
 - New cross-session alignment methods, unless there is a new angle.
 
 **Novelty checks I ran myself:**
+
 - Europe PMC abstract queries (2026-10-05):
   - intracortical + BCI + uncertainty: 0 hits.
   - conformal + BCI/neural decoding: 1 hit, "From confidence to caution: conformal gating for cross-session
@@ -72,6 +78,7 @@ label-free failure prediction for intracortical decoders.**
   dimensionality, cross-day decoding, stability and continual learning. **No uncertainty and no label-free monitoring.**
 
 **Key data finding: LINK (DANDI 001201, CC-BY-4.0, 12.56 GB, 312 NWB sessions, 2020-01-27 to 2023-06-22).**
+
 - 96 channels of threshold crossings and spike-band power in 20 ms bins, finger position and velocity
   (2 degrees of freedom), and 375 trials per session.
 - The electrode table has a **per-session impedance column (`imp`)** that changes over time. The degradation
@@ -106,6 +113,7 @@ Datasets live under `D:/ibci-data` (env var `IBCI_DATA`).
 
 **DECISION (see `docs/decisions/0001-research-topic.md`):** *Knowing when an intracortical BCI decoder fails:
 label-free reliability monitoring across years of recordings.*
+
 - Primary data: LINK.
 - Replication: 000688.
 - Human: FALCON H2, plus BrainGate-20 if the owner downloads it.
@@ -128,13 +136,14 @@ collapse. Baseline shifts dominate, as the LINK paper also reports.
 **Renormalized decoder** (day-j z-scoring from day j's own *unlabelled* first 300 trials; the realistic deployment):
 
 | Days since training | 0 | 1 | 7 | 21 | 45–60 | 90–120 | 120–180 | >180 |
-|---|---|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Median R² | 0.30 | 0.21 | 0.20 | 0.14 | 0.11 | 0.05 | 0.01 | −0.05 |
 
 - R² drops about 30% overnight.
 - Elapsed days predicts R² strongly: Spearman ρ = −0.75 across all pairs and −0.56 within 60 days.
 
 **14 label-free features tested.** The pair-level shift and model features, and the hardware features:
+
 - input mean shift and standard-deviation shift;
 - principal-angle subspace shift;
 - bootstrap-ensemble disagreement;
@@ -146,6 +155,7 @@ collapse. Baseline shifts dominate, as the LINK paper also reports.
 - impedance log-ratio and dead-channel count.
 
 **Results:**
+
 - Partial Spearman with R² given log(days) is at most about 0.27 (output variance) and mostly under 0.1.
 - In time-blocked cross-validated prediction of R² (283 pairs, at most 60 days apart):
   - days only: MAE 0.064;
@@ -156,6 +166,7 @@ collapse. Baseline shifts dominate, as the LINK paper also reports.
 - Detecting "unexpectedly bad days" (residual below −1 SD from the time curve): AUROC 0.50–0.58 for every feature.
 
 **Is the leftover variation just noise?** No.
+
 - Split-half reliability of the time-residuals, using alternating *pairs* of trials:
   r = 0.72, so Spearman–Brown reliability is **0.84**.
 - (Odd/even single-trial splits gave a negative correlation. That is an artifact: center-out trials alternate
@@ -176,11 +187,13 @@ The owner went to sleep and authorised full autonomy. Commits must be authored b
 co-author trailer; see `CLAUDE.md`.
 
 **Housekeeping (owner-approved):**
+
 - Stopped EA Desktop, NVIDIA Broadcast and qBittorrent. qBittorrent was saturating the uplink and throttling
   downloads: DANDI throughput went from about 0.03–0.18 to about 2.2–2.7 MB/s. *The owner should restart qBittorrent if needed.*
 - EABackgroundService needs admin rights, so it was left running.
 
 **Code added:**
+
 - `src/ibci/linear.py`: lag decoders, ridge, ridge-to-prior, CV alpha.
 - `src/ibci/anatomy.py`: oracle-ladder rungs.
 - `scripts/drift_anatomy.py`: ladder over session pairs at target gaps, and data-efficiency curves.
@@ -198,13 +211,14 @@ co-author trailer; see `CLAUDE.md`.
 Median R² at n = 300 labelled trials:
 
 | gap (days) | L0 fixed | L2 renorm | L3 gains | L5 full remap | L6p ridge-to-prior | own |
-|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- |
 | 1 | −0.62 | 0.24 | 0.26 | 0.30 | 0.33 | 0.33 |
 | 14 | −2.94 | 0.19 | 0.22 | 0.28 | 0.30 | 0.29 |
 | 120 | −1.13 | 0.06 | 0.12 | 0.19 | 0.28 | 0.28 |
 | 480 | −2.46 | −0.15 | 0.04 | 0.12 | 0.26 | 0.25 |
 
 What this shows:
+
 - Per-channel gain changes explain little of the drift loss (about 20–40% of the loss beyond renorm).
 - A full linear input remap in front of the frozen decoder recovers about 60–75%.
 - At long gaps, a large share needs a *changed decoder*.
@@ -216,7 +230,7 @@ What this shows:
 random *distant* channels (local1 vs far1, 704 parameters):
 
 | gap (days) | local1 | far1 |
-|---|---|---|
+| --- | --- | --- |
 | 1 | 0.224 | 0.222 |
 | 7 | 0.230 | 0.218 |
 | 30 | 0.186 | 0.167 |
@@ -226,6 +240,7 @@ random *distant* channels (local1 vs far1, 704 parameters):
 So locality has a weak advantage, and parameter count dominates. Needs the full data and paired tests before any claim.
 
 **Interim channel health** (`results/archive/channel_health_partial`; first 470 days, 77 sessions):
+
 - Of 40 initially active channels (>2 Hz), 25 "died" (3 or more consecutive sessions below 2 Hz). Median death day was 151, and 8 died then revived.
 - Session-to-session log threshold-crossing changes are heavy-tailed (excess kurtosis 8.6; 11% of changes have |Δlog| > 1), so abrupt events are common.
 - Neighbouring electrodes have more similar decline slopes than distant pairs (Mann–Whitney p = 3e-10).
@@ -239,6 +254,7 @@ So locality has a weak advantage, and parameter count dominates. Needs the full 
 ## 2026-10-06 ~01:15 — LINK fully downloaded (312/312); electrode failure results on all 3.4 years
 
 **Ladder fixes before the full runs:**
+
 1. The Procrustes rotation was applied in the wrong direction (Q must be Rᵀ). This made the latent rungs worse than nothing.
 2. λ is now chosen by k-fold CV over contiguous trial blocks, using an eigendecomposition per fold. The selected λ values are logged.
 3. Grids were widened; λ was hitting the grid edge.
@@ -251,7 +267,7 @@ Remap L-BFGS converges in about 0.1 s regardless of the iteration count (15–12
 **Channel health** (`scripts/channel_health.py` → `results/channel_health`; 312 sessions over 1,242 days):
 
 | Measure | Year 0 | Year 1 | Year 2 | Year 3 |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | Median impedance (kΩ) | 302 | 248 | 192 | 171 |
 | Active channels (>2 Hz) | 30 | 23 | 18 | 18 |
 | Tuned channels (CV R² > 0.05, 100 ms-smoothed SBP) | 12 | 8 | 8 | 7.5 |
@@ -262,7 +278,7 @@ Remap L-BFGS converges in about 0.1 s regardless of the iteration count (15–12
 - **Edge vs interior, within each array** (log threshold-crossing slope per year; `results/channel_health/channel_slopes.csv`):
 
 | Array | Edge | Interior | Mann–Whitney p |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Medial | −0.27 (n = 28) | −0.18 (n = 36) | 0.046 (permutation of the median: 0.12) |
 | Lateral | −0.12 (n = 14) | +0.04 (n = 18) | 0.0001 |
 
@@ -272,6 +288,7 @@ Remap L-BFGS converges in about 0.1 s regardless of the iteration count (15–12
     2025), while broadband power declines uniformly. One animal, so this is suggestive.
 
 **Failure process** (`scripts/failure_stats_xdata.py` → `results/failure_xdata`, LINK):
+
 - Two-state alive/silent Markov rates: h_off = 0.0031/day and h_on = 0.0008/day. These now set the simulator's failure
   parameters, independently of the ladder calibration.
 - Silencing rate: 0.66 per channel-year. Active channels went from 36 to 18 (−4.9 per year).
@@ -290,7 +307,7 @@ Remap L-BFGS converges in about 0.1 s regardless of the iteration count (15–12
 LSTM with hidden size 256 and a 20-bin window). Median R²:
 
 | gap (days) | L2 renorm | L3 gains | L5 remap | L6p fine-tune to prior | own |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | 1 | 0.21 | 0.29 | 0.30 | 0.34 | 0.34 |
 | 30 | 0.18 | 0.28 | 0.32 | 0.40 | 0.42 |
 | 120 | 0.09 | 0.27 | 0.35 | 0.41 | 0.44 |
@@ -304,6 +321,7 @@ LSTM with hidden size 256 and a 20-bin window). Median R²:
   established.** A matched ridge run on the exact LSTM pairs is queued (`drift_anatomy.py --pairs-from`).
 
 **FALCON H2, human T5** (`results/failure_xdata_h2`):
+
 - The 2023 sessions show session-wide rate inflation, up to a median of 115 Hz per channel on 2023-10-09. That is a
   threshold or preprocessing change, so a dataset-agnostic rule now drops sessions whose median channel rate exceeds 3× the median over sessions.
 - The held-out calibration files are about 80 s snippets, so only the 20 full held-in sessions are used (2022-05 to 2022-12, 211 days).
@@ -329,7 +347,7 @@ The simulator calibration (`results/sim_calib_split`) uses only these rates and 
 **Median R²:**
 
 | gap (days) | 1 | 7 | 30 | 120 | 480 | 900 |
-|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- |
 | own-day | 0.29 | 0.29 | 0.28 | 0.29 | 0.29 | 0.29 |
 | L2 renorm (no labels) | 0.20 | 0.15 | 0.05 | 0.01 | −0.10 | −0.14 |
 | L3 + channel gains (96 parameters) | 0.22 | 0.17 | 0.11 | 0.08 | 0.06 | 0.07 |
@@ -339,7 +357,7 @@ The simulator calibration (`results/sim_calib_split`) uses only these rates and 
 **Retention and recovery** (median [95% CI]):
 
 | | 1 day | 900 days |
-|---|---|---|
+| --- | --- | --- |
 | L2/own (renorm retention) | 0.73 [0.62, 0.78] | −0.52 |
 | L5/own (remap retention) | 0.93 | 0.80 [0.76, 0.83] |
 
@@ -363,7 +381,7 @@ history (the α maximizing median R² over pairs from other training sessions; l
 Median R²:
 
 | n trials | renorm | CV | history | history by gap | oracle |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | 10 | 0.052 | 0.089 | 0.111 | 0.103 | 0.114 |
 | 20 | 0.052 | 0.129 | 0.133 | 0.136 | 0.142 |
 | 50 | 0.052 | 0.184 | 0.183 | 0.187 | 0.197 |
@@ -371,7 +389,7 @@ Median R²:
 Share of pairs where recalibration is **worse than doing nothing** (by more than 0.01):
 
 | n trials | CV | history |
-|---|---|---|
+| --- | --- | --- |
 | 10 | 10.5% | 1.2% |
 | 20 | 8.1% | 0% |
 
@@ -380,6 +398,7 @@ At 1 day with 10 trials, CV gives 0.103, history gives 0.193, and renorm gives 0
 **Practical recipe:** borrow the shrinkage strength from past sessions; harmful recalibrations essentially disappear.
 
 **Matched LSTM vs ridge** (same 79 pairs; `results/anatomy_nn/matched_vs_ridge.csv`; cluster-bootstrap CIs):
+
 - Own-day: the LSTM is higher by 0.128 [0.111, 0.141] (higher on 100% of training sessions).
 - Renormalized, absolute: the LSTM is higher by 0.056 [0.043, 0.073].
 - Relative retention (L2/own): the LSTM is higher by 0.072 [0.010, 0.114], so it is *modestly* more drift-robust.
@@ -420,6 +439,7 @@ regularizer (shrink toward the identity remap), not a constrained "channel re-mi
 - The 03:50 claim "drift is predominantly channel-level linear re-mixing" is **withdrawn**.
 
 **What stands:**
+
 - The renormalization decay curve.
 - Label-free Procrustes alignments don't help.
 - L3 per-channel gains (96 parameters, genuinely constrained) recover 14–50% of the loss.
@@ -428,6 +448,7 @@ regularizer (shrink toward the identity remap), not a constrained "channel re-mi
 - The simulator calibration targets the L5 *statistic*, which is still well defined, but it must not be read as "mixing only."
 
 **New, properly constrained anatomy** (next):
+
 1. Rank-r input remaps M = I + U Vᵀ with r = 1, 2, 4, 8. These confine the decoder change to an r-dimensional channel subspace.
 2. Re-learning only k channels' weights (k = 4–96), with the others frozen. Channels are chosen by:
    - supervised weight change (an upper bound);
@@ -442,7 +463,7 @@ The question becomes: **how many degrees of freedom (subspace dimensions, or ele
 sorted units summed per electrode (192 channels), cursor kinematics. Chewie: 145 pairs; Mihili: 44 pairs.
 
 | gap | ret L2 (N / C / M) | ret L3 gains (N / C / M) |
-|---|---|---|
+| --- | --- | --- |
 | 1 d | 0.73 / 0.72 / 0.77 | 0.78 / 0.81 / 0.84 |
 | 7 d | 0.54 / 0.56 / 0.61 | 0.63 / 0.72 / 0.70 |
 | 30 d | 0.19 / 0.25 / 0.55 | 0.43 / 0.51 / 0.69 |
@@ -460,7 +481,7 @@ sorted units summed per electrode (192 channels), cursor kinematics. Chewie: 145
 Share of the drift loss recovered, relative to full ridge-to-prior with 300 trials:
 
 | channels re-learned (k of 96) | 8 | 16 | 32 | 64 |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | supervised selection (largest weight change) | 0.56 | 0.74 | 0.90 | 0.98 |
 | **label-free** (mean shift + log-sd ratio) | 0.31 | 0.46 | 0.68 | 0.86 |
 | label-free (correlation-profile change) | 0.17 | 0.29 | 0.40 | 0.78 |
@@ -482,7 +503,7 @@ All refits come from one Gram matrix per labelled set, verified identical to a d
 Median R² by labelled trials n:
 
 | n | renorm | full refit | stats k=32 | importance k=32 | wstats k=32 | random k=32 |
-|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- |
 | 10 | 0.052 | 0.111 | 0.085 | **0.124** | 0.113 | 0.090 |
 | 20 | 0.052 | 0.133 | 0.127 | **0.154** | 0.149 | 0.101 |
 | 50 | 0.052 | 0.183 | 0.136 | **0.199** | 0.196 | 0.121 |
@@ -509,7 +530,7 @@ the mis-regularized run.
 Fit on a fresh random seed (ratio to own-day, L2 / L3 / L5):
 
 | gap | real | simulated |
-|---|---|---|
+| --- | --- | --- |
 | 1 d | 0.62 / 0.72 / 0.91 | 0.61 / 0.73 / 0.92 |
 | 7 d | 0.50 / 0.62 / 0.87 | 0.45 / 0.71 / 0.88 |
 | 30 d | 0.02 / 0.30 / 0.83 | 0.28 / 0.40 / 0.82 |
@@ -519,6 +540,7 @@ Fit on a fresh random seed (ratio to own-day, L2 / L3 / L5):
 The worst point is L2 at 30 d: the simulator decays too slowly around one month.
 
 **Fitted parameters:**
+
 - Instant (session-to-session) mixing s_mix0 = 0.96.
 - Slow mixing s_mix = 1.48 with τ_mix = 15 days.
 - Turnover rho: 0.04 instant, rising to 0.12 with τ = 360 days.
@@ -528,6 +550,7 @@ with little slow turnover. (The simulated mechanisms reproduce the measured stat
 generative fit, not proof of the mechanism.)
 
 **Running now:**
+
 - `validate_sim.py`: held-out days ≥ 700, untargeted rungs and n = 20/50/100.
 - `sim_augment.py`: train on simulated futures; evaluated on days ≥ 700 only.
 
@@ -537,7 +560,7 @@ generative fit, not proof of the mechanism.)
 sessions after day 700; 77 pairs; daily renormalization. Paired gain over base ridge (α = 0.1), cluster-bootstrap 95% CI:
 
 | Method | Gain |
-|---|---|
+| --- | --- |
 | Ad hoc perturbations (Sussillo-style: channel dropout plus gain noise) | +0.000 [−0.003, +0.002] |
 | Simulated-futures augmentation | +0.010 [+0.005, +0.013]; +0.012 at gaps ≥ 30 d; beats perturbations by +0.005 [0.001, 0.019] |
 | **Ridge with α = 10⁴ (chosen on the calibration period)** | **+0.042 [+0.033, +0.050]**, positive for 100% of sessions |
@@ -552,7 +575,7 @@ decoders are untested.
 40 training sessions). Median R² by α:
 
 | gap | α = 0.1 (LINK default) | α = 1e3 | α = 1e4 | α = 3e4 | α = 1e5 |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | same day | 0.304 | 0.307 | **0.305** | 0.268 | 0.178 |
 | 1 d | 0.267 | 0.272 | 0.275 | 0.242 | 0.166 |
 | 7 d | 0.143 | 0.156 | 0.178 | 0.165 | 0.120 |
@@ -573,7 +596,7 @@ simulated futures compared with the real ladder for pairs with training day ≥ 
 Median |simulated − real| (ratio to own-day):
 
 | | targeted rungs | untargeted rungs | data budgets n = 20/50/100 |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | calibrated simulator | 0.12 | 0.06 | 0.11 |
 | no-drift reference | 0.37 | 0.27 | 0.39 |
 
@@ -581,6 +604,7 @@ Median |simulated − real| (ratio to own-day):
 - It tracks untargeted rungs well. For example, ridge-to-prior L6p at n = 100: real 0.80–0.90 vs simulated 0.65–0.85.
 
 **Systematic miss:**
+
 - In the held-out later period, real decoders decay *more slowly* than in the calibration period.
 - Real L2 retention is 0.80 at 1 d, 0.32 at 30 d, 0.17 at 120 d and −0.04 at 480 d.
 - The simulator (fitted on days < 700) predicts 0.59, −0.16, −0.10 and −0.29.
@@ -588,7 +612,7 @@ Median |simulated − real| (ratio to own-day):
 **Direct check in the real data** (L2/own by implant age of the training session):
 
 | gap | year 1 | year 2 | year 3 | year 3.5 |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | 30 d | 0.38 | −0.02 | 0.48 | 0.15 |
 | 120 d | −0.12 | −0.12 | 0.18 | 0.17 |
 
@@ -601,7 +625,7 @@ Median |simulated − real| (ratio to own-day):
 L2/own for α = 0.1 vs α = 1e4:
 
 | gap | 1 d | 7 d | 30 d | 120 d | 480 d |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | α = 0.1 | 0.71 | 0.52 | 0.18 | 0.05 | −0.39 |
 | α = 1e4 | 0.79 | 0.62 | 0.41 | 0.29 | −0.01 |
 
@@ -619,7 +643,7 @@ This confirms the regularization finding inside the ladder.
 - `scripts/braingate_failure.py` → `results/braingate_failure` (368 sessions):
 
 | Array | Span (d) | Yield first → last (%) | Silenced / revived | Impedance trend (ρ) | Edge vs interior decline p |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | A1 | 252 | 81 → 55 | 68 / 44 | −0.27 | 0.32 |
 | S1 | 337 | 3 → 1 | 4 / 1 | — | 0.017 |
 | S2 | 458 | 1 → 6 | 1 / 0 | — | 0.93 |
@@ -627,6 +651,7 @@ This confirms the regularization finding inside the ladder.
 | T1 | 277 | 65 → 86 | 17 / 11 | −0.93 | 0.38 |
 
 **Pooled so far:**
+
 - Revived/silenced = 0.70 (LINK monkey N: 23/31 = 0.74).
 - Median channel-level kurtosis 3.4.
 - Edge declines faster: Fisher-combined p = 0.041, median edge − interior slope −0.10/yr.
@@ -642,7 +667,7 @@ T11) passed testzip and was extracted. Zip 3 (T5–T9) is still downloading; a w
 `results/braingate_failure` (per array):
 
 | Array | Span (d) | Silenced / revived | Impedance ρ vs day | Edge vs interior p |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | T2 | 914 | 67 / 50 | −0.98 (1,394 → 83 kΩ) | 0.97 |
 | T3 | 399 | 0 / 0 (no active channels) | −0.98 (607 → 118 kΩ) | 0.13 |
 | T10 MFG | 329 | 59 / 56 | −0.70 | 0.88 |
@@ -652,12 +677,14 @@ T11) passed testzip and was extracted. Zip 3 (T5–T9) is still downloading; a w
 | (plus A1, S1, S2, S3, T1 as before) | | | | |
 
 **Pooled over 11 arrays:**
+
 - Revived/silenced = **0.78** (monkey N 0.74).
 - Median channel-level kurtosis 4.1.
 - Edge electrodes decline faster in 5/11 arrays at p < 0.05. **Fisher-combined p = 0.0012**; median edge − interior slope = −0.08 log-rate per year.
 - Impedance declines in every array with measurements.
 
 **The electrode failure process replicates across species:**
+
 - Transient silencing.
 - Abrupt single-electrode changes.
 - Faster loss of spiking at array edges, consistent with micromotion strain (Forrest 2025).
@@ -669,12 +696,14 @@ Zip 3 (T5, T6, T7) passed testzip and was extracted. T8 and T9 are still downloa
 `results/braingate_failure` now covers 16 arrays with yield files from 2,000+ sessions.
 
 **Pooled:**
+
 - Revived/silenced = **0.78**.
 - Median channel-level kurtosis 3.6.
 - Impedance falls in every array with measurements (ρ mostly −0.82 to −0.99).
 - T5 over 7.3 years: lateral yield 60 → 30%, medial 51 → 40%.
 
 **Edge effect:**
+
 - Individually significant in 6/16 arrays. Fisher-combined p = 2.3e-6; median edge − interior slope = −0.064 log-rate per year.
 - In arrays with at least 10 initially active channels: the edge declines faster in **10/13** (sign test p = 0.046; Fisher p = 5.9e-6).
 - With LINK's 2/2 monkey arrays, that is **12 of 15 arrays across species**.
@@ -685,6 +714,7 @@ Zip 4 (T8, T9) passed testzip and was extracted. Every yield archive is now in `
 The `.tar.gz` copies were deleted after extraction; the owner's zips in `D:/Downloads` remain as a backup.
 
 `results/braingate_failure/per_array.csv` and `pooled.json`:
+
 - **Transient silencing:** 584 of 730 silenced electrodes later revived (**0.80**). Monkey N: 0.74.
 - **Abrupt changes:** median channel-level kurtosis 3.6.
 - **Switching rates:** median h_off = 0.0098/day, h_on = 0.0065/day (monkey N: 0.0031 and 0.0008).
@@ -696,6 +726,7 @@ The `.tar.gz` copies were deleted after extraction; the owner's zips in `D:/Down
 - **Long spans:** T5, 7.3 years (yield 60 → 30% lateral, 51 → 40% medial); S3, 5.4 years (84 → 10%); T11, 4.6 years; T6, 3.2 years.
 
 **Conclusion:** the electrode-failure process measured in one monkey generalizes to 20 human arrays:
+
 - channel loss is mostly transient;
 - abrupt single-electrode changes are common;
 - spiking is lost faster at array edges (consistent with micromotion strain);
@@ -710,7 +741,7 @@ same-day median R² is within 1% of the best (chosen per subject, using same-day
 from `results/reg_tradeoff/rule_across_subjects.csv`, with cluster-bootstrap CIs:
 
 | Subject | Rule α | Same day | 1 d | 7 d | 30 d | 120 d | 480 d |
-|---|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- | --- |
 | N (LINK, SBP) | 1e4 | +0.003 | +0.021 | +0.035 | +0.042 | +0.056 | +0.090 |
 | C (sorted units) | 1e4 | +0.002 | +0.008 | +0.012 | +0.001 (n.s.) | +0.031 | +0.032 |
 | M (sorted units) | 1e3 | +0.000 | +0.001 | +0.000 | +0.001 | +0.001 | +0.001 |
@@ -718,3 +749,28 @@ from `results/reg_tradeoff/rule_across_subjects.csv`, with cluster-bootstrap CIs
 **Conclusion:** regularizing for the future never costs same-day accuracy and always helps cross-day in direction.
 The effect is large for dense SBP features (LINK), moderate for Chewie, and negligible for Mihili. Report it as a
 recommended default with a dataset-dependent effect size, not a universal large gain.
+
+## 2026-10-06 ~10:50 — Prior-art alert from the owner: Pun et al. 2024 (MINDFUL); systematic claim-by-claim check started
+
+The owner found **Pun et al., *Communications Biology* 2024**, "Measuring instability in chronic human intracortical neural
+recordings towards stable, long-term brain-computer interfaces" (PMC11494208).
+
+**What it does:**
+
+- Data: 2 BrainGate humans (T11: 15 sessions over 142 days; T5: 6 sessions over 28 days), with fixed decoders.
+- Method: a label-free instability score (MINDFUL; KL divergence of neural features plus decoder outputs in 60 s windows) that correlates with
+  decoder angle error (r = 0.91 for T11, 0.59 for T5).
+- Not covered: electrode-level failure, a simulator, regularization or recalibration budgets, monkeys or multiple labs.
+
+**Relevance:**
+
+- It is **prior art for the abandoned topic 1** (label-free monitoring). The evening novelty sweep missed it; the dataset
+  sweep listed its data (Dryad dryad.n2z34tn5s) but not its claim. The pivot made it moot for the main paper.
+- It **overlaps with one sub-result** (label-free statistics do not predict performance beyond elapsed time), and the two
+  apparently conflict. Pun et al. report raw correlations; our pilot found that the predictive information disappears once
+  elapsed time is controlled.
+
+**New analysis to add:** compute a MINDFUL-style KL-divergence score on LINK and BrainGate T6, and on MINDFUL's own public
+data, then report raw vs time-partialled correlations with performance. This is a clean, publishable test whichever way it comes out.
+
+**Action:** a sub-agent is running a rigorous claim-by-claim prior-art check (C1–C7) before any writing.
