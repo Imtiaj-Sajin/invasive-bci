@@ -1,0 +1,70 @@
+[
+ {
+  "participant": "T11",
+  "n_days": 15,
+  "n_windows": 145,
+  "pearson_ae_days": 0.8417242230553602,
+  "kl_neural": {
+   "pearson_with_ae": 0.818701949428411,
+   "partial_given_days": 0.36530937399840246,
+   "pearson_with_days": 0.8487359869223553
+  },
+  "kl_output": {
+   "pearson_with_ae": 0.8127964078770562,
+   "partial_given_days": 0.7325770679551978,
+   "pearson_with_days": 0.5842897397541394
+  },
+  "log_kl": {
+   "pearson_with_ae": 0.6037605498692441,
+   "partial_given_days": -0.09157049039837241,
+   "pearson_with_days": 0.7557539003999669
+  },
+  "day_level": {
+   "pearson_kl_ae": 0.5958443027141638,
+   "pearson_days_ae": 0.827334324058546,
+   "partial_kl_ae_given_days": -0.09183267545724645
+  },
+  "lodo_mae": {
+   "days": 17.118916238936826,
+   "kl": 28.980469563879435,
+   "days+kl": 17.482205288605037,
+   "days+kl_neural": 17.4822011186873,
+   "days+kl_output": 11.866653455902108,
+   "kl_output": 12.810071765863164
+  }
+ },
+ {
+  "participant": "T5",
+  "n_days": 6,
+  "n_windows": 73,
+  "pearson_ae_days": 0.16754174456208265,
+  "kl_neural": {
+   "pearson_with_ae": 0.5003759815264465,
+   "partial_given_days": 0.4852632692773522,
+   "pearson_with_days": 0.17542032105064737
+  },
+  "kl_output": {
+   "pearson_with_ae": 0.7900365295218004,
+   "partial_given_days": 0.7831402750127316,
+   "pearson_with_days": 0.21496446936854835
+  },
+  "log_kl": {
+   "pearson_with_ae": 0.42640732146251287,
+   "partial_given_days": 0.3984062563664836,
+   "pearson_with_days": 0.3427208865376428
+  },
+  "day_level": {
+   "pearson_kl_ae": 0.6052426974287797,
+   "pearson_days_ae": 0.19349040356769134,
+   "partial_kl_ae_given_days": 0.5957059810923911
+  },
+  "lodo_mae": {
+   "days": 32.93237549501799,
+   "kl": 19.94295573089122,
+   "days+kl": 38.308049987817384,
+   "days+kl_neural": 38.32486656836726,
+   "days+kl_output": 20.78261000282757,
+   "kl_output": 15.03648704900079
+  }
+ }
+]

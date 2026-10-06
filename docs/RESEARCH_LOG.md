@@ -854,3 +854,62 @@ it needs a browser download.
 
 The MINDFUL public data is being downloaded through the Dryad API with the owner's token (not stored anywhere). The owner
 was advised to reset the Dryad API credentials afterwards.
+
+## 2026-10-06 ~12:00 — MINDFUL re-analysis on its own public data (closed loop): a refined, more nuanced C2b
+
+- Data: Dryad dryad.n2z34tn5s, 412 MB, downloaded through the Dryad API with the owner's token (not stored).
+- Script: `scripts/mindful_reanalysis.py` → `results/mindful_reanalysis`.
+- Setup: fixed online decoder, closed-loop cursor blocks; non-overlapping 60 s windows; KL against day 1 (the reference).
+  - Neural features: top-10 PCs of log SBP for T11, or sqrt threshold crossings for T5 (no SBP in its release).
+  - Decoder output: online velocity.
+  - Performance: median angular error (AE) per window.
+
+**T11** (15 days, 145 windows):
+
+- AE vs elapsed days: r = 0.84.
+
+| | Raw r with AE | Partial given days |
+| --- | --- | --- |
+| KL neural | 0.82 | 0.37 |
+| KL output | 0.81 | 0.73 |
+| Sum | 0.60 | −0.09 |
+
+- Leave-one-day-out MAE:
+
+| Model | MAE |
+| --- | --- |
+| days | 17.1° |
+| days + KL neural | 17.5° |
+| **days + KL output** | **11.9°** |
+| KL output alone | 12.8° |
+
+**T5** (6 days, 73 windows; non-monotonic, with a recovery):
+
+- AE vs days: r = 0.17.
+
+| | Raw r | Partial given days |
+| --- | --- | --- |
+| KL neural | 0.50 | 0.49 |
+| KL output | 0.79 | 0.78 |
+
+- Leave-one-day-out MAE:
+
+| Model | MAE |
+| --- | --- |
+| days | 32.9° |
+| days + KL neural | 38.3° |
+| days + KL output | 20.8° |
+| **KL output alone** | **15.0°** |
+
+**Refined conclusion** (replaces the blanket "label-free adds nothing beyond time"):
+
+1. **Neural-feature instability metrics mostly track elapsed time.** This holds for our offline LINK analysis (partial ρ ≈ −0.16,
+   no CV gain) and for MINDFUL's T11 (partial 0.37, no gain in leave-one-day-out). They are no better than a calendar for prediction.
+2. **In closed-loop use, decoder-output statistics carry genuine information beyond elapsed time:** 30–55% lower
+   leave-one-day-out error in both participants. This is plausibly because the user's corrective behaviour against a degrading
+   decoder shows up in the outputs. It is a symptom detector, which is fine for triggering recalibration.
+   Consistent with our pilot, where output-based features were the strongest label-free signals.
+3. **Practical guidance:** monitor decoder outputs during closed-loop use, and do not rely on neural-only drift scores.
+   Report time-partialled statistics.
+
+**Credit:** MINDFUL's decoder-output component is the useful part. The raw correlation of the neural component is largely a time confound.
