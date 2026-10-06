@@ -795,3 +795,33 @@ Late fit on a fresh seed, real vs simulated L2/own: 0.80 vs 0.71 at 1 d, 0.32 vs
 
 **Conclusion:** drift is smaller and slower in the mature implant, while electrode switching is about the same. Shipped as presets:
 `sim.load_preset("early" | "late")` (`src/ibci/sim_presets.json`); see `docs/SIMULATOR.md`.
+
+## 2026-10-06 ~11:20 — MINDFUL-style instability score vs elapsed time (LINK)
+
+`scripts/mindful_test.py` → `results/mindful_test`. For all 537 anatomy pairs we computed Gaussian KL divergences, day j vs day i:
+
+- neural features on day i's top-10 PCs, with per-day z-scoring;
+- decoder outputs.
+
+| Predictor | Raw Spearman with R² | Partial given log(days) |
+| --- | --- | --- |
+| log(days) | −0.67 | — |
+| KL neural | −0.34 | −0.16 |
+| KL output | −0.22 | −0.16 |
+| KL sum | −0.36 | −0.17 |
+
+Time-blocked cross-validated prediction of R², MAE:
+
+| Predictors | MAE |
+| --- | --- |
+| days only | 0.085 |
+| KL only | 0.114 |
+| days + KL | 0.090 |
+
+**Conclusion:** a MINDFUL-style score carries some real information (partial ρ about −0.17), but about half of its raw correlation
+with performance is elapsed time, and it does not improve prediction beyond the calendar.
+
+**Caveat:** Pun et al. (2024) used closed-loop human sessions with a fixed decoder and 60 s windows. The fair claim is that raw
+instability–performance correlations across days are substantially confounded by elapsed time, and should be reported
+alongside time-partialled values. A re-test on MINDFUL's own public data (Dryad dryad.n2z34tn5s, 0.41 GB) would be ideal;
+it needs a browser download.
