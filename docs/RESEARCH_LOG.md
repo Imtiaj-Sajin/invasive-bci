@@ -564,3 +564,47 @@ decoders are untested.
 - Same-day CV is flat between α = 0.1 and 10⁴, so it gives no reason to choose the larger value; hence small defaults.
 - **Simple rule:** choose the largest α that keeps same-day R² within about 1%.
 - Note: the anatomy ladder used α = 0.1 base decoders, so its absolute decay numbers describe that common default.
+
+## 2026-10-06 ~07:40 — Simulator validation on held-out time; drift is slower later in the implant's life
+
+**Validation** (`scripts/validate_sim.py` → `results/sim_validation`). 10 base sessions from days ≥ 700; full ladder on
+simulated futures compared with the real ladder for pairs with training day ≥ 700.
+
+Median |simulated − real| (ratio to own-day):
+
+| | targeted rungs | untargeted rungs | data budgets n = 20/50/100 |
+|---|---|---|---|
+| calibrated simulator | 0.12 | 0.06 | 0.11 |
+| no-drift reference | 0.37 | 0.27 | 0.39 |
+
+- **The simulator is 3–4× closer to reality than a no-drift null.**
+- It tracks untargeted rungs well. For example, ridge-to-prior L6p at n = 100: real 0.80–0.90 vs simulated 0.65–0.85.
+
+**Systematic miss:**
+- In the held-out later period, real decoders decay *more slowly* than in the calibration period.
+- Real L2 retention is 0.80 at 1 d, 0.32 at 30 d, 0.17 at 120 d and −0.04 at 480 d.
+- The simulator (fitted on days < 700) predicts 0.59, −0.16, −0.10 and −0.29.
+
+**Direct check in the real data** (L2/own by implant age of the training session):
+
+| gap | year 1 | year 2 | year 3 | year 3.5 |
+|---|---|---|---|---|
+| 30 d | 0.38 | −0.02 | 0.48 | 0.15 |
+| 120 d | −0.12 | −0.12 | 0.18 | 0.17 |
+
+- Year 3 at 120 d: 0.18, 95% CI [0.03, 0.31]. Year 1: −0.12, CI [−0.87, 0.07].
+- Not monotonic (year 2 is worst), but long-gap drift is slower in years 3+ than in years 1–2.
+- **The drift process is itself non-stationary over the implant's life.**
+- Next simulator version: make the drift rates depend on implant age (e.g. per-year calibration, or a parametric age term).
+
+**α = 10⁴ base decoders in the ladder** (`results/anatomy_alpha1e4`; same 150 pairs as `drift_dof`).
+L2/own for α = 0.1 vs α = 1e4:
+
+| gap | 1 d | 7 d | 30 d | 120 d | 480 d |
+|---|---|---|---|---|---|
+| α = 0.1 | 0.71 | 0.52 | 0.18 | 0.05 | −0.39 |
+| α = 1e4 | 0.79 | 0.62 | 0.41 | 0.29 | −0.01 |
+
+This confirms the regularization finding inside the ladder.
+
+**Waiting on the owner:** a browser download of the BrainGate yield files (Dryad zip of README plus 14 `yield_*.tar.gz`, 5.3 GB).

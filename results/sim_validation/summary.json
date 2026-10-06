@@ -1,0 +1,76 @@
+{
+ "summary": [
+  {
+   "kind": "nodrift",
+   "group": "efficiency",
+   "median": 0.385,
+   "mean": 0.379,
+   "count": 60
+  },
+  {
+   "kind": "nodrift",
+   "group": "targeted",
+   "median": 0.373,
+   "mean": 0.421,
+   "count": 15
+  },
+  {
+   "kind": "nodrift",
+   "group": "untargeted",
+   "median": 0.27,
+   "mean": 0.356,
+   "count": 25
+  },
+  {
+   "kind": "sim",
+   "group": "efficiency",
+   "median": 0.113,
+   "mean": 0.135,
+   "count": 60
+  },
+  {
+   "kind": "sim",
+   "group": "targeted",
+   "median": 0.123,
+   "mean": 0.152,
+   "count": 15
+  },
+  {
+   "kind": "sim",
+   "group": "untargeted",
+   "median": 0.064,
+   "mean": 0.144,
+   "count": 25
+  }
+ ],
+ "params": {
+  "s_mix0": 0.9592219541752854,
+  "s_mix": 1.4783653200354872,
+  "tau_mix": 15.133524921383799,
+  "beta_local": 0.5,
+  "rho0": 0.042485260931543686,
+  "rho_inf": 0.12031565508259505,
+  "tau_rho": 359.84691406816336,
+  "rho_conc": 5.0,
+  "h_off": 0.0038207531843768502,
+  "h_on": 0.0018015961064157598,
+  "silent_signal_frac": 0.37,
+  "h_jump": 0.005,
+  "jump_sd": 0.5,
+  "rw_offset": 0.02,
+  "rw_logscale": 0.02,
+  "k_latent": 20
+ },
+ "base_sessions": [
+  "2022-01-20_CO",
+  "2022-03-14_CO",
+  "2022-04-14_RD",
+  "2022-04-29_CO",
+  "2022-08-01_CO",
+  "2022-08-17_RD",
+  "2023-01-17_RD",
+  "2023-02-24_RD",
+  "2023-04-26_RD",
+  "2023-05-19_RD"
+ ]
+}

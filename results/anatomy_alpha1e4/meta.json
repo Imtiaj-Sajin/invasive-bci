@@ -1,0 +1,27 @@
+{
+ "n_sessions": 312,
+ "n_pairs": 150,
+ "args": {
+  "gaps": [
+   1,
+   2,
+   4,
+   7,
+   14,
+   30,
+   60,
+   120,
+   240,
+   480,
+   900
+  ],
+  "n_trials": [
+   300
+  ],
+  "max_train": 0,
+  "pairs_from": "results/drift_dof/dof.csv",
+  "resume": false,
+  "base_alpha": 10000.0,
+  "out": "results/anatomy_alpha1e4"
+ }
+}
