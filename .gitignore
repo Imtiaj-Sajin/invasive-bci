@@ -40,3 +40,6 @@ manuscript/*.fdb_latexmk
 manuscript/*.toc
 manuscript/*.blg
 manuscript/*.bbl
+
+# large intermediate caches
+results/failure_robustness/electrode_thresholds.csv.gz

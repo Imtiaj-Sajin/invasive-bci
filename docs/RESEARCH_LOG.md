@@ -1028,3 +1028,37 @@ alternating Wahid and Esme, with no co-author trailers (see `CLAUDE.md`).
 **Data.** BrainGate `decoding_T5.tar.gz` (11.34 GB) is downloading from the owners' VPS to G:. It will be stream-converted
 by `scripts/tools/compact_braingate_decoding.py` (verified identical loader output on a T6 session). The four Dryad yield
 zips in Downloads (5.3 GB, already extracted) were deleted to free space.
+
+## 2026-10-06 ~21:00 — Referee review of draft v1; robustness re-analyses; T5 and T9
+
+An independent referee-style review (sub-agent) checked 36 numbers against the result files (all matched apart from a
+few listed issues) and raised major points. Each was tested rather than argued:
+
+- **"Overnight" pairs include 2-day gaps** (selection window max(1 day, 25%)). True 1-day retention: N 0.74 (n = 21),
+  C 0.70 (31), M 0.80 (12) — holds; **T6 0.41 (n = 5)** vs 0.79 for 2-day pairs (19) — the human "overnight" value was
+  carried by 2-day pairs. Report 1- and 2-day pairs separately (`results/revision_stats.json`).
+- **Decay depends on decoder regularization** (`scripts/decay_alpha.py`, same pairs, α = 10⁴): monkey N retention
+  0.79 / 0.63 / 0.41 / 0.30 / 0.01 at 1 / 7 / 30 / 120 / 480 d, versus 0.73 / 0.54 / 0.19 / 0.04 / −0.36 at α = 0.1.
+  Much of the apparent drift loss with the default decoder is over-fitting. Running for C, M, T6, T5, T9.
+- **Electrode revival is mostly fluctuation** (`scripts/failure_robustness.py`). Revival survives artefact controls
+  (fixed-µV threshold 0.72, waveform ≥ 30 µV 0.71, deep silence < 0.5 Hz 0.71, array-wide shifts removed 0.77,
+  −5.5 RMS 0.74), but a shuffled-session-order null gives the same values (0.79 / 0.71 / 0.72). Only silences of
+  ≥ 30 days carry signal: 96/168 recover vs 33/81 in the null (Fisher P = 0.021), and such silences are twice as common
+  as in the null.
+- **Edge effect is modest** (initially active electrodes only, array as the unit): edge minus interior slope negative
+  in 13/17 human arrays (sign P = 0.025, Wilcoxon P = 0.036); distance-from-centre correlation 13/17 (Wilcoxon
+  P = 0.013); adjusted for initial log rate 12/17 (P = 0.072 / 0.087). The earlier Fisher P = 2e-8 treated dependent
+  electrodes as independent and included never-active electrodes.
+- **The 1% rule versus ordinary same-day tuning:** per-session best same-day α already equals the rule in C, M and T6
+  (no difference); in N the rule adds +0.004 (P = 6.9e-5). The real effect is the small default (α = 0.1, LINK paper)
+  versus any same-day tuning (`results/revision_stats.json`).
+- **Harmful recalibration** holds with the correct paired test: exact McNemar P = 0.0078 (n = 10), 0.016 (n = 20);
+  Holm 0.039 / 0.063. The history policy chose λ = 10⁴ for every pair at n ≤ 50, i.e. a fixed strong shrinkage.
+- Monkey C and M base decoders used α = 1 (not 0.1 as Methods stated); fix in v2.
+
+**T5** (BrainGate, 92 closed-loop sessions over 7.2 years, 192 channels; converted with CRC check): retention after
+1–2 days 0.62 [0.34, 0.76], half-time 3.7 d [1.0, 9.5] (T6: 125 d). Per-channel gains recover 78–92% at every gap, as
+in T6 (both humans), unlike the monkeys (14–42%). 1% rule: +0.008 same day, +0.018 to +0.040 cross-day, all CIs > 0.
+**T9** downloaded (11.73 GB) and converted to `G:/ibci-data/braingate/decoding/T9`; pipeline queued.
+
+Decision: pause manuscript writing until all re-analyses finish, then rewrite v2 around what holds.

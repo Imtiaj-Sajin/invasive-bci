@@ -1,0 +1,99 @@
+{
+ "revival": {
+  "base": {
+   "silenced": 730,
+   "revived": 584,
+   "fraction": 0.8,
+   "arrays_with_silenced": 19
+  },
+  "rms_3.5": {
+   "silenced": 8,
+   "revived": 7,
+   "fraction": 0.875,
+   "arrays_with_silenced": 4
+  },
+  "rms_5.5": {
+   "silenced": 646,
+   "revived": 475,
+   "fraction": 0.7352941176470589,
+   "arrays_with_silenced": 19
+  },
+  "fixed_uv": {
+   "silenced": 840,
+   "revived": 601,
+   "fraction": 0.7154761904761905,
+   "arrays_with_silenced": 20
+  },
+  "no_global": {
+   "silenced": 747,
+   "revived": 575,
+   "fraction": 0.7697456492637216,
+   "arrays_with_silenced": 19
+  },
+  "waveform": {
+   "silenced": 736,
+   "revived": 523,
+   "fraction": 0.7105978260869565,
+   "arrays_with_silenced": 19
+  },
+  "deep": {
+   "silenced": 607,
+   "revived": 430,
+   "fraction": 0.7084019769357496,
+   "arrays_with_silenced": 19
+  },
+  "long_silence": {
+   "silenced": 168,
+   "revived": 96,
+   "fraction": 0.5714285714285714,
+   "arrays_with_silenced": 19
+  },
+  "shuffle_null": {
+   "silenced": 594,
+   "revived": 467,
+   "fraction": 0.7861952861952862,
+   "arrays_with_silenced": 19
+  },
+  "shuffle_deep": {
+   "silenced": 418,
+   "revived": 297,
+   "fraction": 0.7105263157894737,
+   "arrays_with_silenced": 19
+  },
+  "shuffle_long": {
+   "silenced": 81,
+   "revived": 33,
+   "fraction": 0.4074074074074074,
+   "arrays_with_silenced": 18
+  },
+  "shuffle_fixed_uv": {
+   "silenced": 654,
+   "revived": 473,
+   "fraction": 0.7232415902140673,
+   "arrays_with_silenced": 20
+  }
+ },
+ "edge": {
+  "edge_minus_interior": {
+   "n_arrays": 17,
+   "negative": 13,
+   "median": -0.10626458919122578,
+   "sign_test_P_one_sided": 0.0245208740234375,
+   "wilcoxon_P_one_sided": 0.03570556640625
+  },
+  "edge_coef_adj_initial_rate": {
+   "n_arrays": 17,
+   "negative": 12,
+   "median": -0.07648267273585596,
+   "sign_test_P_one_sided": 0.0717315673828125,
+   "wilcoxon_P_one_sided": 0.087127685546875
+  },
+  "rho_distance_slope": {
+   "n_arrays": 17,
+   "negative": 13,
+   "median": -0.14763592013314591,
+   "sign_test_P_one_sided": 0.0245208740234375,
+   "wilcoxon_P_one_sided": 0.013336181640625
+  }
+ }
+}

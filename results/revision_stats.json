@@ -1,0 +1,200 @@
+{
+ "regularization": {
+  "N": {
+   "alpha_rule_median_curve": 10000.0,
+   "alpha_best_median_curve": 1000.0,
+   "per_session_best_alpha_counts": {
+    "1000.0": 21,
+    "10000.0": 19
+   },
+   "per_session_rule_alpha_counts": {
+    "10000.0": 26,
+    "1000.0": 14
+   },
+   "rule_vs_sessionbest": {
+    "n_sessions": 40,
+    "median_gain": 0.004019521176815015,
+    "frac_positive": 0.5,
+    "P": 6.898751069615867e-05
+   },
+   "sessionrule_vs_sessionbest": {
+    "n_sessions": 40,
+    "median_gain": 0.0,
+    "frac_positive": 0.175,
+    "P": 0.017960477526078766
+   }
+  },
+  "C": {
+   "alpha_rule_median_curve": 10000.0,
+   "alpha_best_median_curve": 10000.0,
+   "per_session_best_alpha_counts": {
+    "10000.0": 17,
+    "1000.0": 9,
+    "30000.0": 6,
+    "0.1": 4,
+    "100000.0": 2,
+    "1000000.0": 1,
+    "10.0": 1
+   },
+   "per_session_rule_alpha_counts": {
+    "10000.0": 23,
+    "1000.0": 8,
+    "30000.0": 5,
+    "100000.0": 2,
+    "1000000.0": 1,
+    "300000.0": 1
+   },
+   "rule_vs_sessionbest": {
+    "n_sessions": 40,
+    "median_gain": 0.0,
+    "frac_positive": 0.325,
+    "P": 0.6925518471146306
+   },
+   "sessionrule_vs_sessionbest": {
+    "n_sessions": 40,
+    "median_gain": 0.0,
+    "frac_positive": 0.275,
+    "P": 0.019223439097549075
+   }
+  },
+  "M": {
+   "alpha_rule_median_curve": 1000.0,
+   "alpha_best_median_curve": 0.1,
+   "per_session_best_alpha_counts": {
+    "1000.0": 7,
+    "10000.0": 7,
+    "0.1": 6,
+    "100000.0": 1,
+    "1000000.0": 1
+   },
+   "per_session_rule_alpha_counts": {
+    "10000.0": 10,
+    "1000.0": 6,
+    "30000.0": 4,
+    "100000.0": 1,
+    "1000000.0": 1
+   },
+   "rule_vs_sessionbest": {
+    "n_sessions": 22,
+    "median_gain": 0.0,
+    "frac_positive": 0.22727272727272727,
+    "P": 0.15563546075803855
+   },
+   "sessionrule_vs_sessionbest": {
+    "n_sessions": 22,
+    "median_gain": 0.0006793551146983788,
+    "frac_positive": 0.5454545454545454,
+    "P": 0.0031429285311656034
+   }
+  },
+  "T6": {
+   "alpha_rule_median_curve": 10000.0,
+   "alpha_best_median_curve": 10000.0,
+   "per_session_best_alpha_counts": {
+    "10000.0": 25,
+    "30000.0": 11,
+    "1000.0": 2,
+    "300000.0": 1,
+    "100000.0": 1
+   },
+   "per_session_rule_alpha_counts": {
+    "10000.0": 20,
+    "30000.0": 17,
+    "100000.0": 2,
+    "300000.0": 1
+   },
+   "rule_vs_sessionbest": {
+    "n_sessions": 40,
+    "median_gain": 0.0,
+    "frac_positive": 0.125,
+    "P": 0.39424586721077726
+   },
+   "sessionrule_vs_sessionbest": {
+    "n_sessions": 40,
+    "median_gain": 0.0,
+    "frac_positive": 0.15,
+    "P": 0.03569190011680441
+   }
+  }
+ },
+ "mcnemar": {
+  "10": {
+   "cv_only_harmful": 8,
+   "history_only_harmful": 0,
+   "P_exact": 0.0078125,
+   "P_holm": 0.0390625
+  },
+  "20": {
+   "cv_only_harmful": 7,
+   "history_only_harmful": 0,
+   "P_exact": 0.015625,
+   "P_holm": 0.0625
+  },
+  "50": {
+   "cv_only_harmful": 1,
+   "history_only_harmful": 0,
+   "P_exact": 1.0,
+   "P_holm": 1.0
+  },
+  "100": {
+   "cv_only_harmful": 0,
+   "history_only_harmful": 1,
+   "P_exact": 1.0,
+   "P_holm": 1.0
+  },
+  "300": {
+   "cv_only_harmful": 0,
+   "history_only_harmful": 0,
+   "P_exact": 1.0,
+   "P_holm": 1.0
+  }
+ },
+ "long_silence_vs_shuffle": {
+  "observed": "96/168",
+  "shuffle": "33/81",
+  "odds_ratio": 1.9393939393939394,
+  "P": 0.02110117032211603
+ },
+ "one_vs_two_day": {
+  "N": {
+   "1d": {
+    "n": 21,
+    "median_retention": 0.7430401989215989
+   },
+   "2d": {
+    "n": 9,
+    "median_retention": 0.6388097107638027
+   }
+  },
+  "C": {
+   "1d": {
+    "n": 31,
+    "median_retention": 0.6975979020278215
+   },
+   "2d": {
+    "n": 11,
+    "median_retention": 0.722862061942284
+   }
+  },
+  "M": {
+   "1d": {
+    "n": 12,
+    "median_retention": 0.8038931498095797
+   },
+   "2d": {
+    "n": 2,
+    "median_retention": 0.7494430003987317
+   }
+  },
+  "T6": {
+   "1d": {
+    "n": 5,
+    "median_retention": 0.41447182828527623
+   },
+   "2d": {
+    "n": 19,
+    "median_retention": 0.7887874951784907
+   }
+  }
+ }
+}
