@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software or its results, please cite it as below."
+title: "ibci-drift: chronic drift and electrode failure in intracortical brain-computer interfaces"
+version: 0.1.0
+date-released: 2026-10-06
+license: MIT
+repository-code: "https://github.com/Imtiaj-Sajin/invasive-bci"
+authors:
+  - family-names: Sajin
+    given-names: Imtiaj
+    email: imtiajsajin@gmail.com
+keywords:
+  - brain-computer interface
+  - intracortical recording
+  - Utah array
+  - neural drift
+  - simulation

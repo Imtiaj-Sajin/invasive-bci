@@ -1,0 +1,8 @@
+{
+  "title": "ibci-drift: chronic drift and electrode failure in intracortical brain-computer interfaces",
+  "upload_type": "software",
+  "description": "Analysis code and a calibrated feature-level simulator of chronic drift and electrode failure in intracortical brain-computer interfaces, built from public long-term recordings in monkeys and humans.",
+  "creators": [{ "name": "Sajin, Imtiaj" }],
+  "license": "MIT",
+  "keywords": ["brain-computer interface", "intracortical", "Utah array", "neural drift", "simulation"]
+}

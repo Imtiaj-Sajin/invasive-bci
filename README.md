@@ -49,14 +49,36 @@ Details, numbers, caveats and corrections are in [docs/RESEARCH_LOG.md](docs/RES
 - `scripts/`: entry points. `scripts/run_all.sh` lists the full pipeline in order.
 - `results/`: small result tables and figures. `tests/`: unit tests (`python -m pytest tests -q`).
 
-## Setup (Windows, as used here)
+## Install
 
 ```bash
-python -m venv --system-site-packages .venv      # reuses the system CUDA torch
-.venv/Scripts/python -m pip install pynwb dandi pytest
-export IBCI_DATA=D:/ibci-data                     # datasets live outside the repo
-.venv/Scripts/python scripts/download_link.py     # LINK, DANDI 001201, about 12.6 GB
+git clone https://github.com/Imtiaj-Sajin/invasive-bci.git
+cd invasive-bci
+pip install -e ".[data,dev]"          # add ",gpu" for the GPU-based corrections (PyTorch)
+python -m pytest tests -q
 ```
+
+## Quick start: simulate chronic drift on a real session
+
+```python
+import numpy as np
+from ibci import sim
+from ibci.anatomy import Sess
+from ibci.data import link
+
+p = sim.load_preset("early")            # calibrated on implant days < 700 ("late" for days >= 700)
+base = Sess("2020-03-10_CO")            # a LINK session (download with scripts/download_link.py)
+dist = link.chebyshev_distance(link.electrode_layout())
+drift = sim.sample_drift(base.ztr, 30, p, dist, np.random.default_rng(0), alive=base.alive)
+future = sim.apply_drift(base.zte, drift, np.random.default_rng(1))   # the session 30 days later
+```
+
+More detail: [docs/SIMULATOR.md](docs/SIMULATOR.md) and `examples/simulate_drift.py`. The full analysis pipeline is
+listed in `scripts/run_all.sh`.
+
+## Citation
+
+See [CITATION.cff](CITATION.cff). Licence: MIT.
 
 ## Data (please cite the original papers)
 
