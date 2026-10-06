@@ -18,11 +18,12 @@ researchers will reuse and cite for years. Read this file first, then `docs/RESE
 
 ## Rules of the road
 
-- **Commits (owner's instruction, 2026-10-06):** commit as the repo-local git user Md Wahiduzzaman Suva
-  (GitHub wshuv-o, wshuvo360@gmail.com). End every commit message with two trailers:
-  `Co-authored-by: Md. Imtiaj Alam Sajin <imtiajsajin@gmail.com>` and
-  `Co-authored-by: Esm E Moula Chowdhury Abha <esmechowdhuryabha@gmail.com>`.
-  **Never** add a Claude or any other AI attribution trailer. Pushing to `origin` is allowed.
+- **Commits (owner's instruction, 2026-10-06):** exactly **one author per commit**, no `Co-authored-by` trailers.
+  Alternate between Md Wahiduzzaman Suva <wshuvo360@gmail.com> (GitHub wshuv-o; repo-local git user) and
+  Esm E Moula Chowdhury Abha <esmechowdhuryabha@gmail.com> (GitHub EsmeAbha; use `--author`).
+  Do not commit as Imtiaj Sajin until he says so. **Never** add a Claude or other AI attribution.
+  Commit titles: short and formal (e.g. "Add supplementary table generator"), not conversational.
+  Pushing to `origin` is allowed.
 - **Authors** (order as listed by the owners; all American International University-Bangladesh, Dhaka):
   Md. Imtiaj Alam Sajin (ORCID 0009-0009-2423-1835), Esm E Moula Chowdhury Abha (0009-0008-3776-2283),
   Md Wahiduzzaman Suva (0009-0007-6227-7282).

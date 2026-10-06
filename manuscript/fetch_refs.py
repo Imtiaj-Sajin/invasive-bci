@@ -55,7 +55,7 @@ REFS = [
  ("mensh2017", "doi:10.1371/journal.pcbi.1005619"),
 ]
 out = {}
-H = {"User-Agent": "mailto:imtiajsajin@gmail.com"}
+H = {"User-Agent": "ibci-drift/0.1"}
 for key, q in REFS:
     try:
         if q.startswith("doi:"):
