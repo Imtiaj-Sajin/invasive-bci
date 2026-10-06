@@ -30,6 +30,13 @@ A short, honest summary of the first night of work. Every number, caveat and cor
   - Spiking declines faster at array *edges*, while broadband power declines uniformly.
   - Silencing and revival also appear in Chewie, Mihili and human T5.
 - **Simulator calibrated** on the first 700 days: loss 0.074; it reproduces the real ladder at 1–480 days.
+- **Regularize for the future.** Ridge α = 10⁴ instead of the common 0.1 leaves same-day accuracy unchanged, but cross-day R²
+  is about 50% higher at 30 days and 2.6× higher at 120 days. Same-day CV cannot see this. Simple rule: choose the largest α that keeps
+  same-day R² within about 1% (`results/figures/fig_reg_tradeoff.png`).
+
+## Honest negative result
+- **Training on simulated futures** beats ad hoc perturbations (+0.010 R²), but plain stronger regularization beats both
+  (+0.042). For linear decoders the simulator is a benchmarking and policy tool, not an augmentation tool. Network decoders are untested.
 
 ## Claims I made during the night and then corrected
 - "A 96×96 input remap restores about 80%, so drift is channel re-mixing": **withdrawn**. That remap can represent any decoder,
@@ -39,8 +46,7 @@ A short, honest summary of the first night of work. Every number, caveat and cor
 - "The LSTM is far more drift-robust": based on one pair. On matched pairs it is only modestly more robust.
 
 ## Still running or next
-- Simulator validation on held-out years and untargeted statistics, and "train on simulated futures".
-  Results go to `results/sim_validation` and `results/augment`.
+- Simulator validation on held-out years and untargeted statistics (`results/sim_validation`).
 - Then: package the simulator as a reusable tool, write the methods section, add the BrainGate 20-year human data.
 
 ## Needs you
