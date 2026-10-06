@@ -19,11 +19,12 @@ researchers will reuse and cite for years. Read this file first, then `docs/RESE
 ## Rules of the road
 
 - **Commits (owner's instruction, 2026-10-06):** exactly **one author per commit**, no `Co-authored-by` trailers.
-  Alternate between Md Wahiduzzaman Suva <wshuvo360@gmail.com> (GitHub wshuv-o; repo-local git user) and
+  Use both Md Wahiduzzaman Suva <wshuvo360@gmail.com> (GitHub wshuv-o; repo-local git user) and
   Esm E Moula Chowdhury Abha <esmechowdhuryabha@gmail.com> (GitHub EsmeAbha). For her commits set **both** author and committer:
   `git -c user.name="Esm E Moula Chowdhury Abha" -c user.email="esmechowdhuryabha@gmail.com" commit ...`
   (`--author` alone leaves Wahid as committer and GitHub shows two avatars).
-  Do not commit as Imtiaj Sajin until he says so. **Never** add a Claude or other AI attribution.
+  Do not alternate mechanically (owner, 2026-10-07): vary naturally, e.g. several commits by one person, then
+  one or two by the other, like real collaborators. Do not commit as Imtiaj Sajin until he says so. **Never** add a Claude or other AI attribution.
   Commit titles: short and formal (e.g. "Add supplementary table generator"), not conversational.
   Pushing to `origin` is allowed.
 - **Authors** (order as listed by the owners; all American International University-Bangladesh, Dhaka):

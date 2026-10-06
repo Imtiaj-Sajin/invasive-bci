@@ -38,6 +38,15 @@ FIX = {
 }
 
 MANUAL = {
+    "sun2016": r"Sun, B., Feng, J. \& Saenko, K. Return of frustratingly easy domain adaptation. In \textit{Proc. 30th "
+               r"AAAI Conference on Artificial Intelligence} 2058--2065 (AAAI Press, 2016).",
+    "holm1979": r"Holm, S. A simple sequentially rejective multiple test procedure. \textit{Scand. J. Stat.} \textbf{6}, "
+                r"65--70 (1979).",
+    "loshchilov2019": r"Loshchilov, I. \& Hutter, F. Decoupled weight decay regularization. In \textit{Proc. 7th "
+                      r"International Conference on Learning Representations} (2019).",
+    "srivastava2014": r"Srivastava, N., Hinton, G., Krizhevsky, A., Sutskever, I. \& Salakhutdinov, R. Dropout: a simple "
+                      r"way to prevent neural networks from overfitting. \textit{J. Mach. Learn. Res.} \textbf{15}, "
+                      r"1929--1958 (2014).",
     "hahn2026": r"Hahn, N. V. et al. Performance of intracortical microelectrode arrays in people with implanted "
                 r"brain--computer interfaces over a 20-year period. \textit{Nat. Med.} (in the press); preprint at "
                 r"\url{https://doi.org/10.1101/2025.07.02.25330310} (2025).",
