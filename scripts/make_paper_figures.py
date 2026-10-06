@@ -154,7 +154,7 @@ def fig3(out):
 # ------------------------------------------------------------------------------------------------ Figure 4
 def fig4(out):
     P.setup_nature()
-    fig, axes = plt.subplots(1, 3, figsize=(P.DOUBLE_COL, 2.0), gridspec_kw={"width_ratios": [1.2, 1.2, 1.3]})
+    fig, axes = plt.subplots(1, 3, figsize=(P.DOUBLE_COL, 2.3), gridspec_kw={"width_ratios": [1.2, 1.2, 1.3]})
     for ax, (path, title, lab) in zip(axes[:2], [("results/reg_tradeoff/tradeoff.csv", "Monkey N", "a"),
                                                ("results/reg_tradeoff_T6/tradeoff.csv", "Human T6", "b")]):
         d = pd.read_csv(path)
@@ -169,7 +169,9 @@ def fig4(out):
         ax.set_title(title, loc="left")
         P.panel(ax, lab, x=-0.2)
     axes[0].set_ylabel("decoding R² (median)")
-    axes[1].legend(loc="lower left", frameon=False, ncol=1)
+    h, l = axes[0].get_legend_handles_labels()
+    fig.legend(h, l, loc="lower center", bbox_to_anchor=(0.33, 0.0), ncol=6, frameon=False, fontsize=5,
+               title="test session", title_fontsize=5)
     ax = axes[2]
     t = pd.read_csv("results/reg_tradeoff/rule_across_subjects.csv")
     names = {"N (LINK)": ("Monkey N", P.CAT[0]), "C": ("Monkey C", P.CAT[1]), "M": ("Monkey M", P.CAT[2]),
@@ -191,7 +193,7 @@ def fig4(out):
     ax.set_title("Gain from the 1% rule (median, 95% CI)", loc="left")
     ax.legend(loc="upper left", frameon=False)
     P.panel(ax, "c", x=-0.2)
-    fig.subplots_adjust(wspace=0.35, left=0.07, right=0.99, bottom=0.22, top=0.86)
+    fig.subplots_adjust(wspace=0.35, left=0.07, right=0.99, bottom=0.33, top=0.88)
     P.save(fig, os.path.join(out, "fig4_regularize"))
 
 
@@ -218,7 +220,7 @@ def fig5(out):
         P.panel(ax, lab, x=-0.22)
     axes[0].set_ylabel("R² relative to fresh decoder")
     axes[0].legend(loc="lower right", frameon=False)
-    axes[0].text(11, float(np.median(d[d.gap_target == 7].L2 / d[d.gap_target == 7].own)) + 0.03, "no labels",
+    axes[0].text(140, float(np.median(d[d.gap_target == 7].L2 / d[d.gap_target == 7].own)) - 0.07, "no labels",
                  fontsize=5, color=P.INK2)
     ax = axes[2]
     p = pd.read_csv("results/recal_policy/policies.csv")
@@ -292,7 +294,7 @@ def fig6(out):
     ax.axvline(584 / 730 * 100, color=P.INK2, ls="--", lw=0.6)
     ax.set_xlim(0, 105)
     ax.set_xlabel("silenced electrodes that recover (%)")
-    ax.set_title("Silencing is mostly transient", loc="left")
+    ax.set_title("Transient silencing", loc="left")
     ax.grid(axis="y", visible=False)
     P.panel(ax, "c", x=-0.42)
     ax = axes[3]
@@ -341,7 +343,7 @@ def fig7(out):
     P.day_axis(ax, gx)
     ax.set_xlabel("days since decoder training")
     ax.set_ylabel("R² relative to fresh decoder")
-    ax.set_title("Calibration (implant days < 700)", loc="left")
+    ax.set_title("Calibration (implant days < 700)", loc="left", pad=12)
     ax.legend(loc="lower left", frameon=False, fontsize=4.8)
     P.panel(ax, "a", x=-0.22)
     ax = axes[1]
@@ -354,13 +356,13 @@ def fig7(out):
     ax.set_xticks(x)
     ax.set_xticklabels([lab for _, lab in groups], fontsize=5)
     ax.set_ylabel("median absolute error")
-    ax.set_title("Held-out years (days ≥ 700)", loc="left")
-    ax.legend(loc="upper left", frameon=False)
+    ax.set_title("Held-out years (days ≥ 700)", loc="left", pad=12)
+    ax.legend(loc="lower left", bbox_to_anchor=(0.0, 0.97), ncol=2, frameon=False, fontsize=4.8)
     ax.grid(axis="x", visible=False)
     P.panel(ax, "b", x=-0.22)
     ax = axes[2]
-    keys = [("s_mix0", "session-to-session\nmixing"), ("s_mix", "slow mixing"), ("rho0", "initial turnover ×10"),
-            ("tau_rho", "turnover time\n(years)")]
+    keys = [("s_mix0", "session\nmixing"), ("s_mix", "slow\nmixing"), ("rho0", "initial\nturnover ×10"),
+            ("tau_rho", "turnover\ntime (yr)")]
     ev = [e["params"]["s_mix0"], e["params"]["s_mix"], e["params"]["rho0"] * 10, e["params"]["tau_rho"] / 365.25]
     lv = [late["params"]["s_mix0"], late["params"]["s_mix"], late["params"]["rho0"] * 10, late["params"]["tau_rho"] / 365.25]
     x = np.arange(len(keys))
@@ -369,8 +371,9 @@ def fig7(out):
     ax.set_xticks(x)
     ax.set_xticklabels([lab for _, lab in keys], fontsize=4.8)
     ax.set_ylabel("fitted value")
-    ax.set_title("Drift slows as the implant ages", loc="left")
-    ax.legend(loc="upper left", frameon=False)
+    ax.set_title("Drift slows as the implant ages", loc="left", pad=12)
+    ax.legend(loc="lower left", bbox_to_anchor=(0.0, 0.97), ncol=2, frameon=False, fontsize=4.8)
+    ax.set_ylim(0, 1.75)
     ax.grid(axis="x", visible=False)
     P.panel(ax, "c", x=-0.2)
     fig.subplots_adjust(wspace=0.38, left=0.07, right=0.99, bottom=0.22, top=0.86)
