@@ -29,3 +29,14 @@ Thumbs.db
 *.egg-info/
 build/
 dist/
+
+# LaTeX build artefacts
+manuscript/*.aux
+manuscript/*.log
+manuscript/*.out
+manuscript/*.synctex.gz
+manuscript/*.fls
+manuscript/*.fdb_latexmk
+manuscript/*.toc
+manuscript/*.blg
+manuscript/*.bbl

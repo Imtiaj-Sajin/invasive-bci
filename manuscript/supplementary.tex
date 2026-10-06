@@ -1,0 +1,347 @@
+\documentclass[pdflatex,sn-nature]{sn-jnl}
+
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{textcomp}
+\usepackage{pdflscape}
+
+\raggedbottom
+\makeatletter
+\newcommand\tabinput[1]{\@@input #1 }
+\makeatother
+\renewcommand{\tablename}{Supplementary Table}
+\renewcommand{\thetable}{\arabic{table}}
+
+\begin{document}
+
+\title[Supplementary Information]{Supplementary Information for: Shared patterns of decoder drift and electrode failure
+suggest simple safeguards for implanted brain--computer interfaces}
+
+\author*[1]{\fnm{Md. Imtiaj Alam} \sur{Sajin}}\email{imtiajsajin@gmail.com}
+\author[1]{\fnm{Esm E Moula} \sur{Chowdhury Abha}}\email{esmechowdhuryabha@gmail.com}
+\author[1]{\fnm{Md Wahiduzzaman} \sur{Suva}}\email{wshuvo360@gmail.com}
+\affil*[1]{\orgdiv{Department of Computer Science}, \orgname{American International University-Bangladesh},
+\orgaddress{\city{Dhaka}, \postcode{1229}, \country{Bangladesh}}}
+
+\abstract{This document contains Supplementary Notes 1--3 and Supplementary Tables 1--12. Every table is generated
+from the released result files by \texttt{scripts/make\_supp\_tables.py}, so the values match the code repository
+exactly.}
+
+\maketitle
+
+\section*{Supplementary Note 1: Label-free monitoring statistics}
+
+Before the main analyses, we asked whether label-free statistics computed on a later day can predict how well a
+renormalized fixed decoder will perform on that day. The pilot used the first 46--61 sessions of monkey N
+(January 2020 to about March 2021) and 283 session pairs at most 60 days apart. Decoders were ridge regressions on 8
+lags of spike-band power ($\alpha = 0.1$), trained on the first 300 trials and tested on the rest.
+
+We computed 14 statistics that need no labels on the later day:
+\begin{itemize}
+\item the shift in channel means and in channel standard deviations;
+\item the principal angles between the dominant subspaces of the two days;
+\item disagreement within a bootstrap ensemble of decoders;
+\item disagreement between decoders built on different views of the data (spike-band power versus threshold
+crossings, and 8 lags versus 1 lag);
+\item statistics of the predicted output (velocity bias, variance ratio, Wasserstein distance to the training
+kinematics and smoothness);
+\item self-consistency between predicted position and predicted velocity;
+\item Procrustes alignment disagreement, the Procrustes residual and the share of decoder readout outside the
+dominant subspace;
+\item neural modulation depth;
+\item the log ratio of impedances and the number of silent channels.
+\end{itemize}
+
+Elapsed time predicted decoder accuracy well (Spearman $\rho = -0.75$ across all pairs and $-0.56$ within 60 days).
+After controlling for log elapsed days, the partial Spearman correlation of every statistic with $R^2$ was at most
+0.27 (output variance) and mostly below 0.1. In time-blocked cross-validated prediction of $R^2$, elapsed days alone
+gave a mean absolute error of 0.064. The label-free statistics alone gave 0.067--0.071, and elapsed days together with
+the statistics gave 0.067--0.070. When the target was the gain from recalibration rather than $R^2$, elapsed days gave
+0.045 and the statistics gave 0.054. For detecting unexpectedly poor days (residual more than one standard deviation
+below the time trend), every statistic had an area under the receiver operating characteristic curve of 0.50--0.58.
+
+The residual variation was not noise. Split-half reliability of the residuals, computed on alternating pairs of
+trials, was $r = 0.72$, or 0.84 after Spearman--Brown correction. Alternating pairs were needed because centre-out
+trials alternate between outward and return targets, which made odd/even single-trial splits negatively correlated.
+Adding the reference decoder's own accuracy on the later day, a label-based measure of day difficulty, raised the
+explained variance from 0.29 (elapsed days alone) to 0.56. Day-to-day performance beyond the time trend is therefore
+real and reliable, but none of the label-free statistics we tried captured it. Abrupt faults on single channels
+remain detectable by construction, and such faults may still justify monitoring.
+
+\section*{Supplementary Note 2: Simulator}
+
+The simulator (\texttt{ibci.sim}) is a feature-level generative model of chronic change. It transforms a real base
+session into a simulated session $\Delta t$ days later, so that behaviour and latent dynamics stay realistic. Its
+components are listed in Supplementary Table~11 and defined in the Methods. Two further components, heavy-tailed gain
+jumps and random walks of raw offsets and scales, are included for decoders that are not renormalized. They do not
+affect renormalized decoders and were not calibrated.
+
+\textit{Calibration.} The simulated ladder must be scored with exactly the same correction code and regularization as
+the real ladder. An earlier calibration used regularization 100--1,000 times stronger than the values chosen on real
+data. That handicapped the simulated corrections, and the optimizer compensated with distorted parameters (loss 0.663
+versus 0.074 after the fix). We also restricted silencing to channels that were active in the base session, because
+most channels are already silent on any given day.
+
+\textit{Validation.} The simulator calibrated on days before 700 was evaluated on base sessions after day 700. The
+comparison covered all rungs of the ladder and labelled-data budgets of 20, 50 and 100 trials. A simulator with all
+drift switched off served as a reference. The calibrated simulator was closer to the real data in every group (median
+absolute error 0.12, 0.06 and 0.11 for fitted rungs, unfitted rungs and unfitted budgets; no-drift reference 0.37,
+0.27 and 0.39). Its systematic miss, faster decay than observed in the later years, led to the separate late-period
+calibration in Supplementary Table~11.
+
+\textit{Intended uses and limits.} The simulator is meant for stress-testing decoders and label-free stabilizers under
+controlled drift and electrode failure, and for comparing recalibration policies. It is calibrated on one monkey with
+Utah arrays, spike-band power and a finger task. Its mechanisms reproduce the measured statistics, which does not show
+that they are the true physical mechanisms. Users can calibrate it to other datasets with
+\texttt{scripts/calibrate\_sim.py}.
+
+\section*{Supplementary Note 3: Analysis choices that were corrected during the study}
+
+We report three analysis choices that we revised, because each could mislead similar studies.
+
+\textit{A full input remap is not a structural test.} A free $C\times C$ linear map in front of a frozen decoder
+appears to test whether drift is a ``remixing'' of channels. With a readout of rank at most 32 (8 lags by 4 outputs)
+and 96 channels, however, the map can reproduce any decoder of the same form. Its recovery therefore matches
+retraining and says nothing about the structure of drift. We used it only as a calibration target for the simulator.
+
+\textit{Recovery from re-learning a few channels reflects decoder importance.} Re-learning the weights of $k$ channels
+recovered much of the loss when the channels were those the old decoder relied on most. Channels chosen by label-free
+change did worse (Supplementary Table~9). The recovery therefore reflects which channels matter to the decoder, not
+evidence that drift is concentrated on a few electrodes.
+
+\textit{Small-budget recalibration must shrink the intercept.} Refitting the intercept freely with 10--20 trials
+shifted the output offset and made recalibration harmful in many pairs. Shrinking the intercept toward the old
+decoder, together with the weights, removed most of this harm (Supplementary Table~8).
+
+\clearpage
+
+\begin{landscape}
+\begin{table}[p]
+\caption{\textbf{Datasets.} Session counts are per analysis. Some human sessions contribute to more than one
+analysis.}
+\label{tab:data}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}llllll@{}}
+\toprule
+Individual & Source & Arrays and site & Signal & Task & Sessions (span) \\
+\midrule
+Monkey N & DANDI 001201 (LINK) & 2 Utah, motor cortex & SBP, TC & finger flexion & 312 on 303 days (3.4 years) \\
+Monkey C & DANDI 000688 & Utah, motor/premotor & sorted spikes & reaching & 68 (3.0 years) \\
+Monkey M & DANDI 000688 & Utah, motor/premotor & sorted spikes & reaching & 28 (1.5 years) \\
+Human T6 & Dryad x0k6djj1h & 1 Utah, motor cortex & SBP & closed-loop cursor & 124 (3.1 years) \\
+14 humans & Dryad x0k6djj1h & 20 Utah arrays & TC rates, impedance & research sessions & 2,289 ($\leq$7.3 years) \\
+T11, T5 & Dryad n2z34tn5s (MINDFUL) & motor cortex & SBP (T11), TC (T5) & closed-loop cursor & 15 and 6 days \\
+\botrule
+\end{tabular}
+\footnotetext{SBP, spike-band power; TC, threshold crossings.}
+\end{table}
+\end{landscape}
+
+\begin{landscape}
+\begin{table}[p]
+\caption{\textbf{Correction ladder by individual and gap.} Median decoding $R^2$ for each rung, and median retention
+of the renormalized fixed decoder (renormalized $R^2$ divided by reference $R^2$) with 95\% cluster-bootstrap
+confidence intervals. Each training session contributes at most one pair per gap. Supervised rungs used 300
+labelled trials.}
+\label{tab:ladder}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}rrrrrrrrrrl@{}}
+\toprule
+Gap (days) & Pairs & Reference & None & Mean update & Renorm. & Aligned & Stable aligned & Gains & Ridge to prior &
+Retention [95\% CI] \\
+\midrule
+\tabinput{supp/tab_ladder.tex}
+\botrule
+\end{tabular}
+\end{table}
+\end{landscape}
+
+\begin{table}[p]
+\caption{\textbf{Recurrent versus linear decoder (monkey N, 79 matched pairs).} Median reference $R^2$ (decoder
+trained on the test day), retention of the renormalized fixed decoder and retention after re-learning channel gains.}
+\label{tab:lstm}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}rrrrrrrr@{}}
+\toprule
+& & \multicolumn{2}{c}{Reference $R^2$} & \multicolumn{2}{c}{Retention, renormalized} &
+\multicolumn{2}{c}{Retention, gains} \\
+\cmidrule{3-4}\cmidrule{5-6}\cmidrule{7-8}
+Gap (days) & Pairs & Ridge & LSTM & Ridge & LSTM & Ridge & LSTM \\
+\midrule
+\tabinput{supp/tab_lstm.tex}
+\botrule
+\end{tabular}
+\end{table}
+
+\begin{table}[p]
+\caption{\textbf{Offline monitoring, monkey N (537 pairs).} Spearman correlation with decoder $R^2$, raw and partial
+given log elapsed days, and time-blocked cross-validated error of predicted $R^2$. ``Days and divergence'' uses log
+days together with the neural and output divergences.}
+\label{tab:mindful_link}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Predictor & Raw $\rho$ & Partial $\rho$ \\
+\midrule
+\tabinput{supp/tab_mindful_link.tex}
+\botrule
+\end{tabular}
+\end{table}
+
+\begin{landscape}
+\begin{table}[p]
+\caption{\textbf{Closed-loop monitoring in the public MINDFUL data.} Pearson correlation of angular error with elapsed
+days and with each divergence (raw and partial given days), and leave-one-day-out mean absolute error (degrees) of
+predicted angular error from elapsed days alone, with neural or output divergence added, or from output divergence
+alone.}
+\label{tab:mindful}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}lrrrrrrrrrrr@{}}
+\toprule
+& & & & \multicolumn{2}{c}{Neural divergence} & \multicolumn{2}{c}{Output divergence} &
+\multicolumn{4}{c}{Prediction error (\textdegree)} \\
+\cmidrule{5-6}\cmidrule{7-8}\cmidrule{9-12}
+Participant & Days & Windows & $r$(error, days) & Raw & Partial & Raw & Partial & Days & + neural & + output &
+Output only \\
+\midrule
+\tabinput{supp/tab_mindful.tex}
+\botrule
+\end{tabular}
+\end{table}
+\end{landscape}
+
+\begin{landscape}
+\begin{table}[p]
+\caption{\textbf{Regularization by the 1\% rule.} The rule chose the largest ridge penalty whose median same-day $R^2$
+was within 1\% of the best. Columns give median $R^2$ with $\alpha = 0.1$ and with the chosen $\alpha$, the median
+paired gain with 95\% cluster-bootstrap confidence interval, and the share of training sessions whose mean gain was
+positive.}
+\label{tab:reg}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}llrrrrlr@{}}
+\toprule
+Individual & Chosen $\alpha$ & Gap (days) & Pairs & $R^2$, $\alpha = 0.1$ & $R^2$, rule & Gain [95\% CI] &
+Share positive \\
+\midrule
+\tabinput{supp/tab_reg.tex}
+\botrule
+\end{tabular}
+\end{table}
+\end{landscape}
+
+\begin{landscape}
+\begin{table}[p]
+\caption{\textbf{Recalibration with few labelled trials (monkey N, 86 pairs).} Median retention of the renormalized
+fixed decoder (no labels), and for each number of labelled trials the median retention of ridge to prior / retraining
+from scratch / channel gains. Regularization chosen by cross-validation on the labelled trials.}
+\label{tab:eff}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}rrrlllll@{}}
+\toprule
+Gap (days) & Pairs & No labels & $n = 10$ & $n = 20$ & $n = 50$ & $n = 100$ & $n = 300$ \\
+\midrule
+\tabinput{supp/tab_efficiency.tex}
+\botrule
+\end{tabular}
+\end{table}
+\end{landscape}
+
+\begin{table}[p]
+\caption{\textbf{Choosing the shrinkage strength.} Share of harmful recalibrations (more than 0.01 $R^2$ below the
+renormalized fixed decoder) when the strength of ridge to prior is chosen by cross-validation on the available trials
+or from past sessions, with two-sided Fisher's exact test, and median retention for both policies and for the best
+strength in hindsight (an upper bound, not a usable policy).}
+\label{tab:policy}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}rrrrrrrr@{}}
+\toprule
+& & \multicolumn{3}{c}{Harmful (\%)} & \multicolumn{3}{c}{Median retention} \\
+\cmidrule{3-5}\cmidrule{6-8}
+Trials & Pairs & Cross-validation & History & $P$ & Cross-validation & History & Hindsight \\
+\midrule
+\tabinput{supp/tab_policy.tex}
+\botrule
+\end{tabular}
+\end{table}
+
+\begin{landscape}
+\begin{table}[p]
+\caption{\textbf{Re-learning 32 channels only.} Median retention of a full refit (ridge to prior, strength from past
+sessions) and median paired difference in $R^2$ from it, with 95\% cluster-bootstrap confidence intervals, when only
+32 channels are re-learned. Channels were chosen by decoder importance, by label-free change, by importance-weighted
+change, or at random.}
+\label{tab:targeted}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}rrrllll@{}}
+\toprule
+Trials & Pairs & Full refit & Importance & Label-free change & Weighted change & Random \\
+\midrule
+\tabinput{supp/tab_targeted.tex}
+\botrule
+\end{tabular}
+\end{table}
+\end{landscape}
+
+\begin{landscape}
+\begin{table}[p]
+\caption{\textbf{Electrode failure statistics per array.} Part., participant; Sess., sessions. Yield is the
+percentage of electrodes with a threshold-crossing rate of at least 2~Hz, as the median of the first / last three
+sessions. $h_{\mathrm{off}}$ and $h_{\mathrm{on}}$ are the active-to-silent and silent-to-active switching rates per
+1,000 days. Rev./sil. counts revived and silenced initially active electrodes. Kurt., excess kurtosis. Kurtosis is computed on session-to-session
+changes in log rate after removing session-wide changes. Imp. $\rho$ is the Spearman correlation of the array
+median with day. Edge $-$ int. gives the median edge minus median interior slope of log rate per year, and $P$ is
+the one-sided Mann--Whitney test that edge electrodes decline faster. For monkey N, values are given for the lateral
+and medial arrays where they differ.}
+\label{tab:failure}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}llrrrrrrrrrr@{}}
+\toprule
+Part. & Array & Sess. & Span (d) & Yield (\%) & $h_{\mathrm{off}}$ & $h_{\mathrm{on}}$ & Rev./sil. & Kurt. &
+Imp. $\rho$ & Edge $-$ int. & $P$ \\
+\midrule
+\tabinput{supp/tab_failure.tex}
+\botrule
+\end{tabular}
+\end{table}
+\end{landscape}
+
+\begin{table}[p]
+\caption{\textbf{Simulator parameters.} Values calibrated on monkey N sessions before day 700 (early) and from day 700
+onwards (late). Switching rates were measured from electrode activity in each period rather than calibrated. Fixed
+parameters: local mixing share $\beta = 0.5$, turnover concentration 5, 20 latent dimensions and silent-signal fraction
+$\kappa = 0.37$.}
+\label{tab:sim}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}llrr@{}}
+\toprule
+Parameter & Unit & Early & Late \\
+\midrule
+\tabinput{supp/tab_sim.tex}
+\botrule
+\end{tabular}
+\end{table}
+
+\begin{landscape}
+\begin{table}[p]
+\caption{\textbf{Training on simulated futures.} Median $R^2$ on real later sessions of monkey N for ridge decoders
+trained on sessions after day 700 (simulator calibrated before day 700). Base, $\alpha = 0.1$; stronger ridge,
+$\alpha = 10^4$ chosen on the calibration period; perturbation, random channel dropout and gain noise; simulator,
+eight simulated futures; simulator and ridge, both; several days, real data from the three previous sessions;
+reference, decoder trained on the test day.}
+\label{tab:augment}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}rrrrrrrrr@{}}
+\toprule
+Gap (days) & Pairs & Base & Stronger ridge & Perturbation & Simulator & Simulator and ridge & Several days &
+Reference \\
+\midrule
+\tabinput{supp/tab_augment.tex}
+\botrule
+\end{tabular}
+\end{table}
+\end{landscape}
+
+\end{document}

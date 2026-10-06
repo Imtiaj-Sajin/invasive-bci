@@ -58,7 +58,8 @@ def failure_table(out):
             f"{int(r.revived)}/{int(r.silenced)}", f3(r.channel_level_kurtosis).replace(".00", ".0") if pd.isna(r.channel_level_kurtosis) else f"{r.channel_level_kurtosis:.1f}",
             f3(r.impedance_spearman_vs_day),
             "--" if pd.isna(r.edge_slope) else f"{r.edge_slope - r.interior_slope:.2f}".replace("-", "$-$"),
-            "--" if pd.isna(r.edge_vs_interior_p) else f"{r.edge_vs_interior_p:.3f}"]) + r"\\")
+            "--" if pd.isna(r.edge_vs_interior_p) else (
+                "$<$0.001" if r.edge_vs_interior_p < 0.001 else f"{r.edge_vs_interior_p:.3f}")]) + r"\\")
     n = json.load(open("results/failure_xdata/failure_stats.json"))["N (LINK)"]
     sl = pd.read_csv("results/channel_health/channel_slopes.csv")      # within-array slopes per channel (LINK)
     parts = []
@@ -118,7 +119,7 @@ def sim_table(out):
     desc = [("s_mix0", "Session-to-session mixing s.d.", "1"), ("s_mix", "Slow mixing s.d. (asymptote)", "1"),
             ("tau_mix", "Slow mixing time constant", "days"), ("rho0", "Turnover fraction, next session", "1"),
             ("rho_inf", "Turnover fraction, asymptote", "1"), ("tau_rho", "Turnover time constant", "days"),
-            ("h_off", "Alive to silent rate", "per day"), ("h_on", "Silent to alive rate", "per day")]
+            ("h_off", "Active to silent rate", "per day"), ("h_on", "Silent to active rate", "per day")]
     rows = []
     for k, txt, unit in desc:
         a, b = e["params"][k], late["params"][k]
