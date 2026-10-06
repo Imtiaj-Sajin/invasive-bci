@@ -7,8 +7,20 @@ license: MIT
 repository-code: "https://github.com/Imtiaj-Sajin/invasive-bci"
 authors:
   - family-names: Sajin
-    given-names: Imtiaj
+    given-names: Md. Imtiaj Alam
     email: imtiajsajin@gmail.com
+    orcid: "https://orcid.org/0009-0009-2423-1835"
+    affiliation: American International University-Bangladesh
+  - family-names: Chowdhury Abha
+    given-names: Esm E Moula
+    email: esmechowdhuryabha@gmail.com
+    orcid: "https://orcid.org/0009-0008-3776-2283"
+    affiliation: American International University-Bangladesh
+  - family-names: Suva
+    given-names: Md Wahiduzzaman
+    email: wshuvo360@gmail.com
+    orcid: "https://orcid.org/0009-0007-6227-7282"
+    affiliation: American International University-Bangladesh
 keywords:
   - brain-computer interface
   - intracortical recording

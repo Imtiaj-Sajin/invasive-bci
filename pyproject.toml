@@ -9,7 +9,11 @@ description = "Chronic drift and electrode failure in intracortical BCIs: oracle
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
-authors = [{ name = "Imtiaj Sajin", email = "imtiajsajin@gmail.com" }]
+authors = [
+  { name = "Md. Imtiaj Alam Sajin", email = "imtiajsajin@gmail.com" },
+  { name = "Esm E Moula Chowdhury Abha", email = "esmechowdhuryabha@gmail.com" },
+  { name = "Md Wahiduzzaman Suva", email = "wshuvo360@gmail.com" },
+]
 keywords = ["brain-computer interface", "intracortical", "Utah array", "neural drift", "decoder", "simulation"]
 classifiers = [
   "Programming Language :: Python :: 3",
