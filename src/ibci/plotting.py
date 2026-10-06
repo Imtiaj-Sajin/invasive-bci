@@ -67,3 +67,24 @@ def day_axis(ax, ticks=(1, 3, 7, 30, 120, 480)):
     ax.set_xticks(list(ticks))
     ax.set_xticklabels([str(t) for t in ticks])
     ax.minorticks_off()
+
+
+MM = 1 / 25.4  # inches per millimetre
+SINGLE_COL, DOUBLE_COL = 88 * MM, 180 * MM  # Nature figure widths
+
+
+def setup_nature():
+    """Nature-family figure style: Arial/Helvetica, 5-7 pt text, thin lines, lowercase bold panel letters."""
+    setup()
+    mpl.rcParams.update({
+        "font.family": "sans-serif", "font.sans-serif": ["Arial", "Helvetica", "DejaVu Sans"],
+        "font.size": 6, "axes.titlesize": 7, "axes.labelsize": 6, "xtick.labelsize": 5.5, "ytick.labelsize": 5.5,
+        "legend.fontsize": 5.5, "axes.titleweight": "normal", "axes.linewidth": 0.5, "lines.linewidth": 1.0,
+        "lines.markersize": 3, "xtick.major.width": 0.5, "ytick.major.width": 0.5, "xtick.major.size": 2,
+        "ytick.major.size": 2, "grid.linewidth": 0.4, "savefig.dpi": 450,
+    })
+
+
+def panel(ax, letter, x=-0.18, y=1.04):
+    """Lowercase bold panel letter in the Nature style."""
+    ax.text(x, y, letter, transform=ax.transAxes, fontsize=8, fontweight="bold", va="bottom", ha="left", color=INK)
