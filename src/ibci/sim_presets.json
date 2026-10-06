@@ -1,0 +1,39 @@
+{
+ "_about": "Calibrated SimParams for LINK monkey N (Utah arrays, SBP, finger task). 'early' = implant days < 700 (calibration loss 0.074), 'late' = days >= 700 (loss 0.063). Drift is smaller and slower late in implant life; electrode switching rates are similar. See docs/SIMULATOR.md.",
+ "early": {
+  "s_mix0": 0.9592219541752854,
+  "s_mix": 1.4783653200354872,
+  "tau_mix": 15.133524921383799,
+  "beta_local": 0.5,
+  "rho0": 0.042485260931543686,
+  "rho_inf": 0.12031565508259505,
+  "tau_rho": 359.84691406816336,
+  "rho_conc": 5.0,
+  "h_off": 0.0038207531843768502,
+  "h_on": 0.0018015961064157598,
+  "silent_signal_frac": 0.37,
+  "h_jump": 0.005,
+  "jump_sd": 0.5,
+  "rw_offset": 0.02,
+  "rw_logscale": 0.02,
+  "k_latent": 20
+ },
+ "late": {
+  "s_mix0": 0.7683506434859889,
+  "s_mix": 1.316893472787369,
+  "tau_mix": 12.197932140068488,
+  "beta_local": 0.5,
+  "rho0": 0.03180037662424078,
+  "rho_inf": 0.12717730966492752,
+  "tau_rho": 526.86775827787,
+  "rho_conc": 5.0,
+  "h_off": 0.0033773029864234733,
+  "h_on": 0.0017065601680744872,
+  "silent_signal_frac": 0.37,
+  "h_jump": 0.005,
+  "jump_sd": 0.5,
+  "rw_offset": 0.02,
+  "rw_logscale": 0.02,
+  "k_latent": 20
+ }
+}

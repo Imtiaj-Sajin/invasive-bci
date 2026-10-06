@@ -774,3 +774,24 @@ recordings towards stable, long-term brain-computer interfaces" (PMC11494208).
 data, then report raw vs time-partialled correlations with performance. This is a clean, publishable test whichever way it comes out.
 
 **Action:** a sub-agent is running a rigorous claim-by-claim prior-art check (C1–C7) before any writing.
+
+## 2026-10-06 ~11:00 — Simulator v2: age-dependent presets
+
+Late-period calibration (`calibrate_sim.py --min-day 700`; failure rates fitted on days ≥ 700) finished with **loss 0.063**.
+
+Early vs late parameters:
+
+| Parameter | Early | Late |
+| --- | --- | --- |
+| s_mix0 | 0.96 | 0.77 |
+| s_mix | 1.48 | 1.32 |
+| tau_mix (d) | 15 | 12 |
+| rho0 | 0.042 | 0.032 |
+| tau_rho (d) | 360 | 527 |
+| h_off (/d) | 0.0038 | 0.0034 |
+| h_on (/d) | 0.0018 | 0.0017 |
+
+Late fit on a fresh seed, real vs simulated L2/own: 0.80 vs 0.71 at 1 d, 0.32 vs 0.15 at 30 d, 0.17 vs 0.11 at 120 d.
+
+**Conclusion:** drift is smaller and slower in the mature implant, while electrode switching is about the same. Shipped as presets:
+`sim.load_preset("early" | "late")` (`src/ibci/sim_presets.json`); see `docs/SIMULATOR.md`.

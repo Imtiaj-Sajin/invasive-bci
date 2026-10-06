@@ -135,3 +135,11 @@ def apply_drift(Z: np.ndarray, d: Drift, rng: np.random.Generator) -> np.ndarray
 def to_raw(X: np.ndarray, d: Drift, raw_mean: np.ndarray, raw_std: np.ndarray) -> np.ndarray:
     """Map simulated z-scored features back to raw units with the offset / scale random walks applied."""
     return ((X + d.offset) * (raw_std * np.exp(d.logscale)) + raw_mean).astype(np.float32)
+
+
+def load_preset(name: str = "early") -> SimParams:
+    """Calibrated parameters: 'early' (implant days < 700) or 'late' (days >= 700) from LINK monkey N."""
+    import json
+    import os
+    presets = json.load(open(os.path.join(os.path.dirname(__file__), "sim_presets.json")))
+    return SimParams(**{k: v for k, v in presets[name].items() if k in SimParams.__dataclass_fields__})
