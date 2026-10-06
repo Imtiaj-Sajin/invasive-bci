@@ -49,6 +49,11 @@ Details, numbers, caveats and corrections are in [docs/RESEARCH_LOG.md](docs/RES
   - `stats.py` and `plotting.py`: statistics and figure style.
 - `scripts/`: entry points. `scripts/run_all.sh` lists the full pipeline in order.
 - `results/`: small result tables and figures. `tests/`: unit tests (`python -m pytest tests -q`).
+- `manuscript/`: the paper (Nature Communications format, Springer Nature `sn-jnl` template).
+  - `main.tex` and `supplementary.tex`; compiled PDFs are committed alongside.
+  - `make_bib.py` writes `refs.tex` in citation order; `scripts/make_supp_tables.py` writes `supp/*.tex` from `results/`.
+  - `check_style.py` audits word counts, sentence length, banned words and dashes.
+  - Rebuild: `python manuscript/make_bib.py && cd manuscript && pdflatex main && pdflatex main`.
 
 ## Install
 
@@ -86,3 +91,5 @@ See [CITATION.cff](CITATION.cff). Licence: MIT.
 - **LINK**, DANDI 001201 (CC-BY-4.0): Temmar et al., NeurIPS 2025 Datasets & Benchmarks.
 - **DANDI 000688**: Perich/Miller long-term monkey reaching (Chewie, Mihili).
 - **FALCON H2**, DANDI 000950: Karpowicz et al., NeurIPS 2024 Datasets & Benchmarks (human T5).
+- **BrainGate 20-year release**, Dryad doi:10.5061/dryad.x0k6djj1h: Hahn et al., *Nat. Med.* (2026) (yield data for 20 arrays in 14 participants; closed-loop decoding sessions).
+- **MINDFUL**, Dryad doi:10.5061/dryad.n2z34tn5s: Pun et al., *Commun. Biol.* 7, 1363 (2024).
