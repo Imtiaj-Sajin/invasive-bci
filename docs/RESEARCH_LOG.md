@@ -825,3 +825,32 @@ with performance is elapsed time, and it does not improve prediction beyond the 
 instability–performance correlations across days are substantially confounded by elapsed time, and should be reported
 alongside time-partialled values. A re-test on MINDFUL's own public data (Dryad dryad.n2z34tn5s, 0.41 GB) would be ideal;
 it needs a browser download.
+
+## 2026-10-06 ~11:40 — Claim-by-claim prior-art check done (`docs/knowledge/06_prior_art_check.md`)
+
+**Verdicts:**
+
+| Verdict | Claims |
+| --- | --- |
+| NEW | C2b (no incremental validity of label-free metrics beyond elapsed time; none of 27 citing papers control for time); C4 (regularize for the future, for iBCI); C6a (electrode revival and switching); C7 (calibrated simulator; drift slows later) |
+| New quantitatively | C3 (gain-explained fraction; tension with Bishop 2014) |
+| Partially known | C1 (decay documented per dataset; conserved cross-lab course and ladder new; Wilson 2025 human −46% at 1–2 weeks corroborates); C5 (estimator known: Kuzborskij & Orabona 2013, SmoothBatch, Bayesian updates; harm-rate analysis new); C6b; C6c (Forrest 2025 strain; Patel 2023 cracks; our 20-array time-to-loss test and the SBP dissociation are new) |
+| Already published | C6d (impedance decline): a replication only |
+| Contested | C2a (label-free alignment ≤ renormalization) |
+
+**C2a reconciled with our data** (LINK ladder, median R²):
+
+| gap | L1 recentre (mean-only) | L4u Procrustes | L2 full renorm |
+| --- | --- | --- | --- |
+| 1 d | 0.141 | 0.187 | 0.201 |
+| 7 d | 0.070 | 0.116 | 0.148 |
+| 30 d | −0.037 | 0.032 | 0.045 |
+| 120 d | −0.038 | −0.008 | 0.010 |
+
+- Alignment beats the mean-only baseline used in prior work (L4u > L1 in 58% of pairs), consistent with Wilson 2025 and
+  Degenhart 2020. But it does not beat full per-channel z-scoring (L4u > L2 in only 26% of pairs).
+- **Reframed claim:** much of the reported benefit of label-free stabilizers over mean recalibration is already obtained
+  by per-channel variance normalization.
+
+The MINDFUL public data is being downloaded through the Dryad API with the owner's token (not stored anywhere). The owner
+was advised to reset the Dryad API credentials afterwards.
