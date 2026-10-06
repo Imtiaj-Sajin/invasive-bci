@@ -33,3 +33,4 @@ targets {
 C:\Python311\Lib\site-packages\scipy\stats\_qmc.py:993: UserWarning: The balance properties of Sobol' points require n to be a power of 2.
   sample = self._random(n, workers=workers)
 [1] 51s loss=0.2762 s_mix0=1.01 s_mix=1.46 tau_mix=14.8 rho0=0.04 rho_inf=0.0847 tau_rho=245
+[2] 98s loss=0.6570 s_mix0=0.186 s_mix=0.0377 tau_mix=70.2 rho0=0.121 rho_inf=0.591 tau_rho=45.1
