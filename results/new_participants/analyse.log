@@ -89,3 +89,6 @@ skip  results/new_participants/T7_gain_efficiency.log
 23:34:46 ==== T8 (58 sessions)
 skip  results/new_participants/T8_ladder.log
 23:34:47 start results/new_participants/T8_decay_alpha.log
+00:52:44 done  results/new_participants/T8_decay_alpha.log
+skip  results/new_participants/T8_reg_tradeoff.log
+00:52:44 start results/new_participants/T8_align_variants.log
