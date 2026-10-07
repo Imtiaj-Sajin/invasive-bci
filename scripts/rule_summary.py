@@ -15,9 +15,10 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+from ibci.participants import humans  # noqa: E402
 from ibci.stats import cluster_bootstrap  # noqa: E402
 
-HUMANS = ["T6", "T5", "T9"]
+HUMANS = humans()   # included participants (pre-specified reference-decoder rule, ibci.participants)
 
 
 def subjects():

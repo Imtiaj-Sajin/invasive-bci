@@ -13,12 +13,12 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+from ibci.participants import humans  # noqa: E402
 from ibci.stats import cluster_bootstrap  # noqa: E402
 
 LADDERS = {"Monkey N": "results/anatomy/ladder.csv", "Monkey C": "results/replication/C_ladder.csv",
-           "Monkey M": "results/replication/M_ladder.csv", "Human T6": "results/replication_bg/T6_ladder.csv"}
-LADDERS.update({f"Human {p}": f"results/replication_bg/{p}_ladder.csv" for p in ("T5", "T9")
-                if os.path.exists(f"results/replication_bg/{p}_ladder.csv")})
+           "Monkey M": "results/replication/M_ladder.csv"}
+LADDERS.update({f"Human {p}": f"results/replication_bg/{p}_ladder.csv" for p in humans()})
 GAPS = [1, 7, 30, 120, 480]
 
 
@@ -165,8 +165,7 @@ def mindful_table(out):
 
 def reg_table(out):
     r = pd.read_csv("results/reg_tradeoff/rule_across_subjects.csv")
-    names = {"N (LINK)": "Monkey N", "C": "Monkey C", "M": "Monkey M", "T6 (human)": "Human T6",
-             "T5 (human)": "Human T5", "T9 (human)": "Human T9"}
+    names = {"N (LINK)": "Monkey N", "C": "Monkey C", "M": "Monkey M", **{f"{p} (human)": f"Human {p}" for p in humans()}}
     rows = []
     for _, x in r.iterrows():
         lo, hi = [float(v) for v in x.ci.strip("[]").split(",")]
@@ -188,7 +187,7 @@ def lstm_table(out):
     write(os.path.join(out, "tab_lstm.tex"), rows)
 
 
-NAMES = {"N": "Monkey N", "C": "Monkey C", "M": "Monkey M", "T6": "Human T6", "T5": "Human T5", "T9": "Human T9"}
+NAMES = {"N": "Monkey N", "C": "Monkey C", "M": "Monkey M", **{p: f"Human {p}" for p in humans()}}
 
 
 def nn_table(out):
@@ -240,7 +239,7 @@ def labelfree_table(out):
 
 def human_eff_table(out):
     rows = []
-    for k in ("T6", "T5", "T9"):
+    for k in humans():
         p = f"results/gain_efficiency/{k}.csv"
         if not os.path.exists(p):
             continue
