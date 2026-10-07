@@ -1,0 +1,18 @@
+16:47:20 start convert T3 -> F:/ibci-data/braingate/decoding/T3
+--- restarted 16:50:56 after script edit
+16:51:01 start convert T3 -> F:/ibci-data/braingate/decoding/T3
+16:55:22 done  convert T3 (8 sessions)
+16:55:22 start convert T2 -> F:/ibci-data/braingate/decoding/T2
+--- 16:55:42 switched to three parallel lanes
+16:55:42 start convert T2 -> F:/ibci-data/braingate/decoding/T2
+16:55:42 start convert T8 -> G:/ibci-data/braingate/decoding/T8
+16:55:42 start convert T11 -> D:/ibci-data/braingate/decoding/T11
+--- 17:14:01 T8 and T11 paused; they follow T2 > T7 > T10 one at a time (owner's request)
+17:39:08 done  convert T2 (42 sessions)
+17:39:08 start convert T7 -> F:/ibci-data/braingate/decoding/T7
+18:10:34 done  convert T7 (35 sessions)
+18:10:34 start convert T10 -> F:/ibci-data/braingate/decoding/T10
+18:46:16 done  convert T10 (57 sessions)
+18:46:25 start convert T8 -> G:/ibci-data/braingate/decoding/T8
+20:37:14 done  convert T8 (58 sessions)
+20:37:15 start convert T11 -> D:/ibci-data/braingate/decoding/T11

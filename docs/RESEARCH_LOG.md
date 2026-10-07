@@ -1187,3 +1187,4 @@ abstract 144 words. Next: six more BrainGate participants (owners to download), 
   equal or worse). T2 trials are long (median ~10 s), consistent with weak control. T2 excluded by the rule above;
   the current preprocessing (session-wise z-scored SBP) is retained for all participants.
 - Analysis switched to two lanes at 19:47 (`scripts/analyse_lane.sh`): lane A T7 then T10, lane B T8 then T11; each step waits for >= 6 GB free RAM. The GPU loop continues unchanged.
+- 22:33 T8 `decay_alpha` failed with an out-of-memory error (985 MiB allocation) while two analysis lanes, the GPU network ladder and the T11 download ran together; the RAM guard only checks before a step starts. Queued a rerun after lane A finishes T10, starting only with >= 10 GB free. Other T8 steps continue.

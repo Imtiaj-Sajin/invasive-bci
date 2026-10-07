@@ -1,0 +1,7 @@
+12/12 pairs, 112s
+            rec_rew  rec_rew_nonneg  rec_rew_perm  rec_rew_perm_nn
+gap_target                                                        
+1              1.05            1.10          1.43             1.36
+7              0.87            0.85          1.06             0.95
+30             0.70            0.70          0.62             0.62
+480            2.87            2.87          2.77             2.89

@@ -1,0 +1,78 @@
+16:56:01 ==== T3 (8 sessions)
+16:56:02 start results/new_participants/T3_ladder.log
+16:59:20 done  results/new_participants/T3_ladder.log
+16:59:20 start results/new_participants/T3_decay_alpha.log
+17:02:59 done  results/new_participants/T3_decay_alpha.log
+17:02:59 start results/new_participants/T3_reg_tradeoff.log
+17:03:23 done  results/new_participants/T3_reg_tradeoff.log
+17:03:23 start results/new_participants/T3_align_variants.log
+17:04:06 done  results/new_participants/T3_align_variants.log
+17:04:06 start results/new_participants/T3_label_free_plus.log
+17:04:31 done  results/new_participants/T3_label_free_plus.log
+17:04:31 start results/new_participants/T3_gain_efficiency.log
+17:08:50 done  results/new_participants/T3_gain_efficiency.log
+17:08:50 start results/new_participants/T3_reweight_controls.log
+17:10:55 done  results/new_participants/T3_reweight_controls.log
+17:10:55 start results/new_participants/T3_gain_mechanism.log
+17:11:31 done  results/new_participants/T3_gain_mechanism.log
+17:11:31 start results/new_participants/T3_weight_angles.log
+17:11:43 done  results/new_participants/T3_weight_angles.log
+17:39:45 ==== T2 (42 sessions)
+17:39:45 start results/new_participants/T2_ladder.log
+18:15:11 done  results/new_participants/T2_ladder.log
+18:15:11 start results/new_participants/T2_decay_alpha.log
+18:20:01 FAILED results/new_participants/T2_decay_alpha.log (exit 0)
+skip  results/new_participants/T2_reg_tradeoff.log
+skip  results/new_participants/T2_align_variants.log
+skip  results/new_participants/T2_label_free_plus.log
+skip  results/new_participants/T2_gain_efficiency.log
+skip  results/new_participants/T2_reweight_controls.log
+skip  results/new_participants/T2_gain_mechanism.log
+skip  results/new_participants/T2_weight_angles.log
+18:20:01 ==== T7 (35 sessions)
+18:20:01 start results/new_participants/T7_ladder.log
+18:53:38 done  results/new_participants/T7_ladder.log
+18:53:38 start results/new_participants/T7_decay_alpha.log
+19:28:23 done  results/new_participants/T7_decay_alpha.log
+19:28:23 start results/new_participants/T7_reg_tradeoff.log
+19:32:56 done  results/new_participants/T7_reg_tradeoff.log
+19:32:56 start results/new_participants/T7_align_variants.log
+19:38:57 done  results/new_participants/T7_align_variants.log
+19:38:57 start results/new_participants/T7_label_free_plus.log
+19:41:52 done  results/new_participants/T7_label_free_plus.log
+19:41:52 start results/new_participants/T7_gain_efficiency.log
+20:32:25 done  results/new_participants/T7_gain_efficiency.log
+20:32:25 ==== T7 (35 sessions)
+skip  results/new_participants/T7_ladder.log
+skip  results/new_participants/T7_decay_alpha.log
+skip  results/new_participants/T7_reg_tradeoff.log
+skip  results/new_participants/T7_align_variants.log
+skip  results/new_participants/T7_label_free_plus.log
+skip  results/new_participants/T7_gain_efficiency.log
+20:32:26 start results/new_participants/T7_reweight_controls.log
+20:37:45 ==== T8 (58 sessions)
+20:37:46 start results/new_participants/T8_ladder.log
+20:59:12 done  results/new_participants/T7_reweight_controls.log
+20:59:13 start results/new_participants/T7_gain_mechanism.log
+21:07:22 done  results/new_participants/T7_gain_mechanism.log
+21:07:22 start results/new_participants/T7_weight_angles.log
+21:10:08 done  results/new_participants/T7_weight_angles.log
+21:10:08 ==== T7 finished
+21:10:08 ==== T10 (57 sessions)
+21:11:09 start results/new_participants/T10_ladder.log
+21:41:25 done  results/new_participants/T10_ladder.log
+21:41:26 start results/new_participants/T10_decay_alpha.log
+22:14:32 done  results/new_participants/T10_decay_alpha.log
+22:14:32 start results/new_participants/T10_reg_tradeoff.log
+22:15:06 done  results/new_participants/T8_ladder.log
+22:15:06 start results/new_participants/T8_decay_alpha.log
+22:20:48 done  results/new_participants/T10_reg_tradeoff.log
+22:25:53 start results/new_participants/T10_align_variants.log
+22:33:40 FAILED results/new_participants/T8_decay_alpha.log
+22:33:41 start results/new_participants/T8_reg_tradeoff.log
+22:35:45 done  results/new_participants/T10_align_variants.log
+22:35:46 start results/new_participants/T10_label_free_plus.log
+22:42:25 done  results/new_participants/T10_label_free_plus.log
+22:47:13 done  results/new_participants/T8_reg_tradeoff.log
+22:47:13 start results/new_participants/T8_align_variants.log
+22:47:30 start results/new_participants/T10_gain_efficiency.log
