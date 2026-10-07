@@ -19,7 +19,7 @@ import pandas as pd
 from scipy import stats
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from ibci.participants import humans  # noqa: E402
+from ibci.participants import ALL_PAIRS, humans, valid_pairs  # noqa: E402
 from ibci.stats import cluster_bootstrap  # noqa: E402
 
 GAPS = [1, 7, 30, 120, 480]
@@ -79,19 +79,20 @@ def main():
     for k, (name, path) in IND.items():
         if not os.path.exists(path):
             continue
-        res = {"name": name, "default": decay_block(pd.read_csv(path))}
+        res = {"name": name, "default": decay_block(valid_pairs(pd.read_csv(path)))}
         tp = f"results/decay_alpha/{k}_alpha{TUNED[k]:g}.csv"
         if os.path.exists(tp) and len(pd.read_csv(tp)) >= len(pd.read_csv(path)[lambda x: x.gap_target.isin(GAPS)]) * 0.95:
             tuned = pd.read_csv(tp)
-            res["tuned"] = decay_block(tuned)
+            res["tuned"] = decay_block(valid_pairs(tuned))
             base = pd.read_csv(path)[["train", "test", "gap_target", "L2", "own"]]
             m = tuned.merge(base, on=["train", "test", "gap_target"], suffixes=("_t", "_d"))
+            m = valid_pairs(m, "own_t", "own_d")
             m = m.assign(ret_t=m.L2_t / m.own_t, ret_d=m.L2_d / m.own_d)
             res["tuned_vs_default_retention"] = paired(m, "ret_t", "ret_d", max_gap=480)
             res["tuned_vs_default_abs_r2"] = paired(m, "L2_t", "L2_d", max_gap=480)
         nn = f"results/nn_ladder/{k}.csv"
         if os.path.exists(nn):
-            q = pd.read_csv(nn)
+            q = valid_pairs(pd.read_csv(nn), "own", "ridge_own")
             q = q.assign(ret_nn=q.L2 / q.own, ret_lin=q.ridge_L2 / q.ridge_own,
                          rec_nn=(q.L3 - q.L2) / (q.own - q.L2), rec_lin=(q.ridge_L3 - q.ridge_L2) / (q.ridge_own - q.ridge_L2),
                          d_own=q.own - q.ridge_own)
@@ -106,7 +107,7 @@ def main():
                                          for g, x in q.groupby("gap_target")}}
         av = f"results/align_variants/{k}.csv"
         if os.path.exists(av):
-            q = pd.read_csv(av)
+            q = valid_pairs(pd.read_csv(av))
             res["alignment"] = {
                 "by_gap": q.groupby("gap_target")[["mean_only", "mean_plus_align", "renorm", "renorm_plus_align", "own"]]
                 .median().round(3).to_dict("index"),
@@ -115,7 +116,7 @@ def main():
                 "renorm_vs_mean_only": paired(q, "renorm", "mean_only")}
         lf = f"results/label_free_plus/{k}.csv"
         if os.path.exists(lf):
-            q = pd.read_csv(lf)
+            q = valid_pairs(pd.read_csv(lf))
             res["label_free_plus"] = {
                 "by_gap": q.groupby("gap_target")[["renorm", "coral", "fa_fixed", "fa_stab", "fa_own", "own"]]
                 .median().round(3).to_dict("index"),
@@ -124,7 +125,7 @@ def main():
                 "fa_stab_vs_renorm": paired(q, "fa_stab", "renorm", max_gap=480)}
         ge = f"results/gain_efficiency/{k}.csv"
         if os.path.exists(ge):
-            q = pd.read_csv(ge)
+            q = valid_pairs(pd.read_csv(ge))
             eff = {}
             for n in (10, 20, 50, 100, 300):
                 for rung in ("L3", "L6p", "L6"):
@@ -134,7 +135,8 @@ def main():
             eff["no_labels"] = round(float((q.L2 / q.own).median()), 3)
             res["data_efficiency"] = {"n_pairs": int(len(q)), "median_retention": eff}
         out[k] = res
-    json.dump(out, open("results/v2_summary.json", "w"), indent=1, default=float)
+    json.dump(out, open("results/v2_summary_allpairs.json" if ALL_PAIRS else "results/v2_summary.json", "w"), indent=1,
+              default=float)
     for k, r in out.items():
         d = r["default"]
         print(f"{r['name']:10s} 1d strict {d.get('strict_1day', {}).get('retention')}  t_half {d['t_half_days']}"

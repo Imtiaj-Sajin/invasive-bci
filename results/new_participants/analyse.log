@@ -85,3 +85,7 @@ skip  results/new_participants/T7_gain_efficiency.log
 23:32:19 start results/new_participants/T10_weight_angles.log
 23:33:57 done  results/new_participants/T10_weight_angles.log
 23:33:57 ==== T10 finished
+23:34:46 single lane: T8 remaining steps alone, then T11
+23:34:46 ==== T8 (58 sessions)
+skip  results/new_participants/T8_ladder.log
+23:34:47 start results/new_participants/T8_decay_alpha.log

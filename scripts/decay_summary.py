@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from ibci.participants import humans  # noqa: E402
+from ibci.participants import humans, valid_pairs  # noqa: E402
 
 SUBJ = [("monkey N", "results/anatomy/ladder.csv"), ("monkey C", "results/replication/C_ladder.csv"),
         ("monkey M", "results/replication/M_ladder.csv")]
@@ -42,7 +42,7 @@ def main():
     rng = np.random.default_rng(0)
     rows = []
     for name, path in SUBJ:
-        d = pd.read_csv(path)
+        d = valid_pairs(pd.read_csv(path))
         d = d[d.gap_target.isin(GAPS)].assign(ret=lambda x: x.L2 / x.own)
         med = curve(d)
         groups = d.train.unique()

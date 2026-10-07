@@ -16,7 +16,7 @@ import pandas as pd
 from scipy import stats
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from ibci.participants import humans  # noqa: E402
+from ibci.participants import humans, valid_pairs  # noqa: E402
 
 out = {}
 SUBJ = {"N": "results/reg_tradeoff/tradeoff.csv", "C": "results/reg_tradeoff_C/tradeoff.csv",
@@ -72,7 +72,7 @@ for p_ in humans():
     if os.path.exists(f"results/replication_bg/{p_}_ladder.csv"):
         LAD[p_] = f"results/replication_bg/{p_}_ladder.csv"
 for name, path in LAD.items():
-    d = pd.read_csv(path)
+    d = valid_pairs(pd.read_csv(path))
     d = d[d.gap_target == 1].assign(r=lambda x: x.L2 / x.own)
     out.setdefault("one_vs_two_day", {})[name] = {
         f"{int(k)}d": {"n": int(len(g)), "median_retention": float(g.r.median())} for k, g in d.groupby("days")}
