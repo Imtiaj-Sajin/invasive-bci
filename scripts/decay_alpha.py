@@ -44,14 +44,42 @@ def sessions_for(subject, alpha, keys):
         return out
     from replicate_braingate_decoding import BGSess, load_session
     root = os.path.join(os.environ.get("IBCI_DATA", "D:/ibci-data"), "braingate", "decoding", subject)
-    out = {}
+    paths = {}
     for f in glob.glob(os.path.join(root, "*_decoding.mat")):
         day = int(re.search(r"_day_(\d+)_", f).group(1))
         key = f"{subject}_day{day}"
         if key in keys:
-            d, X, Y, T = load_session(f)
-            out[key] = BGSess(key, d, X, Y, T, alpha)
-    return out
+            paths[key] = f
+    return LazySessions(paths, lambda key, f: BGSess(key, *load_session(f), alpha))
+
+
+class LazySessions(dict):
+    """Sessions built on first access and kept in a small least-recently-used cache. Holding every session of a large
+    participant (e.g. T11, 196 sessions) exceeds 24 GB of RAM; results are identical because each session is built the
+    same way on every access."""
+
+    def __init__(self, paths, build, maxsize=16):
+        super().__init__()
+        self.paths, self.build, self.maxsize, self.order = paths, build, maxsize, []
+
+    def __getitem__(self, key):
+        if dict.__contains__(self, key):
+            self.order.remove(key)
+        else:
+            dict.__setitem__(self, key, self.build(key, self.paths[key]))
+            if len(self.order) >= self.maxsize:
+                dict.__delitem__(self, self.order.pop(0))
+        self.order.append(key)
+        return dict.__getitem__(self, key)
+
+    def __contains__(self, key):
+        return key in self.paths
+
+    def __len__(self):
+        return len(self.paths)
+
+    def keys(self):
+        return self.paths.keys()
 
 
 def main():

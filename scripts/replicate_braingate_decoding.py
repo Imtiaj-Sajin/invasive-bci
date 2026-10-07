@@ -16,6 +16,7 @@ import os
 import re
 import sys
 import time
+from collections import OrderedDict
 
 import numpy as np
 import pandas as pd
@@ -77,6 +78,31 @@ class BGSess:
         return self.zte * self.z.std + self.z.mean
 
 
+class SessStub:
+    """Day and file of a usable session; the session itself is loaded only when a pair needs it."""
+
+    def __init__(self, key, day, path):
+        self.key, self.day, self.style, self.path = key, day, "cursor", path
+
+
+def session_loader(stubs, maxsize=16):
+    """Least-recently-used cache of BGSess objects. Large participants (e.g. T11, 196 sessions) do not fit in 24 GB when
+    every session is held at once; results are identical because each BGSess is built the same way."""
+    cache = OrderedDict()
+
+    def get(i):
+        if i in cache:
+            cache.move_to_end(i)
+            return cache[i]
+        st = stubs[i]
+        day, X, Y, T = load_session(st.path)
+        cache[i] = BGSess(st.key, day, X, Y, T)
+        if len(cache) > maxsize:
+            cache.popitem(last=False)
+        return cache[i]
+    return get
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--participant", required=True)
@@ -95,12 +121,14 @@ def main():
             day, X, Y, T = load_session(f)
             if T.max() + 1 < 20:                       # need enough go periods to split
                 continue
-            sessions.append(BGSess(f"{args.participant}_day{day}", day, X, Y, T))
+            sessions.append(SessStub(f"{args.participant}_day{day}", day, f))
+            del X, Y, T
         except Exception as e:
             print("skip", os.path.basename(f), e, flush=True)
     print(f"{args.participant}: {len(sessions)} sessions over {sessions[-1].day - sessions[0].day} days", flush=True)
     pairs = select_pairs(sessions, args.gaps)
     print(f"{len(pairs)} pairs", flush=True)
+    get = session_loader(sessions)
     out_csv = os.path.join(args.out, f"{args.participant}_ladder.csv")
     rows, done = [], set()
     if args.resume and os.path.exists(out_csv):                 # keep pairs finished by an interrupted run
@@ -110,9 +138,9 @@ def main():
         print(f"resuming: {len(done)} pairs already done", flush=True)
     t0 = time.time()
     for c, (i, j, g) in enumerate(pairs):
-        si, sj = sessions[i], sessions[j]
-        if (si.key, sj.key, g) in done:
+        if (sessions[i].key, sessions[j].key, g) in done:
             continue
+        si, sj = get(i), get(j)
         rows.append(dict(participant=args.participant, train=si.key, test=sj.key, gap_target=g, days=sj.day - si.day,
                          train_day=si.day, **ladder(si, sj, [300], skip=tuple(args.skip))))
         if (c + 1) % 20 == 0 or c + 1 == len(pairs):

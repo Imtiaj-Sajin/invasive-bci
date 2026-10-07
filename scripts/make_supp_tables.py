@@ -313,6 +313,33 @@ def matched_table(out):
     write(os.path.join(out, "tab_matched.tex"), rows)
 
 
+def decoding_tables(out):
+    """Human rows of the dataset table, and the per-participant decoding table with the inclusion rule."""
+    from ibci.participants import MIN_REF_R2, excluded_humans, reference_r2
+    st = json.load(open("results/decoding_session_stats.json")) if os.path.exists("results/decoding_session_stats.json") \
+        else {}
+    order = humans() + sorted(excluded_humans(), key=lambda k: int(k[1:]))
+    rows = []
+    for k in order:
+        if k not in st:
+            continue
+        s = st[k]
+        tag = "" if k in humans() else r" (excluded)"
+        rows.append(f"Human {k}{tag} & Dryad x0k6djj1h & {s['arrays']} Utah, motor cortex & SBP & closed-loop cursor & "
+                    f"{s['sessions']} ({s['years']:.1f} years) " + r"\\")
+    write(os.path.join(out, "tab_data_humans.tex"), rows)
+    rows = []
+    for k in order:
+        if k not in st:
+            continue
+        s, r = st[k], reference_r2(k)
+        rows.append(" & ".join([k, f"{s['arrays']} ({s['channels']})", str(s["sessions"]), f"{s['years']:.1f}",
+                                f"{s['median_trials']:.0f}", f"{s['median_movement_s']:.1f}",
+                                f3(r) if r is not None else "--",
+                                "yes" if r is not None and r > MIN_REF_R2 else "no"]) + r"\\")
+    write(os.path.join(out, "tab_decoding.tex"), rows)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="manuscript/natcomms/supp")
@@ -320,7 +347,7 @@ def main():
     os.makedirs(args.out, exist_ok=True)
     for fn in (ladder_table, failure_table, efficiency_table, policy_table, sim_table, augment_table, mindful_table,
                reg_table, nn_table, angle_table, labelfree_table, human_eff_table, revival_table,
-               controls_table, matched_table):
+               controls_table, matched_table, decoding_tables):
         fn(args.out)
         print("wrote", fn.__name__, flush=True)
 
