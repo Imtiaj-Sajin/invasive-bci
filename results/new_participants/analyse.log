@@ -77,3 +77,11 @@ skip  results/new_participants/T7_gain_efficiency.log
 22:47:13 start results/new_participants/T8_align_variants.log
 22:47:30 start results/new_participants/T10_gain_efficiency.log
 22:52:46 FAILED results/new_participants/T8_align_variants.log
+23:14:25 done  results/new_participants/T10_gain_efficiency.log
+23:14:25 start results/new_participants/T10_reweight_controls.log
+23:27:14 done  results/new_participants/T10_reweight_controls.log
+23:27:15 start results/new_participants/T10_gain_mechanism.log
+23:32:19 done  results/new_participants/T10_gain_mechanism.log
+23:32:19 start results/new_participants/T10_weight_angles.log
+23:33:57 done  results/new_participants/T10_weight_angles.log
+23:33:57 ==== T10 finished
