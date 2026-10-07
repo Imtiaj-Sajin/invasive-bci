@@ -1118,3 +1118,19 @@ in people with any well-regularized refit; label-free alignment adds little beyo
 matters and per-channel corrections track electrode firing; brief silences are fluctuation, long ones real; simulator
 useful for untested corrections. 7 figures (new Fig. 4 on channel controls), 13 Supplementary Tables, 57 references,
 abstract 144 words. Next: six more BrainGate participants (owners to download), possibly a FALCON comparison.
+
+### 2026-10-07 — Real-data overview figure
+
+- Owners asked for a separate attention figure made from real images and data, not hand-drawn illustration. The
+  illustrated panel was removed (helper drawing code deleted from `scripts/make_v2_figures.py`).
+- **New Fig. 1** (`fig1_overview`): (a) array sites on the FreeSurfer fsaverage cortical surface rendered with nilearn
+  (`SCIPY_ARRAY_API=1 python scripts/render_brain.py`; sites placed by MNI coordinates at the hand knob, marked as
+  approximate; the Destrieux atlas download was not used because of an expired certificate at the host);
+  (b) released mean spike waveforms of T5's lateral array on day 40 (58/96 electrodes with spikes) and day 2,700
+  (31/96); (c) closed-loop cursor paths, T5 day 833, held-out outward movements; (d) the same movements reconstructed by
+  integrating decoded direction: same-day decoder R² 0.56, decoder from day 355 (renormalized) −0.28, re-weighted
+  (300 trials) 0.44, tuned penalty. These match `results/decay_alpha/T5_alpha10000.csv` (pair 355→833). Display gain 2
+  for all decoders (stated in Methods). Example data cached in `results/figures/overview_examples.npz`.
+- **New Fig. 2** (`fig2_design`): sessions timeline and correction ladder, moved out of Fig. 1. Later figures renumbered
+  3–8 (files renamed). Command: `python scripts/make_v2_figures.py`.
+- Backup prompt for an AI image (slides/social media only, not the paper) in `manuscript/natcomms/figure1_image_prompt.md`.

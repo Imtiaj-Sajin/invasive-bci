@@ -74,18 +74,32 @@ three BrainGate participants, recordings from 20 arrays in 14 participants\cite{
 fixed decoders\cite{pun2024}.
 
 Here, we analyzed these datasets with a single pipeline. We trained decoders on one day, tested them on later days
-and applied a ladder of corrections. Decay rates differed about a hundredfold between individuals, and weak
+and applied a ladder of corrections. Figure~\ref{fig:overview} shows the problem in one participant. Over seven years,
+one array lost about half of its electrodes with spikes, and a decoder trained 478 days earlier failed until each
+channel was re-weighted. Decay rates differed about a hundredfold between individuals, and weak
 regularization exaggerated decay. In people, about 100 labeled trials restored most of the accuracy with any
 well-regularized refit, and label-free alignment added little beyond rescaling each channel. Corrections recovered
 far more when channels kept their identity, and the per-channel corrections tracked each electrode's changing
 activity. At the electrode level, brief silences matched session-to-session fluctuation, whereas silences lasting over
 a month were real and often reversed. We release the code, a calibrated simulator and all derived results.
 
+\begin{figure}[tbp]
+\centering
+\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig1_overview.pdf}}
+\caption{\textbf{Recordings change over years, and decoders decay with them.} \textbf{a}, Approximate array sites on
+the hand area of motor cortex, shown on a standard human cortical surface (FreeSurfer fsaverage). \textbf{b}, Mean
+spike waveforms on the lateral array of participant T5, 7.3 years apart. Grey squares mark electrodes without spikes.
+\textbf{c}, Cursor paths in a closed-loop session of T5 on day 833, for held-out outward movements. Colours mark targets.
+\textbf{d}, The same movements reconstructed by integrating decoded direction, for three decoders. The decoder from day
+355 fails without correction and recovers after re-weighting each channel (Methods).}
+\label{fig:overview}
+\end{figure}
+
 \section*{Results}
 
 \subsection*{Datasets and approach}
 
-We assembled four public datasets (Fig.~\ref{fig:overview}a and Supplementary Table~1). Decoder analyses used six
+We assembled four public datasets (Fig.~\ref{fig:design}a and Supplementary Table~1). Decoder analyses used six
 individuals. Monkey N was recorded over 1,242 days with Utah arrays in motor cortex during a two-finger
 task\cite{temmar2025,nason2021}. Monkeys C and M were recorded over three and 1.5 years during
 reaching\cite{gallego2020,perich2018}. BrainGate participants T6, T5 and T9 contributed 124, 92 and 117 closed-loop
@@ -96,7 +110,7 @@ and T5 controlled a cursor with a fixed decoder\cite{pun2024}.
 For each individual, we trained a linear decoder on one session and tested it on later sessions at gaps of 1 to 480
 days. Before testing, every channel of the later session was z-scored with that session's own mean and standard
 deviation. This step, renormalization, needs no labels and equalizes each channel's scale; the result is the
-renormalized fixed decoder. We then applied a ladder of corrections (Fig.~\ref{fig:overview}b and Methods). Label-free
+renormalized fixed decoder. We then applied a ladder of corrections (Fig.~\ref{fig:design}b and Methods). Label-free
 corrections updated channel means or aligned neural activity to the training day. Corrections that use labeled trials
 from the later day either re-weighted each channel's contribution to the otherwise unchanged decoder, or refitted the
 decoder while shrinking it toward the old one. A decoder trained on the later day served as the reference. We report
@@ -105,13 +119,11 @@ test trials.
 
 \begin{figure}[tbp]
 \centering
-\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig1_overview.pdf}}
-\caption{\textbf{Data and approach.} \textbf{a}, Recording setups. BrainGate participants had Utah arrays in the hand area of
-motor cortex and controlled a computer cursor. Monkeys had Utah arrays in motor and premotor cortex and performed a finger
-task (monkey N) or reached to targets (monkeys C and M). \textbf{b}, Sessions analyzed, by individual. Each tick is one
-session. Numbers give sessions per analysis. \textbf{c}, The correction ladder. A decoder trained on day $i$ is tested on
+\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig2_design.pdf}}
+\caption{\textbf{Datasets and the correction ladder.} \textbf{a}, Sessions analyzed, by individual. Each tick is one
+session. Numbers give sessions per analysis. \textbf{b}, The correction ladder. A decoder trained on day $i$ is tested on
 a later day $j$ after increasingly strong corrections. A decoder trained on day $j$ is the reference.}
-\label{fig:overview}
+\label{fig:design}
 \end{figure}
 
 \subsection*{Decay rates differ about a hundredfold between individuals}
@@ -135,7 +147,7 @@ growing mismatch between decoder and day, not poorer recordings.
 
 \begin{figure}[tbp]
 \centering
-\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig2_decay.pdf}}
+\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig3_decay.pdf}}
 \caption{\textbf{Decoders decay at rates that differ between individuals.} \textbf{a}, Retention of the renormalized fixed
 decoder, the $R^2$ of the old decoder divided by that of the reference decoder, against days since training. Circles,
 monkeys; squares, humans. Bands show 95\% confidence intervals. \textbf{b}, Retention after exactly one day (filled) and
@@ -205,7 +217,7 @@ allow only a descriptive comparison. Within these limits, elapsed time was as go
 
 \begin{figure}[tbp]
 \centering
-\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig3_labelfree.pdf}}
+\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig4_labelfree.pdf}}
 \caption{\textbf{Label-free corrections and monitoring add little.} \textbf{a}, Change in $R^2$ for five label-free
 corrections, relative to renormalization. Points show medians over training sessions; bars show 95\% confidence
 intervals. Values below the axis are printed. \textbf{b}, Offline monitoring in monkey N. Bars show how strongly each
@@ -266,7 +278,7 @@ only a global scale therefore overstate how much decoders rotate across days\cit
 
 \begin{figure}[tbp]
 \centering
-\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig4_channels.pdf}}
+\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig5_channels.pdf}}
 \caption{\textbf{Channel tuning is partly preserved over months.} \textbf{a}, Retention after re-weighting each channel in
 front of the unchanged decoder. \textbf{b}, Retention after re-weighting the correct decoder (circles and squares) or a
 decoder with scrambled channels (crosses). Upper rows use signed weights; lower rows use non-negative weights. Ticks mark
@@ -301,7 +313,7 @@ $P = \val{mcn:10:holm}$); with 20 trials the rates were \val{harm:20:cv}\% and \
 
 \begin{figure}[tbp]
 \centering
-\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig5_recipes.pdf}}
+\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig6_recipes.pdf}}
 \caption{\textbf{Simple recipes for recalibration.} \textbf{a}, Decoding $R^2$ in monkey N against the ridge penalty, on the
 training day (lightest) and on later days (darker). The dotted line marks $\alpha = 0.1$. \textbf{b}, Gain from the 1\%
 rule over $\alpha = 0.1$, per individual and gap. \textbf{c}, Retention in the three participants against the number of
@@ -343,7 +355,7 @@ most at the array edges\cite{forrest2025}, but they are modest and partly explai
 
 \begin{figure}[tbp]
 \centering
-\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig6_electrodes.pdf}}
+\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig7_electrodes.pdf}}
 \caption{\textbf{Most electrode silences are transient fluctuations.} \textbf{a}, Percentage of electrodes with spiking
 activity over years, for 20 human arrays (purple) and two arrays in monkey N (blue). \textbf{b}, Median impedance of each
 array relative to its first sessions. \textbf{c}, Percentage of silenced human electrodes that later recovered, observed
@@ -377,7 +389,7 @@ regularization (\val{aug:ridge_reg}) or training on several past sessions (\val{
 
 \begin{figure}[tbp]
 \centering
-\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig7_simulator.pdf}}
+\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig8_simulator.pdf}}
 \caption{\textbf{A calibrated simulator for testing new corrections.} \textbf{a}, Calibration on monkey N sessions before
 day 700. Points show real retention; lines show the simulator. \textbf{b}, Prediction error on sessions after day 700,
 for the simulator (dark blue), the median retention measured before day 700 (light blue) and a simulator without drift
@@ -553,6 +565,14 @@ the same pairs with the tuned penalty.
 $\mathbf{B}_i$ and $\mathbf{B}_j$. We computed the angle between $\mathrm{vec}(\mathbf{B}_i)$ and $\mathrm{vec}(\mathbf{B}_j)$,
 which allows one global scale, and the angle between $\mathrm{vec}(\mathbf{B}_j)$ and $\mathrm{vec}(\mathrm{diag}(\mathbf{s})
 \mathbf{B}_i)$, with each channel's scale $s_c$ fitted by least squares.
+
+\textit{Example in Fig.~\ref{fig:overview}.} Waveforms are the released robust mean waveforms (15~kHz, in microvolts)
+for electrodes with a threshold-crossing rate of at least 2~Hz at $-4.5$ times the robust standard deviation. For the
+reconstructions, decoders used the tuned penalty: one trained on T5's day 355, one trained on day 833, and the day-355
+decoder re-weighted with 300 labeled trials from day 833. Paths are shown for held-out movements that started at the
+center. Each path integrates the decoded direction from the cursor's start position. The step size was set so that
+the intended direction would reach the target in the trial's duration, multiplied by a common display gain of 2 for
+all decoders. $R^2$ values are those of the analysis on the same held-out trials.
 
 \subsection*{Label-free corrections}
 
