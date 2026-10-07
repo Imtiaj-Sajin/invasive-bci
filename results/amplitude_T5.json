@@ -1,0 +1,15 @@
+{
+ "participant": "T5",
+ "array": "lateral",
+ "n_electrodes": 62,
+ "early_median_uv": 55.15228057110785,
+ "late_median_uv": 28.790355558959902,
+ "ratio_median": 0.513021947170686,
+ "ratio_q25": 0.4422151645329645,
+ "ratio_q75": 0.5881421570914916,
+ "n_smaller": 61,
+ "wilcoxon_p": 8.356926594151027e-12,
+ "early_days": 200,
+ "late_days": 2000,
+ "n_sessions": 438
+}
