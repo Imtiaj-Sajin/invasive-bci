@@ -1,0 +1,8 @@
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+T9 rate: pairs 120, sessions 39, median rho 0.111, positive 0.92, P 3.2e-10; null median -0.010
+T9 imp: pairs 100, sessions 37, median rho -0.076, positive 0.11, P 1.3e-07; null median -0.010
