@@ -1,0 +1,104 @@
+== 18:43:38 convert G:/ibci-dl/decoding_T5.tar.gz -> D:/ibci-data/braingate/decoding/T5
+   1 T5_day_1015_decoding.mat  0.1 GB read, 10s
+   2 T5_day_1036_decoding.mat  0.3 GB read, 20s
+   3 T5_day_1048_decoding.mat  0.4 GB read, 30s
+   4 T5_day_111_decoding.mat  0.4 GB read, 32s
+   5 T5_day_113_decoding.mat  0.5 GB read, 35s
+   6 T5_day_1167_decoding.mat  0.6 GB read, 44s
+   7 T5_day_1197_decoding.mat  0.7 GB read, 50s
+   8 T5_day_1209_decoding.mat  0.8 GB read, 60s
+   9 T5_day_120_decoding.mat  0.9 GB read, 70s
+  10 T5_day_121_decoding.mat  0.9 GB read, 72s
+  11 T5_day_1244_decoding.mat  1.1 GB read, 80s
+  12 T5_day_124_decoding.mat  1.1 GB read, 82s
+  13 T5_day_126_decoding.mat  1.2 GB read, 93s
+  14 T5_day_1288_decoding.mat  1.4 GB read, 109s
+  15 T5_day_1302_decoding.mat  1.5 GB read, 113s
+  16 T5_day_140_decoding.mat  1.5 GB read, 116s
+  17 T5_day_1519_decoding.mat  1.6 GB read, 127s
+  18 T5_day_166_decoding.mat  1.7 GB read, 132s
+  19 T5_day_1671_decoding.mat  1.7 GB read, 134s
+  20 T5_day_1743_decoding.mat  1.8 GB read, 136s
+  21 T5_day_1804_decoding.mat  1.8 GB read, 138s
+  22 T5_day_182_decoding.mat  1.9 GB read, 145s
+  23 T5_day_1862_decoding.mat  1.9 GB read, 147s
+  24 T5_day_1895_decoding.mat  1.9 GB read, 149s
+  25 T5_day_189_decoding.mat  2.0 GB read, 156s
+  26 T5_day_2007_decoding.mat  2.0 GB read, 158s
+  27 T5_day_2077_decoding.mat  2.1 GB read, 160s
+  28 T5_day_2107_decoding.mat  2.1 GB read, 168s
+  29 T5_day_2126_decoding.mat  2.3 GB read, 182s
+  30 T5_day_2133_decoding.mat  2.4 GB read, 190s
+  31 T5_day_2149_decoding.mat  2.5 GB read, 195s
+  32 T5_day_225_decoding.mat  2.6 GB read, 204s
+  33 T5_day_252_decoding.mat  2.7 GB read, 212s
+  34 T5_day_2595_decoding.mat  2.8 GB read, 221s
+  35 T5_day_2609_decoding.mat  2.9 GB read, 232s
+  36 T5_day_2667_decoding.mat  3.0 GB read, 238s
+  37 T5_day_287_decoding.mat  3.0 GB read, 244s
+  38 T5_day_324_decoding.mat  3.1 GB read, 249s
+  39 T5_day_348_decoding.mat  3.2 GB read, 259s
+  40 T5_day_352_decoding.mat  3.2 GB read, 265s
+  41 T5_day_355_decoding.mat  3.3 GB read, 273s
+  42 T5_day_399_decoding.mat  3.6 GB read, 296s
+  43 T5_day_40_decoding.mat  3.6 GB read, 301s
+  44 T5_day_47_decoding.mat  3.7 GB read, 305s
+  45 T5_day_497_decoding.mat  3.8 GB read, 314s
+  46 T5_day_49_decoding.mat  3.9 GB read, 326s
+  47 T5_day_51_decoding.mat  4.1 GB read, 344s
+  48 T5_day_525_decoding.mat  4.2 GB read, 349s
+  49 T5_day_54_decoding.mat  4.4 GB read, 369s
+  50 T5_day_56_decoding.mat  4.6 GB read, 389s
+  51 T5_day_57_decoding.mat  4.8 GB read, 406s
+  52 T5_day_600_decoding.mat  4.9 GB read, 412s
+  53 T5_day_607_decoding.mat  4.9 GB read, 415s
+  54 T5_day_609_decoding.mat  4.9 GB read, 420s
+  55 T5_day_61_decoding.mat  5.0 GB read, 422s
+  56 T5_day_635_decoding.mat  5.0 GB read, 427s
+  57 T5_day_63_decoding.mat  5.1 GB read, 429s
+  58 T5_day_658_decoding.mat  5.1 GB read, 437s
+  59 T5_day_663_decoding.mat  5.1 GB read, 440s
+  60 T5_day_665_decoding.mat  5.3 GB read, 460s
+  61 T5_day_677_decoding.mat  5.3 GB read, 464s
+  62 T5_day_679_decoding.mat  5.4 GB read, 467s
+  63 T5_day_684_decoding.mat  5.7 GB read, 493s
+  64 T5_day_688_decoding.mat  6.0 GB read, 512s
+  65 T5_day_68_decoding.mat  6.1 GB read, 522s
+  66 T5_day_693_decoding.mat  6.4 GB read, 546s
+  67 T5_day_707_decoding.mat  6.6 GB read, 559s
+  68 T5_day_709_decoding.mat  6.8 GB read, 578s
+  69 T5_day_70_decoding.mat  6.9 GB read, 585s
+  70 T5_day_719_decoding.mat  7.3 GB read, 611s
+  71 T5_day_735_decoding.mat  7.4 GB read, 623s
+  72 T5_day_75_decoding.mat  7.6 GB read, 632s
+  73 T5_day_761_decoding.mat  7.7 GB read, 644s
+  74 T5_day_798_decoding.mat  7.9 GB read, 655s
+  75 T5_day_831_decoding.mat  7.9 GB read, 658s
+  76 T5_day_833_decoding.mat  8.0 GB read, 666s
+  77 T5_day_847_decoding.mat  8.1 GB read, 670s
+  78 T5_day_852_decoding.mat  8.3 GB read, 690s
+  79 T5_day_854_decoding.mat  8.5 GB read, 699s
+  80 T5_day_875_decoding.mat  8.8 GB read, 721s
+  81 T5_day_880_decoding.mat  9.0 GB read, 736s
+  82 T5_day_882_decoding.mat  9.4 GB read, 768s
+  83 T5_day_889_decoding.mat  9.4 GB read, 772s
+  84 T5_day_896_decoding.mat  9.6 GB read, 789s
+  85 T5_day_919_decoding.mat  9.8 GB read, 803s
+  86 T5_day_938_decoding.mat  10.0 GB read, 821s
+  87 T5_day_945_decoding.mat  10.2 GB read, 831s
+  88 T5_day_952_decoding.mat  10.5 GB read, 854s
+  89 T5_day_957_decoding.mat  10.9 GB read, 891s
+  90 T5_day_959_decoding.mat  11.1 GB read, 907s
+  91 T5_day_964_decoding.mat  11.2 GB read, 913s
+  92 T5_day_985_decoding.mat  11.4 GB read, 923s
+done: 92 sessions; archive read to the end (gzip CRC verified)
+== 18:59:02 correction ladder
+== 20:38:15 regularization trade-off
+== 20:47:00 summaries, tables, figures
+ subject  n_pairs  n_train_sessions  overnight overnight_ci  t_half_days     t_half_ci
+monkey N      259                80      0.726 [0.62, 0.78]          8.1   [3.7, 10.1]
+monkey C      145                64      0.715 [0.62, 0.78]          9.2   [4.6, 19.5]
+monkey M       44                22      0.769 [0.71, 0.85]         33.9   [9.5, 44.0]
+human T6      369               122      0.729 [0.41, 0.87]        124.6 [55.7, 240.0]
+human T5      256                89      0.615 [0.34, 0.76]          3.7    [1.0, 9.5]
+== 20:48:22 done

@@ -1,0 +1,13 @@
+20/115 pairs, 166s
+40/115 pairs, 381s
+60/115 pairs, 639s
+80/115 pairs, 929s
+100/115 pairs, 1163s
+115/115 pairs, 1334s
+            rec_rew  rec_rew_nonneg  rec_rew_perm  rec_rew_perm_nn
+gap_target                                                        
+1              0.64            0.64          0.11            -0.97
+7              0.73            0.66          0.23            -0.35
+30             0.73            0.54          0.45             0.24
+120            0.76            0.67          0.70             0.54
+480            0.82            0.70          0.79             0.60

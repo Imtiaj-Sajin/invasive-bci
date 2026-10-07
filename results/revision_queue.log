@@ -1,0 +1,33 @@
+22:32:46 start T9 pipeline
+00:00:53 done  T9 pipeline
+00:00:53 start results/decay_alpha_T5.log
+01:20:40 done  results/decay_alpha_T5.log
+01:20:40 start results/decay_alpha_T9.log
+03:24:48 done  results/decay_alpha_T9.log
+03:24:48 start results/align_variants_C.log
+03:31:22 done  results/align_variants_C.log
+03:31:22 start results/align_variants_M.log
+03:34:17 done  results/align_variants_M.log
+03:34:17 start results/align_variants_T6.log
+03:44:49 done  results/align_variants_T6.log
+03:44:49 start results/align_variants_T5.log
+04:00:30 done  results/align_variants_T5.log
+04:00:30 start results/align_variants_T9.log
+04:21:18 done  results/align_variants_T9.log
+04:21:18 start results/label_free_plus_C.log
+04:24:27 done  results/label_free_plus_C.log
+skip  results/label_free_plus_M.log
+04:24:27 start results/label_free_plus_T6.log
+04:29:43 done  results/label_free_plus_T6.log
+04:29:43 start results/label_free_plus_T5.log
+04:36:53 done  results/label_free_plus_T5.log
+04:36:53 start results/label_free_plus_T9.log
+04:45:07 done  results/label_free_plus_T9.log
+04:45:07 start results/gain_efficiency_T6.log
+05:03:53 done  results/gain_efficiency_T6.log
+05:03:53 start results/gain_efficiency_T5.log
+05:57:04 done  results/gain_efficiency_T5.log
+05:57:04 start results/gain_efficiency_T9.log
+06:54:21 done  results/gain_efficiency_T9.log
+06:55:45 summaries refreshed
+06:55:45 QUEUE COMPLETE

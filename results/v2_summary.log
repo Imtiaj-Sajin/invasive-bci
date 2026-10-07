@@ -1,0 +1,6 @@
+Monkey N   1d strict [0.743, 0.62, 0.832]  t_half 8.1  tuned t_half 16.4
+Monkey C   1d strict [0.698, 0.579, 0.768]  t_half 9.2  tuned t_half 10.4
+Monkey M   1d strict [0.804, 0.697, 0.86]  t_half 33.9  tuned t_half 36.9
+Human T6   1d strict [0.414, -2.451, 0.993]  t_half 124.6  tuned t_half 228.6
+Human T5   1d strict None  t_half 3.7  tuned t_half 7.9
+Human T9   1d strict [0.582, 0.328, 0.759]  t_half 1.1  tuned t_half 1.1
