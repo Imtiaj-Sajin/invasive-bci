@@ -69,8 +69,8 @@ datasets, spans of weeks and different baselines\cite{karpowicz2024falcon}, whic
 
 Public long-term datasets now allow these questions to be asked across individuals with one method. They include three
 years of finger decoding in one monkey\cite{temmar2025} and reaching recordings from two monkeys in another
-laboratory\cite{gallego2020,perich2018}. They also include closed-loop cursor sessions spanning two to seven years in
-three BrainGate participants, recordings from 20 arrays in 14 participants\cite{hahn2026}, and closed-loop sessions with
+laboratory\cite{gallego2020,perich2018}. They also include closed-loop cursor sessions from nine BrainGate participants, spanning up to
+seven years, recordings from 20 arrays in 14 participants\cite{hahn2026}, and closed-loop sessions with
 fixed decoders\cite{pun2024}.
 
 Here, we analyzed these datasets with a single pipeline. We trained decoders on one day, tested them on later days
@@ -89,7 +89,7 @@ a month were real and often reversed. We release the code, a calibrated simulato
 \makebox[\textwidth][c]{\includegraphics[width=170mm]{fig1_overview.pdf}}
 \caption{\textbf{Recordings change over years, and decoders decay with them.} \textbf{a}, Approximate array sites
 (white) on the precentral gyrus (green), rendered on the FreeSurfer fsaverage cortical surface, and a rendering of one
-Utah array. Data came from three people with paralysis and three monkeys. \textbf{b}, Peak-to-peak spike
+Utah array. Decoder analyses used \val{hum:nword} people with paralysis and three monkeys. \textbf{b}, Peak-to-peak spike
 amplitude on each electrode of T5's lateral array, 7.3 years apart. Grey cells had no spikes. Outlines mark the
 electrodes in \textbf{c}. \textbf{c}, Mean spike waveform of three electrodes in every session with spikes, coloured
 by time since implant. \textbf{d}, Threshold-crossing rate of every electrode on the same array in every session, in
@@ -104,11 +104,13 @@ channel (Methods).}
 
 \subsection*{Datasets and approach}
 
-We assembled four public datasets (Fig.~\ref{fig:design}a and Supplementary Table~1). Decoder analyses used six
-individuals. Monkey N was recorded over 1,242 days with Utah arrays in motor cortex during a two-finger
+We assembled four public datasets (Fig.~\ref{fig:design}a and Supplementary Table~1). Decoder analyses used
+\val{ind:nword} individuals. Monkey N was recorded over 1,242 days with Utah arrays in motor cortex during a two-finger
 task\cite{temmar2025,nason2021}. Monkeys C and M were recorded over three and 1.5 years during
-reaching\cite{gallego2020,perich2018}. BrainGate participants T6, T5 and T9 contributed 124, 92 and 117 closed-loop
-cursor sessions over 3.1, 7.2 and 2.0 years\cite{hahn2026}. Electrode analyses used all 20 arrays from 14 BrainGate
+reaching\cite{gallego2020,perich2018}. BrainGate participants \val{hum:list} contributed \val{hum:nsess:min}--\val{hum:nsess:max}
+closed-loop cursor sessions each, over \val{hum:years:min}--\val{hum:years:max} years (\val{hum:nsess:total} sessions in
+total; Supplementary Table~14)\cite{hahn2026}. Two further participants, T2 and T3, were excluded because their decoders
+did not work even on the day they were trained (Methods). Electrode analyses used all 20 arrays from 14 BrainGate
 participants (2,289 sessions) and monkey N. Monitoring analyses used closed-loop sessions in which participants T11
 and T5 controlled a cursor with a fixed decoder\cite{pun2024}.
 
@@ -321,8 +323,8 @@ $P = \val{mcn:10:holm}$); with 20 trials the rates were \val{harm:20:cv}\% and \
 \makebox[\textwidth][c]{\includegraphics[width=170mm]{fig6_recipes.pdf}}
 \caption{\textbf{Simple recipes for recalibration.} \textbf{a}, Decoding $R^2$ in monkey N against the ridge penalty, on the
 training day (lightest) and on later days (darker). The dotted line marks $\alpha = 0.1$. \textbf{b}, Gain from the 1\%
-rule over $\alpha = 0.1$, per individual and gap. \textbf{c}, Retention in the three participants against the number of
-labeled trials, for a retrained decoder, a refit shrunk toward the old decoder and re-weighting. The dotted line marks
+rule over $\alpha = 0.1$, per individual and gap. \textbf{c}, Retention in the human participants against the number
+of labeled trials, for a retrained decoder, a refit shrunk toward the old decoder and re-weighting. The dotted line marks
 the renormalized fixed decoder. \textbf{d}, Recalibrations in monkey N that made the decoder worse than no recalibration,
 with the shrinkage chosen by cross-validation (grey) or fixed (blue).}
 \label{fig:recipes}
