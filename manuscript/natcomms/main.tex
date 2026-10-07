@@ -75,7 +75,8 @@ fixed decoders\cite{pun2024}.
 
 Here, we analyzed these datasets with a single pipeline. We trained decoders on one day, tested them on later days
 and applied a ladder of corrections. Figure~\ref{fig:overview} shows the problem in one participant. Over seven years,
-one array lost about half of its electrodes with spikes, and a decoder trained 478 days earlier failed until each
+one array lost about half of its electrodes with spikes, and the remaining spikes shrank by about half. A decoder
+trained 478 days earlier failed until each
 channel was re-weighted. Decay rates differed about a hundredfold between individuals, and weak
 regularization exaggerated decay. In people, about 100 labeled trials restored most of the accuracy with any
 well-regularized refit, and label-free alignment added little beyond rescaling each channel. Corrections recovered
@@ -86,13 +87,15 @@ a month were real and often reversed. We release the code, a calibrated simulato
 \begin{figure}[tbp]
 \centering
 \makebox[\textwidth][c]{\includegraphics[width=170mm]{fig1_overview.pdf}}
-\caption{\textbf{Recordings change over years, and decoders decay with them.} \textbf{a}, Approximate array sites on
-the hand area of motor cortex, on the FreeSurfer fsaverage cortical surface. 	extbf{b}, Mean spike waveforms on
-the lateral array of participant T5, 7.3 years apart. Dots mark electrodes without spikes. 	extbf{c}, Threshold-crossing
-rate of every electrode on the same array in every session, in 30-day bins. White columns have no sessions.
-	extbf{d}, Recorded cursor paths in a closed-loop session of T5, for held-out outward movements. Colours mark
-targets. 	extbf{e}, The same movements reconstructed offline from neural activity by three decoders. The decoder
-from day 355 fails without correction and recovers after re-weighting each channel (Methods).}
+\caption{\textbf{Recordings change over years, and decoders decay with them.} \textbf{a}, Approximate array sites
+on the hand area of motor cortex, rendered on the FreeSurfer fsaverage cortical surface. \textbf{b}, Peak-to-peak spike
+amplitude on each electrode of T5's lateral array, 7.3 years apart. Grey cells had no spikes. Outlines mark the
+electrodes in \textbf{c}. \textbf{c}, Mean spike waveform of three electrodes in every session with spikes, coloured
+by time since implant. \textbf{d}, Threshold-crossing rate of every electrode on the same array in every session, in
+30-day bins. White columns have no sessions. \textbf{e}, Recorded cursor paths in a closed-loop session of T5, for
+held-out outward movements. Colours mark targets. \textbf{f}, The same movements reconstructed offline from neural
+activity by three decoders. The decoder from day 355 fails without correction and recovers after re-weighting each
+channel (Methods).}
 \label{fig:overview}
 \end{figure}
 
@@ -568,8 +571,10 @@ which allows one global scale, and the angle between $\mathrm{vec}(\mathbf{B}_j)
 \mathbf{B}_i)$, with each channel's scale $s_c$ fitted by least squares.
 
 \textit{Example in Fig.~\ref{fig:overview}.} Waveforms are the released robust mean waveforms (15~kHz, in microvolts)
-for electrodes with a threshold-crossing rate of at least 2~Hz at $-4.5$ times the robust standard deviation. Rates
-in panel c are the released threshold-crossing rates at the same threshold, averaged within 30-day bins. For the
+for electrodes with a threshold-crossing rate of at least 2~Hz at $-4.5$ times the robust standard deviation. Amplitude is the
+peak-to-peak value of these waveforms. Rates in panel d are the released threshold-crossing rates at the same
+threshold, averaged within 30-day bins. The cortical surface was rendered with PyVista; array sites were placed
+at the hand knob by MNI coordinates and are approximate. For the
 reconstructions, decoders used the tuned penalty: one trained on T5's day 355, one trained on day 833, and the day-355
 decoder re-weighted with 300 labeled trials from day 833. Paths are shown for held-out movements that started at the
 center. Each path integrates the decoded direction from the cursor's start position. The step size was set so that

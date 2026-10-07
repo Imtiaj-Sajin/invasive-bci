@@ -1137,3 +1137,12 @@ abstract 144 words. Next: six more BrainGate participants (owners to download), 
 - Fig. 1 restyled as data plots after owner feedback that the axis-free version looked drawn: axes with units on every
   panel (mm on the array, task units for the cursor), and a new panel c with the threshold-crossing rate of all 96
   electrodes of T5's lateral array in all 438 yield sessions (30-day bins, −4.5 threshold). Panels are now a–e.
+- Fig. 1 revised again after owner feedback (wanted a realistic brain, bolder colours, and waveforms that read as
+  data): (a) fsaverage pial surface rendered with PyVista in a tissue colour with the two array footprints
+  (`SCIPY_ARRAY_API=1 python scripts/render_3d.py --what brain`; needs `pip install pyvista`); (b) peak-to-peak
+  amplitude maps of T5's lateral array, day 40 vs day 2,700; (c) mean waveforms of electrodes 34, 17 and 13 in all
+  ~430 sessions, coloured by years (amplitude roughly halves, e.g. 104 → 40 µV); (d) rate heatmap; (e, f) cursor and
+  decoder reconstructions with filled target markers. Released data have only mean waveforms per electrode and
+  session; individual spike snippets are not public, so per-spike overlays as in Hahn et al. cannot be made.
+- Software rendering of a Utah array from published dimensions (`render_3d.py --what utah` → `utah_3d.png`) made for
+  the owners to review; not used in the paper.
