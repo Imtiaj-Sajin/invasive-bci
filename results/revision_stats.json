@@ -115,6 +115,65 @@
     "frac_positive": 0.15,
     "P": 0.03569190011680441
    }
+  },
+  "T5": {
+   "alpha_rule_median_curve": 10000.0,
+   "alpha_best_median_curve": 10000.0,
+   "per_session_best_alpha_counts": {
+    "10000.0": 20,
+    "30000.0": 14,
+    "300000.0": 2,
+    "100000.0": 2,
+    "10.0": 1,
+    "1000000.0": 1
+   },
+   "per_session_rule_alpha_counts": {
+    "30000.0": 19,
+    "10000.0": 15,
+    "100000.0": 3,
+    "300000.0": 2,
+    "1000000.0": 1
+   },
+   "rule_vs_sessionbest": {
+    "n_sessions": 40,
+    "median_gain": 0.0,
+    "frac_positive": 0.1,
+    "P": 0.025093508198080473
+   },
+   "sessionrule_vs_sessionbest": {
+    "n_sessions": 40,
+    "median_gain": 0.0,
+    "frac_positive": 0.175,
+    "P": 0.017290280592906253
+   }
+  },
+  "T9": {
+   "alpha_rule_median_curve": 30000.0,
+   "alpha_best_median_curve": 10000.0,
+   "per_session_best_alpha_counts": {
+    "10000.0": 17,
+    "30000.0": 16,
+    "1000.0": 4,
+    "100000.0": 3
+   },
+   "per_session_rule_alpha_counts": {
+    "30000.0": 18,
+    "10000.0": 17,
+    "100000.0": 4,
+    "1000.0": 1
+   },
+   "rule_vs_sessionbest": {
+    "n_sessions": 40,
+    "median_gain": 0.0009788721799850603,
+    "frac_positive": 0.5,
+    "P": 0.0009187757254428566
+   },
+   "sessionrule_vs_sessionbest": {
+    "n_sessions": 40,
+    "median_gain": 0.0,
+    "frac_positive": 0.175,
+    "P": 0.017960477526078766
+   }
   }
  },
  "mcnemar": {
@@ -194,6 +253,26 @@
    "2d": {
     "n": 19,
     "median_retention": 0.7887874951784907
+   }
+  },
+  "T5": {
+   "1d": {
+    "n": 2,
+    "median_retention": 0.9198326894758511
+   },
+   "2d": {
+    "n": 15,
+    "median_retention": 0.5923746272504018
+   }
+  },
+  "T9": {
+   "1d": {
+    "n": 19,
+    "median_retention": 0.5821034238407127
+   },
+   "2d": {
+    "n": 8,
+    "median_retention": 0.34195858686769176
    }
   }
  }

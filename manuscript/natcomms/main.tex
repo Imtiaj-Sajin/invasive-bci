@@ -16,8 +16,8 @@
 
 \begin{document}
 
-\title[Channel re-weighting corrects decoder drift in people]{Re-weighting each recording channel corrects most
-long-term decoder drift in people with implanted brain--computer interfaces}
+\title[Per-channel changes and decoder drift]{Per-channel changes account for most long-term decoder drift in people
+with paralysis}
 
 \author*[1]{\fnm{Md. Imtiaj Alam} \sur{Sajin}}\email{imtiajsajin@gmail.com}
 \author[1]{\fnm{Esm E Moula} \sur{Chowdhury Abha}}\email{esmechowdhuryabha@gmail.com}
@@ -27,14 +27,15 @@ long-term decoder drift in people with implanted brain--computer interfaces}
 \orgaddress{\city{Dhaka}, \postcode{1229}, \country{Bangladesh}}}
 
 \abstract{Implanted brain--computer interfaces can restore communication and movement after paralysis, but their
-decoders lose accuracy as recordings change. Which changes matter, and how to correct them cheaply, remains unclear.
-Here, we show that in people, most of this loss can be undone by re-learning one weight per recording channel. Using one pipeline on public long-term recordings from three monkeys and 14 people, we found that
-decoder decay rates differed about a hundredfold between individuals, and weak regularization exaggerated decay. In
-all three people with decoding data, this re-weighting restored most of the accuracy lost over days to more than a
-year, for linear and recurrent decoders alike. In monkeys, the same correction recovered much less as
-gaps grew. Label-free alignment of neural activity added nothing beyond rescaling each channel. Brief electrode
-silences were mostly session-to-session fluctuation. These results point to fast, low-cost recalibration for
-clinical systems.}
+decoders lose accuracy as recordings change. What changes, and what a correction must fix, remains unclear.
+Here, we show that in people, most of this loss can be undone by re-learning one weight per recording channel. We
+analysed public long-term recordings from three monkeys and 14 people with one pipeline. In all three people with
+decoding data, this re-weighting recovered most of the accuracy lost over days to more than a year, for linear and
+recurrent decoders. In monkeys it recovered much less, even when they decoded the same variable. Decay rates differed
+about a hundredfold between individuals, and weak regularization exaggerated decay. Label-free alignment of neural
+activity added nothing beyond rescaling each channel, and brief electrode silences were mostly session-to-session
+fluctuation. These results show what recalibration in clinical systems has to correct, and set baselines for
+new methods.}
 
 \keywords{brain--computer interface, intracortical recording, Utah array, neural drift, decoder recalibration,
 electrode stability}
@@ -61,8 +62,11 @@ scores have been proposed to signal when recalibration is needed\cite{pun2024}.
 
 Choosing among these approaches requires knowing what actually changes in the recordings. If the decoded signal moves
 to different channels, a decoder must be rebuilt. If each channel keeps its tuning but changes in strength, a much
-smaller correction may suffice. These possibilities have rarely been separated, and most comparisons used one dataset,
-weeks of data and different baselines\cite{karpowicz2024falcon}. On the hardware side, long-term studies report falling
+smaller correction may suffice. Earlier work modelled per-electrode drift as baseline shifts in monkeys over
+weeks\cite{bishop2014,jarosiewicz2015}, and human decoders absorb day-to-day changes with a full input layer learned for
+each day\cite{willett2021,fan2023}. Other studies describe drift as rotation of preferred directions or of decoder
+weights\cite{pun2024,wilson2025}. Whether a strictly per-channel correction suffices, and over what span of time, has
+not been isolated, and most comparisons used one dataset, weeks of data and different baselines\cite{karpowicz2024falcon}. On the hardware side, long-term studies report falling
 array yield and impedance\cite{barrese2013,sponheim2021,chen2023,hahn2026}, but how single electrodes come and go is
 less well described.
 
@@ -166,7 +170,7 @@ absolute $R^2$ on later days rose by a median of \val{N:tunedabsdiff} in monkey 
 $P = \val{N:tunedabsp}$) and \val{T6:tunedabsdiff} in T6 ($P = \val{T6:tunedabsp}$).
 
 A simple rule captures this benefit using training-day data only: choose the largest penalty whose same-day accuracy
-stays within 1\% of the best (Fig.~\ref{fig:recipes}a,b and Supplementary Table~6). Compared with $\alpha = 0.1$, it
+stays within 1\% of the best (Fig.~\ref{fig:recipes}a,b and Supplementary Table~3). Compared with $\alpha = 0.1$, it
 raised cross-day $R^2$ in every individual, with session-level median gains of \val{N:rulemed} in monkey N
 (\val{N:rulepos} of \val{N:rulen} sessions; $P = \val{N:rulep}$), \val{T6:rulemed} in T6 ($P = \val{T6:rulep}$),
 \val{T5:rulemed} in T5 ($P = \val{T5:rulep}$) and \val{T9:rulemed} in T9 ($P = \val{T9:rulep}$). Gains were small in
@@ -192,20 +196,29 @@ memorizing the closed-loop sessions, was as accurate as the linear decoder in pe
 channels recovered \val{T6:nnrecmin}--\val{T6:nnrecmax}\%, \val{T5:nnrecmin}--\val{T5:nnrecmax}\% and
 \val{T9:nnrecmin}--\val{T9:nnrecmax}\% of its loss (Fig.~\ref{fig:reweight}b). In monkeys the network was more accurate
 than the linear decoder (median $R^2$ higher by \val{N:nnowndiff}, \val{C:nnowndiff} and \val{M:nnowndiff}), but
-re-weighting again recovered less at long gaps (Supplementary Table~3).
+re-weighting again recovered less at long gaps (Supplementary Table~4).
 
 Could the species difference reflect what was decoded? Human decoders predicted a two-dimensional direction, whereas
 monkey decoders predicted four kinematic signals. We therefore rebuilt the reaching monkeys' sessions to decode the
 direction of hand movement only, mirroring the human target (Methods). Re-weighting then recovered
-\val{C:matchrec1}\% of the loss at one day and \val{C:matchrec480}\% at 480 days in monkey C, and \val{M:matchrec1}\% and
-\val{M:matchrec480}\% in monkey M (Fig.~\ref{fig:reweight}c). The decoded variable therefore does not explain the
-difference.
+\val{C:matchrecmin}--\val{C:matchrecmax}\% of the loss in monkey C and \val{M:matchrecmin}--\val{M:matchrecmax}\% in monkey
+M across gaps (Fig.~\ref{fig:reweight}c). This was more than with kinematic targets but still well below the human
+values. The decoded variable explains part of the difference, but not most of it.
 
-How much labelled data does re-weighting need in people? Pooled over the three participants and all gaps, retention
-after re-weighting was \val{hum:effL3n20} with 20 labelled trials, \val{hum:effL3n50} with 50 and \val{hum:effL3n300} with
-300, against \val{hum:effnone} without labels (Fig.~\ref{fig:reweight}d). A fresh decoder reached \val{hum:effL6n20}
-with 20 trials and \val{hum:effL6n50} with 50. A trial lasted about 1.6--3.9~s in these sessions, so 20 trials take
-under a minute in T5 and T6.
+Per-channel changes also reconcile our result with reports that decoders rotate across days\cite{pun2024,wilson2025}.
+Those reports measured the angle between decoders fitted on different days, allowing only one global change of scale.
+When we also allowed one scale per channel, the angle between decoders fitted on different days fell by
+\val{ang:redmin}--\val{ang:redmax}\textdegree{} in every individual (Supplementary Table~5). Angles that allow only a
+global scale therefore overstate how much decoders rotate. Decoder weights were too variable, however, to separate the
+species on this measure, so we rely on the functional test above.
+
+Re-weighting is a diagnostic of what changes, not necessarily the most efficient way to recalibrate. Pooled over the
+three participants and all gaps, retention after re-weighting was \val{hum:effL3n20} with 20 labelled trials,
+\val{hum:effL3n50} with 50 and \val{hum:effL3n300} with 300, against \val{hum:effnone} without labels
+(Fig.~\ref{fig:reweight}d). With 50 trials, refitting the decoder while shrinking it toward the old one reached
+\val{hum:effL6pn50}, and a fresh, strongly regularized decoder reached \val{hum:effL6n50}. Trials lasted about 1.6--3.9~s,
+so 50 trials take one to three minutes. In these participants, then, a short block of labelled data restored most of the
+accuracy with any well-regularized refit.
 
 \begin{figure}[tbp]
 \centering
@@ -228,21 +241,21 @@ decoder. The dotted line marks the renormalized fixed decoder, which uses no lab
 Several methods realign neural activity to a reference day without labels\cite{degenhart2020,gallego2020,ma2023,
 karpowicz2025}. Their benefits were usually measured against a fixed decoder or against one whose channel means alone
 were updated\cite{ma2023,wilson2025}. We compared four label-free corrections with renormalization, which rescales each
-channel (Fig.~\ref{fig:labelfree}a and Supplementary Table~4).
+channel (Fig.~\ref{fig:labelfree}a and Supplementary Table~6).
 
-Rotating the dominant neural subspace onto the training day by orthogonal Procrustes analysis\cite{schonemann1966} did
-not help. Applied after updating channel means only, it lowered $R^2$ in monkey N by \val{N:rotmeandiff} (two-sided
-Wilcoxon signed-rank test over training sessions, $P = \val{N:rotmeanp}$). Applied after renormalization, it lowered $R^2$
-by \val{N:rotrendiff} ($P = \val{N:rotrenp}$); in the humans the changes were \val{T6:rotrendiff},
-\val{T5:rotrendiff} and \val{T9:rotrendiff}. Renormalization itself improved on updating means only by
-\val{N:renmeandiff} in monkey N ($P = \val{N:renmeanp}$). Matching the full covariance of the channels (CORAL\cite{sun2016})
-changed $R^2$ by \val{N:coraldiff} in monkey N ($P = \val{N:coralp}$), \val{M:coraldiff} in M, and
-\val{T6:coraldiff}, \val{T5:coraldiff} and \val{T9:coraldiff} in the humans. A faithful implementation of the
-factor-analysis stabilizer of Degenhart and colleagues\cite{degenhart2020} improved on its own fixed latent decoder in
-none of the monkeys (change \val{N:stabfixdiff} in N, \val{M:stabfixdiff} in M) and did not consistently beat
-renormalization in the humans (changes \val{T6:stabrendiff}, \val{T5:stabrendiff} and \val{T9:stabrendiff}). That method
-was designed for closed-loop use with a latent decoder, and offline tests may understate it. In these data, however,
-the useful label-free step was to rescale each channel.
+Updating channel means alone was worse than renormalization in every individual (Fig.~\ref{fig:labelfree}a); in monkey
+N the difference was \val{N:renmeandiff} in $R^2$ (two-sided Wilcoxon signed-rank test over training sessions,
+$P = \val{N:renmeanp}$). Rotating the dominant neural subspace onto the training day by orthogonal Procrustes
+analysis\cite{schonemann1966} did not close this gap. Applied after updating means, it lowered $R^2$ further in monkey N
+(by \val{N:rotmeandiff}; $P = \val{N:rotmeanp}$). Applied after renormalization, it lowered $R^2$ slightly in every
+individual, by \val{N:rotrendiff} in monkey N ($P = \val{N:rotrenp}$) and by \val{T6:rotrendiff}, \val{T5:rotrendiff}
+and \val{T9:rotrendiff} in T6, T5 and T9. Matching the full channel covariance (CORAL\cite{sun2016}) improved slightly on
+renormalization in monkey N (by \val{N:coraldiff}; $P = \val{N:coralp}$) but not in the other five individuals. A
+faithful implementation of the factor-analysis stabilizer of Degenhart and colleagues\cite{degenhart2020} was better
+than renormalization in T5 (by \val{T5:stabrendiff}; $P = \val{T5:stabrenp}$) and worse in the other five individuals.
+That method was designed for closed-loop use with a latent decoder, and offline tests may understate it. In these data,
+however, the label-free step that mattered was rescaling each channel, and the gains reported for alignment methods
+over mean-only baselines\cite{wilson2025} largely reflect this step.
 
 \subsection*{Neural change adds little beyond time since calibration}
 
@@ -260,7 +273,7 @@ divergences to elapsed time slightly increased the cross-validated error of pred
 performance beyond the time trend was reliable (split-half reliability 0.84).
 
 We then re-analysed the public MINDFUL data, in which T11 and T5 controlled a cursor in closed loop with a fixed decoder
-(Fig.~\ref{fig:labelfree}c and Supplementary Table~5). In T11 (\val{T11:mf:days} days), neural divergence correlated
+(Fig.~\ref{fig:labelfree}c and Supplementary Table~7). In T11 (\val{T11:mf:days} days), neural divergence correlated
 with angular error ($r = \val{T11:mf:nraw}$), consistent with the original report\cite{pun2024}. Most of this
 association was shared with elapsed time (partial $r = \val{T11:mf:npart}$), and adding neural divergence did not
 improve leave-one-day-out prediction of error (\val{T11:mf:dn}\textdegree{} versus \val{T11:mf:days}\textdegree{}).
@@ -290,7 +303,7 @@ divergence added (orange).}
 
 When labelled data are scarce, refitting a decoder can make it worse. In monkey N (86 session pairs), we refitted the
 decoder by ridge regression shrunk toward the old decoder, penalizing changes in both the weights and the
-intercept\cite{kuzborskij2013,orsborn2012,dangi2013} (Fig.~\ref{fig:recipes}c and Supplementary Table~7). Choosing the
+intercept\cite{kuzborskij2013,orsborn2012,dangi2013} (Fig.~\ref{fig:recipes}c and Supplementary Table~8). Choosing the
 shrinkage strength by cross-validation on a few trials was unreliable: with 10 trials, \val{harm:10:cv}\% of
 recalibrations ended worse than no recalibration (Fig.~\ref{fig:recipes}d). A fixed strong shrinkage, the value that
 worked best on pairs from other training sessions, lowered this to \val{harm:10:hist}\% (exact McNemar test on paired
@@ -325,7 +338,7 @@ Array yield and impedance declined over years in both species (Fig.~\ref{fig:ele
 reports\cite{barrese2013,sponheim2021,chen2023,bjanes2025,hahn2026}.
 
 Electrodes often fell silent and later recovered, but most such events were fluctuation rather than failure and repair
-(Fig.~\ref{fig:electrodes}c and Supplementary Table~10). Of \val{rev:base:sil} initially active human electrodes that
+(Fig.~\ref{fig:electrodes}c and Supplementary Table~9). Of \val{rev:base:sil} initially active human electrodes that
 stayed below threshold for at least three consecutive sessions, \val{rev:base:frac}\% later recovered for at least three
 sessions. The same statistic computed after randomly shuffling each electrode's session order, which destroys any
 temporal process, gave \val{rev:shuffle_null:frac}\%. The match held when the threshold was fixed in microvolts for
@@ -380,9 +393,9 @@ For corrections that the simulator was not fitted to, it was clearly better (\va
 \val{sim:unfit:early}). The simulator is therefore most useful for predicting how new corrections will behave. Real
 decoders decayed more slowly in the later years, and a calibration on that period gave weaker session-to-session
 mixing (\val{sim:mix0late} versus \val{sim:mix0}) and slower turnover (time constant \val{sim:taurholate} versus
-\val{sim:taurho} days), suggesting that drift slows as an implant ages in this monkey. Training decoders on simulated
+\val{sim:taurho} days; Fig.~\ref{fig:sim}c and Supplementary Table~10), suggesting that drift slows as an implant ages in this monkey. Training decoders on simulated
 futures helped little ($R^2$ higher by \val{aug:sim}) compared with stronger regularization (\val{aug:ridge_reg}) or
-training on several past sessions (\val{aug:multi}; Supplementary Table~12).
+training on several past sessions (\val{aug:multi}; Supplementary Table~11).
 
 \begin{figure}[tbp]
 \centering
@@ -402,25 +415,29 @@ early ($<700$ days) and late ($\geq700$ days) sessions: session-to-session mixin
 
 We measured how decoders and electrodes change over years in three monkeys and 14 people with one pipeline. The
 central finding is that in people, most of the accuracy a decoder loses over days to more than a year is recovered by
-re-learning one weight per recording channel. This held in all three participants with decoding data, for linear and
-recurrent decoders, and with little labelled data. In monkeys, the same correction recovered much less at long gaps,
-even when we decoded the same variable.
+re-learning one weight per recording channel. This held in all three participants with decoding data and for linear
+and recurrent decoders. In monkeys, the same correction recovered much less at long gaps, and decoding the same
+variable as in the humans narrowed this difference only partly.
 
 This result has a simple interpretation. In these human recordings, the decoder's pattern across time lags and
 outputs remained valid for each channel, while the strength with which each channel carried the decoded signal changed.
-It agrees with the observation that tuning parameters on the same electrode tend to change together between
-days\cite{bishop2014}. Our results do not reveal the cause. Changes in the number or proximity of neurons near each
-electrode would act this way\cite{polikov2005,kozai2015}, as would changes in noise. Why monkeys differ is also open.
-The human arrays were older at the start of recording, the human tasks were closed-loop, and the cortical areas and
-species differ. Each of these could change how tuning evolves.
+It extends the observation that parameters on the same electrode change together between days\cite{bishop2014}, which
+was made in monkeys over weeks and modelled as shifts in baseline, to multiplicative changes over years in people. It
+also suggests that the full input layers learned for each day in human decoders\cite{willett2021,fan2023} mainly absorb
+per-channel changes, and that part of the rotation reported for human decoders\cite{pun2024,wilson2025} reflects
+per-channel scaling. Our results do not reveal the cause. Changes in the number or proximity of neurons near each
+electrode would act this way\cite{polikov2005,kozai2015}, as would changes in noise. Why monkeys differ is also open:
+species, cortical areas, tasks and recording features all differ between the datasets, and the human tasks were
+closed-loop.
 
-The practical implication is that recalibration in people can be small. Re-learning one weight per channel requires a
-short block of labelled trials, adds few parameters and keeps the decoder that the user has learned to control. It
-complements label-free methods, which in our data could not recover this kind of change beyond rescaling each channel.
-Three further recipes follow from our results. Daily per-channel renormalization should be the baseline against which
-new methods are compared. Ridge penalties should be tuned rather than left at small defaults, because weak
-regularization exaggerates apparent drift. And when recalibrating from a few trials, shrinking toward the previous
-decoder, including its intercept, avoids recalibrations that do more harm than good.
+What does this mean for recalibration? In these participants, a short block of labelled trials restored most of the
+accuracy with any well-regularized refit, so re-weighting is not needed for data efficiency. Its value is that it
+identifies the change that recalibration has to correct, and that it does so while keeping the decoder the user has
+learned to control, which may matter in closed loop. Label-free methods, by contrast, did not recover this change beyond
+rescaling each channel. Three further recipes follow from our results. Daily per-channel renormalization should be the
+baseline against which new methods are compared. Ridge penalties should be tuned rather than left at small defaults,
+because weak regularization exaggerates apparent drift. And when recalibrating from a few trials, shrinking toward the
+previous decoder, including its intercept, avoids recalibrations that do more harm than good.
 
 Decay rates varied about a hundredfold between individuals, from one day to several months to lose half of the accuracy.
 A fixed recalibration schedule will therefore be wrong for many users. The monitoring analyses suggest that statistics
@@ -444,8 +461,9 @@ is calibrated to feature-level statistics in one monkey and does not model bioph
 methods offline, where they may perform differently than in closed loop.
 
 Long-term public datasets made this study possible. We release our code, derived results and the calibrated simulator
-so that others can test methods against realistic drift. Our results suggest that durable clinical decoders may need
-less effort than often assumed: a brief re-weighting of channels may keep a familiar decoder working for months.
+so that others can test methods against realistic drift. Our results suggest that, in people, keeping a decoder
+working over months is mainly a matter of tracking how strongly each channel carries the signal, and that the
+corrections to compare against are simple ones.
 
 \section*{Methods}
 
@@ -548,6 +566,13 @@ the same pairs.
 \textit{Data efficiency in humans.} For 30 training sessions per participant (fixed seed), the ladder was run with
 $n \in \{10, 20, 50, 100, 300\}$ labelled trials.
 
+\textit{Decoder-weight angles.} For every pair, ridge decoders ($\alpha = 10^4$) were fitted on each day. Each channel's
+block of weights (8 lags by all outputs) was stacked into $\mathbf{B}_i$ and $\mathbf{B}_j$. We computed the angle between
+$\mathrm{vec}(\mathbf{B}_i)$ and $\mathrm{vec}(\mathbf{B}_j)$, which allows one global scale, and the angle between
+$\mathrm{vec}(\mathbf{B}_j)$ and $\mathrm{vec}(\mathrm{diag}(\mathbf{s})\mathbf{B}_i)$, with the scale $s_c$ of each channel
+fitted by least squares. As a reference, the second angle was also computed after randomly permuting the channels of
+$\mathbf{B}_i$.
+
 \subsection*{Label-free corrections}
 
 \textit{Procrustes rotation.} Let $\mathbf{V}_i, \mathbf{V}_j \in \mathbb{R}^{C\times k}$ hold the top $k = 16$ principal
@@ -599,7 +624,7 @@ Statistics were computed per array. An electrode was active in a session when it
 the root-mean-square noise was at least 2~Hz. An initially active electrode (mean rate of at least 2~Hz over the first
 three sessions) was silent when it stayed below threshold for at least three consecutive observed sessions, and
 recovered when it later exceeded 4~Hz for at least three consecutive sessions. Missing sessions were skipped, not
-imputed. Control analyses (Supplementary Table~10) used thresholds of $-3.5$ and $-5.5$ times the noise; a fixed
+imputed. Control analyses (Supplementary Table~9) used thresholds of $-3.5$ and $-5.5$ times the noise; a fixed
 threshold per electrode in microvolts (its $-4.5$ value over the first three sessions, implemented by choosing in each
 session the noise multiple whose microvolt threshold was closest); removal of sessions with array-wide shifts (absolute
 median change in log rate above 1); a requirement for a mean waveform trough of at least 30~$\mu$V; silence below

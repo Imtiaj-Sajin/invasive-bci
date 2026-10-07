@@ -38,6 +38,9 @@ FIX = {
 }
 
 MANUAL = {
+    "fan2023": r"Fan, C. et al. Plug-and-play stability for intracortical brain--computer interfaces: a one-year "
+               r"demonstration of seamless brain-to-text communication. \textit{Adv. Neural Inf. Process. Syst.} "
+               r"\textbf{36} (2023).",
     "sun2016": r"Sun, B., Feng, J. \& Saenko, K. Return of frustratingly easy domain adaptation. In \textit{Proc. 30th "
                r"AAAI Conference on Artificial Intelligence} 2058--2065 (AAAI Press, 2016).",
     "holm1979": r"Holm, S. A simple sequentially rejective multiple test procedure. \textit{Scand. J. Stat.} \textbf{6}, "

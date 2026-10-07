@@ -149,6 +149,24 @@ def main():
                 if c in e:
                     put(f"hum:eff{rung}n{n}", f2(float((e[c] / e.own).median())))
                     put(f"hum:effpct{rung}n{n}", pct(float((e[c] / e.own).median())))
+    # weight angles: reduction of the decoder-weight angle when one scale per channel is allowed
+    red_all = []
+    for k in IND:
+        p = f"results/weight_angles/{k}.csv"
+        if os.path.exists(p):
+            q = pd.read_csv(p)
+            med = q.groupby("gap_target")[["angle_global", "angle_channel", "angle_null"]].median()
+            red = med.angle_global - med.angle_channel
+            red_all += list(red.values)
+            put(f"{k}:angred", f"{red.median():.0f}")
+            put(f"{k}:anggl1", f"{med.angle_global.iloc[0]:.0f}")
+            put(f"{k}:anggl480", f"{med.angle_global.iloc[-1]:.0f}")
+            put(f"{k}:angch1", f"{med.angle_channel.iloc[0]:.0f}")
+            put(f"{k}:angch480", f"{med.angle_channel.iloc[-1]:.0f}")
+            put(f"{k}:angnull", f"{med.angle_null.median():.0f}")
+    if red_all:
+        put("ang:redmin", f"{min(red_all):.0f}")
+        put("ang:redmax", f"{max(red_all):.0f}")
     # matched-output control
     for k in ("C", "M"):
         p = f"results/matched_output/{k}.csv"
