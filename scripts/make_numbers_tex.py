@@ -27,7 +27,7 @@ def f3(x):
 
 
 def pct(x):
-    return "--" if x is None or not np.isfinite(x) else f"{100 * x:.0f}"
+    return "--" if x is None or not np.isfinite(x) else f"{100 * x:.0f}".replace("-", "$-$")
 
 
 def pval(p):
@@ -304,6 +304,30 @@ def main():
             put(f"{k}:trecmax", pct(max(rec)))
             put(f"{k}:tgainretmin", f2(min(rg)))
             put(f"{k}:tgainretmax", f2(max(rg)))
+    # fitted weights versus electrode changes (humans)
+    from scipy import stats as _st
+    for k in ("T6", "T5", "T9"):
+        p = f"results/gain_mechanism/{k}.csv"
+        if os.path.exists(p):
+            q = pd.read_csv(p)
+            for name in ("rate", "imp"):
+                c = f"rho_{name}"
+                if c in q and q[c].notna().sum() >= 6:
+                    sv = q.groupby("train")[c].mean().dropna()
+                    put(f"{k}:mech:{name}:rho", f2(float(sv.median())))
+                    put(f"{k}:mech:{name}:pos", pct(float((sv > 0).mean())))
+                    put(f"{k}:mech:{name}:n", str(len(sv)))
+                    put(f"{k}:mech:{name}:p", pval(float(_st.wilcoxon(sv).pvalue)))
+                    put(f"{k}:mech:{name}:null", f2(float(q[c + "_null"].median())))
+    nl = load("results/failure_robustness/null_summary.json")
+    for k, v in nl.items():
+        put(f"null:{k}:obs", pct(v["fraction_obs"]))
+        put(f"null:{k}:mean", pct(v["fraction_null_mean"]))
+        put(f"null:{k}:ci", f"{pct(v['fraction_null_ci'][0])}--{pct(v['fraction_null_ci'][1])}")
+        put(f"null:{k}:p", pval(v["P_upper"]))
+        put(f"null:{k}:sil", f"{v['silenced_obs']:,}")
+        put(f"null:{k}:silnull", f"{v['silenced_null_mean']:.0f}")
+        put(f"null:{k}:arrays", v["arrays_above_null_median"].replace("/", " of "))
     # re-weighting controls (true vs channel-permuted decoder, signed vs non-negative weights)
     for k in IND:
         p = f"results/reweight_controls/{k}.csv"

@@ -3,7 +3,7 @@
   fig1_overview     data across six decoder-drift individuals, 20 human arrays and closed-loop monitoring; the ladder
   fig2_decay        decay of a renormalized fixed decoder in six individuals; strict 1-day vs 2-day; tuned penalty
   fig3_reweight     re-weighting each channel restores most accuracy in people (linear and network decoders),
-                    matched-output control in monkeys, and how many labelled trials it needs
+                    matched-output control in monkeys, and how many labeled trials it needs
   fig4_labelfree    label-free corrections relative to renormalization; monitoring offline and in closed loop
   fig5_recipes      ridge penalty trade-off and the 1% rule; recalibration shrunk toward the old decoder
   fig6_electrodes   yield and impedance; electrode silence versus a shuffled null; edge effect per array
@@ -216,10 +216,11 @@ def tuned_ladders():
     return out
 
 
-def fig3(out):
+def fig4c(out):
+    """Corrections work best when channels keep their identity (figure 4 of the manuscript)."""
     P.setup_nature()
     L = tuned_ladders()
-    fig, axes = plt.subplots(1, 4, figsize=(P.DOUBLE_COL, 2.0), gridspec_kw={"width_ratios": [1.35, 1.0, 0.95, 1.2]})
+    fig, axes = plt.subplots(1, 4, figsize=(P.DOUBLE_COL, 2.05), gridspec_kw={"width_ratios": [1.3, 1.1, 0.9, 1.0]})
     ax = axes[0]
     for k in L:
         line_ci(ax, GAPS, boot_curve(L[k], "L3_n300"), COL[k], NAME[k], MK[k], "-" if MK[k] == "o" else "--")
@@ -229,86 +230,89 @@ def fig3(out):
     ax.set_xlabel("days since decoder training")
     ax.set_ylabel(RET)
     ax.set_title("After re-weighting each channel", loc="left")
-    ax.legend(loc="lower left", frameon=False, ncol=2, fontsize=4.8)
-    P.panel(ax, "a", x=-0.24)
+    ax.legend(loc="lower left", frameon=False, ncol=2, fontsize=4.6)
+    P.panel(ax, "a", x=-0.25)
 
-    ax = axes[1]   # share of the loss recovered: linear vs network, per individual (median over all pairs)
+    ax = axes[1]   # correct versus scrambled channel assignment
+    for i, k in enumerate(L):
+        f = f"results/reweight_controls/{k}.csv"
+        if not os.path.exists(f):
+            continue
+        q = pd.read_csv(f)
+        med = {c: cluster_bootstrap(q.assign(_r=q[c] / q.own), "_r", n_boot=800) for c in
+               ("renorm", "rew", "rew_perm", "rew_nonneg", "rew_perm_nn")}
+        for off, (tc, pc) in ((-0.15, ("rew", "rew_perm")), (0.15, ("rew_nonneg", "rew_perm_nn"))):
+            y = i + off
+            ax.plot([med[pc][0], med[tc][0]], [y, y], color=COL[k], lw=0.6, alpha=0.6)
+            ax.plot(med[tc][0], y, MK[k], color=COL[k], ms=3 if off < 0 else 2.6, mfc=COL[k] if off < 0 else "white",
+                    mew=0.8)
+            ax.plot(med[pc][0], y, "x", color=COL[k], ms=3, mew=0.8)
+        ax.plot(med["renorm"][0], i, "|", color=P.INK2, ms=6, mew=0.8)
+    ax.set_yticks(range(len(L)))
+    ax.set_yticklabels([NAME[k] for k in L])
+    ax.invert_yaxis()
+    ax.axvline(0, color=P.INK2, lw=0.4)
+    ax.set_xlim(-0.35, 1.05)
+    ax.set_xlabel(RET)
+    ax.set_title("Correct vs scrambled channels", loc="left", fontsize=6)
+    ax.legend([Line2D([], [], marker="o", color=P.INK2, ls="", ms=3), Line2D([], [], marker="o", color=P.INK2, ls="",
+                                                                              ms=3, mfc="white"),
+               Line2D([], [], marker="x", color=P.INK2, ls="", ms=3), Line2D([], [], marker="|", color=P.INK2, ls="",
+                                                                             ms=6)],
+              ["signed weights", "non-negative", "scrambled", "no labels"], loc="lower left", frameon=False,
+              fontsize=4.2, handletextpad=0.2)
+    ax.grid(axis="y", visible=False)
+    P.panel(ax, "b", x=-0.45)
+
+    ax = axes[2]   # fitted weights track electrode firing-rate changes (humans)
+    hum = [k for k in ("T6", "T5", "T9") if os.path.exists(f"results/gain_mechanism/{k}.csv")]
+    for i, k in enumerate(hum):
+        q = pd.read_csv(f"results/gain_mechanism/{k}.csv")
+        s_ = q.groupby("train").rho_rate.mean().dropna()
+        nl = q.groupby("train").rho_rate_null.mean().dropna()
+        jit = np.random.default_rng(i).uniform(-0.12, 0.12, len(s_))
+        ax.plot(i + jit - 0.18, s_, MK[k], color=COL[k], ms=1.8, alpha=0.7)
+        ax.plot(i + np.random.default_rng(10 + i).uniform(-0.12, 0.12, len(nl)) + 0.18, nl, ".", color=P.NEUTRAL,
+                ms=2, alpha=0.7)
+        ax.plot([i - 0.32, i - 0.04], [s_.median()] * 2, color=P.INK, lw=1)
+        ax.plot([i + 0.04, i + 0.32], [nl.median()] * 2, color=P.INK2, lw=1)
+    ax.axhline(0, color=P.INK2, lw=0.5)
+    ax.set_xticks(range(len(hum)))
+    ax.set_xticklabels(hum)
+    ax.set_ylabel("Spearman ρ, weight vs\nfiring-rate change")
+    ax.set_title("Weights track electrodes", loc="left", fontsize=6)
+    ax.legend([Line2D([], [], marker="s", color=P.INK2, ls="", ms=2.5), Line2D([], [], marker=".", color=P.NEUTRAL,
+                                                                                ls="", ms=3)],
+              ["observed", "channels shuffled"], loc="upper left", frameon=False, fontsize=4.2)
+    ax.grid(axis="x", visible=False)
+    P.panel(ax, "c", x=-0.42)
+
+    ax = axes[3]   # share of loss recovered: linear vs network
     for i, k in enumerate(L):
         d = L[k].assign(rec=lambda x: (x.L3_n300 - x.L2) / (x.own - x.L2))
-        est, lo, hi = cluster_bootstrap(d, "rec", n_boot=1500)
+        est, lo, hi = cluster_bootstrap(d, "rec", n_boot=1200)
         ax.plot([lo, hi], [i - 0.13] * 2, color=COL[k], lw=0.8)
         ax.plot(est, i - 0.13, MK[k], color=COL[k], ms=3)
         nn = f"results/nn_ladder/{k}.csv"
         if os.path.exists(nn):
             q = pd.read_csv(nn).assign(rec=lambda x: (x.L3 - x.L2) / (x.own - x.L2))
-            est, lo, hi = cluster_bootstrap(q, "rec", n_boot=1500)
+            est, lo, hi = cluster_bootstrap(q, "rec", n_boot=1200)
             ax.plot([lo, hi], [i + 0.13] * 2, color=COL[k], lw=0.8)
             ax.plot(est, i + 0.13, MK[k], color=COL[k], ms=3, mfc="white", mew=0.8)
     ax.set_yticks(range(len(L)))
-    ax.set_yticklabels([NAME[k] for k in L])
+    ax.set_yticklabels([])
     ax.invert_yaxis()
-    ax.set_xlim(0, 1.05)
+    ax.set_xlim(-0.1, 1.15)
     ax.set_xlabel("share of loss recovered")
     ax.set_title("Linear (filled), network (open)", loc="left", fontsize=6)
     ax.grid(axis="y", visible=False)
-    P.panel(ax, "b", x=-0.5)
-
-    ax = axes[2]   # matched-output control in reaching monkeys
-    for k in ("C", "M"):
-        mo = f"results/matched_output_tuned/{k}.csv"
-        if k not in L:
-            continue
-        a = L[k].assign(rec=lambda x: (x.L3_n300 - x.L2) / (x.own - x.L2)).groupby("gap_target").rec.median()
-        ax.plot(GAPS, [a.get(g, np.nan) for g in GAPS], MK[k], color=COL[k], ls="-", ms=2.4, lw=1,
-                label=f"{k}, kinematics")
-        if os.path.exists(mo):
-            b = pd.read_csv(mo).assign(rec=lambda x: (x.L3_n300 - x.L2) / (x.own - x.L2)).groupby("gap_target").rec.median()
-            ax.plot(GAPS, [b.get(g, np.nan) for g in GAPS], MK[k], color=COL[k], ls=":", ms=2.4, lw=1, mfc="white",
-                    label=f"{k}, direction")
-    hum = pd.concat([L[k].assign(rec=lambda x: (x.L3_n300 - x.L2) / (x.own - x.L2)) for k in L if k.startswith("T")])
-    if len(hum):
-        h = hum.groupby("gap_target").rec.median()
-        ax.plot(GAPS, [h.get(g, np.nan) for g in GAPS], "s", color=P.INK2, ls="--", ms=2.4, lw=1, label="humans")
-    P.day_axis(ax, GAPS)
-    ax.set_ylim(-0.45, 1.05)
-    ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
-    ax.set_xlabel("days since decoder training")
-    ax.set_ylabel("share of loss recovered")
-    ax.set_title("Same decoded variable", loc="left")
-    ax.legend(loc="lower left", frameon=False, fontsize=4.2, ncol=3, columnspacing=0.8, handlelength=1.5)
-    P.panel(ax, "c", x=-0.3)
-
-    ax = axes[3]   # data efficiency in humans
-    ns = [10, 20, 50, 100, 300]
-    frames = [pd.read_csv(f"results/gain_efficiency/{k}.csv") for k in ("T6", "T5", "T9")
-              if os.path.exists(f"results/gain_efficiency/{k}.csv")]
-    if frames:
-        e = pd.concat(frames)
-        e = e.assign(train=e.subject + "_" + e.train.astype(str))
-        for rung, name, c in (("L3", "re-weight channels", P.BLUE_ORDINAL[5]), ("L6p", "refit near old decoder", P.INK2),
-                              ("L6", "retrained on day j", P.NEUTRAL)):
-            cols = [f"{rung}_n{n}" for n in ns]
-            est = np.array([cluster_bootstrap(e.dropna(subset=[c_]).assign(_r=lambda x, c_=c_: x[c_] / x.own), "_r",
-                                              n_boot=800) if c_ in e else (np.nan,) * 3 for c_ in cols])
-            line_ci(ax, ns, est, c, name)
-        ax.axhline(float((e.L2 / e.own).median()), color=P.NEUTRAL, ls=":", lw=0.7)
-        ax.text(12, float((e.L2 / e.own).median()) + 0.03, "no labels", fontsize=4.6, color=P.INK2)
-        ax.legend(loc="lower right", frameon=False, fontsize=4.6)
-    ax.set_xscale("log")
-    ax.set_xticks(ns)
-    ax.set_xticklabels([str(n) for n in ns])
-    ax.minorticks_off()
-    ax.set_ylim(-0.2, 1.1)
-    ax.set_xlabel("labelled trials on day j")
-    ax.set_ylabel(RET)
-    ax.set_title("Three humans, all gaps", loc="left")
-    P.panel(ax, "d", x=-0.27)
-    fig.subplots_adjust(wspace=0.55, left=0.06, right=0.99, bottom=0.2, top=0.86)
-    P.save(fig, os.path.join(out, "fig3_reweight"))
+    P.panel(ax, "d", x=-0.1)
+    fig.subplots_adjust(wspace=0.5, left=0.065, right=0.99, bottom=0.2, top=0.86)
+    P.save(fig, os.path.join(out, "fig4_channels"))
 
 
 # ------------------------------------------------------------------------------------------------ Figure 4
-def fig4(out):
+def fig3(out):
     P.setup_nature()
     fig, axes = plt.subplots(1, 3, figsize=(P.DOUBLE_COL, 2.1), gridspec_kw={"width_ratios": [1.6, 0.9, 0.9]})
     ax = axes[0]
@@ -379,7 +383,7 @@ def fig4(out):
     ax.grid(axis="x", visible=False)
     P.panel(ax, "c", x=-0.3)
     fig.subplots_adjust(wspace=0.42, left=0.06, right=0.99, bottom=0.2, top=0.86)
-    P.save(fig, os.path.join(out, "fig4_labelfree"))
+    P.save(fig, os.path.join(out, "fig3_labelfree"))
 
 
 # ------------------------------------------------------------------------------------------------ Figure 5
@@ -407,14 +411,14 @@ def fig5(out):
     for o, key in zip(offs, keys):
         k = names[key]
         s = t[t.subject == key]
-        xs = np.log10([max(g, 0.5) for g in s.gap]) + o
+        xs = np.log10([max(g, 0.3) for g in s.gap]) + o
         lo = [float(v.strip("[]").split(",")[0]) for v in s.ci]
         hi = [float(v.strip("[]").split(",")[1]) for v in s.ci]
         for x, l_, h_ in zip(xs, lo, hi):
             ax.plot([x, x], [l_, h_], color=COL[k], lw=0.7)
         ax.plot(xs, s.gain, MK[k], color=COL[k], ms=2.4, label=NAME[k])
     ax.axhline(0, color=P.INK2, lw=0.5)
-    ax.set_xticks(np.log10([0.5, 1, 7, 30, 120, 480]))
+    ax.set_xticks(np.log10([0.3, 1, 7, 30, 120, 480]))
     ax.set_xticklabels(["same\nday", "1", "7", "30", "120", "480"])
     ax.set_xlabel("days since decoder training")
     ax.set_ylabel("R² gain over α = 0.1")
@@ -422,21 +426,25 @@ def fig5(out):
     ax.legend(loc="upper left", frameon=False, fontsize=4.4, ncol=2)
     P.panel(ax, "b", x=-0.25)
     ax = axes[2]
-    e = pd.read_csv("results/data_efficiency/ladder.csv")
     ns = [10, 20, 50, 100, 300]
-    for m, name, c in (("L6p", "refit near old decoder", P.INK2), ("L6", "retrained on day j", P.NEUTRAL),
+    e = pd.concat([pd.read_csv(f"results/gain_efficiency/{k}.csv") for k in ("T6", "T5", "T9")
+                   if os.path.exists(f"results/gain_efficiency/{k}.csv")])
+    e = e.assign(train=e.subject + "_" + e.train.astype(str))
+    for m, name, c in (("L6", "retrained on day j", P.NEUTRAL), ("L6p", "refit near old decoder", P.INK2),
                        ("L3", "re-weight channels", P.BLUE_ORDINAL[5])):
-        est = np.array([cluster_bootstrap(e.assign(_r=e[f"{m}_n{n}"] / e.own), "_r", n_boot=800) for n in ns])
+        est = np.array([cluster_bootstrap(e.dropna(subset=[f"{m}_n{n}"]).assign(_r=lambda x, c_=f"{m}_n{n}": x[c_] / x.own),
+                                          "_r", n_boot=800) for n in ns])
         line_ci(ax, ns, est, c, name)
     ax.axhline(float((e.L2 / e.own).median()), color=P.NEUTRAL, ls=":", lw=0.7)
+    ax.text(12, float((e.L2 / e.own).median()) + 0.03, "no labels", fontsize=4.4, color=P.INK2)
     ax.set_xscale("log")
     ax.set_xticks(ns)
     ax.set_xticklabels([str(n) for n in ns])
     ax.minorticks_off()
-    ax.set_ylim(-0.3, 1.1)
-    ax.set_xlabel("labelled trials on day j")
+    ax.set_ylim(-0.1, 1.1)
+    ax.set_xlabel("labeled trials on day j")
     ax.set_ylabel(RET)
-    ax.set_title("Monkey N, all gaps", loc="left")
+    ax.set_title("Three humans, all gaps", loc="left")
     ax.legend(loc="lower right", frameon=False, fontsize=4.4)
     P.panel(ax, "c", x=-0.3)
     ax = axes[3]
@@ -447,7 +455,7 @@ def fig5(out):
     ax.bar(x + 0.18, rates.history, 0.34, color=P.CAT[0], label="fixed strong shrinkage")
     ax.set_xticks(x)
     ax.set_xticklabels([str(n) for n in rates.index])
-    ax.set_xlabel("labelled trials on day j")
+    ax.set_xlabel("labeled trials on day j")
     ax.set_ylabel("worse than no recalibration (%)")
     ax.set_title("Harmful recalibrations", loc="left")
     ax.legend(loc="upper right", frameon=False, fontsize=4.4)
@@ -502,14 +510,17 @@ def fig6(out):
     groups = [("base", "shuffle_null", "≥3\nsessions"), ("fixed_uv", "shuffle_fixed_uv", "fixed\nµV"),
               ("deep", "shuffle_deep", "<0.5\nHz"), ("long_silence", "shuffle_long", "≥30\ndays")]
     x = np.arange(len(groups))
+    nullf = "results/failure_robustness/null_summary.json"
+    ns_ = json.load(open(nullf)) if os.path.exists(nullf) else {}
     obs = [r[a]["fraction"] * 100 for a, _, _ in groups]
-    nul = [r[b]["fraction"] * 100 for _, b, _ in groups]
+    nul = [ns_[a]["fraction_null_mean"] * 100 if a in ns_ else r[b]["fraction"] * 100 for a, b, _ in groups]
+    err = [[(ns_[a]["fraction_null_mean"] - ns_[a]["fraction_null_ci"][0]) * 100 if a in ns_ else 0 for a, _, _ in groups],
+           [(ns_[a]["fraction_null_ci"][1] - ns_[a]["fraction_null_mean"]) * 100 if a in ns_ else 0 for a, _, _ in groups]]
     ax.bar(x - 0.18, obs, 0.34, color=H, label="observed")
-    ax.bar(x + 0.18, nul, 0.34, color=P.NEUTRAL, label="session order shuffled")
+    ax.bar(x + 0.18, nul, 0.34, color=P.NEUTRAL, label="shuffled (200×, 95% range)")
+    ax.errorbar(x + 0.18, nul, yerr=err, fmt="none", ecolor=P.INK2, elinewidth=0.6, capsize=1.2)
     for xi, (a, b, _) in zip(x, groups):
         ax.text(xi - 0.18, obs[xi] + 1.5, f"{r[a]['silenced']}", fontsize=3.8, ha="center", va="bottom",
-                rotation=90, color=P.INK2)
-        ax.text(xi + 0.18, nul[xi] + 1.5, f"{r[b]['silenced']}", fontsize=3.8, ha="center", va="bottom",
                 rotation=90, color=P.INK2)
     ax.set_xticks(x)
     ax.set_xticklabels([g[2] for g in groups], fontsize=4.6)
@@ -622,7 +633,7 @@ def main():
     ap.add_argument("--out", default="results/figures/v2")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
-    figs = {"fig1": fig1, "fig2": fig2, "fig3": fig3, "fig4": fig4, "fig5": fig5, "fig6": fig6, "fig7": fig7}
+    figs = {"fig1": fig1, "fig2": fig2, "fig3": fig3, "fig4": fig4c, "fig5": fig5, "fig6": fig6, "fig7": fig7}
     for k, f in figs.items():
         if args.only is None or k in args.only:
             f(args.out)
