@@ -1,5 +1,5 @@
 # datasets and large artefacts
-data/
+/data/
 *.nwb
 *.h5
 *.hdf5
