@@ -92,11 +92,12 @@ def efficiency_table(out):
 def policy_table(out):
     p = pd.read_csv("results/recal_policy/policies.csv")
     st = json.load(open("results/paper_stats.json"))["harmful"]
+    mc = json.load(open("results/revision_stats.json"))["mcnemar"]
     rows = []
     for n, q in p.groupby("n"):
         h = st[str(int(n))]
         cells = [str(int(n)), str(len(q)), f"{100 * h['cv'] / len(q):.1f}", f"{100 * h['history'] / len(q):.1f}",
-                 f"{h['P']:.3f}" if h["P"] < 1 else "1.0"]
+                 f"{mc[str(int(n))]['P_exact']:.3f}" if mc[str(int(n))]["P_exact"] < 1 else "1.0"]
         for c in ("cv", "history", "oracle"):
             cells.append(f3((q[c] / q.own).median()))
         rows.append(" & ".join(cells) + r"\\")
@@ -169,7 +170,9 @@ def reg_table(out):
     rows = []
     for _, x in r.iterrows():
         lo, hi = [float(v) for v in x.ci.strip("[]").split(",")]
-        rows.append(" & ".join([names[x.subject], f"$10^{{{int(np.log10(x.alpha_rule))}}}$",
+        la = np.log10(x.alpha_rule)
+        atxt = f"$10^{{{int(la)}}}$" if la == int(la) else f"${x.alpha_rule / 10 ** int(la):.0f}\\times10^{{{int(la)}}}$"
+        rows.append(" & ".join([names[x.subject], atxt,
                                 "same day" if x.gap == 0 else str(int(x.gap)), str(int(x.n)), f3(x.base), f3(x.rule),
                                 ci(x.gain, lo, hi, 3), f"{x.frac_pos:.2f}"]) + r"\\")
     write(os.path.join(out, "tab_reg.tex"), rows)
