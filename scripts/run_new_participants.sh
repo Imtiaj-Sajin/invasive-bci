@@ -10,6 +10,7 @@
 #
 # Usage: bash scripts/run_new_participants.sh convert > results/new_participants/convert.log 2>&1 &
 #        bash scripts/run_new_participants.sh analyse > results/new_participants/analyse.log 2>&1 &
+#        bash scripts/run_new_participants.sh gpu > results/new_participants/gpu.log 2>&1 &   (network ladder on the GPU)
 set -u
 cd "$(dirname "$0")/.."
 PY=.venv/Scripts/python.exe
@@ -78,6 +79,18 @@ analyse() {
     step "$OUT/${P}_weight_angles.log" "$E" scripts/weight_angles.py --subject "$P"
   done
   echo "$(date +%T) ANALYSE LOOP COMPLETE"
+}
+
+gpu() {   # recurrent-network ladder on the GPU, alongside the CPU loop, once a participant's linear ladder exists
+  for P in $ORDER; do
+    while [ ! -f "$OUT/${P}_ladder.log.ok" ]; do
+      grep -q "ANALYSE LOOP COMPLETE" "$OUT/analyse.log" 2>/dev/null && break
+      sleep 60
+    done
+    [ -f "results/replication_bg/${P}_ladder.csv" ] || { echo "$(date +%T) no ladder for $P, skipped"; continue; }
+    step "$OUT/${P}_nn_ladder.log" "IBCI_DATA=$(data_root "$P")" scripts/nn_ladder.py --subject "$P"
+  done
+  echo "$(date +%T) GPU LOOP COMPLETE"
 }
 
 "$1"

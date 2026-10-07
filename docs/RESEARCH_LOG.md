@@ -1169,3 +1169,10 @@ abstract 144 words. Next: six more BrainGate participants (owners to download), 
 - Proposed cleanup for T11 (not yet done): raw Perich and LINK NWB files on D: (~24 GB; all sessions already in
   `perich_cache`/`link_cache`; re-downloadable from DANDI; keep one LINK file for the electrode layout) and the
   extracted-duplicate `MINDFUL_Data.zip`.
+- **Cleanup done** (owners approved, 2026-10-07), each item verified first: `MINDFUL_Data.zip` (all 180 entries present
+  extracted with identical sizes); raw Perich NWB files (all 97 have a `perich_cache` npz, and `ibci.data.perich`
+  reads only the cache; DANDI 000688); raw LINK NWB files except `sub-Monkey-N_ses-20200127_ecephys.nwb` kept as a
+  spare (all 312 sessions in `link_cache`, electrode layout cached in `layout.csv`). D: free space 10 → 34 GB. Loading
+  from the caches was re-tested afterwards (Perich C 68 sessions, LINK 312 sessions, layout 96 × 5).
+- A third loop (`run_new_participants.sh gpu`) runs the recurrent-network ladder on the GPU for each new participant
+  once its linear ladder exists.
