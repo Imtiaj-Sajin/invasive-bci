@@ -6,6 +6,9 @@ and electrode metadata. This tool reads the archive as a stream (no full extract
 -4.5 RMS threshold crossings, casts neural data to float32 and writes compressed .mat files with the same structure,
 so scripts/replicate_braingate_decoding.py reads them unchanged. Reading the stream to the end also checks the gzip CRC.
 
+ARCHIVE may be a local path or an http(s) URL; a URL is streamed straight into the converter, so the archive is never
+stored. If the connection drops, the stream restarts from the beginning and sessions already written are skipped.
+
 Usage: python scripts/tools/compact_braingate_decoding.py ARCHIVE OUT_DIR
 """
 import argparse
@@ -36,12 +39,31 @@ def main():
     ap.add_argument("out_dir")
     args = ap.parse_args()
     os.makedirs(args.out_dir, exist_ok=True)
+    for attempt in range(1, 6):
+        try:
+            convert(args.archive, args.out_dir)
+            return
+        except (OSError, EOFError, tarfile.TarError) as e:   # dropped connection or truncated stream: start again,
+            print(f"attempt {attempt} failed: {e!r}", flush=True)  # sessions already written are skipped
+            if not args.archive.startswith("http") or attempt == 5:
+                raise
+            time.sleep(30)
+
+
+def convert(archive, out_dir):
+    """Read the archive (a local path or an http(s) URL, streamed without saving the archive) to the end."""
     n, t0, read_bytes = 0, time.time(), 0
-    with tarfile.open(args.archive, "r|gz") as tar:
+    if archive.startswith("http"):
+        import urllib.request
+        src = urllib.request.urlopen(archive, timeout=120)
+        tar_ctx = tarfile.open(fileobj=src, mode="r|gz")
+    else:
+        tar_ctx = tarfile.open(archive, "r|gz")
+    with tar_ctx as tar:
         for m in tar:
             if not (m.isfile() and m.name.endswith(".mat")):
                 continue
-            dest = os.path.join(args.out_dir, os.path.basename(m.name))
+            dest = os.path.join(out_dir, os.path.basename(m.name))
             raw = tar.extractfile(m).read()
             read_bytes += len(raw)
             if not os.path.exists(dest):
