@@ -11,14 +11,14 @@ import pandas as pd
 from scipy import stats
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from ibci.participants import humans  # noqa: E402
+from ibci.participants import humans, valid_pairs  # noqa: E402
 
 out = {}
 SUBJ = {"N": "results/anatomy/ladder.csv", "C": "results/replication/C_ladder.csv",
         "M": "results/replication/M_ladder.csv"}
 HUMANS = humans()   # included participants (pre-specified reference-decoder rule)
 SUBJ.update({p: f"results/replication_bg/{p}_ladder.csv" for p in HUMANS})
-L = {k: pd.read_csv(v) for k, v in SUBJ.items()}
+L = {k: valid_pairs(pd.read_csv(v)) for k, v in SUBJ.items()}
 
 # 1. Overnight retention: does it differ across subjects? (one value per training session: mean over its 1-day pairs)
 grp = []

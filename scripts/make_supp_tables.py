@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from ibci.participants import humans  # noqa: E402
+from ibci.participants import humans, valid_pairs  # noqa: E402
 from ibci.stats import cluster_bootstrap  # noqa: E402
 
 LADDERS = {"Monkey N": "results/anatomy/ladder.csv", "Monkey C": "results/replication/C_ladder.csv",
@@ -39,7 +39,7 @@ def write(path, rows):
 def ladder_table(out):
     rows = []
     for name, p in LADDERS.items():
-        d = pd.read_csv(p)
+        d = valid_pairs(pd.read_csv(p))
         d = d[d.gap_target.isin(GAPS)].assign(ret=lambda x: x.L2 / x.own)
         rows.append(r"\multicolumn{11}{l}{\textit{" + name + r"}}\\")
         for g, q in d.groupby("gap_target"):
@@ -196,7 +196,7 @@ def nn_table(out):
         p = f"results/nn_ladder/{k}.csv"
         if not os.path.exists(p):
             continue
-        q = pd.read_csv(p).assign(ret_nn=lambda x: x.L2 / x.own, ret_lin=lambda x: x.ridge_L2 / x.ridge_own,
+        q = valid_pairs(pd.read_csv(p), "own", "ridge_own").assign(ret_nn=lambda x: x.L2 / x.own, ret_lin=lambda x: x.ridge_L2 / x.ridge_own,
                                   rec_nn=lambda x: (x.L3 - x.L2) / (x.own - x.L2),
                                   rec_lin=lambda x: (x.ridge_L3 - x.ridge_L2) / (x.ridge_own - x.ridge_L2))
         rows.append(r"\multicolumn{8}{l}{\textit{" + name + r"}}\\")
@@ -243,7 +243,7 @@ def human_eff_table(out):
         p = f"results/gain_efficiency/{k}.csv"
         if not os.path.exists(p):
             continue
-        q = pd.read_csv(p)
+        q = valid_pairs(pd.read_csv(p))
         cells = [NAMES[k], str(len(q)), f3((q.L2 / q.own).median())]
         for n in (10, 20, 50, 100, 300):
             vals = []
@@ -278,7 +278,7 @@ def controls_table(out):
         p = f"results/reweight_controls/{k}.csv"
         if not os.path.exists(p):
             continue
-        q = pd.read_csv(p)
+        q = valid_pairs(pd.read_csv(p))
         cells = [name, str(len(q))] + [f"{(q[c] / q.own).median():.2f}".replace("-", "$-$")
                                          for c in ("renorm", "rew", "rew_perm", "rew_nonneg", "rew_perm_nn")]
         m = f"results/gain_mechanism/{k}.csv"
@@ -301,7 +301,7 @@ def matched_table(out):
                        ("direction", f"results/matched_output_tuned/{k}.csv")):
             if not os.path.exists(p):
                 continue
-            q = pd.read_csv(p)
+            q = valid_pairs(pd.read_csv(p))
             q = q[q.gap_target.isin([1, 7, 30, 120, 480])].assign(
                 rec=lambda x: (x.L3_n300 - x.L2) / (x.own - x.L2), ret=lambda x: x.L2 / x.own,
                 ret3=lambda x: x.L3_n300 / x.own)

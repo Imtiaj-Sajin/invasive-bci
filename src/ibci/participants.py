@@ -44,6 +44,20 @@ def excluded_humans():
     return out
 
 
+ALL_PAIRS = os.environ.get("IBCI_ALL_PAIRS") == "1"   # sensitivity analysis: keep every pair
+
+
+def valid_pairs(d, *own_cols):
+    """Session pairs whose reference decoder(s) work (R2 > MIN_REF_R2); see docs/decisions/0003.
+    With IBCI_ALL_PAIRS=1 every pair is kept (sensitivity analysis)."""
+    if ALL_PAIRS:
+        return d
+    keep = pd.Series(True, index=d.index)
+    for c in own_cols or ("own",):
+        keep &= d[c] > MIN_REF_R2
+    return d[keep]
+
+
 def individuals():
     return MONKEYS + humans()
 
