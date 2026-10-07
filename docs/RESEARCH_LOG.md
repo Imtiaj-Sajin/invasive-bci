@@ -1155,3 +1155,17 @@ abstract 144 words. Next: six more BrainGate participants (owners to download), 
 - **Spike amplitude result** (`python scripts/amplitude_summary.py`): on T5's lateral array, 62 electrodes had spikes
   both before day 200 and after day 2,000; median amplitude fell from 55 to 29 µV (median ratio 0.51, IQR 0.44–0.59),
   smaller on 61 of 62 (Wilcoxon P = 8.4e-12). Added to Results (electrode section) via `\val{amp:*}` keys.
+
+### 2026-10-07 — Six more BrainGate participants
+
+- Owners mirrored the remaining Dryad decoding archives (T2 4.37 GB, T3 0.62, T7 4.42, T8 14.18, T10 4.62, T11 21.24;
+  49.5 GB) on their server. Disk is tight (C 12, D 9, E 14, F 17, G 18 GB free), so archives are not stored:
+  `scripts/tools/compact_braingate_decoding.py` now accepts a URL and streams it straight into compact session files
+  (retries on a dropped connection; gzip CRC checked at the end).
+- `scripts/run_new_participants.sh` runs two loops: `convert` (T3, T2, T7, T10 → F:/ibci-data; T8 → G:/ibci-data;
+  T11 → D:/ibci-data only after ~24 GB is freed there, pending the owners' approval of the cleanup) and `analyse`
+  (ladder, tuned-penalty decay, regularization, alignment variants, CORAL/stabilizer, label efficiency, re-weighting
+  controls, gain–electrode link, weight angles; one job at a time). Logs in `results/new_participants/`.
+- Proposed cleanup for T11 (not yet done): raw Perich and LINK NWB files on D: (~24 GB; all sessions already in
+  `perich_cache`/`link_cache`; re-downloadable from DANDI; keep one LINK file for the electrode layout) and the
+  extracted-duplicate `MINDFUL_Data.zip`.
