@@ -92,3 +92,9 @@ skip  results/new_participants/T8_ladder.log
 00:52:44 done  results/new_participants/T8_decay_alpha.log
 skip  results/new_participants/T8_reg_tradeoff.log
 00:52:44 start results/new_participants/T8_align_variants.log
+01:15:00 done  results/new_participants/T8_align_variants.log
+01:15:00 start results/new_participants/T8_label_free_plus.log
+01:24:51 done  results/new_participants/T8_label_free_plus.log
+01:24:51 start results/new_participants/T8_gain_efficiency.log
+02:40:22 done  results/new_participants/T8_gain_efficiency.log
+02:40:22 start results/new_participants/T8_reweight_controls.log
