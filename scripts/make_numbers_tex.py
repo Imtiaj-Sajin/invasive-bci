@@ -10,10 +10,16 @@ import json
 import os
 import re
 
+import sys
+
 import numpy as np
 import pandas as pd
 
-IND = ["N", "C", "M", "T6", "T5", "T9"]
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+from ibci.participants import excluded_humans, humans  # noqa: E402
+
+HUM = humans()   # included participants (pre-specified reference-decoder rule)
+IND = ["N", "C", "M"] + HUM
 GAPS = [1, 7, 30, 120, 480]
 V = {}
 
@@ -137,7 +143,7 @@ def main():
                 put(f"{k}:eff{c.replace('_', '')}", f2(v))
 
     # pooled human data efficiency
-    frames = [pd.read_csv(f"results/gain_efficiency/{k}.csv") for k in ("T6", "T5", "T9")
+    frames = [pd.read_csv(f"results/gain_efficiency/{k}.csv") for k in HUM
               if os.path.exists(f"results/gain_efficiency/{k}.csv")]
     if frames:
         e = pd.concat(frames)
@@ -179,7 +185,7 @@ def main():
             put(f"{k}:matchrec1", pct(med.get(1, np.nan)))
     # regularization
     rule = pd.read_csv("results/reg_tradeoff/rule_across_subjects.csv")
-    names = {"N (LINK)": "N", "C": "C", "M": "M", "T6 (human)": "T6", "T5 (human)": "T5", "T9 (human)": "T9"}
+    names = {"N (LINK)": "N", "C": "C", "M": "M", **{f"{p} (human)": p for p in HUM}}
     ps = load("results/paper_stats.json")
     rs = load("results/revision_stats.json")
     for full, k in names.items():
@@ -306,7 +312,7 @@ def main():
             put(f"{k}:tgainretmax", f2(max(rg)))
     # fitted weights versus electrode changes (humans)
     from scipy import stats as _st
-    for k in ("T6", "T5", "T9"):
+    for k in HUM:
         p = f"results/gain_mechanism/{k}.csv"
         if os.path.exists(p):
             q = pd.read_csv(p)

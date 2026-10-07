@@ -1193,3 +1193,4 @@ abstract 144 words. Next: six more BrainGate participants (owners to download), 
   remaining steps now run alone after T10 finishes (`MIN_FREE_GB=10 bash scripts/analyse_lane.sh T8 T11`).
 - T11 may run on the owners' second PC (more RAM, RTX 5080): `scripts/run_participant_standalone.sh` and
   `docs/RUN_ON_SECOND_PC.md`. `gain_mechanism.py` now reads the yield folder from `IBCI_YIELD` (default unchanged).
+- Summary scripts now read included participants from `src/ibci/participants.py` (pre-specified rule: median reference R2 > 0.1; included T6, T5, T9, T7, T10, T8; excluded T2 -0.02, T3 -0.05). Early default-penalty half-lives: T7 7.1 d, T10 2.2 d, T8 1.0 d. Issue to fix before regenerating the paper: retention ratios explode when a pair's reference R2 is near zero (T7 one-day CI 0.19-54.8).

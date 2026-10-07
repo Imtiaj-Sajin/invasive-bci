@@ -19,13 +19,14 @@ import pandas as pd
 from scipy import stats
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+from ibci.participants import humans  # noqa: E402
 from ibci.stats import cluster_bootstrap  # noqa: E402
 
 GAPS = [1, 7, 30, 120, 480]
 IND = {"N": ("Monkey N", "results/anatomy/ladder.csv"), "C": ("Monkey C", "results/replication/C_ladder.csv"),
-       "M": ("Monkey M", "results/replication/M_ladder.csv"), "T6": ("Human T6", "results/replication_bg/T6_ladder.csv"),
-       "T5": ("Human T5", "results/replication_bg/T5_ladder.csv"), "T9": ("Human T9", "results/replication_bg/T9_ladder.csv")}
-TUNED = {"N": 1e4, "C": 1e4, "M": 1e4, "T6": 1e4, "T5": 1e4, "T9": 1e4}
+       "M": ("Monkey M", "results/replication/M_ladder.csv")}
+IND.update({p: (f"Human {p}", f"results/replication_bg/{p}_ladder.csv") for p in humans()})
+TUNED = {k: 1e4 for k in IND}
 
 
 def ci(d, col, n_boot=2000):

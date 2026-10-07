@@ -4,15 +4,19 @@ Writes results/paper_stats.json.
 """
 import json
 import os
+import sys
 
 import numpy as np
 import pandas as pd
 from scipy import stats
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+from ibci.participants import humans  # noqa: E402
+
 out = {}
 SUBJ = {"N": "results/anatomy/ladder.csv", "C": "results/replication/C_ladder.csv",
-        "M": "results/replication/M_ladder.csv", "T6": "results/replication_bg/T6_ladder.csv"}
-HUMANS = ["T6"] + [p for p in ("T5", "T9") if os.path.exists(f"results/replication_bg/{p}_ladder.csv")]
+        "M": "results/replication/M_ladder.csv"}
+HUMANS = humans()   # included participants (pre-specified reference-decoder rule)
 SUBJ.update({p: f"results/replication_bg/{p}_ladder.csv" for p in HUMANS})
 L = {k: pd.read_csv(v) for k, v in SUBJ.items()}
 

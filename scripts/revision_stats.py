@@ -8,16 +8,20 @@
 4. True one-day versus two-day pairs in the 'overnight' set, per subject.
 """
 import json
+import os
+import sys
 
 import numpy as np
 import pandas as pd
 from scipy import stats
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+from ibci.participants import humans  # noqa: E402
+
 out = {}
 SUBJ = {"N": "results/reg_tradeoff/tradeoff.csv", "C": "results/reg_tradeoff_C/tradeoff.csv",
-        "M": "results/reg_tradeoff_M/tradeoff.csv", "T6": "results/reg_tradeoff_T6/tradeoff.csv"}
-import os  # noqa: E402
-for p in ("T5", "T9"):
+        "M": "results/reg_tradeoff_M/tradeoff.csv"}
+for p in humans():
     if os.path.exists(f"results/reg_tradeoff_{p}/tradeoff.csv"):
         SUBJ[p] = f"results/reg_tradeoff_{p}/tradeoff.csv"
 for name, path in SUBJ.items():
@@ -63,9 +67,8 @@ f = stats.fisher_exact([[a["revived"], a["silenced"] - a["revived"]], [b["revive
 out["long_silence_vs_shuffle"] = {"observed": f"{a['revived']}/{a['silenced']}", "shuffle": f"{b['revived']}/{b['silenced']}",
                                   "odds_ratio": float(f[0]), "P": float(f[1])}
 
-LAD = {"N": "results/anatomy/ladder.csv", "C": "results/replication/C_ladder.csv", "M": "results/replication/M_ladder.csv",
-       "T6": "results/replication_bg/T6_ladder.csv"}
-for p_ in ("T5", "T9"):
+LAD = {"N": "results/anatomy/ladder.csv", "C": "results/replication/C_ladder.csv", "M": "results/replication/M_ladder.csv"}
+for p_ in humans():
     if os.path.exists(f"results/replication_bg/{p_}_ladder.csv"):
         LAD[p_] = f"results/replication_bg/{p_}_ladder.csv"
 for name, path in LAD.items():
