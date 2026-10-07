@@ -76,3 +76,4 @@ skip  results/new_participants/T7_gain_efficiency.log
 22:47:13 done  results/new_participants/T8_reg_tradeoff.log
 22:47:13 start results/new_participants/T8_align_variants.log
 22:47:30 start results/new_participants/T10_gain_efficiency.log
+22:52:46 FAILED results/new_participants/T8_align_variants.log

@@ -1188,3 +1188,8 @@ abstract 144 words. Next: six more BrainGate participants (owners to download), 
   the current preprocessing (session-wise z-scored SBP) is retained for all participants.
 - Analysis switched to two lanes at 19:47 (`scripts/analyse_lane.sh`): lane A T7 then T10, lane B T8 then T11; each step waits for >= 6 GB free RAM. The GPU loop continues unchanged.
 - 22:33 T8 `decay_alpha` failed with an out-of-memory error (985 MiB allocation) while two analysis lanes, the GPU network ladder and the T11 download ran together; the RAM guard only checks before a step starts. Queued a rerun after lane A finishes T10, starting only with >= 10 GB free. Other T8 steps continue.
+- 22:52 T8 `align_variants` also ran out of memory: T8 sessions are very long (~200,000 bins; a 199,056 × 1,536
+  float32 design matrix is 1.1 GiB), so its steps cannot share RAM with another heavy job. Lane B was stopped; T8's
+  remaining steps now run alone after T10 finishes (`MIN_FREE_GB=10 bash scripts/analyse_lane.sh T8 T11`).
+- T11 may run on the owners' second PC (more RAM, RTX 5080): `scripts/run_participant_standalone.sh` and
+  `docs/RUN_ON_SECOND_PC.md`. `gain_mechanism.py` now reads the yield folder from `IBCI_YIELD` (default unchanged).
