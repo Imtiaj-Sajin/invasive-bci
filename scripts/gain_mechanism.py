@@ -63,7 +63,7 @@ def main():
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
     root = os.path.join(os.environ.get("IBCI_DATA", "D:/ibci-data"), "braingate")
-    yroot = "D:/ibci-data/braingate"
+    yroot = os.environ.get("IBCI_YIELD", "D:/ibci-data/braingate")   # folder that contains yield/<P>/
     lin = pd.read_csv(f"results/replication_bg/{args.subject}_ladder.csv")
     lin = lin[lin.gap_target.isin(GAPS)][["train", "test", "gap_target", "days"]].reset_index(drop=True)
     rng = np.random.default_rng(0)

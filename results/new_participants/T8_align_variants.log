@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "G:\codes\invasive bci\scripts\align_variants.py", line 61, in <module>
+    main()
+  File "G:\codes\invasive bci\scripts\align_variants.py", line 41, in main
+    sess = sessions_for(args.subject, alpha, set(pairs.train) | set(pairs.test))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\codes\invasive bci\scripts\decay_alpha.py", line 53, in sessions_for
+    out[key] = BGSess(key, d, X, Y, T, alpha)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\codes\invasive bci\scripts\replicate_braingate_decoding.py", line 72, in __init__
+    self.dec = LagDecoder.fit(self.ztr, self.y_tr, N_LAGS, alpha)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\codes\invasive bci\scripts\..\src\ibci\linear.py", line 62, in fit
+    W, b = ridge(lagged(Z, n_lags), Y, alpha)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\codes\invasive bci\scripts\..\src\ibci\linear.py", line 27, in ridge
+    Xc, Yc, xm, ym = _center(X, Y)
+                     ^^^^^^^^^^^^^
+  File "G:\codes\invasive bci\scripts\..\src\ibci\linear.py", line 22, in _center
+    return X - xm, Y - ym, xm, ym
+           ~~^~~~
+numpy._core._exceptions._ArrayMemoryError: Unable to allocate 1.14 GiB for an array with shape (199056, 1536) and data type float32
