@@ -352,7 +352,66 @@ def main():
                 put(f"{k}:ctl:{c}", f2(float((q[c] / q.own).median())))
             put(f"{k}:ctl:pairs", str(len(q)))
             put(f"{k}:ctl:zero", pct(float(q.nonneg_zero_frac.median())))
+    group_keys()
     write(args)
+
+
+def _num(s):
+    """Parse a formatted value back to a number ('$-$0.12' -> -0.12); None if it is not numeric."""
+    try:
+        return float(str(s).replace("$-$", "-").replace("\\%", ""))
+    except ValueError:
+        return None
+
+
+def _join(names):
+    return names[0] if len(names) == 1 else ", ".join(names[:-1]) + " and " + names[-1]
+
+
+def group_keys():
+    """Summaries across the included human participants: count, list, and min/max (with who) of per-person values.
+
+    Each group value is the min or max of the per-person value as printed, so the text and the per-person tables agree.
+    """
+    words = {2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine"}
+    put("hum:n", str(len(HUM)))
+    put("hum:nword", words.get(len(HUM), str(len(HUM))))
+    put("ind:nword", words.get(len(HUM) + 3, str(len(HUM) + 3)))
+    put("hum:list", _join(HUM))
+    ex = excluded_humans()
+    put("hum:excln", str(len(ex)))
+    put("hum:excllist", _join(sorted(ex)) if ex else "none")
+    for k, r in ex.items():
+        put(f"{k}:refr2", f2(r))
+    single = ["thalf", "thalftuned", "strict1", "ret1", "nnown", "linown", "rulemed", "rulevsbest", "pairs", "ntrain",
+              "mech:rate:rho", "mech:rate:pos", "mech:imp:rho", "angred", "nnowndiff"] + [f"ret{g}" for g in GAPS] + \
+             [f"tret{g}" for g in GAPS] + [f"ctl:{c}" for c in ("renorm", "rew", "rew_perm", "rew_nonneg", "rew_perm_nn")]
+    for s in single:
+        vals = [(h, _num(V.get(f"{h}:{s}"))) for h in HUM]
+        vals = [(h, v) for h, v in vals if v is not None]
+        if not vals:
+            continue
+        lo, hi = min(vals, key=lambda x: x[1]), max(vals, key=lambda x: x[1])
+        put(f"hum:{s}:min", V[f"{lo[0]}:{s}"])
+        put(f"hum:{s}:max", V[f"{hi[0]}:{s}"])
+        put(f"hum:{s}:minwho", lo[0])
+        put(f"hum:{s}:maxwho", hi[0])
+        put(f"hum:{s}:nval", str(len(vals)))
+    for lo_s, hi_s, name in (("trecmin", "trecmax", "trec"), ("tgainretmin", "tgainretmax", "tgainret"),
+                             ("nnrecmin", "nnrecmax", "nnrec"), ("recmin", "recmax", "rec"),
+                             ("gainretmin", "gainretmax", "gainret")):
+        los = [(h, _num(V.get(f"{h}:{lo_s}"))) for h in HUM]
+        his = [(h, _num(V.get(f"{h}:{hi_s}"))) for h in HUM]
+        los, his = [x for x in los if x[1] is not None], [x for x in his if x[1] is not None]
+        if los and his:
+            put(f"hum:{name}:min", V[f"{min(los, key=lambda x: x[1])[0]}:{lo_s}"])
+            put(f"hum:{name}:max", V[f"{max(his, key=lambda x: x[1])[0]}:{hi_s}"])
+    for name in ("rate", "imp"):          # how many participants show a significant weight-electrode link
+        ps = [(h, V.get(f"{h}:mech:{name}:p")) for h in HUM if f"{h}:mech:{name}:p" in V]
+        sig = [h for h, p in ps if p and ("times10" in p or (_num(p) is not None and _num(p) < 0.05))]
+        put(f"hum:mech:{name}:ntested", str(len(ps)))
+        put(f"hum:mech:{name}:nsig", str(len(sig)))
+        put(f"hum:mech:{name}:sigwho", _join(sig) if sig else "none")
 
 
 def write(args):
