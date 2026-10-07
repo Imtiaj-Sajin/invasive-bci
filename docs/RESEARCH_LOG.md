@@ -1186,3 +1186,4 @@ abstract 144 words. Next: six more BrainGate participants (owners to download), 
   later T2 sessions ≈ 0. For comparison T7 0.24–0.37 and T6 0.11–0.39 with the current pipeline (block-wise and TX are
   equal or worse). T2 trials are long (median ~10 s), consistent with weak control. T2 excluded by the rule above;
   the current preprocessing (session-wise z-scored SBP) is retained for all participants.
+- Analysis switched to two lanes at 19:47 (`scripts/analyse_lane.sh`): lane A T7 then T10, lane B T8 then T11; each step waits for >= 6 GB free RAM. The GPU loop continues unchanged.
