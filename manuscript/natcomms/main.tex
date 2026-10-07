@@ -482,10 +482,22 @@ from each of 2,289 research sessions in 14 participants with 20 arrays (A1, S1--
 electrode, they list threshold-crossing rates at several thresholds (with the threshold in microvolts), impedance and
 grid position. Nineteen arrays were in the hand area of motor cortex and one was in the middle frontal gyrus. The
 decoding data contain closed-loop cursor sessions with spike-band power in 10~ms bins, cursor and target positions and
-the periods of attempted movement. We used all sessions of T6 (124 sessions over 3.1 years, one array, 96 channels), T5
-(92 sessions over 7.2 years, two arrays, 192 channels) and T9 (117 sessions over 2.0 years, two arrays, 192 channels).
-Sessions contained a median of 367, 551 and 275 trials, with median movement periods of 1.6, 1.7 and 3.9~s. All sessions
-of a participant were treated as one task type.
+the periods of attempted movement, for nine participants (T2, T3 and T5--T11). We used all sessions of each
+participant. Sessions, spans, arrays, trials per session and movement durations are listed in Supplementary Tables~1
+and~14.
+All sessions of a participant were treated as one task type.
+
+\textit{Inclusion of participants and session pairs.} Retention is undefined when the reference decoder does not work.
+A participant therefore entered the decay and correction analyses only if the median $R^2$ of its reference decoder
+across session pairs exceeded 0.1. We fixed this rule when the first added participant (T3) failed, before the results
+of the other five added participants were seen. \val{hum:nWord} participants met it (\val{hum:list}). T2 and T3
+did not (median reference $R^2$ \val{T2:refr2} and \val{T3:refr2}). Their movement periods lasted a median of 15.6~s,
+against 1.6--3.9~s in the other participants, and neither block-wise normalization nor threshold crossings recovered a
+usable decoder (Supplementary Table~14). Within included individuals, session pairs whose reference $R^2$ was at most 0.1
+were left out of retention summaries, in monkeys and humans alike. This rule was adopted after a single failed test
+session (reference $R^2$ $-42.8$) made bootstrap intervals meaningless; it removed 0--18\% of pairs per individual and
+changed median retention by less than 0.05 in nearly all individuals and gaps. Results with all pairs are given in the
+Supplementary Information.
 
 \textit{MINDFUL} (Dryad\cite{data_mindful}; ref.~\cite{pun2024}). Closed-loop cursor blocks in which T11 (15 days) and T5
 (6 days) used a fixed decoder, with neural features in 20~ms bins (spike-band power for T11 and threshold crossings for

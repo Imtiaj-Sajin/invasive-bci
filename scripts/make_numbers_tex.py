@@ -374,8 +374,24 @@ def group_keys():
     Each group value is the min or max of the per-person value as printed, so the text and the per-person tables agree.
     """
     words = {2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine"}
+    sess = load("results/figures/overview_sessions.json")        # session days per participant (decoding data)
+    ns, yrs = {}, {}
+    for h in HUM + sorted(excluded_humans()):
+        d = sess.get(f"human {h} decoding")
+        if d:
+            ns[h], yrs[h] = len(d), (max(d) - min(d)) / 365.25
+            put(f"{h}:nsess", str(ns[h]))
+            put(f"{h}:years", f"{yrs[h]:.1f}")
+    inc = [h for h in HUM if h in ns]
+    if inc:
+        put("hum:nsess:min", str(min(ns[h] for h in inc)))
+        put("hum:nsess:max", str(max(ns[h] for h in inc)))
+        put("hum:nsess:total", f"{sum(ns[h] for h in inc):,}")
+        put("hum:years:min", f"{min(yrs[h] for h in inc):.1f}")
+        put("hum:years:max", f"{max(yrs[h] for h in inc):.1f}")
     put("hum:n", str(len(HUM)))
     put("hum:nword", words.get(len(HUM), str(len(HUM))))
+    put("hum:nWord", words.get(len(HUM), str(len(HUM))).capitalize())
     put("ind:nword", words.get(len(HUM) + 3, str(len(HUM) + 3)))
     put("hum:list", _join(HUM))
     ex = excluded_humans()

@@ -147,9 +147,7 @@ Individual & Source & Arrays and site & Signal & Task & Sessions (span) \\
 Monkey N & DANDI 001201 (LINK) & 2 Utah, motor cortex & SBP, TC & finger flexion & 312 on 303 days (3.4 years) \\
 Monkey C & DANDI 000688 & Utah, motor/premotor & sorted spikes & reaching & 68 (3.0 years) \\
 Monkey M & DANDI 000688 & Utah, motor/premotor & sorted spikes & reaching & 28 (1.5 years) \\
-Human T6 & Dryad x0k6djj1h & 1 Utah, motor cortex & SBP & closed-loop cursor & 124 (3.1 years) \\
-Human T5 & Dryad x0k6djj1h & 2 Utah, motor cortex & SBP & closed-loop cursor & 92 (7.2 years) \\
-Human T9 & Dryad x0k6djj1h & 2 Utah, motor cortex & SBP & closed-loop cursor & 117 (2.0 years) \\
+\tabinput{supp/tab_data_humans.tex}
 14 humans & Dryad x0k6djj1h & 20 Utah arrays & TC rates, impedance & research sessions & 2,289 ($\leq$7.3 years) \\
 T11, T5 & Dryad n2z34tn5s (MINDFUL) & motor cortex & SBP (T11), TC (T5) & closed-loop cursor & 15 and 6 days \\
 \botrule
@@ -416,6 +414,23 @@ Gap (days) & Pairs & Base & Stronger ridge & Perturbation & Simulator & Simulato
 Reference \\
 \midrule
 \tabinput{supp/tab_augment.tex}
+\botrule
+\end{tabular}
+\end{table}
+
+\begin{table}[p]
+\caption{\textbf{BrainGate decoding participants and the inclusion rule.} Arrays (channels), sessions and span of the
+closed-loop cursor sessions; median trials (movement periods) per session and median movement duration; median $R^2$ of
+the reference decoder across session pairs (linear decoder, default penalty). Participants entered the decay and
+correction analyses when this median exceeded 0.1 (Methods). For T2, neither block-wise normalization nor threshold
+crossings raised same-day $R^2$ above about 0.1 except on its earliest session.}
+\label{tab:decoding}
+\small
+\begin{tabular}{@{}lccccccc@{}}
+\toprule
+Participant & Arrays (channels) & Sessions & Span (years) & Trials per session & Movement (s) & Reference $R^2$ & Included \\
+\midrule
+\tabinput{supp/tab_decoding.tex}
 \botrule
 \end{tabular}
 \end{table}

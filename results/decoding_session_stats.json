@@ -1,0 +1,92 @@
+{
+ "T6": {
+  "sessions": 124,
+  "first_day": 88,
+  "last_day": 1211,
+  "years": 3.07,
+  "arrays": 1,
+  "channels": 96,
+  "median_trials": 367.5,
+  "median_movement_s": 1.63
+ },
+ "T5": {
+  "sessions": 92,
+  "first_day": 40,
+  "last_day": 2667,
+  "years": 7.19,
+  "arrays": 2,
+  "channels": 192,
+  "median_trials": 551.5,
+  "median_movement_s": 1.68
+ },
+ "T9": {
+  "sessions": 117,
+  "first_day": 28,
+  "last_day": 758,
+  "years": 2.0,
+  "arrays": 2,
+  "channels": 192,
+  "median_trials": 275.0,
+  "median_movement_s": 3.89
+ },
+ "T7": {
+  "sessions": 35,
+  "first_day": 50,
+  "last_day": 545,
+  "years": 1.36,
+  "arrays": 2,
+  "channels": 192,
+  "median_trials": 290.0,
+  "median_movement_s": 3.82
+ },
+ "T10": {
+  "sessions": 57,
+  "first_day": 49,
+  "last_day": 363,
+  "years": 0.86,
+  "arrays": 1,
+  "channels": 96,
+  "median_trials": 403.0,
+  "median_movement_s": 3.25
+ },
+ "T8": {
+  "sessions": 58,
+  "first_day": 38,
+  "last_day": 1033,
+  "years": 2.72,
+  "arrays": 2,
+  "channels": 192,
+  "median_trials": 722.0,
+  "median_movement_s": 2.79
+ },
+ "T11": {
+  "sessions": 196,
+  "first_day": 41,
+  "last_day": 1710,
+  "years": 4.57,
+  "arrays": 2,
+  "channels": 192,
+  "median_trials": 215.0,
+  "median_movement_s": 3.27
+ },
+ "T2": {
+  "sessions": 42,
+  "first_day": 46,
+  "last_day": 768,
+  "years": 1.98,
+  "arrays": 1,
+  "channels": 96,
+  "median_trials": 184.5,
+  "median_movement_s": 15.6
+ },
+ "T3": {
+  "sessions": 8,
+  "first_day": 36,
+  "last_day": 406,
+  "years": 1.01,
+  "arrays": 1,
+  "channels": 96,
+  "median_trials": 158.0,
+  "median_movement_s": 15.6
+ }
+}
