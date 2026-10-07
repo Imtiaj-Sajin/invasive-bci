@@ -87,11 +87,12 @@ a month were real and often reversed. We release the code, a calibrated simulato
 \centering
 \makebox[\textwidth][c]{\includegraphics[width=170mm]{fig1_overview.pdf}}
 \caption{\textbf{Recordings change over years, and decoders decay with them.} \textbf{a}, Approximate array sites on
-the hand area of motor cortex, shown on a standard human cortical surface (FreeSurfer fsaverage). \textbf{b}, Mean
-spike waveforms on the lateral array of participant T5, 7.3 years apart. Grey squares mark electrodes without spikes.
-\textbf{c}, Cursor paths in a closed-loop session of T5 on day 833, for held-out outward movements. Colours mark targets.
-\textbf{d}, The same movements reconstructed by integrating decoded direction, for three decoders. The decoder from day
-355 fails without correction and recovers after re-weighting each channel (Methods).}
+the hand area of motor cortex, on the FreeSurfer fsaverage cortical surface. 	extbf{b}, Mean spike waveforms on
+the lateral array of participant T5, 7.3 years apart. Dots mark electrodes without spikes. 	extbf{c}, Threshold-crossing
+rate of every electrode on the same array in every session, in 30-day bins. White columns have no sessions.
+	extbf{d}, Recorded cursor paths in a closed-loop session of T5, for held-out outward movements. Colours mark
+targets. 	extbf{e}, The same movements reconstructed offline from neural activity by three decoders. The decoder
+from day 355 fails without correction and recovers after re-weighting each channel (Methods).}
 \label{fig:overview}
 \end{figure}
 
@@ -567,7 +568,8 @@ which allows one global scale, and the angle between $\mathrm{vec}(\mathbf{B}_j)
 \mathbf{B}_i)$, with each channel's scale $s_c$ fitted by least squares.
 
 \textit{Example in Fig.~\ref{fig:overview}.} Waveforms are the released robust mean waveforms (15~kHz, in microvolts)
-for electrodes with a threshold-crossing rate of at least 2~Hz at $-4.5$ times the robust standard deviation. For the
+for electrodes with a threshold-crossing rate of at least 2~Hz at $-4.5$ times the robust standard deviation. Rates
+in panel c are the released threshold-crossing rates at the same threshold, averaged within 30-day bins. For the
 reconstructions, decoders used the tuned penalty: one trained on T5's day 355, one trained on day 833, and the day-355
 decoder re-weighted with 300 labeled trials from day 833. Paths are shown for held-out movements that started at the
 center. Each path integrates the decoded direction from the cursor's start position. The step size was set so that

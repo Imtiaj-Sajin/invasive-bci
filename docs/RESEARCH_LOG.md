@@ -1134,3 +1134,6 @@ abstract 144 words. Next: six more BrainGate participants (owners to download), 
 - **New Fig. 2** (`fig2_design`): sessions timeline and correction ladder, moved out of Fig. 1. Later figures renumbered
   3–8 (files renamed). Command: `python scripts/make_v2_figures.py`.
 - Backup prompt for an AI image (slides/social media only, not the paper) in `manuscript/natcomms/figure1_image_prompt.md`.
+- Fig. 1 restyled as data plots after owner feedback that the axis-free version looked drawn: axes with units on every
+  panel (mm on the array, task units for the cursor), and a new panel c with the threshold-crossing rate of all 96
+  electrodes of T5's lateral array in all 438 yield sessions (30-day bins, −4.5 threshold). Panels are now a–e.
