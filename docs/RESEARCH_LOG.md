@@ -1176,3 +1176,13 @@ abstract 144 words. Next: six more BrainGate participants (owners to download), 
   from the caches was re-tested afterwards (Perich C 68 sessions, LINK 312 sessions, layout 96 × 5).
 - A third loop (`run_new_participants.sh gpu`) runs the recurrent-network ladder on the GPU for each new participant
   once its linear ladder exists.
+- **T3 result (first new participant):** 8 decoding sessions over 370 days, 12 pairs. The same-day reference decoder
+  failed: reference R² −0.16 to −0.02 in all 12 pairs, so retention is undefined. Decision (before seeing the other
+  five participants): a participant enters the decay/correction summaries only if its median reference R² across
+  pairs is clearly positive (> 0.1); excluded participants are reported with their numbers in the Supplement.
+- **T2:** 42 sessions, 120 pairs, but the same-day decoder fails (median reference R² −0.02; 11/120 pairs > 0.1).
+  Check (`python scripts/tools/check_feature_normalization.py`, ridge α = 1e4, same-day 80/20 split): block-wise
+  z-scoring (as in the dataset README) and threshold crossings do not help. T2 day 103: SBP 0.12, +block 0.10, TX 0.11;
+  later T2 sessions ≈ 0. For comparison T7 0.24–0.37 and T6 0.11–0.39 with the current pipeline (block-wise and TX are
+  equal or worse). T2 trials are long (median ~10 s), consistent with weak control. T2 excluded by the rule above;
+  the current preprocessing (session-wise z-scored SBP) is retained for all participants.
