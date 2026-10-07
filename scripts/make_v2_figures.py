@@ -250,21 +250,22 @@ def fig3(out):
             continue
         a = L[k].assign(rec=lambda x: (x.L3_n300 - x.L2) / (x.own - x.L2)).groupby("gap_target").rec.median()
         ax.plot(GAPS, [a.get(g, np.nan) for g in GAPS], MK[k], color=COL[k], ls="-", ms=2.4, lw=1,
-                label=f"{NAME[k]}, kinematics")
+                label=f"{k}, kinematics")
         if os.path.exists(mo):
             b = pd.read_csv(mo).assign(rec=lambda x: (x.L3_n300 - x.L2) / (x.own - x.L2)).groupby("gap_target").rec.median()
             ax.plot(GAPS, [b.get(g, np.nan) for g in GAPS], MK[k], color=COL[k], ls=":", ms=2.4, lw=1, mfc="white",
-                    label=f"{NAME[k]}, direction only")
+                    label=f"{k}, direction")
     hum = pd.concat([L[k].assign(rec=lambda x: (x.L3_n300 - x.L2) / (x.own - x.L2)) for k in L if k.startswith("T")])
     if len(hum):
         h = hum.groupby("gap_target").rec.median()
-        ax.plot(GAPS, [h.get(g, np.nan) for g in GAPS], "s", color=P.INK2, ls="--", ms=2.4, lw=1, label="humans (pooled)")
+        ax.plot(GAPS, [h.get(g, np.nan) for g in GAPS], "s", color=P.INK2, ls="--", ms=2.4, lw=1, label="humans")
     P.day_axis(ax, GAPS)
-    ax.set_ylim(0, 1.05)
+    ax.set_ylim(-0.45, 1.05)
+    ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
     ax.set_xlabel("days since decoder training")
     ax.set_ylabel("share of loss recovered")
     ax.set_title("Same decoded variable", loc="left")
-    ax.legend(loc="lower left", frameon=False, fontsize=4.4)
+    ax.legend(loc="lower left", frameon=False, fontsize=4.2, ncol=3, columnspacing=0.8, handlelength=1.5)
     P.panel(ax, "c", x=-0.3)
 
     ax = axes[3]   # data efficiency in humans
@@ -317,14 +318,21 @@ def fig4(out):
             diff = (s[col] - s["renorm"]).rename("d").reset_index()
             est, lo, hi = cluster_bootstrap(diff.assign(train=diff.train), "d", n_boot=800)
             x = m_i + (j - (len(IND) - 1) / 2) * 0.11
-            ax.plot([x, x], [lo, hi], color=COL[k], lw=0.7)
-            ax.plot(x, est, MK[k], color=COL[k], ms=2.6, label=NAME[k] if m_i == 0 else None)
+            ylo, yhi = -0.3, 0.1
+            if est < ylo:   # off-scale: arrow at the bottom with the value
+                ax.annotate(f"{est:.1f}", xy=(x, ylo + 0.01), xytext=(x, ylo + 0.06 + 0.035 * (j % 2)), fontsize=3.8, ha="center",
+                            color=COL[k], arrowprops=dict(arrowstyle="-|>", lw=0.5, color=COL[k]))
+                continue
+            ax.plot([x, x], [max(lo, ylo), min(hi, yhi)], color=COL[k], lw=0.7)
+            ax.plot(x, est, MK[k], color=COL[k], ms=2.6, label=NAME[k] if m_i == 3 else None)
     ax.axhline(0, color=P.INK2, lw=0.6)
+    ax.set_ylim(-0.3, 0.1)
     ax.set_xticks(xs)
-    ax.set_xticklabels([m[2] for m in methods], fontsize=4.8)
+    ax.set_xticklabels([m[2].replace(" + ", "\n+ ").replace(" (CORAL)", "\n(CORAL)")
+                        .replace("factor-analysis ", "factor-analysis\n") for m in methods], fontsize=4.8)
     ax.set_ylabel("R² change vs rescaling each channel")
     ax.set_title("Label-free corrections (gaps up to 120 days)", loc="left")
-    ax.legend(loc="lower left", frameon=False, ncol=3, fontsize=4.4)
+    ax.legend(loc="lower right", frameon=False, ncol=3, fontsize=4.2)
     ax.grid(axis="x", visible=False)
     P.panel(ax, "a", x=-0.12)
 

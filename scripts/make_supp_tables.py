@@ -185,13 +185,98 @@ def lstm_table(out):
     write(os.path.join(out, "tab_lstm.tex"), rows)
 
 
+NAMES = {"N": "Monkey N", "C": "Monkey C", "M": "Monkey M", "T6": "Human T6", "T5": "Human T5", "T9": "Human T9"}
+
+
+def nn_table(out):
+    rows = []
+    for k, name in NAMES.items():
+        p = f"results/nn_ladder/{k}.csv"
+        if not os.path.exists(p):
+            continue
+        q = pd.read_csv(p).assign(ret_nn=lambda x: x.L2 / x.own, ret_lin=lambda x: x.ridge_L2 / x.ridge_own,
+                                  rec_nn=lambda x: (x.L3 - x.L2) / (x.own - x.L2),
+                                  rec_lin=lambda x: (x.ridge_L3 - x.ridge_L2) / (x.ridge_own - x.ridge_L2))
+        rows.append(r"\multicolumn{8}{l}{\textit{" + name + r"}}\\")
+        for g, x in q.groupby("gap_target"):
+            rows.append(" & ".join([str(g), str(len(x)), f3(x.ridge_own.median()), f3(x.own.median()),
+                                    f3(x.ret_lin.median()), f3(x.ret_nn.median()), f3(x.rec_lin.median()),
+                                    f3(x.rec_nn.median())]) + r"\\")
+    write(os.path.join(out, "tab_nn.tex"), rows)
+
+
+def angle_table(out):
+    rows = []
+    for k, name in NAMES.items():
+        p = f"results/weight_angles/{k}.csv"
+        if not os.path.exists(p):
+            continue
+        med = pd.read_csv(p).groupby("gap_target")[["angle_global", "angle_channel", "angle_null"]].median()
+        for g, r in med.iterrows():
+            rows.append(" & ".join([name if g == med.index[0] else "", str(g), f"{r.angle_global:.0f}",
+                                    f"{r.angle_channel:.0f}", f"{r.angle_null:.0f}"]) + r"\\")
+    write(os.path.join(out, "tab_angles.tex"), rows)
+
+
+def labelfree_table(out):
+    s = json.load(open("results/v2_summary.json"))
+    rows = []
+    for k, name in NAMES.items():
+        r = s.get(k, {})
+        a, l_ = r.get("alignment", {}), r.get("label_free_plus", {})
+        cells = [name]
+        for blk, key in ((a, "renorm_vs_mean_only"), (a, "rotation_on_mean_updated"), (a, "rotation_on_renormalized"),
+                         (l_, "coral_vs_renorm"), (l_, "fa_stab_vs_renorm"), (l_, "fa_stab_vs_fa_fixed")):
+            e = blk.get(key) or {}
+            p = e.get("P")
+            ptxt = "--" if p is None else (f"{p:.2g}" if p >= 1e-3 else f"{p:.0e}").replace("e-0", "e-")
+            cells.append("--" if not e else f"{f3(e['median_diff'])} ({ptxt})")
+        rows.append(" & ".join(cells) + r"\\")
+    write(os.path.join(out, "tab_labelfree.tex"), rows)
+
+
+def human_eff_table(out):
+    rows = []
+    for k in ("T6", "T5", "T9"):
+        p = f"results/gain_efficiency/{k}.csv"
+        if not os.path.exists(p):
+            continue
+        q = pd.read_csv(p)
+        cells = [NAMES[k], str(len(q)), f3((q.L2 / q.own).median())]
+        for n in (10, 20, 50, 100, 300):
+            vals = []
+            for rung in ("L3", "L6p", "L6"):
+                c = f"{rung}_n{n}"
+                vals.append(f"{(q[c] / q.own).median():.2f}" if c in q else "--")
+            cells.append(" / ".join(vals).replace("-", "$-$").replace("$-$$-$", "--"))
+        rows.append(" & ".join(cells) + r"\\")
+    write(os.path.join(out, "tab_eff_human.tex"), rows)
+
+
+def revival_table(out):
+    r = json.load(open("results/failure_robustness/summary.json"))["revival"]
+    lab = [("base", "At least 3 sessions below 2 Hz (main definition)", "shuffle_null"),
+           ("rms_3.5", "Threshold $-3.5$ times noise", None), ("rms_5.5", "Threshold $-5.5$ times noise", None),
+           ("fixed_uv", "Fixed threshold in microvolts per electrode", "shuffle_fixed_uv"),
+           ("no_global", "Array-wide shifts removed", None), ("waveform", "Mean waveform trough at least 30 $\\mu$V", None),
+           ("deep", "Silence below 0.5 Hz", "shuffle_deep"), ("long_silence", "Silence lasting at least 30 days",
+                                                              "shuffle_long")]
+    rows = []
+    for k, text, null in lab:
+        v = r[k]
+        nv = r.get(null) if null else None
+        rows.append(" & ".join([text, f"{v['silenced']:,}", f"{v['revived']:,}", f"{100 * v['fraction']:.0f}",
+                                f"{100 * nv['fraction']:.0f} ({nv['silenced']:,})" if nv else "--"]) + r"\\")
+    write(os.path.join(out, "tab_revival.tex"), rows)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="manuscript/natcomms/supp")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
-    for fn in (ladder_table, failure_table, efficiency_table, policy_table, targeted_table, sim_table, augment_table,
-               mindful_table, reg_table, lstm_table):
+    for fn in (ladder_table, failure_table, efficiency_table, policy_table, sim_table, augment_table, mindful_table,
+               reg_table, nn_table, angle_table, labelfree_table, human_eff_table, revival_table):
         fn(args.out)
         print("wrote", fn.__name__, flush=True)
 
