@@ -67,6 +67,100 @@ def ladders():
 
 
 # ------------------------------------------------------------------------------------------------ Figure 1
+def _smooth(pts, n=400):
+    from scipy.interpolate import splev, splprep
+    pts = np.asarray(pts, float)
+    tck, _ = splprep([np.r_[pts[:, 0], pts[0, 0]], np.r_[pts[:, 1], pts[0, 1]]], s=0, per=1)
+    return np.array(splev(np.linspace(0, 1, n), tck)).T
+
+
+def _curve(ax, pts, **kw):
+    from scipy.interpolate import splev, splprep
+    pts = np.asarray(pts, float)
+    tck, _ = splprep([pts[:, 0], pts[:, 1]], s=0, k=min(3, len(pts) - 1))
+    xy = np.array(splev(np.linspace(0, 1, 100), tck)).T
+    ax.plot(xy[:, 0], xy[:, 1], **kw)
+
+
+def _brain(ax, x0, y0, sc, kind, array_xy, array_col):
+    """Stylized lateral view of a human or macaque left hemisphere (front to the left)."""
+    from matplotlib.patches import Ellipse, Polygon, Rectangle
+    if kind == "human":
+        outline = [(0.02, 0.40), (0.10, 0.58), (0.28, 0.71), (0.50, 0.75), (0.72, 0.69), (0.90, 0.54), (0.98, 0.36),
+                   (0.90, 0.22), (0.66, 0.15), (0.44, 0.13), (0.30, 0.18), (0.20, 0.26), (0.07, 0.28)]
+        sulci = [[(0.55, 0.745), (0.52, 0.60), (0.47, 0.46), (0.43, 0.33)],          # central sulcus
+                 [(0.25, 0.27), (0.40, 0.33), (0.55, 0.38), (0.66, 0.43)],          # lateral fissure
+                 [(0.33, 0.70), (0.31, 0.58), (0.27, 0.47)], [(0.66, 0.70), (0.62, 0.56), (0.58, 0.47)],
+                 [(0.45, 0.25), (0.60, 0.25), (0.75, 0.29)], [(0.18, 0.50), (0.25, 0.53), (0.33, 0.52)]]
+        cereb = (0.82, 0.16, 0.22, 0.12)
+    else:
+        outline = [(0.03, 0.36), (0.14, 0.54), (0.38, 0.65), (0.64, 0.64), (0.86, 0.54), (0.97, 0.38), (0.90, 0.24),
+                   (0.66, 0.16), (0.40, 0.15), (0.20, 0.20), (0.08, 0.25)]
+        sulci = [[(0.56, 0.645), (0.53, 0.52), (0.49, 0.40)],                       # central sulcus
+                 [(0.33, 0.58), (0.30, 0.47), (0.36, 0.39), (0.43, 0.36)],          # arcuate sulcus
+                 [(0.20, 0.33), (0.38, 0.30), (0.58, 0.33)],                        # lateral fissure
+                 [(0.18, 0.47), (0.25, 0.48)], [(0.74, 0.58), (0.72, 0.46), (0.76, 0.36)]]
+        cereb = (0.84, 0.18, 0.18, 0.10)
+    xy = _smooth(outline)
+    ax.add_patch(Ellipse((x0 + cereb[0] * sc, y0 + cereb[1] * sc), cereb[2] * sc, cereb[3] * sc, fc="#e6dedb",
+                         ec="#9c8f8a", lw=0.5, zorder=1))
+    ax.add_patch(Polygon(np.c_[x0 + xy[:, 0] * sc, y0 + xy[:, 1] * sc], closed=True, fc="#f2e7e4", ec="#8a7d78",
+                         lw=0.7, zorder=2))
+    for sp in sulci:
+        _curve(ax, [(x0 + u * sc, y0 + v * sc) for u, v in sp], color="#b3a39d", lw=0.6, zorder=3)
+    for (u, v) in array_xy:
+        w = 0.045 * sc
+        ax.add_patch(Rectangle((x0 + u * sc - w / 2, y0 + v * sc - w / 2), w, w, fc=array_col, ec="white", lw=0.5,
+                               zorder=4))
+
+
+def _utah(ax, x0, y0, w):
+    """Utah array close-up: 10 x 10 needles on a square base in oblique view."""
+    from matplotlib.patches import Polygon
+    dx, dy = w, 0.28 * w
+    base = np.array([(0, 0), (dx, 0), (dx + 0.45 * w, dy), (0.45 * w, dy)]) + (x0, y0)
+    ax.add_patch(Polygon(base, closed=True, fc="#c9ced6", ec="#6e7681", lw=0.5, zorder=2))
+    for i in range(10)[::-1]:
+        for j in range(10):
+            u = (j + 0.5) / 10
+            v = (i + 0.5) / 10
+            bx, by = x0 + u * dx + v * 0.45 * w, y0 + v * dy
+            h = 0.42 * w
+            ax.plot([bx, bx], [by, by - h], color="#7a8290", lw=0.3, zorder=3, solid_capstyle="round")
+
+
+def _monitor(ax, x, y, w):
+    from matplotlib.patches import Circle, FancyBboxPatch
+    ax.add_patch(FancyBboxPatch((x, y), w, 0.62 * w, boxstyle="round,pad=0.004,rounding_size=0.01", fc="#2b2f38",
+                                ec="#2b2f38", lw=0.5, zorder=2))
+    ax.plot([x + w / 2, x + w / 2], [y, y - 0.12 * w], color="#2b2f38", lw=1.2, zorder=2)
+    ax.plot([x + 0.32 * w, x + 0.68 * w], [y - 0.12 * w] * 2, color="#2b2f38", lw=1.2, zorder=2)
+    ax.add_patch(Circle((x + 0.72 * w, y + 0.42 * w), 0.06 * w, fc="none", ec="#7ed957", lw=0.8, zorder=3))
+    ax.add_patch(Circle((x + 0.35 * w, y + 0.24 * w), 0.035 * w, fc="white", ec="none", zorder=3))
+    ax.annotate("", xy=(x + 0.66 * w, y + 0.39 * w), xytext=(x + 0.40 * w, y + 0.26 * w),
+                arrowprops=dict(arrowstyle="-|>", lw=0.5, color="white", mutation_scale=4), zorder=3)
+
+
+def _center_out(ax, x, y, r):
+    from matplotlib.patches import Circle
+    for k in range(8):
+        t = 2 * np.pi * k / 8
+        ax.add_patch(Circle((x + r * np.cos(t), y + r * np.sin(t)), 0.16 * r, fc="none", ec="#6e7681", lw=0.5))
+    ax.add_patch(Circle((x, y), 0.16 * r, fc="#6e7681", ec="none"))
+    ax.annotate("", xy=(x + 0.8 * r * np.cos(0.8), y + 0.8 * r * np.sin(0.8)), xytext=(x, y),
+                arrowprops=dict(arrowstyle="-|>", lw=0.6, color="#2a78d6", mutation_scale=5))
+
+
+def _fingers(ax, x, y, w):
+    from matplotlib.patches import FancyBboxPatch
+    for k, (dx, h, c) in enumerate(((0.0, 0.9, "#2a78d6"), (0.26, 1.0, "#2a78d6"), (0.52, 0.95, "#86b6ef"),
+                                    (0.78, 0.8, "#86b6ef"))):
+        ax.add_patch(FancyBboxPatch((x + dx * w, y), 0.18 * w, h * w, boxstyle="round,pad=0,rounding_size=0.008",
+                                    fc=c, ec="none"))
+    ax.add_patch(FancyBboxPatch((x - 0.04 * w, y - 0.32 * w), 1.04 * w, 0.36 * w,
+                                boxstyle="round,pad=0,rounding_size=0.01", fc="#86b6ef", ec="none"))
+
+
 def fig1(out):
     sess = json.load(open("results/figures/overview_sessions.json"))
     for p in ("T5", "T9"):
@@ -75,15 +169,43 @@ def fig1(out):
         if days:
             sess[f"human {p} decoding"] = days
     json.dump(sess, open("results/figures/overview_sessions.json", "w"))
-    groups = [("Decoder drift", ["monkey N (LINK)", "monkey C (000688)", "monkey M (000688)", "human T6 decoding",
-                                 "human T5 decoding", "human T9 decoding"]),
-              ("Electrode statistics", sorted([k for k in sess if k.startswith("BrainGate")],
-                                              key=lambda k: -(sess[k][-1] - sess[k][0]))),
-              ("Closed-loop monitoring", ["MINDFUL T11", "MINDFUL T5"])]
-    colors = {"Decoder drift": P.CAT[0], "Electrode statistics": "#1baf7a", "Closed-loop monitoring": "#eb6834"}
     P.setup_nature()
-    fig = plt.figure(figsize=(P.DOUBLE_COL, 3.4))
-    ax = fig.add_axes([0.085, 0.1, 0.5, 0.82])
+    fig = plt.figure(figsize=(P.DOUBLE_COL, 5.6))
+
+    # a: illustration
+    ax = fig.add_axes([0.0, 0.62, 1.0, 0.36])
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 3.6)
+    ax.axis("off")
+    _brain(ax, 0.25, 0.55, 3.1, "human", [(0.50, 0.66), (0.46, 0.57)], "#4a3aa7")
+    ax.text(1.8, 3.35, "People with paralysis", fontsize=6.5, ha="center", fontweight="bold")
+    ax.text(1.8, 3.08, "BrainGate: 20 arrays in 14 participants", fontsize=5, ha="center", color=P.INK2)
+    ax.text(1.8, 0.62, "decoding: T5, T6 and T9, 2–7 years each", fontsize=5, ha="center", color=P.INK2)
+    _monitor(ax, 3.35, 1.9, 0.75)
+    ax.text(3.72, 1.55, "cursor control", fontsize=5, ha="center", color=P.INK2)
+    _brain(ax, 4.75, 0.95, 2.3, "monkey", [(0.52, 0.56), (0.40, 0.55)], "#2a78d6")
+    ax.text(5.9, 3.35, "Monkeys", fontsize=6.5, ha="center", fontweight="bold")
+    ax.text(5.9, 3.08, "N (finger task); C and M (reaching)", fontsize=5, ha="center", color=P.INK2)
+    ax.text(5.9, 1.08, "1.5–3.4 years each", fontsize=5, ha="center", color=P.INK2)
+    _fingers(ax, 7.0, 2.35, 0.32)
+    ax.text(7.16, 2.0, "fingers", fontsize=5, ha="center", color=P.INK2)
+    _center_out(ax, 7.85, 2.55, 0.32)
+    ax.text(7.85, 2.0, "reaching", fontsize=5, ha="center", color=P.INK2)
+    ax.text(9.05, 3.35, "Utah array", fontsize=6.5, ha="center", fontweight="bold")
+    _utah(ax, 8.35, 2.05, 1.05)
+    ax.text(9.05, 1.2, "96 electrodes, 4 x 4 mm,\n1-1.5 mm long".replace("x", "\u00d7").replace("1-1", "1\u20131"),
+            fontsize=5, ha="center", color=P.INK2)
+    ax.text(9.05, 0.55, "per electrode: spike-band\npower, threshold crossings", fontsize=4.8, ha="center",
+            color=P.INK2)
+    ax.text(0.05, 3.45, "a", fontsize=8, fontweight="bold")
+
+    # b: sessions over time
+    groups = [("Decoders", ["monkey N (LINK)", "monkey C (000688)", "monkey M (000688)", "human T6 decoding",
+                            "human T5 decoding", "human T9 decoding"]),
+              ("Electrodes", sorted([k for k in sess if k.startswith("BrainGate")], key=lambda k: -(sess[k][-1] - sess[k][0]))),
+              ("Monitoring", ["MINDFUL T11", "MINDFUL T5"])]
+    colors = {"Decoders": P.CAT[0], "Electrodes": "#1baf7a", "Monitoring": "#eb6834"}
+    bx = fig.add_axes([0.085, 0.07, 0.49, 0.5])
     rows, y = [], 0
     for gname, keys in groups:
         for k in keys:
@@ -91,40 +213,41 @@ def fig1(out):
                 continue
             days = sess[k]
             yrs = [(d - days[0]) / 365.25 for d in days]
-            ax.plot([yrs[0], yrs[-1]], [y, y], color=colors[gname], lw=0.6, alpha=0.5)
-            ax.plot(yrs, [y] * len(yrs), "|", color=colors[gname], ms=3, mew=0.5)
+            bx.plot([yrs[0], yrs[-1]], [y, y], color=colors[gname], lw=0.6, alpha=0.5)
+            bx.plot(yrs, [y] * len(yrs), "|", color=colors[gname], ms=2.6, mew=0.5)
             lab = k.replace(" (yield)", "").replace("BrainGate ", "").replace(" decoding", "").replace("MINDFUL ", "")
-            rows.append((y, f"{lab}  (n={len(days)})"))
+            rows.append((y, f"{lab}  ({len(days)})"))
             y -= 1
         y -= 0.8
-    ax.set_yticks([r[0] for r in rows])
-    ax.set_yticklabels([r[1] for r in rows], fontsize=4.6)
-    ax.set_xlabel("years since first session")
-    ax.grid(axis="y", visible=False)
-    ax.set_ylim(y + 0.3, 1)
-    ax.legend([Line2D([], [], color=c, lw=1.2) for c in colors.values()], list(colors), loc="lower right",
-              title="analysis", title_fontsize=5.5)
-    ax.set_title("17 individuals, up to 7.3 years per array", loc="left")
-    P.panel(ax, "a", x=-0.14)
-    bx = fig.add_axes([0.66, 0.1, 0.32, 0.82])
-    bx.set_xlim(0, 1)
-    bx.set_ylim(0, 1)
-    bx.axis("off")
-    bx.text(0, 0.97, "Decoder trained on day i, tested on later day j", fontsize=6, va="top")
-    rungs = [("No correction", "none", P.NEUTRAL), ("Rescale each channel", "no labels", P.BLUE_ORDINAL[2]),
+    bx.set_yticks([r[0] for r in rows])
+    bx.set_yticklabels([r[1] for r in rows], fontsize=4.4)
+    bx.set_xlabel("years since first session")
+    bx.grid(axis="y", visible=False)
+    bx.set_ylim(y + 0.3, 1)
+    bx.legend([Line2D([], [], color=c, lw=1.2) for c in colors.values()], list(colors), loc="lower right",
+              title="analysis (sessions)", title_fontsize=5, fontsize=5)
+    P.panel(bx, "b", x=-0.15)
+
+    # c: correction ladder
+    cx = fig.add_axes([0.66, 0.07, 0.32, 0.5])
+    cx.set_xlim(0, 1)
+    cx.set_ylim(0, 1)
+    cx.axis("off")
+    cx.text(0, 0.98, "Decoder from day i, tested on a later day j", fontsize=5.8, va="top")
+    rungs = [("No correction", "none", P.NEUTRAL), ("Renormalize channels", "no labels", P.BLUE_ORDINAL[2]),
              ("Align neural activity", "no labels", P.BLUE_ORDINAL[3]),
-             ("Re-weight each channel", "labels, 1 per channel", P.BLUE_ORDINAL[5]),
-             ("Refit near old decoder", "labels, few trials", P.BLUE_ORDINAL[7]),
-             ("Reference decoder (day j)", "reference", P.INK2)]
+             ("Re-weight channels", "labels", P.BLUE_ORDINAL[5]),
+             ("Refit near old decoder", "labels", P.BLUE_ORDINAL[7]),
+             ("Reference decoder (day j)", "labels", P.INK2)]
     for k, (name, req, c) in enumerate(rungs):
-        yy = 0.82 - k * 0.13
-        bx.add_patch(FancyBboxPatch((0.02, yy - 0.045), 0.62, 0.09, boxstyle="round,pad=0.008,rounding_size=0.015",
+        yy = 0.83 - k * 0.135
+        cx.add_patch(FancyBboxPatch((0.02, yy - 0.047), 0.64, 0.094, boxstyle="round,pad=0.008,rounding_size=0.015",
                                     fc=c, ec="none", alpha=0.9 if k else 0.5))
-        bx.text(0.04, yy, name, fontsize=5.5, va="center", color="white" if 1 <= k <= 4 else P.INK)
-        bx.text(0.68, yy, req, fontsize=5, va="center", color=P.INK2)
-    bx.annotate("", xy=(0.97, 0.13), xytext=(0.97, 0.84), arrowprops=dict(arrowstyle="-|>", lw=0.6, color=P.INK2))
-    bx.text(0.99, 0.48, "more correction", rotation=90, fontsize=5, va="center", ha="left", color=P.INK2)
-    P.panel(bx, "b", x=-0.05)
+        cx.text(0.05, yy, name, fontsize=5.4, va="center", color="white" if 1 <= k <= 5 else P.INK)
+        cx.text(0.70, yy, req, fontsize=5, va="center", color=P.INK2)
+    cx.annotate("", xy=(0.95, 0.12), xytext=(0.95, 0.86), arrowprops=dict(arrowstyle="-|>", lw=0.6, color=P.INK2))
+    cx.text(0.975, 0.49, "stronger correction", rotation=90, fontsize=5, va="center", ha="left", color=P.INK2)
+    P.panel(cx, "c", x=-0.04)
     P.save(fig, os.path.join(out, "fig1_overview"))
 
 
