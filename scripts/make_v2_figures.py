@@ -31,20 +31,26 @@ from matplotlib.patches import FancyBboxPatch
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 sys.path.insert(0, os.path.dirname(__file__))
 from ibci import plotting as P  # noqa: E402
+from ibci.participants import MONKEYS, humans, ladder_path, valid_pairs  # noqa: E402
 from ibci.stats import cluster_bootstrap  # noqa: E402
 
 GAPS = [1, 7, 30, 120, 480]
-IND = [("N", "Monkey N", "results/anatomy/ladder.csv", "#2a78d6", "o"),
-       ("C", "Monkey C", "results/replication/C_ladder.csv", "#eb6834", "o"),
-       ("M", "Monkey M", "results/replication/M_ladder.csv", "#1baf7a", "o"),
-       ("T6", "Human T6", "results/replication_bg/T6_ladder.csv", "#4a3aa7", "s"),
-       ("T5", "Human T5", "results/replication_bg/T5_ladder.csv", "#eda100", "s"),
-       ("T9", "Human T9", "results/replication_bg/T9_ladder.csv", "#e87ba4", "s")]
+# Colours follow the validated categorical order (dataviz palette checker: CVD and normal-vision separation pass for
+# 7 adjacent slots). Monkeys and humans each use the order from the start; species is also encoded by marker
+# (circles vs squares) and line style, and curves are drawn in separate monkey and human panels.
+CAT7 = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7"]
+IND = ([(k, f"Monkey {k}", ladder_path(k), CAT7[i], "o") for i, k in enumerate(MONKEYS)]
+       + [(k, f"Human {k}", ladder_path(k), CAT7[i % 7], "s") for i, k in enumerate(humans())])
 IND = [i for i in IND if os.path.exists(i[2])]
 COL = {k: c for k, _, _, c, _ in IND}
 MK = {k: m for k, _, _, _, m in IND}
 NAME = {k: n for k, n, _, _, _ in IND}
 RET = "retention (R² / fresh R²)"
+DECODING_ROOTS = {"T6": "D:/ibci-data/braingate/decoding/T6", "T5": "D:/ibci-data/braingate/decoding/T5",
+                  "T9": "G:/ibci-data/braingate/decoding/T9", "T7": "F:/ibci-data/braingate/decoding/T7",
+                  "T10": "F:/ibci-data/braingate/decoding/T10", "T8": "G:/ibci-data/braingate/decoding/T8",
+                  "T11": "D:/ibci-data/braingate/decoding/T11", "T2": "F:/ibci-data/braingate/decoding/T2",
+                  "T3": "F:/ibci-data/braingate/decoding/T3"}
 
 
 def boot_curve(d, num, den="own", gaps=GAPS, n_boot=800):
@@ -53,9 +59,9 @@ def boot_curve(d, num, den="own", gaps=GAPS, n_boot=800):
                      else (np.nan, np.nan, np.nan) for g in gaps])
 
 
-def line_ci(ax, x, est, color, label=None, marker="o", ls="-"):
+def line_ci(ax, x, est, color, label=None, marker="o", ls="-", alpha=0.13):
     ax.plot(x, est[:, 0], color=color, marker=marker, ms=2.4, label=label, ls=ls, lw=1)
-    ax.fill_between(x, est[:, 1], est[:, 2], color=color, alpha=0.13, lw=0)
+    ax.fill_between(x, est[:, 1], est[:, 2], color=color, alpha=alpha, lw=0)
 
 
 def ref_lines(ax):
@@ -64,7 +70,28 @@ def ref_lines(ax):
 
 
 def ladders():
-    return {k: pd.read_csv(p)[lambda x: x.gap_target.isin(GAPS)] for k, _, p, _, _ in IND}
+    return {k: valid_pairs(pd.read_csv(p))[lambda x: x.gap_target.isin(GAPS)] for k, _, p, _, _ in IND}
+
+
+def species_curves(axm, axh, series, ylim, ylabel=True, title=None):
+    """Draw one retention curve per individual, monkeys in axm and humans in axh. series: {k: est array}."""
+    for ax, group, lab in ((axm, [k for k in series if MK[k] == "o"], "Monkeys"),
+                           (axh, [k for k in series if MK[k] == "s"], "Humans")):
+        for k in group:                                   # lighter bands when many curves share a panel
+            line_ci(ax, GAPS, series[k], COL[k], k, MK[k], "-" if MK[k] == "o" else "--",
+                    alpha=0.13 if len(group) <= 3 else 0.06)
+        ref_lines(ax)
+        P.day_axis(ax, GAPS)
+        ax.set_ylim(ylim[0] - (0.45 if len(group) > 3 else 0), ylim[1])   # room for the legend below the curves
+        ax.legend(loc="lower left", frameon=False, ncol=3 if len(group) > 3 else 1, fontsize=4.4, handlelength=1.2,
+                  columnspacing=0.6, title=lab, title_fontsize=4.8)
+        if ylabel:
+            ax.set_ylabel(RET, fontsize=5.2)
+    axm.set_xlabel("")
+    axm.tick_params(labelbottom=False)
+    axh.set_xlabel("days since decoder training")
+    if title:
+        axm.set_title(title, loc="left")
 
 
 # ------------------------------------------------------------------------------------------------ Figure 1
@@ -390,8 +417,7 @@ def fig1(out):
 # ------------------------------------------------------------------------------------------------ Figure 2
 def fig_design(out):
     sess = json.load(open("results/figures/overview_sessions.json"))
-    for p in ("T5", "T9"):
-        root = {"T5": "D:/ibci-data/braingate/decoding/T5", "T9": "G:/ibci-data/braingate/decoding/T9"}[p]
+    for p, root in DECODING_ROOTS.items():          # refresh session days from the converted data when available
         days = sorted(int(re.search(r"_day_(\d+)_", f).group(1)) for f in glob.glob(os.path.join(root, "*_decoding.mat")))
         if days:
             sess[f"human {p} decoding"] = days
@@ -400,8 +426,8 @@ def fig_design(out):
     fig = plt.figure(figsize=(P.DOUBLE_COL, 2.7))
 
     # b: sessions over time
-    groups = [("Decoders", ["monkey N (LINK)", "monkey C (000688)", "monkey M (000688)", "human T6 decoding",
-                            "human T5 decoding", "human T9 decoding"]),
+    groups = [("Decoders", ["monkey N (LINK)", "monkey C (000688)", "monkey M (000688)"]
+               + [f"human {p} decoding" for p in humans()]),
               ("Electrodes", sorted([k for k in sess if k.startswith("BrainGate")], key=lambda k: -(sess[k][-1] - sess[k][0]))),
               ("Monitoring", ["MINDFUL T11", "MINDFUL T5"])]
     colors = {"Decoders": P.CAT[0], "Electrodes": "#1baf7a", "Monitoring": "#eb6834"}
@@ -456,18 +482,12 @@ def fig_design(out):
 def fig2(out):
     P.setup_nature()
     L = ladders()
-    fig, axes = plt.subplots(1, 4, figsize=(P.DOUBLE_COL, 2.0), gridspec_kw={"width_ratios": [1.45, 0.8, 0.8, 1.45]})
-    ax = axes[0]
-    for k in L:
-        line_ci(ax, GAPS, boot_curve(L[k], "L2"), COL[k], NAME[k], MK[k], "-" if MK[k] == "o" else "--")
-    ref_lines(ax)
-    P.day_axis(ax, GAPS)
-    ax.set_ylim(-0.7, 1.1)
-    ax.set_xlabel("days since decoder training")
-    ax.set_ylabel(RET)
-    ax.set_title("Renormalized fixed decoder", loc="left")
-    ax.legend(loc="lower left", frameon=False, ncol=2, fontsize=4.8)
-    P.panel(ax, "a", x=-0.26)
+    fig = plt.figure(figsize=(P.DOUBLE_COL, 3.1))
+    gs = fig.add_gridspec(2, 4, width_ratios=[1.45, 0.8, 0.8, 1.45], hspace=0.12)
+    axes = [None, fig.add_subplot(gs[:, 1]), fig.add_subplot(gs[:, 2]), None]
+    am, ah = fig.add_subplot(gs[0, 0]), fig.add_subplot(gs[1, 0])
+    species_curves(am, ah, {k: boot_curve(L[k], "L2") for k in L}, (-0.7, 1.1), title="Renormalized fixed decoder")
+    P.panel(am, "a", x=-0.26)
 
     ax = axes[1]
     for i, k in enumerate(L):
@@ -514,18 +534,12 @@ def fig2(out):
     ax.grid(axis="y", visible=False)
     P.panel(ax, "c", x=-0.1)
 
-    ax = axes[3]
-    for k in L:
-        tp = f"results/decay_alpha/{k}_alpha10000.csv"
-        if os.path.exists(tp):
-            line_ci(ax, GAPS, boot_curve(pd.read_csv(tp), "L2"), COL[k], NAME[k], MK[k], "-" if MK[k] == "o" else "--")
-    ref_lines(ax)
-    P.day_axis(ax, GAPS)
-    ax.set_ylim(-0.7, 1.1)
-    ax.set_xlabel("days since decoder training")
-    ax.set_title("Same, with the tuned ridge penalty", loc="left")
-    P.panel(ax, "d", x=-0.12)
-    fig.subplots_adjust(wspace=0.5, left=0.065, right=0.99, bottom=0.2, top=0.86)
+    tm, th = fig.add_subplot(gs[0, 3]), fig.add_subplot(gs[1, 3])
+    tuned = {k: boot_curve(valid_pairs(pd.read_csv(tp)), "L2") for k in L
+             if os.path.exists(tp := f"results/decay_alpha/{k}_alpha10000.csv")}
+    species_curves(tm, th, tuned, (-0.7, 1.1), ylabel=False, title="Same, with the tuned ridge penalty")
+    P.panel(tm, "d", x=-0.12)
+    fig.subplots_adjust(wspace=0.5, left=0.065, right=0.99, bottom=0.13, top=0.9)
     P.save(fig, os.path.join(out, "fig3_decay"))
 
 
@@ -536,7 +550,7 @@ def tuned_ladders():
     for k, _, _, _, _ in IND:
         p = f"results/decay_alpha/{k}_alpha10000.csv"
         if os.path.exists(p):
-            out[k] = pd.read_csv(p)[lambda x: x.gap_target.isin(GAPS)]
+            out[k] = valid_pairs(pd.read_csv(p))[lambda x: x.gap_target.isin(GAPS)]
     return out
 
 
@@ -544,18 +558,13 @@ def fig4c(out):
     """Corrections work best when channels keep their identity (figure 4 of the manuscript)."""
     P.setup_nature()
     L = tuned_ladders()
-    fig, axes = plt.subplots(1, 4, figsize=(P.DOUBLE_COL, 2.05), gridspec_kw={"width_ratios": [1.3, 1.1, 0.9, 1.0]})
-    ax = axes[0]
-    for k in L:
-        line_ci(ax, GAPS, boot_curve(L[k], "L3_n300"), COL[k], NAME[k], MK[k], "-" if MK[k] == "o" else "--")
-    ref_lines(ax)
-    P.day_axis(ax, GAPS)
-    ax.set_ylim(-0.1, 1.1)
-    ax.set_xlabel("days since decoder training")
-    ax.set_ylabel(RET)
-    ax.set_title("After re-weighting each channel", loc="left")
-    ax.legend(loc="lower left", frameon=False, ncol=2, fontsize=4.6)
-    P.panel(ax, "a", x=-0.25)
+    fig = plt.figure(figsize=(P.DOUBLE_COL, 3.0))
+    gs = fig.add_gridspec(2, 4, width_ratios=[1.3, 1.1, 0.9, 1.0], hspace=0.12)
+    axes = [None, fig.add_subplot(gs[:, 1]), fig.add_subplot(gs[:, 2]), fig.add_subplot(gs[:, 3])]
+    am, ah = fig.add_subplot(gs[0, 0]), fig.add_subplot(gs[1, 0])
+    species_curves(am, ah, {k: boot_curve(L[k], "L3_n300") for k in L}, (-0.1, 1.1),
+                   title="After re-weighting each channel")
+    P.panel(am, "a", x=-0.25)
 
     ax = axes[1]   # correct versus scrambled channel assignment
     for i, k in enumerate(L):
@@ -589,7 +598,7 @@ def fig4c(out):
     P.panel(ax, "b", x=-0.45)
 
     ax = axes[2]   # fitted weights track electrode firing-rate changes (humans)
-    hum = [k for k in ("T6", "T5", "T9") if os.path.exists(f"results/gain_mechanism/{k}.csv")]
+    hum = [k for k in humans() if os.path.exists(f"results/gain_mechanism/{k}.csv")]
     for i, k in enumerate(hum):
         q = pd.read_csv(f"results/gain_mechanism/{k}.csv")
         s_ = q.groupby("train").rho_rate.mean().dropna()
@@ -631,7 +640,7 @@ def fig4c(out):
     ax.set_title("Linear (filled), network (open)", loc="left", fontsize=6)
     ax.grid(axis="y", visible=False)
     P.panel(ax, "d", x=-0.1)
-    fig.subplots_adjust(wspace=0.5, left=0.065, right=0.99, bottom=0.2, top=0.86)
+    fig.subplots_adjust(wspace=0.5, left=0.065, right=0.99, bottom=0.13, top=0.9)
     P.save(fig, os.path.join(out, "fig5_channels"))
 
 
@@ -751,7 +760,7 @@ def fig5(out):
     P.panel(ax, "b", x=-0.25)
     ax = axes[2]
     ns = [10, 20, 50, 100, 300]
-    e = pd.concat([pd.read_csv(f"results/gain_efficiency/{k}.csv") for k in ("T6", "T5", "T9")
+    e = pd.concat([pd.read_csv(f"results/gain_efficiency/{k}.csv") for k in humans()
                    if os.path.exists(f"results/gain_efficiency/{k}.csv")])
     e = e.assign(train=e.subject + "_" + e.train.astype(str))
     for m, name, c in (("L6", "retrained on day j", P.NEUTRAL), ("L6p", "refit near old decoder", P.INK2),
