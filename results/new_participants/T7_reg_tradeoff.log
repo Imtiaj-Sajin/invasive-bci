@@ -1,0 +1,41 @@
+T7_day50 done
+T7_day55 done
+T7_day57 done
+T7_day66 done
+T7_day71 done
+T7_day73 done
+T7_day78 done
+T7_day106 done
+T7_day135 done
+T7_day140 done
+T7_day162 done
+T7_day167 done
+T7_day205 done
+T7_day252 done
+T7_day258 done
+T7_day266 done
+T7_day268 done
+T7_day279 done
+T7_day280 done
+T7_day293 done
+T7_day307 done
+T7_day314 done
+T7_day315 done
+T7_day321 done
+T7_day328 done
+T7_day350 done
+T7_day377 done
+T7_day392 done
+T7_day401 done
+T7_day406 done
+T7_day426 done
+T7_day434 done
+T7_day455 done
+alpha       0.1        10.0       1000.0     10000.0    30000.0    100000.0   300000.0   1000000.0
+gap_target                                                                                        
+0               0.239      0.239      0.243      0.255      0.256      0.210      0.161      0.057
+1               0.126      0.126      0.128      0.139      0.142      0.117      0.106      0.060
+7               0.079      0.079      0.084      0.096      0.102      0.103      0.062      0.008
+30             -0.053     -0.053      0.020      0.033      0.049      0.057      0.024     -0.020
+120            -0.137     -0.137     -0.128     -0.044     -0.019      0.029      0.028     -0.012
+480            -0.001      0.001      0.025      0.032      0.039      0.042      0.031      0.009

@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "G:\codes\invasive bci\scripts\decay_alpha.py", line 81, in <module>
+    main()
+  File "G:\codes\invasive bci\scripts\decay_alpha.py", line 71, in main
+    res = ladder(sess[r.train], sess[r.test], [300], skip=("L4", "L5"))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py", line 349, in ladder
+    a, f = cv_shrunk(H_tr, Y, tid, n, ALPHAS, si.dec.W.astype(np.float64), k_folds, scale_by_rows=False,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py", line 263, in cv_shrunk
+    eig = _eig_solver(F, r, fit, center)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py", line 218, in _eig_solver
+    Ff = F[fit].astype(np.float64)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+numpy._core._exceptions._ArrayMemoryError: Unable to allocate 985. MiB for an array with shape (84002, 1537) and data type float64

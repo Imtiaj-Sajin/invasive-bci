@@ -1,0 +1,33 @@
+T2: 42 sessions over 722 days
+120 pairs
+  20/120 pairs, 346s
+  40/120 pairs, 723s
+  60/120 pairs, 1072s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:229: RuntimeWarning: Mean of empty slice.
+  Fm, rm = F[fit].mean(0), r[fit].mean(0)
+C:\Python311\Lib\site-packages\numpy\_core\_methods.py:137: RuntimeWarning: invalid value encountered in divide
+  ret = um.true_divide(
+  80/120 pairs, 1413s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:229: RuntimeWarning: Mean of empty slice.
+  Fm, rm = F[fit].mean(0), r[fit].mean(0)
+C:\Python311\Lib\site-packages\numpy\_core\_methods.py:137: RuntimeWarning: invalid value encountered in divide
+  ret = um.true_divide(
+  100/120 pairs, 1723s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:229: RuntimeWarning: Mean of empty slice.
+  Fm, rm = F[fit].mean(0), r[fit].mean(0)
+C:\Python311\Lib\site-packages\numpy\_core\_methods.py:137: RuntimeWarning: invalid value encountered in divide
+  ret = um.true_divide(
+  120/120 pairs, 2030s
+               L2    L4u  L3_n300  L6p_n300    own  ret_L2  ret_L3
+gap_target                                                        
+1          -0.043 -0.108    0.027    -0.037 -0.037   0.163   0.961
+7          -0.080 -0.120   -0.011    -0.008 -0.008   1.238   0.759
+30         -0.116 -0.196   -0.001    -0.005 -0.010   1.437   0.510
+120        -0.171 -0.194   -0.021    -0.015 -0.017   4.203   0.809
+480        -0.090 -0.102   -0.018    -0.029 -0.028   3.428   0.606
