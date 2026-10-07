@@ -1093,3 +1093,28 @@ Manuscript folders reorganized into `natcomms/`, `jne/` (planned longer version)
 
 Next: independent referee review of v2; then add the remaining six BrainGate decoding participants (T2, T3, T7, T8,
 T10, T11) when the owners download them, to test the human finding in up to nine people.
+
+## 2026-10-07 (day) — Second referee review; channel controls; manuscript reframed
+
+A fresh referee review of v2 raised a fundamental confound: re-weighting (one free signed weight per channel) might
+recover accuracy in humans because a 2-D target is easy to refit, not because channels keep their tuning.
+
+- **Scrambled-channel control** (`scripts/reweight_controls.py`, tuned penalty, 40 training sessions each): retention
+  after re-weighting the correct vs a channel-permuted decoder: T6 0.88 vs 0.65, T5 0.83 vs 0.77, T9 0.78 vs 0.55;
+  monkeys N 0.46 vs −0.19, C 0.60 vs 0.02, M 0.68 vs 0.02. Non-negative weights: T6 0.87 vs 0.36, T5 0.72 vs 0.57,
+  T9 0.72 vs 0.29; N 0.49 vs −0.17, C 0.57 vs 0.00, M 0.67 vs 0.00. Channel identity matters in all six, but the
+  absolute human recovery is inflated by target flexibility. **The "per-channel drift in people" headline was dropped.**
+- **Electrode link** (`scripts/gain_mechanism.py`): fitted weights correlate with each electrode's change in
+  threshold-crossing rate (median ρ per session: T6 0.04, T5 0.03, T9 0.11; positive in 69/77/92% of sessions;
+  P = 0.017, 9e-4, 3e-10; shuffled ≈ 0). Impedance: T9 ρ −0.08 (P = 1e-7), others n.s.
+- **Permutation null** (`scripts/failure_null.py`, 200 shuffles): short-silence recovery 80% vs null 78% (75–81%);
+  ≥30-day silences 57% vs 44% (33–54%), P = 0.01, and 168 vs 79 silences.
+- **Matched-output control with tuned penalty**: C 36–60%, M 30–48% recovered.
+- Generator bugs fixed (MINDFUL day count, α label), Fisher→McNemar in table, Fig. 4a gap range made consistent.
+
+**Manuscript reframed** (owners agreed): "How intracortical brain–computer interfaces age and what keeps them working".
+Findings: hundredfold variation in decay; weak regularization inflates decay; ~100 labeled trials restore most accuracy
+in people with any well-regularized refit; label-free alignment adds little beyond renormalization; channel identity
+matters and per-channel corrections track electrode firing; brief silences are fluctuation, long ones real; simulator
+useful for untested corrections. 7 figures (new Fig. 4 on channel controls), 13 Supplementary Tables, 57 references,
+abstract 144 words. Next: six more BrainGate participants (owners to download), possibly a FALCON comparison.

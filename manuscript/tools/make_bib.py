@@ -38,6 +38,12 @@ FIX = {
 }
 
 MANUAL = {
+    "nuyujukian2014": r"Nuyujukian, P. et al. Performance sustaining intracortical neural prostheses. "
+                      r"\textit{J. Neural Eng.} \textbf{11}, 066003 (2014).",
+    "brandman2018": r"Brandman, D. M. et al. Rapid calibration of an intracortical brain--computer interface for "
+                    r"people with tetraplegia. \textit{J. Neural Eng.} \textbf{15}, 026007 (2018).",
+    "farshchian2019": r"Farshchian, A. et al. Adversarial domain adaptation for stable brain--machine interfaces. In "
+                      r"\textit{Proc. 7th International Conference on Learning Representations} (2019).",
     "fan2023": r"Fan, C. et al. Plug-and-play stability for intracortical brain--computer interfaces: a one-year "
                r"demonstration of seamless brain-to-text communication. \textit{Adv. Neural Inf. Process. Syst.} "
                r"\textbf{36} (2023).",

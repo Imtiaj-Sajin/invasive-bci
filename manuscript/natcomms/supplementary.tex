@@ -17,8 +17,8 @@
 
 \begin{document}
 
-\title[Supplementary Information]{Supplementary Information for: Per-channel changes account for most long-term
-decoder drift in people with paralysis}
+\title[Supplementary Information]{Supplementary Information for: How intracortical brain--computer interfaces age and
+what keeps them working}
 
 \author*[1]{\fnm{Md. Imtiaj Alam} \sur{Sajin}}\email{imtiajsajin@gmail.com}
 \author[1]{\fnm{Esm E Moula} \sur{Chowdhury Abha}}\email{esmechowdhuryabha@gmail.com}
@@ -26,7 +26,7 @@ decoder drift in people with paralysis}
 \affil*[1]{\orgdiv{Department of Computer Science}, \orgname{American International University-Bangladesh},
 \orgaddress{\city{Dhaka}, \postcode{1229}, \country{Bangladesh}}}
 
-\abstract{This document contains Supplementary Notes 1--3 and Supplementary Tables 1--11. Every table is generated
+\abstract{This document contains Supplementary Notes 1--3 and Supplementary Tables 1--13. Every table is generated
 from the released result files by \texttt{scripts/make\_supp\_tables.py}, so its values match the code repository.}
 
 \maketitle
@@ -63,7 +63,7 @@ the statistics gave 0.067--0.070. When the target was the gain from recalibratio
 below the time trend), every statistic had an area under the receiver operating characteristic curve of 0.50--0.58.
 
 The residual variation was not noise. Split-half reliability of the residuals, computed on alternating pairs of
-trials, was $r = 0.72$, or 0.84 after Spearman--Brown correction. Alternating pairs were needed because centre-out
+trials, was $r = 0.72$, or 0.84 after Spearman--Brown correction. Alternating pairs were needed because center-out
 trials alternate between outward and return targets, which made odd/even single-trial splits negatively correlated.
 Day-to-day performance beyond the time trend is therefore real and reliable, but none of the label-free statistics we
 tried captured it. Abrupt faults on single channels remain detectable by construction, and such faults may still
@@ -72,8 +72,8 @@ justify monitoring.
 \section*{Supplementary Note 2: Simulator}
 
 The simulator (\texttt{ibci.sim}) is a feature-level generative model of chronic change. It transforms a real base
-session into a simulated session $\Delta t$ days later, so that behaviour and latent dynamics stay realistic. Its
-components are defined in the Methods and its parameters are listed in Supplementary Table~10. Two further components,
+session into a simulated session $\Delta t$ days later, so that behavior and latent dynamics stay realistic. Its
+components are defined in the Methods and its parameters are listed in Supplementary Table~12. Two further components,
 heavy-tailed gain jumps and random walks of raw offsets and scales, are included for decoders that are not
 renormalized. They do not affect renormalized decoders and were not calibrated.
 
@@ -84,16 +84,15 @@ versus 0.074 after the fix). We also restricted silencing to channels that were 
 most channels are already silent on any given day.
 
 \textit{Validation.} The simulator calibrated on days before 700 was evaluated on base sessions after day 700, for
-all rungs of the ladder and for 20, 50 and 100 labelled trials. Two references were used: the simulator with all drift
+all rungs of the ladder and for 20, 50 and 100 labeled trials. Two references were used: the simulator with all drift
 switched off, and the median retention measured on real pairs before day 700 (an empirical curve). The simulator
 beat the no-drift reference everywhere. It beat the empirical curve only for corrections it was not fitted to; for
-fitted corrections and for different amounts of labelled data the empirical curve was as good or better (main text,
+fitted corrections and for different amounts of labeled data the empirical curve was as good or better (main text,
 Fig.~7b). The simulator is therefore most useful for predicting how untested corrections behave.
 
 \textit{Intended uses and limits.} The simulator is meant for stress-testing decoders and label-free methods under
 controlled drift and electrode switching, and for comparing recalibration policies. It is calibrated on one monkey
-with Utah arrays, spike-band power and a finger task, and it does not reproduce the strong per-channel character of
-drift in the human data. Its mechanisms reproduce the measured statistics, which does not show that they are the true
+with Utah arrays, spike-band power and a finger task, and it has not been calibrated to human recordings. Its mechanisms reproduce the measured statistics, which does not show that they are the true
 physical mechanisms. Users can calibrate it to other datasets with \texttt{scripts/calibrate\_sim.py}.
 
 \section*{Supplementary Note 3: Analysis choices revised during the study}
@@ -105,16 +104,22 @@ whichever was larger, so the one-day set contains two-day gaps. In participant T
 pairs, which changed the apparent overnight retention. We now report one- and two-day pairs separately.
 
 \textit{Decoder regularization confounds decay.} With the small ridge penalties used in the original dataset papers,
-decoders decayed faster than with a tuned penalty, especially in monkey N. Decay should be reported for decoders
-whose penalty was tuned.
+decoders decayed faster than with a tuned penalty, especially in monkey N. Decay is therefore reported for decoders whose penalty
+was tuned.
 
-\textit{Label-free alignment must be compared with renormalization.} In our ladder, alignment was first applied to
+\textit{Label-free alignment was compared with renormalization.} In our ladder, alignment was first applied to
 renormalized features, which cannot separate the two. We therefore also aligned mean-updated features.
 
 \textit{Electrode revival needs a null.} Counting electrodes that fall silent and later recover suggested a striking
 recovery rate. The same statistic computed on shuffled session orders was almost as high, so only long silences carry
-evidence of a temporal process. Electrode-level tests must also treat the array, not the electrode, as the unit,
-because neighbouring electrodes are correlated.
+evidence of a temporal process. Electrode-level tests also treat the array, not the electrode, as the unit, because
+neighboring electrodes are correlated.
+
+\textit{Flexible corrections need scrambled-channel controls.} Re-weighting one weight per channel recovered most
+of the loss in the human participants, which at first suggested that drift there is mostly per-channel. Decoders
+with scrambled channels could also be re-weighted to high accuracy when the decoded variable was two-dimensional,
+so high recovery alone does not show per-channel drift. We therefore report scrambled-channel and non-negative
+controls (Supplementary Table~5).
 
 \textit{A full input remap is not a structural test.} A free $C\times C$ linear map in front of a frozen decoder can
 reproduce any decoder of the same form when the readout rank is below the number of channels. We used it only as a
@@ -124,7 +129,7 @@ calibration target for the simulator.
 training $R^2$ of 0.97 and test $R^2$ of $-1.1$ on a human session. All network results use a smaller, regularized
 network with early stopping on held-out training trials.
 
-\textit{Small-budget recalibration must shrink the intercept.} Refitting the intercept freely with 10--20 trials shifted
+\textit{Small-budget recalibration shrinks the intercept.} Refitting the intercept freely with 10--20 trials shifted
 the output offset and made recalibration harmful in many pairs.
 
 \clearpage
@@ -156,7 +161,7 @@ T11, T5 & Dryad n2z34tn5s (MINDFUL) & motor cortex & SBP (T11), TC (T5) & closed
 \begin{table}[p]
 \caption{\textbf{Correction ladder by individual and gap (linear decoder, default penalty).} Median decoding $R^2$ for
 each rung, and median retention of the renormalized fixed decoder with 95\% cluster-bootstrap confidence intervals.
-Each training session contributes at most one pair per gap. Supervised rungs used up to 300 labelled trials.
+Each training session contributes at most one pair per gap. Supervised rungs used up to 300 labeled trials.
 Aligned, Procrustes rotation after renormalization; stable aligned, the same estimated from stable channels.}
 \label{tab:ladder}
 \scriptsize\setlength{\tabcolsep}{2.8pt}
@@ -170,56 +175,6 @@ Retention [95\% CI] \\
 \end{tabular}
 \end{table}
 \end{landscape}
-
-\begin{landscape}
-\begin{table}[p]
-\caption{\textbf{Regularization by the 1\% rule.} The rule chose the largest ridge penalty whose median same-day $R^2$
-was within 1\% of the best. Columns give median $R^2$ with $\alpha = 0.1$ and with the chosen $\alpha$, the median
-paired gain with 95\% cluster-bootstrap confidence interval, and the share of training sessions whose mean gain was
-positive.}
-\label{tab:reg}
-\scriptsize\setlength{\tabcolsep}{3.5pt}
-\begin{tabular}{@{}llrrrrlr@{}}
-\toprule
-Individual & Chosen $\alpha$ & Gap (days) & Pairs & $R^2$, $\alpha = 0.1$ & $R^2$, rule & Gain [95\% CI] &
-Share positive \\
-\midrule
-\tabinput{supp/tab_reg.tex}
-\botrule
-\end{tabular}
-\end{table}
-\end{landscape}
-
-\begin{table}[p]
-\caption{\textbf{Recurrent network versus linear decoder.} For 25 training sessions per individual: median reference
-$R^2$, retention of the renormalized fixed decoder, and share of the loss recovered by re-weighting each channel.}
-\label{tab:nn}
-\scriptsize\setlength{\tabcolsep}{3.5pt}
-\begin{tabular}{@{}rrrrrrrr@{}}
-\toprule
-& & \multicolumn{2}{c}{Reference $R^2$} & \multicolumn{2}{c}{Retention} & \multicolumn{2}{c}{Loss recovered} \\
-\cmidrule{3-4}\cmidrule{5-6}\cmidrule{7-8}
-Gap (days) & Pairs & Linear & Network & Linear & Network & Linear & Network \\
-\midrule
-\tabinput{supp/tab_nn.tex}
-\botrule
-\end{tabular}
-\end{table}
-
-\begin{table}[p]
-\caption{\textbf{Angles between decoders fitted on different days} (degrees, medians over pairs). Global, angle that
-allows one global scale; per channel, angle after fitting one scale per channel; permuted, the per-channel angle
-after randomly permuting the channels of the earlier decoder.}
-\label{tab:angles}
-\scriptsize\setlength{\tabcolsep}{3.5pt}
-\begin{tabular}{@{}lrrrr@{}}
-\toprule
-Individual & Gap (days) & Global & Per channel & Permuted \\
-\midrule
-\tabinput{supp/tab_angles.tex}
-\botrule
-\end{tabular}
-\end{table}
 
 \begin{landscape}
 \begin{table}[p]
@@ -271,8 +226,95 @@ Predictor & Raw $\rho$ & Partial $\rho$ \\
 
 \begin{landscape}
 \begin{table}[p]
-\caption{\textbf{Recalibration with few labelled trials.} \textbf{a}, Monkey N (86 pairs): median retention without
-labels and, for each number of labelled trials, ridge to prior / fresh decoder / re-weighting (regularization by
+\caption{\textbf{Channel controls and electrode link.} For 40 training sessions per individual (tuned penalty), median
+retention of the renormalized fixed decoder, after re-weighting the correctly assigned decoder, after re-weighting a
+decoder with scrambled channels, and the same two with non-negative weights. Electrode link (humans): median over
+training sessions of the Spearman correlation between fitted channel weights and the change in each electrode's log
+threshold-crossing rate or log impedance between the two days, with the share of sessions with a positive correlation.}
+\label{tab:controls}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}lrrrrrrll@{}}
+\toprule
+& & & \multicolumn{2}{c}{Signed weights} & \multicolumn{2}{c}{Non-negative weights} & \multicolumn{2}{c}{Electrode link} \\
+\cmidrule{4-5}\cmidrule{6-7}\cmidrule{8-9}
+Individual & Pairs & No labels & Correct & Scrambled & Correct & Scrambled & Firing rate & Impedance \\
+\midrule
+\tabinput{supp/tab_controls.tex}
+\botrule
+\end{tabular}
+\end{table}
+\end{landscape}
+
+\begin{table}[p]
+\caption{\textbf{Recurrent network versus linear decoder.} For 25 training sessions per individual: median reference
+$R^2$, retention of the renormalized fixed decoder, and share of the loss recovered by re-weighting each channel.}
+\label{tab:nn}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}rrrrrrrr@{}}
+\toprule
+& & \multicolumn{2}{c}{Reference $R^2$} & \multicolumn{2}{c}{Retention} & \multicolumn{2}{c}{Loss recovered} \\
+\cmidrule{3-4}\cmidrule{5-6}\cmidrule{7-8}
+Gap (days) & Pairs & Linear & Network & Linear & Network & Linear & Network \\
+\midrule
+\tabinput{supp/tab_nn.tex}
+\botrule
+\end{tabular}
+\end{table}
+
+\begin{table}[p]
+\caption{\textbf{Matched-output control in the reaching monkeys} (tuned penalty). Median retention of the renormalized
+fixed decoder and after re-weighting, and the share of the loss recovered by re-weighting (\%), when decoding hand
+kinematics (four outputs) or hand-movement direction only (a two-dimensional unit vector, as for the human
+participants).}
+\label{tab:matched}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+Individual & Target & Gap (days) & Renormalized & Re-weighted & Recovered (\%) \\
+\midrule
+\tabinput{supp/tab_matched.tex}
+\botrule
+\end{tabular}
+\end{table}
+
+\begin{table}[p]
+\caption{\textbf{Angles between decoders fitted on different days} (degrees, medians over pairs). Global, angle that
+allows one global scale; per channel, angle after fitting one scale per channel; permuted, the per-channel angle
+after randomly permuting the channels of the earlier decoder.}
+\label{tab:angles}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Individual & Gap (days) & Global & Per channel & Permuted \\
+\midrule
+\tabinput{supp/tab_angles.tex}
+\botrule
+\end{tabular}
+\end{table}
+
+\begin{landscape}
+\begin{table}[p]
+\caption{\textbf{Regularization by the 1\% rule.} The rule chose the largest ridge penalty whose median same-day $R^2$
+was within 1\% of the best. Columns give median $R^2$ with $\alpha = 0.1$ and with the chosen $\alpha$, the median
+paired gain with 95\% cluster-bootstrap confidence interval, and the share of training sessions whose mean gain was
+positive.}
+\label{tab:reg}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}llrrrrlr@{}}
+\toprule
+Individual & Chosen $\alpha$ & Gap (days) & Pairs & $R^2$, $\alpha = 0.1$ & $R^2$, rule & Gain [95\% CI] &
+Share positive \\
+\midrule
+\tabinput{supp/tab_reg.tex}
+\botrule
+\end{tabular}
+\end{table}
+\end{landscape}
+
+\begin{landscape}
+\begin{table}[p]
+\caption{\textbf{Recalibration with few labeled trials.} \textbf{a}, Monkey N (86 pairs): median retention without
+labels and, for each number of labeled trials, ridge to prior / fresh decoder / re-weighting (regularization by
 cross-validation). \textbf{b}, Human participants (30 training sessions each, all gaps): re-weighting / ridge to prior /
 fresh decoder. \textbf{c}, Harmful recalibrations in monkey N (more than 0.01 $R^2$ below the renormalized fixed
 decoder) with the shrinkage chosen by cross-validation or fixed at the value best on other training sessions, with

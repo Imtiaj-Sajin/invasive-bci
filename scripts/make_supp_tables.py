@@ -273,13 +273,55 @@ def revival_table(out):
     write(os.path.join(out, "tab_revival.tex"), rows)
 
 
+def controls_table(out):
+    rows = []
+    for k, name in NAMES.items():
+        p = f"results/reweight_controls/{k}.csv"
+        if not os.path.exists(p):
+            continue
+        q = pd.read_csv(p)
+        cells = [name, str(len(q))] + [f"{(q[c] / q.own).median():.2f}".replace("-", "$-$")
+                                         for c in ("renorm", "rew", "rew_perm", "rew_nonneg", "rew_perm_nn")]
+        m = f"results/gain_mechanism/{k}.csv"
+        if os.path.exists(m):
+            g = pd.read_csv(m)
+            for c in ("rho_rate", "rho_imp"):
+                sv = g.groupby("train")[c].mean().dropna() if c in g else pd.Series(dtype=float)
+                cells.append(f"{sv.median():.2f} ({(sv > 0).mean() * 100:.0f}\\%)".replace("-", "$-$") if len(sv) >= 6
+                             else "--")
+        else:
+            cells += ["--", "--"]
+        rows.append(" & ".join(cells) + r"\\")
+    write(os.path.join(out, "tab_controls.tex"), rows)
+
+
+def matched_table(out):
+    rows = []
+    for k in ("C", "M"):
+        for lab, p in (("kinematics", f"results/decay_alpha/{k}_alpha10000.csv"),
+                       ("direction", f"results/matched_output_tuned/{k}.csv")):
+            if not os.path.exists(p):
+                continue
+            q = pd.read_csv(p)
+            q = q[q.gap_target.isin([1, 7, 30, 120, 480])].assign(
+                rec=lambda x: (x.L3_n300 - x.L2) / (x.own - x.L2), ret=lambda x: x.L2 / x.own,
+                ret3=lambda x: x.L3_n300 / x.own)
+            med = q.groupby("gap_target")[["ret", "ret3", "rec"]].median()
+            for g, r in med.iterrows():
+                rows.append(" & ".join([NAMES[k] if (lab == "kinematics" and g == 1) else "", lab if g == 1 else "",
+                                        str(g), f"{r.ret:.2f}", f"{r.ret3:.2f}", f"{100 * r.rec:.0f}"]).replace("-", "$-$")
+                            + r"\\")
+    write(os.path.join(out, "tab_matched.tex"), rows)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="manuscript/natcomms/supp")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
     for fn in (ladder_table, failure_table, efficiency_table, policy_table, sim_table, augment_table, mindful_table,
-               reg_table, nn_table, angle_table, labelfree_table, human_eff_table, revival_table):
+               reg_table, nn_table, angle_table, labelfree_table, human_eff_table, revival_table,
+               controls_table, matched_table):
         fn(args.out)
         print("wrote", fn.__name__, flush=True)
 
