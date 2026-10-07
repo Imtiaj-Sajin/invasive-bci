@@ -242,22 +242,22 @@
     }
    },
    "rotation_on_mean_updated": {
-    "n_sessions": 79,
-    "median_diff": -0.0631,
-    "frac_positive": 0.18,
-    "P": 3.4385311138664365e-08
+    "n_sessions": 80,
+    "median_diff": -0.068,
+    "frac_positive": 0.11,
+    "P": 1.2624859672153582e-09
    },
    "rotation_on_renormalized": {
-    "n_sessions": 79,
-    "median_diff": -0.0189,
+    "n_sessions": 80,
+    "median_diff": -0.0154,
     "frac_positive": 0.19,
-    "P": 6.5939650911765296e-09
+    "P": 4.4067722809159333e-07
    },
    "renorm_vs_mean_only": {
-    "n_sessions": 79,
-    "median_diff": 0.0608,
-    "frac_positive": 0.85,
-    "P": 3.0031859330523904e-11
+    "n_sessions": 80,
+    "median_diff": 0.0514,
+    "frac_positive": 0.79,
+    "P": 1.6962233589488386e-08
    }
   },
   "label_free_plus": {
@@ -566,22 +566,22 @@
     }
    },
    "rotation_on_mean_updated": {
-    "n_sessions": 58,
-    "median_diff": -0.0557,
-    "frac_positive": 0.1,
-    "P": 1.7755593445001686e-08
+    "n_sessions": 64,
+    "median_diff": -0.0895,
+    "frac_positive": 0.06,
+    "P": 1.8513389485600405e-10
    },
    "rotation_on_renormalized": {
-    "n_sessions": 58,
-    "median_diff": -0.0268,
-    "frac_positive": 0.17,
-    "P": 5.142653779490824e-07
+    "n_sessions": 64,
+    "median_diff": -0.0276,
+    "frac_positive": 0.19,
+    "P": 8.514582577087828e-09
    },
    "renorm_vs_mean_only": {
-    "n_sessions": 58,
-    "median_diff": 0.0073,
-    "frac_positive": 0.69,
-    "P": 0.022145452189204405
+    "n_sessions": 64,
+    "median_diff": 0.0329,
+    "frac_positive": 0.78,
+    "P": 5.784189440753489e-06
    }
   },
   "label_free_plus": {
@@ -883,21 +883,21 @@
    },
    "rotation_on_mean_updated": {
     "n_sessions": 22,
-    "median_diff": -0.0886,
+    "median_diff": -0.0907,
     "frac_positive": 0.05,
-    "P": 2.0503997802734375e-05
+    "P": 9.5367431640625e-07
    },
    "rotation_on_renormalized": {
     "n_sessions": 22,
-    "median_diff": -0.0297,
-    "frac_positive": 0.23,
-    "P": 0.0036711692810058594
+    "median_diff": -0.0363,
+    "frac_positive": 0.14,
+    "P": 0.00014638900756835938
    },
    "renorm_vs_mean_only": {
     "n_sessions": 22,
-    "median_diff": 0.015,
-    "frac_positive": 0.86,
-    "P": 0.00014638900756835938
+    "median_diff": 0.0184,
+    "frac_positive": 0.91,
+    "P": 2.6226043701171875e-05
    }
   },
   "label_free_plus": {
@@ -1207,21 +1207,21 @@
    },
    "rotation_on_mean_updated": {
     "n_sessions": 122,
-    "median_diff": -0.0977,
-    "frac_positive": 0.2,
-    "P": 3.0503272225965334e-09
+    "median_diff": -0.0877,
+    "frac_positive": 0.26,
+    "P": 1.1355044658517406e-08
    },
    "rotation_on_renormalized": {
     "n_sessions": 122,
-    "median_diff": -0.0109,
-    "frac_positive": 0.3,
-    "P": 1.8791362480116967e-07
+    "median_diff": -0.0086,
+    "frac_positive": 0.31,
+    "P": 3.6623756042181703e-07
    },
    "renorm_vs_mean_only": {
     "n_sessions": 122,
-    "median_diff": 0.1273,
+    "median_diff": 0.1554,
     "frac_positive": 0.93,
-    "P": 2.656809945756322e-19
+    "P": 1.1465676985374902e-19
    }
   },
   "label_free_plus": {
@@ -1543,22 +1543,22 @@
     }
    },
    "rotation_on_mean_updated": {
-    "n_sessions": 82,
-    "median_diff": -6.0272,
-    "frac_positive": 0.04,
-    "P": 1.1935410710764813e-13
+    "n_sessions": 89,
+    "median_diff": -7.3884,
+    "frac_positive": 0.06,
+    "P": 3.5338823767570284e-13
    },
    "rotation_on_renormalized": {
-    "n_sessions": 82,
-    "median_diff": -0.0256,
+    "n_sessions": 89,
+    "median_diff": -0.0498,
     "frac_positive": 0.38,
-    "P": 0.002405707381516433
+    "P": 0.00025659181090625813
    },
    "renorm_vs_mean_only": {
-    "n_sessions": 82,
-    "median_diff": 1.5049,
-    "frac_positive": 0.96,
-    "P": 1.2706384561493496e-14
+    "n_sessions": 89,
+    "median_diff": 3.0653,
+    "frac_positive": 0.99,
+    "P": 4.386109388356917e-16
    }
   },
   "label_free_plus": {
@@ -1889,21 +1889,21 @@
    },
    "rotation_on_mean_updated": {
     "n_sessions": 114,
-    "median_diff": -2.786,
+    "median_diff": -2.7661,
     "frac_positive": 0.03,
-    "P": 2.687134275433305e-18
+    "P": 2.824760766798752e-18
    },
    "rotation_on_renormalized": {
     "n_sessions": 114,
-    "median_diff": -0.0628,
-    "frac_positive": 0.21,
-    "P": 2.6873770070583643e-11
+    "median_diff": -0.0632,
+    "frac_positive": 0.18,
+    "P": 3.6231682324873226e-12
    },
    "renorm_vs_mean_only": {
     "n_sessions": 114,
-    "median_diff": 0.6841,
+    "median_diff": 0.6187,
     "frac_positive": 0.97,
-    "P": 1.845694501916825e-18
+    "P": 2.199798856762709e-18
    }
   },
   "label_free_plus": {
