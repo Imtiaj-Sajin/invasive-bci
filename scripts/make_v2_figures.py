@@ -68,7 +68,8 @@ def ladders():
 
 
 # ------------------------------------------------------------------------------------------------ Figure 1
-EX = dict(participant="T5", array="lateral", wave_days=(40, 2700), train_day=355, test_day=833, gain=2.0,
+EX = dict(participant="T5", array="lateral", wave_days=(40, 2700), electrodes=(33, 16, 12), train_day=355,
+          test_day=833, gain=2.0,
           yield_root="D:/ibci-data/braingate/yield", decoding_root="D:/ibci-data/braingate/decoding",
           cache="results/figures/overview_examples.npz")
 
@@ -84,8 +85,9 @@ def overview_examples():
     if os.path.exists(EX["cache"]):
         z = np.load(EX["cache"], allow_pickle=True)
         out = {k: z[k].item() if z[k].dtype == object else z[k] for k in z.files}
-        if "fr" not in out:
+        if "fr" not in out or "wfe" not in out:
             out.update(firing_rate_matrix())
+            out.update(electrode_waveforms())
             _save_examples(out)
         return out
     from scipy.io import loadmat
@@ -134,6 +136,7 @@ def overview_examples():
     out["paths"], out["targets"] = paths, np.array(targets)
     out["all_targets"] = np.unique(tgt[en - 1].round(), axis=0)
     out.update(firing_rate_matrix())
+    out.update(electrode_waveforms())
     _save_examples(out)
     return out
 
@@ -141,6 +144,25 @@ def overview_examples():
 def _save_examples(out):
     np.savez_compressed(EX["cache"], **{k: (np.array(v, dtype=object) if isinstance(v, dict) else v)
                                         for k, v in out.items()})
+
+
+def electrode_waveforms():
+    """Mean waveforms of the example electrodes in every yield session where they had spikes, plus grid positions."""
+    from scipy.io import loadmat
+    P_ = EX["participant"]
+    files = glob.glob(f"{EX['yield_root']}/{P_}/{P_}_day_*_yield.mat")
+    wfe, pos = {i: ([], []) for i in EX["electrodes"]}, {}
+    for f in sorted(files, key=lambda f: int(re.search(r"_day_(\d+)_", f).group(1))):
+        m = loadmat(f, simplify_cells=True, variable_names=["post_implant_day", "electrodes", "spike_waveforms"])
+        e, w = m["electrodes"], m["spike_waveforms"]
+        for i, x, y in zip(e["electrode_id"], e["x"], e["y"]):
+            if i in wfe:
+                pos[int(i)] = (float(x), float(y))
+        for i, v in zip(np.atleast_1d(w["electrode_id"]), np.atleast_2d(w["mean_waveforms"])):
+            if int(i) in wfe and np.all(np.isfinite(v)):
+                wfe[int(i)][0].append(int(m["post_implant_day"]))
+                wfe[int(i)][1].append(np.asarray(v, np.float32))
+    return {"wfe": {i: (np.array(d), np.array(v)) for i, (d, v) in wfe.items()}, "wfe_pos": pos}
 
 
 def firing_rate_matrix(thr="-4.5"):
@@ -161,16 +183,16 @@ def firing_rate_matrix(thr="-4.5"):
     return {"fr_days": np.array(days), "fr": np.array(rows).T}
 
 
-def _wave_grid(ax, grid, xy, wf, title, ylabel=True):
-    have = {(x, y) for x, y in xy}
-    empty = np.array([g for g in grid if tuple(g) not in have])
-    if len(empty):
-        ax.plot(empty[:, 0], empty[:, 1], ".", ms=1.6, color=P.NEUTRAL)
-    t = np.linspace(-0.4, 0.4, wf.shape[1]) if len(wf) else []
-    for (x, y), v in zip(xy, wf):
-        ax.plot(x + t, y + v / 260.0, color=P.INK, lw=0.45)
+def _amp_map(ax, grid, xy, wf, title, norm, cmap, mark=(), ylabel=True):
+    amp = {(x, y): v.max() - v.min() for (x, y), v in zip(xy, wf)}
+    for gx, gy in grid:
+        a_ = amp.get((gx, gy))
+        fc = cmap(norm(a_)) if a_ is not None else "#ecebe7"
+        ax.add_patch(plt.Rectangle((gx - 0.45, gy - 0.45), 0.9, 0.9, fc=fc, ec="none"))
+    for (mx, my), c in mark:
+        ax.add_patch(plt.Rectangle((mx - 0.5, my - 0.5), 1.0, 1.0, fc="none", ec=c, lw=1.1))
     ax.set_xlim(-0.6, 9.6)
-    ax.set_ylim(-0.9, 9.6)
+    ax.set_ylim(-0.6, 9.6)
     ax.set_aspect("equal")
     ax.set_xticks([0, 9], ["0", "3.6"])
     ax.set_yticks([0, 9], ["0", "3.6"] if ylabel else [])
@@ -178,62 +200,112 @@ def _wave_grid(ax, grid, xy, wf, title, ylabel=True):
     if ylabel:
         ax.set_ylabel("mm", labelpad=0)
     ax.grid(False)
-    ax.set_title(f"{title}\n{len(wf)} of {len(grid)} electrodes with spikes", fontsize=5.4, pad=2, linespacing=1.2)
+    ax.set_title(f"{title}: {len(wf)} of {len(grid)} with spikes", fontsize=5.6, pad=3)
+
+
+TARGET_COLORS = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7", "#e34948"]
 
 
 def _paths(ax, paths, targets, all_targets, title, ylabel=False):
     outer = [tg for tg in all_targets if np.linalg.norm(tg) > 50]
     keys = sorted(int(round(np.degrees(np.arctan2(tg[1], tg[0])))) % 360 for tg in outer)
-    cols = dict(zip(keys, P.CAT))
-    for tg in outer:
-        ax.plot(*tg, "o", ms=6, mfc="none", mec=P.NEUTRAL, mew=0.6)
+    cols = dict(zip(keys, TARGET_COLORS))
     for xy, tg in zip(paths, targets):
         k = int(round(np.degrees(np.arctan2(tg[1], tg[0])))) % 360
-        ax.plot(xy[:, 0], xy[:, 1], lw=0.5, color=cols.get(k, P.INK2), alpha=0.9)
-    lim = 1.2 * np.abs(all_targets).max()
+        ax.plot(xy[:, 0], xy[:, 1], lw=0.9, color=cols.get(k, P.INK2), alpha=0.85, solid_capstyle="round", zorder=2)
+    for tg in outer:
+        k = int(round(np.degrees(np.arctan2(tg[1], tg[0])))) % 360
+        ax.plot(*tg, "o", ms=8.5, mfc=cols[k], mec="white", mew=0.8, zorder=3)
+    ax.plot(0, 0, "o", ms=6, mfc=P.INK, mec="white", mew=0.8, zorder=3)
+    lim = 1.22 * np.abs(all_targets).max()
     ax.set_xlim(-lim, lim)
     ax.set_ylim(-lim, lim)
     ax.set_aspect("equal")
     ticks = [-400, 0, 400]
     ax.set_xticks(ticks, [str(v).replace("-", "\u2212") for v in ticks])
     ax.set_yticks(ticks, [str(v).replace("-", "\u2212") for v in ticks] if ylabel else [])
-    ax.set_xlabel("x position (task units)", labelpad=1)
+    ax.set_xlabel("x (task units)", labelpad=1)
     if ylabel:
-        ax.set_ylabel("y position (task units)", labelpad=1)
+        ax.set_ylabel("y (task units)", labelpad=1)
     ax.grid(False)
-    ax.set_title(title, fontsize=5.6, pad=3, linespacing=1.15)
+    ax.set_title(title, fontsize=6, pad=3, linespacing=1.2, fontweight="bold")
+
+
+def _trimmed(path):
+    img = plt.imread(path)
+    on = img[..., 3] > 0.02 if img.shape[-1] == 4 else img[..., :3].min(-1) < 0.97
+    r, c = np.flatnonzero(on.any(1)), np.flatnonzero(on.any(0))
+    return img[r[0]:r[-1] + 1, c[0]:c[-1] + 1]
 
 
 def fig1(out):
+    import matplotlib as mpl
     P.setup_nature()
     ex = overview_examples()
-    fig = plt.figure(figsize=(P.DOUBLE_COL, 4.5))
+    fig = plt.figure(figsize=(P.DOUBLE_COL, 6.3))
+    H = 6.3
 
-    # a: cortical surface rendered from the FreeSurfer fsaverage template, with the array sites
-    ax = fig.add_axes([0.0, 0.50, 0.27, 0.38])
-    ax.imshow(plt.imread("results/figures/v2/brain_render.png"))
+    def lab(x, y, t):
+        fig.text(x, y, t, fontsize=8, fontweight="bold", va="top")
+
+    # a: rendered cortical surface (FreeSurfer fsaverage) with the array sites
+    ax = fig.add_axes([0.02, 0.625, 0.38, 0.31])
+    ax.imshow(_trimmed("results/figures/v2/brain_3d.png"))
     ax.axis("off")
-    ax.text(0.5, 1.33, "Utah arrays in motor cortex", transform=ax.transAxes, ha="center", fontsize=6.2,
-            fontweight="bold")
-    ax.text(0.5, 1.27, "Hand area, left hemisphere (fsaverage).\nT5, T6, T9 and monkeys N, C, M,\n"
-            "1.5–7.3 years each", transform=ax.transAxes, ha="center", va="top", fontsize=5, color=P.INK2, linespacing=1.25)
-    ax.text(0.0, 1.33, "a", transform=ax.transAxes, fontsize=8, fontweight="bold")
+    lab(0.005, 0.995, "a")
+    fig.text(0.21, 0.99, "Utah arrays in the hand area of motor cortex", ha="center", va="top", fontsize=6.5,
+             fontweight="bold")
+    fig.text(0.21, 0.965, "Participants T5, T6 and T9 and monkeys N, C and M, 1.5–7.3 years each", ha="center",
+             va="top", fontsize=5.2, color=P.INK2)
 
-    # b: spike waveforms on one array, years apart
+    # b: spike amplitude on every electrode of one array, 7.3 years apart
     d0, d1 = EX["wave_days"]
+    amp_cmap = mpl.colors.LinearSegmentedColormap.from_list("amp", mpl.colormaps["Purples"](np.linspace(0.25, 1, 256)))
+    norm = mpl.colors.Normalize(20, 120)
+    ecol = dict(zip(EX["electrodes"], ["#eb6834", "#1baf7a", "#2a78d6"]))
+    mark = [(ex["wfe_pos"][i], c) for i, c in ecol.items()]
+    lab(0.44, 0.995, "b")
+    fig.text(0.715, 0.99, f"Spike amplitude on each electrode, {EX['participant']} lateral array", ha="center",
+             va="top", fontsize=6.5, fontweight="bold")
     for k, (d, ttl) in enumerate([(d0, f"Day {d0}"), (d1, f"Day {d1:,}")]):
-        bx = fig.add_axes([0.315 + k * 0.175, 0.535, 0.16, 0.33])
-        _wave_grid(bx, ex[f"grid{d}"], ex[f"xy{d}"], ex[f"wf{d}"], ttl, ylabel=k == 0)
-        if k == 0:
-            bx.text(-0.3, 1.27, "b", transform=bx.transAxes, fontsize=8, fontweight="bold")
-            bx.text(1.05, 1.27, f"Mean spike waveforms, {EX['participant']} lateral array",
-                    transform=bx.transAxes, ha="center", fontsize=6)
-        else:
-            bx.plot([9.9, 9.9], [0, 100 / 260.0], color=P.INK, lw=0.6, clip_on=False)
-            bx.text(10.1, 50 / 260.0, "100 µV", fontsize=4.6, va="center", clip_on=False)
+        bx = fig.add_axes([0.47 + k * 0.22, 0.655, 0.2, 0.27])
+        _amp_map(bx, ex[f"grid{d}"], ex[f"xy{d}"], ex[f"wf{d}"], ttl, norm, amp_cmap, mark, ylabel=k == 0)
+    cax = fig.add_axes([0.925, 0.69, 0.012, 0.2])
+    cb = fig.colorbar(mpl.cm.ScalarMappable(norm, amp_cmap), cax=cax, ticks=[20, 70, 120])
+    cb.set_label("peak-to-peak (µV)", labelpad=2)
+    cb.outline.set_visible(False)
 
-    # c: threshold-crossing rate of every electrode in every session
-    hx = fig.add_axes([0.725, 0.535, 0.21, 0.33])
+    # c: waveforms of three electrodes in every session, coloured by time since implant
+    lab(0.005, 0.585, "c")
+    fig.text(0.29, 0.58, "Mean spike waveform in every session, three electrodes", ha="center", va="top",
+             fontsize=6.5, fontweight="bold")
+    tcmap = mpl.colormaps["viridis"]
+    tnorm = mpl.colors.Normalize(0, 7.5)
+    t_ms = np.arange(32) / 15.0
+    for k, (i, c) in enumerate(ecol.items()):
+        cx = fig.add_axes([0.06 + k * 0.165, 0.37, 0.14, 0.17])
+        days, W = ex["wfe"][i]
+        for dd, w in zip(days, W):
+            cx.plot(t_ms, w, color=tcmap(tnorm(dd / 365.25)), lw=0.5, alpha=0.55)
+        cx.set_ylim(-150, 60)
+        cx.set_xticks([0, 1, 2])
+        cx.set_xlabel("time (ms)", labelpad=1)
+        if k == 0:
+            cx.set_ylabel("voltage (µV)", labelpad=1)
+        else:
+            cx.set_yticklabels([])
+        cx.grid(False)
+        for sp in ("left", "bottom"):
+            cx.spines[sp].set_color(P.INK2)
+        cx.set_title(f"electrode {i + 1} ({len(days)} sessions)", fontsize=5.4, pad=2, color=c, fontweight="bold")
+    cax = fig.add_axes([0.555, 0.39, 0.009, 0.13])
+    cb = fig.colorbar(mpl.cm.ScalarMappable(tnorm, tcmap), cax=cax, ticks=[0, 2, 4, 6])
+    cb.set_label("years", labelpad=2)
+    cb.outline.set_visible(False)
+
+    # d: threshold-crossing rate of every electrode in every session
+    lab(0.63, 0.585, "d")
+    hx = fig.add_axes([0.70, 0.37, 0.2, 0.18])
     days, fr = ex["fr_days"], ex["fr"]
     edges = np.arange(days.min(), days.max() + 31, 30)
     binned = np.full((fr.shape[0], len(edges) - 1), np.nan)
@@ -241,7 +313,7 @@ def fig1(out):
     for j in np.unique(idx):
         binned[:, j] = np.nanmean(fr[:, idx == j], axis=1)
     order = np.argsort(-np.nanmean(fr[:, days < days.min() + 180], axis=1))
-    cmap = plt.get_cmap("Blues").copy()
+    cmap = mpl.colormaps["Blues"].copy()
     cmap.set_bad("white")
     im = hx.imshow(np.log10(binned[order] + 0.1), aspect="auto", cmap=cmap, vmin=-1, vmax=2, interpolation="none",
                    extent=[edges[0] / 365.25, edges[-1] / 365.25, fr.shape[0], 0])
@@ -249,33 +321,30 @@ def fig1(out):
     hx.set_ylabel("electrode (sorted)", labelpad=1)
     hx.set_yticks([1, 96], ["1", "96"])
     hx.grid(False)
-    hx.set_title(f"Threshold crossings, {len(days)} sessions", fontsize=5.6, pad=3)
+    hx.set_title(f"Threshold crossings, {len(days)} sessions", fontsize=6, pad=3, fontweight="bold")
     cb = fig.colorbar(im, ax=hx, fraction=0.08, pad=0.03, ticks=[-1, 0, 1, 2])
     cb.ax.set_yticklabels(["0.1", "1", "10", "100"])
     cb.set_label("rate (Hz)", labelpad=1)
     cb.outline.set_visible(False)
-    hx.text(-0.3, 1.13, "c", transform=hx.transAxes, fontsize=8, fontweight="bold")
 
-    # d, e: closed-loop cursor paths and decoder reconstructions on the same held-out trials
+    # e, f: closed-loop cursor paths and decoder reconstructions on the same held-out trials
     gap = EX["test_day"] - EX["train_day"]
     r = ex["r2"]
 
     def fmt(v):
         return f"{v:.2f}".replace("-", "\u2212")
 
-    pan = [("cursor", "Recorded cursor, closed loop\n(day %d)" % EX["test_day"]),
+    pan = [("cursor", "Recorded cursor\n(closed loop, day %d)" % EX["test_day"]),
            ("own", "Same-day decoder\n$R^2$ = " + fmt(r["own"])),
            ("fixed", "Decoder from %d days earlier\n$R^2$ = " % gap + fmt(r["fixed"])),
            ("reweight", "Same decoder, re-weighted\n$R^2$ = " + fmt(r["reweight"]))]
+    lab(0.005, 0.27, "e")
+    lab(0.255, 0.27, "f")
+    fig.text(0.62, 0.268, "Offline reconstruction of the same movements from neural activity", ha="center",
+             va="top", fontsize=6.5, fontweight="bold")
     for k, (key, ttl) in enumerate(pan):
-        cx = fig.add_axes([0.06 + k * 0.235, 0.075, 0.2, 0.32])
+        cx = fig.add_axes([0.055 + k * 0.237, 0.04, 0.2, 0.18])
         _paths(cx, ex["paths"][key], ex["targets"], ex["all_targets"], ttl, ylabel=k == 0)
-        if k == 0:
-            cx.text(-0.3, 1.2, "d", transform=cx.transAxes, fontsize=8, fontweight="bold")
-        if k == 1:
-            cx.text(-0.12, 1.2, "e", transform=cx.transAxes, fontsize=8, fontweight="bold")
-            cx.text(1.75, 1.2, "Offline reconstruction of the same movements from neural activity",
-                    transform=cx.transAxes, ha="center", fontsize=6)
     P.save(fig, os.path.join(out, "fig1_overview"))
 
 
