@@ -328,6 +328,15 @@ def main():
         put(f"null:{k}:sil", f"{v['silenced_obs']:,}")
         put(f"null:{k}:silnull", f"{v['silenced_null_mean']:.0f}")
         put(f"null:{k}:arrays", v["arrays_above_null_median"].replace("/", " of "))
+    if os.path.exists("results/amplitude_T5.json"):
+        am = load("results/amplitude_T5.json")
+        put("amp:n", str(am["n_electrodes"]))
+        put("amp:early", f"{am['early_median_uv']:.0f}")
+        put("amp:late", f"{am['late_median_uv']:.0f}")
+        put("amp:ratio", f"{am['ratio_median']:.2f}")
+        put("amp:iqr", f"{am['ratio_q25']:.2f}--{am['ratio_q75']:.2f}")
+        put("amp:smaller", str(am["n_smaller"]))
+        put("amp:p", pval(am["wilcoxon_p"]))
     # re-weighting controls (true vs channel-permuted decoder, signed vs non-negative weights)
     for k in IND:
         p = f"results/reweight_controls/{k}.csv"

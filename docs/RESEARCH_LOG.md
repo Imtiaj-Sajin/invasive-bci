@@ -1146,3 +1146,12 @@ abstract 144 words. Next: six more BrainGate participants (owners to download), 
   session; individual spike snippets are not public, so per-spike overlays as in Hahn et al. cannot be made.
 - Software rendering of a Utah array from published dimensions (`render_3d.py --what utah` → `utah_3d.png`) made for
   the owners to review; not used in the paper.
+- Fig. 1a finalized (owners approved): precentral gyrus from the Desikan–Killiany atlas (FreeSurfer `lh.aparc.annot`,
+  fetched with `mne.datasets.fetch_fsaverage(subjects_dir=pathlib.Path("G:/mne_data/subjects"))`) coloured green; two
+  white 4 × 4 mm array plates on its crown near the hand-knob coordinates (approximate); circular inset with the Utah
+  array rendering and leader lines; small CC0 PhyloPic silhouettes of *Homo sapiens sapiens* and *Macaca mulatta*
+  (species and licences checked via the API; three first-choice "human" silhouettes were other *Homo* taxa and were
+  rejected). Assets and licences in `results/figures/assets/README.md`.
+- **Spike amplitude result** (`python scripts/amplitude_summary.py`): on T5's lateral array, 62 electrodes had spikes
+  both before day 200 and after day 2,000; median amplitude fell from 55 to 29 µV (median ratio 0.51, IQR 0.44–0.59),
+  smaller on 61 of 62 (Wilcoxon P = 8.4e-12). Added to Results (electrode section) via `\val{amp:*}` keys.

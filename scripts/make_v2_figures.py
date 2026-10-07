@@ -231,11 +231,22 @@ def _paths(ax, paths, targets, all_targets, title, ylabel=False):
     ax.set_title(title, fontsize=6, pad=3, linespacing=1.2, fontweight="bold")
 
 
-def _trimmed(path):
+def _trimmed(path, offsets=False):
     img = plt.imread(path)
     on = img[..., 3] > 0.02 if img.shape[-1] == 4 else img[..., :3].min(-1) < 0.97
     r, c = np.flatnonzero(on.any(1)), np.flatnonzero(on.any(0))
-    return img[r[0]:r[-1] + 1, c[0]:c[-1] + 1]
+    out = img[r[0]:r[-1] + 1, c[0]:c[-1] + 1]
+    return (out, r[0], c[0]) if offsets else out
+
+
+def _icon(fig, rect, path, color):
+    """A silhouette (PhyloPic, CC0) recoloured to one flat colour."""
+    img = plt.imread(path).copy()
+    img[..., :3] = np.array(plt.matplotlib.colors.to_rgb(color))
+    ia = fig.add_axes(rect)
+    ia.imshow(img)
+    ia.set_aspect("equal", anchor="W")
+    ia.axis("off")
 
 
 def fig1(out):
@@ -248,15 +259,43 @@ def fig1(out):
     def lab(x, y, t):
         fig.text(x, y, t, fontsize=8, fontweight="bold", va="top")
 
-    # a: rendered cortical surface (FreeSurfer fsaverage) with the array sites
-    ax = fig.add_axes([0.02, 0.625, 0.38, 0.31])
-    ax.imshow(_trimmed("results/figures/v2/brain_3d.png"))
-    ax.axis("off")
+    # a: rendered cortical surface (FreeSurfer fsaverage, precentral gyrus from the aparc atlas), array sites and a
+    # rendering of one Utah array
+    from matplotlib.patches import Circle, ConnectionPatch
     lab(0.005, 0.995, "a")
-    fig.text(0.21, 0.99, "Utah arrays in the hand area of motor cortex", ha="center", va="top", fontsize=6.5,
+    fig.text(0.215, 0.99, "Intracortical arrays in motor cortex", ha="center", va="top", fontsize=6.5,
              fontweight="bold")
-    fig.text(0.21, 0.965, "Participants T5, T6 and T9 and monkeys N, C and M, 1.5–7.3 years each", ha="center",
-             va="top", fontsize=5.2, color=P.INK2)
+    _icon(fig, [0.035, 0.902, 0.02, 0.06], "results/figures/assets/human_phylopic_b8c16fc6.png", P.INK2)
+    fig.text(0.06, 0.94, "People with paralysis\nT5, T6, T9", va="center", fontsize=5.2, color=P.INK, linespacing=1.25)
+    _icon(fig, [0.19, 0.912, 0.04, 0.036], "results/figures/assets/macaque_phylopic_63169c26.png", P.INK2)
+    fig.text(0.235, 0.94, "Monkeys\nN, C, M", va="center", fontsize=5.2, color=P.INK, linespacing=1.25)
+    fig.text(0.215, 0.888, "1.5–7.3 years of recordings each", ha="center", va="center", fontsize=5.2,
+             color=P.INK2)
+    ax = fig.add_axes([0.0, 0.60, 0.31, 0.275])
+    brain, r0, c0 = _trimmed("results/figures/v2/brain_3d.png", offsets=True)
+    ax.imshow(brain)
+    ax.axis("off")
+    sites = np.array(json.load(open("results/figures/v2/brain_3d_sites.json"))["sites_px"]) - [c0, r0]
+    ax.text(0.5, -0.015, "precentral gyrus (green), array sites (white)", transform=ax.transAxes, ha="center",
+            va="top", fontsize=4.8, color=P.INK2)
+    ux = fig.add_axes([0.305, 0.705, 0.11, 0.124])                       # square in inches
+    ring = Circle((0.5, 0.5), 0.5, transform=ux.transAxes, fc="white", ec=P.NEUTRAL, lw=0.7, clip_on=False)
+    ux.add_patch(ring)
+    utah = _trimmed("results/figures/v2/utah_3d.png")
+    h, w = utah.shape[:2]
+    im = ux.imshow(utah, extent=[0.0, 1.0, 0.5 - 0.5 * h / w, 0.5 + 0.5 * h / w], zorder=2)
+    im.set_clip_path(ring)
+    ux.set_xlim(0, 1)
+    ux.set_ylim(0, 1)
+    ux.axis("off")
+    fig.text(0.36, 0.695, "Utah array: 96 electrodes,\n400 µm apart (rendering)", ha="center", va="top", fontsize=4.8,
+             color=P.INK2, linespacing=1.25)
+    tip = sites.mean(0)
+    for ang in (150, 210):
+        t = np.radians(ang)
+        ux.add_artist(ConnectionPatch(xyA=tuple(tip), coordsA=ax.transData,
+                                      xyB=(0.5 + 0.5 * np.cos(t), 0.5 + 0.5 * np.sin(t)), coordsB=ux.transAxes,
+                                      color=P.NEUTRAL, lw=0.6, zorder=1))
 
     # b: spike amplitude on every electrode of one array, 7.3 years apart
     d0, d1 = EX["wave_days"]

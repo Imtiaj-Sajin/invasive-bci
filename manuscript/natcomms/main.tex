@@ -88,7 +88,8 @@ a month were real and often reversed. We release the code, a calibrated simulato
 \centering
 \makebox[\textwidth][c]{\includegraphics[width=170mm]{fig1_overview.pdf}}
 \caption{\textbf{Recordings change over years, and decoders decay with them.} \textbf{a}, Approximate array sites
-on the hand area of motor cortex, rendered on the FreeSurfer fsaverage cortical surface. \textbf{b}, Peak-to-peak spike
+(white) on the precentral gyrus (green), rendered on the FreeSurfer fsaverage cortical surface, and a rendering of one
+Utah array. Data came from three people with paralysis and three monkeys. \textbf{b}, Peak-to-peak spike
 amplitude on each electrode of T5's lateral array, 7.3 years apart. Grey cells had no spikes. Outlines mark the
 electrodes in \textbf{c}. \textbf{c}, Mean spike waveform of three electrodes in every session with spikes, coloured
 by time since implant. \textbf{d}, Threshold-crossing rate of every electrode on the same array in every session, in
@@ -335,7 +336,11 @@ electrode was active when its threshold-crossing rate exceeded 2~Hz, the definit
 Array yield and impedance declined over years in both species (Fig.~\ref{fig:electrodes}a,b). Impedance fell in 17 of
 18 human arrays with measurements (median Spearman $\rho$ with time $-0.92$). In monkey N it fell from a median of
 302~k$\Omega$ in the first year to 171~k$\Omega$ in the fourth ($\rho = -0.88$). Both trends replicate earlier
-reports\cite{barrese2013,sponheim2021,chen2023,bjanes2025,hahn2026}.
+reports\cite{barrese2013,sponheim2021,chen2023,bjanes2025,hahn2026}. Spikes also became smaller. On T5's lateral
+array, \val{amp:n} electrodes had spikes both in the first 200 days and after day 2,000. Their median spike amplitude
+fell from \val{amp:early} to \val{amp:late}~$\mu$V (median ratio \val{amp:ratio}, interquartile range \val{amp:iqr}),
+and it was smaller on \val{amp:smaller} of them ($P = \val{amp:p}$, Wilcoxon signed-rank test;
+Fig.~\ref{fig:overview}b,c).
 
 Electrodes often fell silent and later recovered\cite{barrese2013,downey2018}, but most such events were fluctuation
 (Fig.~\ref{fig:electrodes}c and Supplementary Table~11). Of \val{null:base:sil} initially active human electrodes that
@@ -573,8 +578,9 @@ which allows one global scale, and the angle between $\mathrm{vec}(\mathbf{B}_j)
 \textit{Example in Fig.~\ref{fig:overview}.} Waveforms are the released robust mean waveforms (15~kHz, in microvolts)
 for electrodes with a threshold-crossing rate of at least 2~Hz at $-4.5$ times the robust standard deviation. Amplitude is the
 peak-to-peak value of these waveforms. Rates in panel d are the released threshold-crossing rates at the same
-threshold, averaged within 30-day bins. The cortical surface was rendered with PyVista; array sites were placed
-at the hand knob by MNI coordinates and are approximate. For the
+threshold, averaged within 30-day bins. The cortical surface was rendered with PyVista, with the precentral gyrus taken from the Desikan--Killiany
+atlas. Array sites were placed on its crown near the hand knob by MNI coordinates and are approximate. The array
+inset is a rendering from published dimensions, not a photograph. Silhouettes are from PhyloPic (CC0). For the
 reconstructions, decoders used the tuned penalty: one trained on T5's day 355, one trained on day 833, and the day-355
 decoder re-weighted with 300 labeled trials from day 833. Paths are shown for held-out movements that started at the
 center. Each path integrates the decoded direction from the cursor's start position. The step size was set so that

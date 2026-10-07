@@ -1,8 +1,9 @@
 """Software renderings for Figure 1 (PyVista / VTK), from real geometry only.
 
-brain : left pial surface of the FreeSurfer fsaverage template (MRI-derived), shaded by sulcal depth in a tissue
-        colour, with two Utah array footprints (4 x 4 mm plates with a 10 x 10 electrode grid) placed on the hand area
-        of the precentral gyrus at the MNI coordinates used in scripts/render_brain.py. Sites are approximate.
+brain : left pial surface of the FreeSurfer fsaverage template (MRI-derived, obtained with
+        mne.datasets.fetch_fsaverage), shaded by sulcal depth in a tissue colour, with the precentral gyrus of the
+        Desikan-Killiany atlas (aparc) coloured and two Utah array footprints (4 x 4 mm plates with a 10 x 10 grid) on
+        its crown near the hand-knob coordinates used in scripts/render_brain.py. Sites are approximate.
 utah  : a Utah array built from its published dimensions (10 x 10 shanks, 400 um pitch, 1.5 mm long, tapered,
         on a 4 x 4 mm silicon base) with a gold wire bundle. It is a rendering, not a photograph.
 
@@ -16,7 +17,7 @@ import pyvista as pv
 
 SITES = (np.array([-36.0, -22.0, 64.0]), np.array([-44.0, -14.0, 54.0]))
 TISSUE_LIGHT, TISSUE_DARK = np.array([236, 196, 160]) / 255, np.array([170, 112, 78]) / 255
-SITE_COLOR = "#1fb5a8"
+MOTOR_COLOR = "#3d9a5b"
 
 
 def _array_plate(center, normal, size=4.0, n=10, lift=1.2):
@@ -38,32 +39,40 @@ def _array_plate(center, normal, size=4.0, n=10, lift=1.2):
     return plate, bumps
 
 
-def render_brain(out, data_dir="G:/nilearn_data", size=(2400, 1800)):
-    from nilearn import datasets, surface
-    fs = datasets.fetch_surf_fsaverage("fsaverage", data_dir=data_dir)
-    coords, faces = surface.load_surf_mesh(fs["pial_left"])
-    sulc = surface.load_surf_data(fs["sulc_left"])
+def render_brain(out, subjects_dir="G:/mne_data/subjects", size=(2400, 1800)):
+    """fsaverage pial surface with the precentral gyrus (Desikan-Killiany atlas, FreeSurfer aparc) coloured and two
+    array footprints on its crown near the hand-knob coordinates. Writes the image and the sites' pixel positions."""
+    import json
+
+    import nibabel as nib
+    surf = os.path.join(subjects_dir, "fsaverage", "surf")
+    coords, faces = nib.freesurfer.read_geometry(os.path.join(surf, "lh.pial"))
+    sulc = nib.freesurfer.read_morph_data(os.path.join(surf, "lh.sulc"))
+    labels, _, names = nib.freesurfer.read_annot(os.path.join(subjects_dir, "fsaverage", "label", "lh.aparc.annot"))
+    names = [n.decode() for n in names]
+    precentral = labels == names.index("precentral")
     mesh = pv.PolyData(coords, np.c_[np.full(len(faces), 3), faces].ravel())
     mesh = mesh.compute_normals(auto_orient_normals=True)
     w = np.clip((sulc - np.percentile(sulc, 5)) / (np.percentile(sulc, 95) - np.percentile(sulc, 5)), 0, 1)
     rgb = (1 - w)[:, None] * TISSUE_LIGHT + w[:, None] * TISSUE_DARK
-    tint = np.array([int(SITE_COLOR[i:i + 2], 16) for i in (1, 3, 5)]) / 255
-    plates = []
+    motor = np.array([int(MOTOR_COLOR[i:i + 2], 16) for i in (1, 3, 5)]) / 255
+    shade = (1 - 0.6 * w)[:, None]                                       # keep the folds visible inside the region
+    rgb[precentral] = (motor * shade)[precentral]
+    plates, centers = [], []
     for target in SITES:
-        near = np.flatnonzero(np.linalg.norm(coords - target, axis=1) < 8.0)
-        cidx = near[np.argmin(sulc[near])]                                 # crown of the gyrus near the target
-        c = coords[cidx]
+        crown = precentral & (sulc < np.percentile(sulc[precentral], 25))  # crown of the precentral gyrus
+        cand = np.flatnonzero(crown)
+        c = coords[cand[np.argmin(np.linalg.norm(coords[cand] - target, axis=1))]]
         d = np.linalg.norm(coords - c, axis=1)
-        halo = d < 6.5
-        rgb[halo] = 0.45 * rgb[halo] + 0.55 * tint
-        normal = 0.5 * mesh.point_data["Normals"][d < 3.0].mean(0) + 0.5 * np.array([-0.85, 0.0, 0.53])  # face the viewer
-        plates.append(_array_plate(c, normal))
+        normal = 0.7 * mesh.point_data["Normals"][d < 3.0].mean(0) + 0.3 * np.array([-0.85, 0.0, 0.53])
+        plates.append(_array_plate(c, normal, lift=0.3))
+        centers.append(c)
     mesh.point_data["rgb"] = (rgb * 255).astype(np.uint8)
     pl = pv.Plotter(off_screen=True, window_size=size)
     pl.add_mesh(mesh, scalars="rgb", rgb=True, smooth_shading=True, specular=0.25, specular_power=18, ambient=0.18,
                 diffuse=0.85)
     for plate, bumps in plates:
-        pl.add_mesh(plate, color="#f4f4f2", smooth_shading=False, specular=0.4, ambient=0.3)
+        pl.add_mesh(plate, color="#ffffff", smooth_shading=False, specular=0.3, ambient=0.45)
         pl.add_mesh(bumps, color="#3a3f47", smooth_shading=True, specular=0.5)
     centre = coords.mean(0)
     el = np.radians(12)
@@ -74,8 +83,17 @@ def render_brain(out, data_dir="G:/nilearn_data", size=(2400, 1800)):
     pl.enable_anti_aliasing("ssaa")
     path = os.path.join(out, "brain_3d.png")
     pl.screenshot(path, transparent_background=True)
+    import vtk
+    pix = []
+    for c in centers:
+        co = vtk.vtkCoordinate()
+        co.SetCoordinateSystemToWorld()
+        co.SetValue(*c)
+        x, y = co.GetComputedDoubleDisplayValue(pl.renderer)
+        pix.append([x, size[1] - y])                                       # image rows count from the top
+    json.dump({"size": list(size), "sites_px": pix}, open(os.path.join(out, "brain_3d_sites.json"), "w"))
     pl.close()
-    print("saved", path)
+    print("saved", path, "sites", np.round(pix, 1).tolist())
 
 
 def render_utah(out, size=(2000, 1600)):
