@@ -22,3 +22,14 @@ C:\Users\User\AppData\Roaming\Python\Python311\site-packages\torch\nn\modules\rn
 70/83 pairs, 1753s
 C:\Users\User\AppData\Roaming\Python\Python311\site-packages\torch\nn\modules\rnn.py:1124: UserWarning: RNN module weights are not part of single contiguous chunk of memory. This means they need to be compacted at every call, possibly greatly increasing memory usage. To compact weights again call flatten_parameters(). (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\pytorch\aten\src\ATen\native\cudnn\RNN.cpp:1481.)
   result = _VF.lstm(
+80/83 pairs, 1983s
+C:\Users\User\AppData\Roaming\Python\Python311\site-packages\torch\nn\modules\rnn.py:1124: UserWarning: RNN module weights are not part of single contiguous chunk of memory. This means they need to be compacted at every call, possibly greatly increasing memory usage. To compact weights again call flatten_parameters(). (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\pytorch\aten\src\ATen\native\cudnn\RNN.cpp:1481.)
+  result = _VF.lstm(
+83/83 pairs, 2034s
+              own  ridge_own  ret_nn  ret_ridge  gain_nn  gain_ridge
+gap_target                                                          
+1           0.142      0.196  -0.117      0.143    0.112       0.365
+7           0.222      0.272  -1.396     -0.116    0.749       0.060
+30          0.178      0.307  -1.072     -0.539    0.885       0.482
+120         0.276      0.266  -1.255     -0.390    0.793       0.309
+480         0.400      0.456  -0.734     -0.455    0.978       0.577
