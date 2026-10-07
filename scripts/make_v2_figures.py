@@ -115,7 +115,7 @@ def fig1(out):
              ("Align neural activity", "no labels", P.BLUE_ORDINAL[3]),
              ("Re-weight each channel", "labels, 1 per channel", P.BLUE_ORDINAL[5]),
              ("Refit near old decoder", "labels, few trials", P.BLUE_ORDINAL[7]),
-             ("Fresh decoder on day j", "reference", P.INK2)]
+             ("Reference decoder (day j)", "reference", P.INK2)]
     for k, (name, req, c) in enumerate(rungs):
         yy = 0.82 - k * 0.13
         bx.add_patch(FancyBboxPatch((0.02, yy - 0.045), 0.62, 0.09, boxstyle="round,pad=0.008,rounding_size=0.015",
@@ -206,9 +206,19 @@ def fig2(out):
 
 
 # ------------------------------------------------------------------------------------------------ Figure 3
+def tuned_ladders():
+    """Correction ladders with the tuned ridge penalty (alpha = 1e4) for day-i and reference decoders."""
+    out = {}
+    for k, _, _, _, _ in IND:
+        p = f"results/decay_alpha/{k}_alpha10000.csv"
+        if os.path.exists(p):
+            out[k] = pd.read_csv(p)[lambda x: x.gap_target.isin(GAPS)]
+    return out
+
+
 def fig3(out):
     P.setup_nature()
-    L = ladders()
+    L = tuned_ladders()
     fig, axes = plt.subplots(1, 4, figsize=(P.DOUBLE_COL, 2.0), gridspec_kw={"width_ratios": [1.35, 1.0, 0.95, 1.2]})
     ax = axes[0]
     for k in L:
@@ -245,7 +255,7 @@ def fig3(out):
 
     ax = axes[2]   # matched-output control in reaching monkeys
     for k in ("C", "M"):
-        mo = f"results/matched_output/{k}.csv"
+        mo = f"results/matched_output_tuned/{k}.csv"
         if k not in L:
             continue
         a = L[k].assign(rec=lambda x: (x.L3_n300 - x.L2) / (x.own - x.L2)).groupby("gap_target").rec.median()
@@ -276,7 +286,7 @@ def fig3(out):
         e = pd.concat(frames)
         e = e.assign(train=e.subject + "_" + e.train.astype(str))
         for rung, name, c in (("L3", "re-weight channels", P.BLUE_ORDINAL[5]), ("L6p", "refit near old decoder", P.INK2),
-                              ("L6", "fresh decoder", P.NEUTRAL)):
+                              ("L6", "retrained on day j", P.NEUTRAL)):
             cols = [f"{rung}_n{n}" for n in ns]
             est = np.array([cluster_bootstrap(e.dropna(subset=[c_]).assign(_r=lambda x, c_=c_: x[c_] / x.own), "_r",
                                               n_boot=800) if c_ in e else (np.nan,) * 3 for c_ in cols])
@@ -313,7 +323,6 @@ def fig4(out):
             if not os.path.exists(f):
                 continue
             q = pd.read_csv(f)
-            q = q[q.gap_target <= 120]
             s = q.groupby("train")[[col, "renorm"]].mean()
             diff = (s[col] - s["renorm"]).rename("d").reset_index()
             est, lo, hi = cluster_bootstrap(diff.assign(train=diff.train), "d", n_boot=800)
@@ -331,7 +340,7 @@ def fig4(out):
     ax.set_xticklabels([m[2].replace(" + ", "\n+ ").replace(" (CORAL)", "\n(CORAL)")
                         .replace("factor-analysis ", "factor-analysis\n") for m in methods], fontsize=4.8)
     ax.set_ylabel("R² change vs rescaling each channel")
-    ax.set_title("Label-free corrections (gaps up to 120 days)", loc="left")
+    ax.set_title("Label-free corrections (all gaps)", loc="left")
     ax.legend(loc="lower right", frameon=False, ncol=3, fontsize=4.2)
     ax.grid(axis="x", visible=False)
     P.panel(ax, "a", x=-0.12)
@@ -415,7 +424,7 @@ def fig5(out):
     ax = axes[2]
     e = pd.read_csv("results/data_efficiency/ladder.csv")
     ns = [10, 20, 50, 100, 300]
-    for m, name, c in (("L6p", "refit near old decoder", P.INK2), ("L6", "fresh decoder", P.NEUTRAL),
+    for m, name, c in (("L6p", "refit near old decoder", P.INK2), ("L6", "retrained on day j", P.NEUTRAL),
                        ("L3", "re-weight channels", P.BLUE_ORDINAL[5])):
         est = np.array([cluster_bootstrap(e.assign(_r=e[f"{m}_n{n}"] / e.own), "_r", n_boot=800) for n in ns])
         line_ci(ax, ns, est, c, name)
@@ -507,7 +516,7 @@ def fig6(out):
     ax.set_ylim(0, 125)
     ax.set_yticks([0, 20, 40, 60, 80, 100])
     ax.set_xlabel("silence definition")
-    ax.set_ylabel("silent electrodes that recover (%)")
+    ax.set_ylabel("silenced electrodes that recover (%)")
     ax.set_title("Silence then recovery", loc="left")
     ax.legend(loc="upper right", frameon=False, fontsize=4.2)
     ax.grid(axis="x", visible=False)

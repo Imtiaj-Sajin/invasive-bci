@@ -169,7 +169,7 @@ def main():
         put("ang:redmax", f"{max(red_all):.0f}")
     # matched-output control
     for k in ("C", "M"):
-        p = f"results/matched_output/{k}.csv"
+        p = f"results/matched_output_tuned/{k}.csv" if os.path.exists(f"results/matched_output_tuned/{k}.csv") else f"results/matched_output/{k}.csv"
         if os.path.exists(p):
             q = pd.read_csv(p).assign(rec=lambda x: (x.L3_n300 - x.L2) / (x.own - x.L2))
             med = q.groupby("gap_target").rec.median()
@@ -276,7 +276,7 @@ def main():
     mr = load("results/mindful_reanalysis/summary.json")
     for r in mr or []:
         p = r["participant"]
-        put(f"{p}:mf:days", str(r["n_days"]))
+        put(f"{p}:mf:ndays", str(r["n_days"]))
         put(f"{p}:mf:win", str(r["n_windows"]))
         put(f"{p}:mf:rdays", f2(r["pearson_ae_days"]))
         put(f"{p}:mf:nraw", f2(r["kl_neural"]["pearson_with_ae"]))
@@ -288,6 +288,31 @@ def main():
             put(f"{p}:mf:{lab}", f"{r['lodo_mae'][kk]:.1f}")
         put(f"{p}:mf:dayr", f2(r["day_level"]["partial_kl_ae_given_days"] if r["day_level"]["partial_kl_ae_given_days"]
                                 is not None else np.nan))
+    # half-life confidence intervals (decay_summary.csv: default penalty)
+    ds = pd.read_csv("results/decay_summary.csv")
+    for _, r in ds.iterrows():
+        k = r.subject.split()[-1]
+        lo, hi = [float(x) for x in str(r.t_half_ci).strip('[]').split(',')]
+        put(f"{k}:thalfci", f"{days(lo)}--{days(hi)}")
+    # tuned-penalty recovery by re-weighting
+    for k in IND:
+        t = s.get(k, {}).get("tuned")
+        if t:
+            rec = [t[f"gap{g}"].get("loss_recovered_by_gains") for g in GAPS if f"gap{g}" in t]
+            rg = [t[f"gap{g}"].get("retention_gains") for g in GAPS if f"gap{g}" in t]
+            put(f"{k}:trecmin", pct(min(rec)))
+            put(f"{k}:trecmax", pct(max(rec)))
+            put(f"{k}:tgainretmin", f2(min(rg)))
+            put(f"{k}:tgainretmax", f2(max(rg)))
+    # re-weighting controls (true vs channel-permuted decoder, signed vs non-negative weights)
+    for k in IND:
+        p = f"results/reweight_controls/{k}.csv"
+        if os.path.exists(p):
+            q = pd.read_csv(p)
+            for c in ("renorm", "rew", "rew_nonneg", "rew_perm", "rew_perm_nn"):
+                put(f"{k}:ctl:{c}", f2(float((q[c] / q.own).median())))
+            put(f"{k}:ctl:pairs", str(len(q)))
+            put(f"{k}:ctl:zero", pct(float(q.nonneg_zero_frac.median())))
     write(args)
 
 

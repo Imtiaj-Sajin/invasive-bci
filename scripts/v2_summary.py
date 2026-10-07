@@ -62,7 +62,7 @@ def decay_block(d, l2="L2", own="own", l3="L3_n300"):
     return out
 
 
-def paired(d, a, b, max_gap=120):
+def paired(d, a, b, max_gap=480):
     q = d[d.gap_target <= max_gap]
     s = q.groupby("train")[[a, b]].mean().dropna()
     if len(s) < 6:
