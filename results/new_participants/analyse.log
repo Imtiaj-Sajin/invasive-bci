@@ -98,3 +98,11 @@ skip  results/new_participants/T8_reg_tradeoff.log
 01:24:51 start results/new_participants/T8_gain_efficiency.log
 02:40:22 done  results/new_participants/T8_gain_efficiency.log
 02:40:22 start results/new_participants/T8_reweight_controls.log
+03:19:59 done  results/new_participants/T8_reweight_controls.log
+03:20:00 start results/new_participants/T8_gain_mechanism.log
+03:34:50 done  results/new_participants/T8_gain_mechanism.log
+03:34:51 start results/new_participants/T8_weight_angles.log
+03:40:02 done  results/new_participants/T8_weight_angles.log
+03:40:02 ==== T8 finished
+03:40:02 ==== T11 (196 sessions)
+03:40:03 start results/new_participants/T11_ladder.log
