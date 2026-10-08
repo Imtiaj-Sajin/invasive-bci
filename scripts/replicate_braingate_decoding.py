@@ -31,6 +31,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from drift_anatomy import select_pairs  # noqa: E402
 
 TRAIN_FRAC = 0.8
+BLOCKNORM = os.environ.get("IBCI_BLOCKNORM") == "1"   # off for all main analyses
 
 
 def load_session(path):
@@ -38,6 +39,11 @@ def load_session(path):
     d = loadmat(path, simplify_cells=True)
     day = int(d["post_implant_day"])
     sbp = np.asarray(d["neural"]["sbp"], dtype=np.float32)
+    if BLOCKNORM:              # sensitivity analysis: z-score each recording block separately (as in the dataset paper)
+        b = d["blocks"]
+        for a0, a1 in zip(np.atleast_1d(b["sample_start_index"]).astype(int), np.atleast_1d(b["sample_end_index"]).astype(int)):
+            seg = sbp[a0:a1]
+            sbp[a0:a1] = (seg - seg.mean(0)) / np.maximum(seg.std(0), 1e-6)
     cur = np.asarray(d["cursor_position"], dtype=np.float32)
     tgt = np.asarray(d["target_position"], dtype=np.float32)
     tr = d["trials"]
