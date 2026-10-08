@@ -1,0 +1,71 @@
+25/677 pairs, 760s
+50/677 pairs, 1439s
+75/677 pairs, 2300s
+100/677 pairs, 3022s
+125/677 pairs, 3785s
+150/677 pairs, 4699s
+175/677 pairs, 5522s
+200/677 pairs, 6223s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:229: RuntimeWarning: Mean of empty slice.
+  Fm, rm = F[fit].mean(0), r[fit].mean(0)
+C:\Python311\Lib\site-packages\numpy\_core\_methods.py:137: RuntimeWarning: invalid value encountered in divide
+  ret = um.true_divide(
+225/677 pairs, 6759s
+250/677 pairs, 7239s
+275/677 pairs, 7778s
+300/677 pairs, 8342s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:229: RuntimeWarning: Mean of empty slice.
+  Fm, rm = F[fit].mean(0), r[fit].mean(0)
+C:\Python311\Lib\site-packages\numpy\_core\_methods.py:137: RuntimeWarning: invalid value encountered in divide
+  ret = um.true_divide(
+325/677 pairs, 8862s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:229: RuntimeWarning: Mean of empty slice.
+  Fm, rm = F[fit].mean(0), r[fit].mean(0)
+C:\Python311\Lib\site-packages\numpy\_core\_methods.py:137: RuntimeWarning: invalid value encountered in divide
+  ret = um.true_divide(
+350/677 pairs, 9339s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:229: RuntimeWarning: Mean of empty slice.
+  Fm, rm = F[fit].mean(0), r[fit].mean(0)
+C:\Python311\Lib\site-packages\numpy\_core\_methods.py:137: RuntimeWarning: invalid value encountered in divide
+  ret = um.true_divide(
+375/677 pairs, 9846s
+400/677 pairs, 10329s
+425/677 pairs, 10868s
+450/677 pairs, 11478s
+475/677 pairs, 12120s
+500/677 pairs, 12758s
+525/677 pairs, 13386s
+550/677 pairs, 13967s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:229: RuntimeWarning: Mean of empty slice.
+  Fm, rm = F[fit].mean(0), r[fit].mean(0)
+C:\Python311\Lib\site-packages\numpy\_core\_methods.py:137: RuntimeWarning: invalid value encountered in divide
+  ret = um.true_divide(
+575/677 pairs, 14515s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:229: RuntimeWarning: Mean of empty slice.
+  Fm, rm = F[fit].mean(0), r[fit].mean(0)
+C:\Python311\Lib\site-packages\numpy\_core\_methods.py:137: RuntimeWarning: invalid value encountered in divide
+  ret = um.true_divide(
+600/677 pairs, 15067s
+625/677 pairs, 15675s
+650/677 pairs, 16170s
+675/677 pairs, 16817s
+677/677 pairs, 16854s
+               L1     L2    L4u  L3_n300    own    ret
+gap_target                                            
+1           0.192  0.164  0.089    0.241  0.276  0.868
+7           0.137  0.152  0.045    0.212  0.233  0.661
+30          0.076  0.091  0.036    0.165  0.218  0.696
+120         0.037  0.041 -0.011    0.196  0.230  0.559
+480        -0.079 -0.096 -0.111    0.143  0.257  0.011

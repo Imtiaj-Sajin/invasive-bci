@@ -1,0 +1,85 @@
+T11: 196 sessions over 1669 days
+677 pairs
+  20/677 pairs, 680s
+  40/677 pairs, 1202s
+  60/677 pairs, 1806s
+  80/677 pairs, 2413s
+  100/677 pairs, 3014s
+  120/677 pairs, 3600s
+  140/677 pairs, 4341s
+  160/677 pairs, 5073s
+  180/677 pairs, 5705s
+  200/677 pairs, 6215s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:229: RuntimeWarning: Mean of empty slice.
+  Fm, rm = F[fit].mean(0), r[fit].mean(0)
+C:\Python311\Lib\site-packages\numpy\_core\_methods.py:137: RuntimeWarning: invalid value encountered in divide
+  ret = um.true_divide(
+  220/677 pairs, 6639s
+  240/677 pairs, 7029s
+  260/677 pairs, 7424s
+  280/677 pairs, 7910s
+  300/677 pairs, 8335s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:229: RuntimeWarning: Mean of empty slice.
+  Fm, rm = F[fit].mean(0), r[fit].mean(0)
+C:\Python311\Lib\site-packages\numpy\_core\_methods.py:137: RuntimeWarning: invalid value encountered in divide
+  ret = um.true_divide(
+  320/677 pairs, 8726s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:229: RuntimeWarning: Mean of empty slice.
+  Fm, rm = F[fit].mean(0), r[fit].mean(0)
+C:\Python311\Lib\site-packages\numpy\_core\_methods.py:137: RuntimeWarning: invalid value encountered in divide
+  ret = um.true_divide(
+  340/677 pairs, 9114s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:229: RuntimeWarning: Mean of empty slice.
+  Fm, rm = F[fit].mean(0), r[fit].mean(0)
+C:\Python311\Lib\site-packages\numpy\_core\_methods.py:137: RuntimeWarning: invalid value encountered in divide
+  ret = um.true_divide(
+  360/677 pairs, 9510s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:229: RuntimeWarning: Mean of empty slice.
+  Fm, rm = F[fit].mean(0), r[fit].mean(0)
+C:\Python311\Lib\site-packages\numpy\_core\_methods.py:137: RuntimeWarning: invalid value encountered in divide
+  ret = um.true_divide(
+  380/677 pairs, 9928s
+  400/677 pairs, 10316s
+  420/677 pairs, 10759s
+  440/677 pairs, 11192s
+  460/677 pairs, 11759s
+  480/677 pairs, 12246s
+  500/677 pairs, 12756s
+  520/677 pairs, 13265s
+  540/677 pairs, 13718s
+  560/677 pairs, 14177s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:229: RuntimeWarning: Mean of empty slice.
+  Fm, rm = F[fit].mean(0), r[fit].mean(0)
+C:\Python311\Lib\site-packages\numpy\_core\_methods.py:137: RuntimeWarning: invalid value encountered in divide
+  ret = um.true_divide(
+  580/677 pairs, 14595s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:239: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:229: RuntimeWarning: Mean of empty slice.
+  Fm, rm = F[fit].mean(0), r[fit].mean(0)
+C:\Python311\Lib\site-packages\numpy\_core\_methods.py:137: RuntimeWarning: invalid value encountered in divide
+  ret = um.true_divide(
+  600/677 pairs, 15068s
+  620/677 pairs, 15565s
+  640/677 pairs, 15957s
+  660/677 pairs, 16471s
+  677/677 pairs, 16793s
+               L2    L4u  L3_n300  L6p_n300    own  ret_L2  ret_L3
+gap_target                                                        
+1           0.001 -0.143    0.215     0.220  0.137   0.146   0.853
+7          -0.133 -0.214    0.179     0.213  0.145   0.321   0.912
+30         -0.086 -0.164    0.156     0.166  0.138   0.220   0.856
+120        -0.179 -0.214    0.152     0.155  0.138   0.214   0.815
+480        -0.349 -0.407    0.140     0.172  0.064   0.063   0.656
