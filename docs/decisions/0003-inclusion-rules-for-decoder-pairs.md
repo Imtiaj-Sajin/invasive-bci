@@ -33,3 +33,16 @@ Supplement.
 - Keeping all pairs: intervals become meaningless when the denominator is near zero.
 - Differences (old R² − reference R²) instead of ratios: avoids the instability but changes every reported quantity
   and breaks comparability with prior work that reports ratios (e.g. retention in Degenhart et al. 2020).
+
+## Addendum (2026-10-08): T11
+
+T11 (196 sessions, 677 pairs) failed the participant rule: median reference R² −16.2, only 155/677 pairs above 0.1.
+`scripts/tools/scan_artifacts.py` showed why: in 107 of 196 sessions the held-out segment contains values more than
+10³ s.d. from the session's training segment (T7 2/35, T8 4/58, T10 1/57), consistent with scale jumps between
+recording blocks. Block-wise z-scoring, as in the dataset paper, rescued most affected sessions (day 630: R²
+−8.5×10⁸ → 0.33; day 596 → 0.11; day 413 stayed −0.23) and left clean sessions unchanged (0.52 → 0.52, 0.52 → 0.55).
+
+Decision: the pre-specified rule stands, so T11 is not in the main analysis (six human participants). T11 is analysed
+with block-wise normalization (`IBCI_BLOCKNORM=1`; results/replication_bg_blocknorm, results/decay_alpha_blocknorm) and
+reported as a sensitivity analysis. The main pipeline keeps session-wise normalization, under which block-wise
+normalization was equal or slightly worse for T6 and T7 (check_feature_normalization.py).

@@ -106,3 +106,10 @@ skip  results/new_participants/T8_reg_tradeoff.log
 03:40:02 ==== T8 finished
 03:40:02 ==== T11 (196 sessions)
 03:40:03 start results/new_participants/T11_ladder.log
+03:57:13 T11 restarted with on-demand session loading
+03:57:13 ==== T11 (196 sessions)
+03:57:14 start results/new_participants/T11_ladder.log
+07:28:16 done  results/new_participants/T11_ladder.log
+07:28:16 start results/new_participants/T11_decay_alpha.log
+07:43:09 T11 fails the participant rule (median reference R2 -16.2; block-level scale jumps in 107/196 sessions). Main T11 steps not run; T11 block-normalized sensitivity runs started.
+07:43:09 start results/new_participants/T11_blocknorm_ladder.log
