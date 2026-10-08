@@ -422,6 +422,19 @@ def group_keys():
         if los and his:
             put(f"hum:{name}:min", V[f"{min(los, key=lambda x: x[1])[0]}:{lo_s}"])
             put(f"hum:{name}:max", V[f"{max(his, key=lambda x: x[1])[0]}:{hi_s}"])
+    for s in ("tunedabsdiff", "thalf", "thalftuned", "angred", "rulemed", "rotrendiff", "renmeandiff"):  # all nine
+        vals = [(i, _num(V.get(f"{i}:{s}"))) for i in IND]
+        vals = [(i, v) for i, v in vals if v is not None]
+        if vals:
+            put(f"all:{s}:min", V[f"{min(vals, key=lambda x: x[1])[0]}:{s}"])
+            put(f"all:{s}:max", V[f"{max(vals, key=lambda x: x[1])[0]}:{s}"])
+    for s in ("tunedabsp", "rotrenp", "rulep", "renmeanp", "coralp"):          # how many individuals reach P < 0.05
+        ps = [V.get(f"{i}:{s}") for i in IND if f"{i}:{s}" in V]
+        put(f"all:{s}:nsig", str(sum(1 for p in ps if "times10" in p or (_num(p) is not None and _num(p) < 0.05))))
+        put(f"all:{s}:ntested", str(len(ps)))
+    hs = [h for h in HUM if f"{h}:coralp" in V]
+    put("hum:coral:nworse", str(sum(1 for h in hs if (_num(V[f"{h}:coraldiff"]) or 0) < 0 and
+                                    ("times10" in V[f"{h}:coralp"] or (_num(V[f"{h}:coralp"]) or 1) < 0.05))))
     for name in ("rate", "imp"):          # how many participants show a significant weight-electrode link
         ps = [(h, V.get(f"{h}:mech:{name}:p")) for h in HUM if f"{h}:mech:{name}:p" in V]
         sig = [h for h, p in ps if p and ("times10" in p or (_num(p) is not None and _num(p) < 0.05))]
