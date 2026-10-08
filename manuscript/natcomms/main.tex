@@ -65,7 +65,9 @@ signal when recalibration is needed\cite{pun2024}.
 Building on these approaches requires answers to three practical questions. How fast do decoders decay in different
 individuals, and how much of the measured decay comes from the decoder itself? Which corrections recover the loss,
 and with how much labeled data? And what happens at the electrodes over the years? Answers have come mostly from single
-datasets, spans of weeks and different baselines\cite{karpowicz2024falcon}, which makes results hard to compare.
+datasets, spans of weeks and different baselines\cite{karpowicz2024falcon}, which makes results hard to compare. In one
+participant, for example, a decoder whose channel means were updated still failed after months, whereas adjusting its
+weights recovered it\cite{wilson2025}. Whether such results hold across individuals and species is not known.
 
 Public long-term datasets now allow these questions to be asked across individuals with one method. They include three
 years of finger decoding in one monkey\cite{temmar2025} and reaching recordings from two monkeys in another
@@ -88,15 +90,12 @@ a month were real and often reversed. We release the code, a calibrated simulato
 \centering
 \makebox[\textwidth][c]{\includegraphics[width=170mm]{fig1_overview.pdf}}
 \caption{\textbf{Recordings change over years, and decoders decay with them.} \textbf{a}, Approximate array sites
-(white) on the precentral gyrus (green), rendered on the FreeSurfer fsaverage cortical surface, and a rendering of one
-Utah array. Decoder analyses used \val{hum:nword} people with paralysis and three monkeys. \textbf{b}, Peak-to-peak spike
-amplitude on each electrode of T5's lateral array, 7.3 years apart. Grey cells had no spikes. Outlines mark the
-electrodes in \textbf{c}. \textbf{c}, Mean spike waveform of three electrodes in every session with spikes, coloured
-by time since implant. \textbf{d}, Threshold-crossing rate of every electrode on the same array in every session, in
-30-day bins. White columns have no sessions. \textbf{e}, Recorded cursor paths in a closed-loop session of T5, for
-held-out outward movements. Colours mark targets. \textbf{f}, The same movements reconstructed offline from neural
-activity by three decoders. The decoder from day 355 fails without correction and recovers after re-weighting each
-channel (Methods).}
+(white) on the precentral gyrus (green) of a standard cortical surface, and a rendered Utah array. \textbf{b}, Spike
+amplitude on each electrode of T5's lateral array, 7.3 years apart. Grey cells had no spikes; outlines mark the
+electrodes in \textbf{c}. \textbf{c}, Mean spike waveforms of three electrodes in every session, coloured by time since
+implant. \textbf{d}, Threshold-crossing rate of every electrode on the same array, in 30-day bins. \textbf{e}, Cursor
+paths in a closed-loop session of T5. Colours mark targets. \textbf{f}, The same movements reconstructed offline by
+three decoders. The decoder from day 355 fails until each channel is re-weighted (Methods).}
 \label{fig:overview}
 \end{figure}
 
