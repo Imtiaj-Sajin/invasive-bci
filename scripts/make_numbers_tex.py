@@ -435,6 +435,40 @@ def group_keys():
     hs = [h for h in HUM if f"{h}:coralp" in V]
     put("hum:coral:nworse", str(sum(1 for h in hs if (_num(V[f"{h}:coraldiff"]) or 0) < 0 and
                                     ("times10" in V[f"{h}:coralp"] or (_num(V[f"{h}:coralp"]) or 1) < 0.05))))
+    ap = load("results/v2_summary_allpairs.json")                  # sensitivity: every pair kept
+    for k, r in ap.items():
+        d = r.get("default", {})
+        if d.get("t_half_days") is not None:
+            put(f"ap:{k}:thalf", days(d["t_half_days"]))
+        g1 = d.get("gap1", {}).get("retention")
+        if g1:
+            put(f"ap:{k}:ret1", f2(g1[0]))
+    tb = "results/replication_bg_blocknorm/T11_ladder.csv"         # T11 with block-wise normalization
+    if os.path.exists(tb):
+        from ibci.participants import valid_pairs as _vp
+        q = pd.read_csv(tb)
+        put("t11b:pairs", str(len(q)))
+        put("t11b:refr2", f2(float(q.own.median())))
+        put("t11b:valid", str(int((q.own > 0.1).sum())))
+        v = _vp(q)[lambda x: x.gap_target.isin(GAPS)].assign(r=lambda x: x.L2 / x.own, r3=lambda x: x.L3_n300 / x.own)
+        med = v.groupby("gap_target").r.median()
+        for g in GAPS:
+            if g in med:
+                put(f"t11b:ret{g}", f2(float(med[g])))
+        put("t11b:gainretmin", f2(float(v.groupby("gap_target").r3.median().min())))
+        put("t11b:gainretmax", f2(float(v.groupby("gap_target").r3.median().max())))
+    t11 = "results/replication_bg/T11_ladder.csv"
+    if os.path.exists(t11):
+        q = pd.read_csv(t11)
+        put("T11:refr2", f2(float(q.own.median())))
+        put("T11:pairs", str(len(q)))
+        put("T11:validpairs", str(int((q.own > 0.1).sum())))
+    sc = "results/artifact_scan.csv"
+    if os.path.exists(sc):
+        q = pd.read_csv(sc)
+        for p, g in q.groupby("participant"):
+            put(f"{p}:artsess", str(int((g.max_z_test > 1e3).sum())))
+            put(f"{p}:nscanned", str(len(g)))
     for name in ("rate", "imp"):          # how many participants show a significant weight-electrode link
         ps = [(h, V.get(f"{h}:mech:{name}:p")) for h in HUM if f"{h}:mech:{name}:p" in V]
         sig = [h for h, p in ps if p and ("times10" in p or (_num(p) is not None and _num(p) < 0.05))]

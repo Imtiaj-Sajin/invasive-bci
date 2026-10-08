@@ -7,6 +7,8 @@
 \usepackage{lmodern}
 \usepackage{textcomp}
 \usepackage{pdflscape}
+\usepackage{xcolor}
+\input{numbers}
 
 \raggedbottom
 \makeatletter
@@ -26,7 +28,7 @@ intracortical brain--computer interfaces}
 \affil*[1]{\orgdiv{Department of Computer Science}, \orgname{American International University-Bangladesh},
 \orgaddress{\city{Dhaka}, \postcode{1229}, \country{Bangladesh}}}
 
-\abstract{This document contains Supplementary Notes 1--3 and Supplementary Tables 1--13. Every table is generated
+\abstract{This document contains Supplementary Notes 1--4 and Supplementary Tables 1--14. Every table is generated
 from the released result files by \texttt{scripts/make\_supp\_tables.py}, so its values match the code repository.}
 
 \maketitle
@@ -131,6 +133,39 @@ network with early stopping on held-out training trials.
 
 \textit{Small-budget recalibration shrinks the intercept.} Refitting the intercept freely with 10--20 trials shifted
 the output offset and made recalibration harmful in many pairs.
+
+\section*{Supplementary Note 4: Excluded participants and sensitivity analyses}
+
+\textit{Participants whose decoders did not work.} The BrainGate decoding data contain nine participants. Retention
+is defined only when the reference decoder, trained on the test day, works. We therefore required a median reference
+$R^2$ above 0.1 across a participant's session pairs (Methods). The rule was fixed when the first added participant
+(T3) failed and before the results of the other added participants were seen. T3 (8 sessions, 12 pairs) and T2
+(42 sessions, 120 pairs) failed it, with median reference $R^2$ of \val{T3:refr2} and \val{T2:refr2}. Their movement
+periods lasted a median of 15.6~s, against 1.6--3.9~s in the included participants (Supplementary Table~14). For T2,
+block-wise normalization and threshold crossings did not raise same-day $R^2$ above about 0.1 except on its earliest
+session, whereas the same checks left T6 and T7 working.
+
+\textit{T11.} T11 (196 sessions, \val{T11:pairs} pairs) also failed the rule (median reference $R^2$ \val{T11:refr2};
+\val{T11:validpairs} pairs above 0.1). In \val{T11:artsess} of \val{T11:nscanned} sessions, the held-out trials
+contained spike-band power more than $10^3$ standard deviations from the training trials of the same session. This was
+rare in the included participants (T7 \val{T7:artsess} of \val{T7:nscanned}, T8 \val{T8:artsess} of \val{T8:nscanned},
+T10 \val{T10:artsess} of \val{T10:nscanned} sessions), and such pairs are removed by the pair rule below. The jumps
+coincided with recording blocks. When each block was z-scored separately, as in the dataset
+paper (Hahn et al., 2026), most affected T11 sessions decoded normally, and clean sessions were unchanged. With block-wise
+normalization, the median reference $R^2$ of T11 was \val{t11b:refr2} (\val{t11b:valid} of \val{t11b:pairs} pairs above
+0.1). The renormalized fixed decoder kept a median retention of \val{t11b:ret1} after one day, \val{t11b:ret30} after 30
+days and \val{t11b:ret480} after 480 days, and re-weighting each channel restored retention to
+\val{t11b:gainretmin}--\val{t11b:gainretmax}, in line with the included participants. T11 is not part of the main
+analysis because the inclusion rule was fixed in advance.
+
+\textit{Session pairs with a failed reference decoder.} Within included individuals, pairs whose reference $R^2$ was at
+most 0.1 were left out (0--18\% of pairs per individual). With all pairs kept, the main conclusions did not change.
+Time to half retention ranged from \val{ap:T8:thalf} days (T8) to \val{ap:T6:thalf} days (T6), compared with
+\val{T8:thalf} to \val{T6:thalf} days with the rule, so the spread between individuals remained about a hundredfold.
+The largest single change was in T7, whose retention after one day lay close to one half (\val{ap:T7:ret1} with all
+pairs, \val{T7:ret1} with the rule), so its time to half retention moved from \val{ap:T7:thalf} days to under one day.
+All other individuals changed by less than a few days. Full results with all pairs are in
+\texttt{results/v2\_summary\_allpairs.json}.
 
 \clearpage
 
