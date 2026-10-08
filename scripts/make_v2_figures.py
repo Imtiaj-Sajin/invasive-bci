@@ -592,8 +592,8 @@ def fig4c(out):
                                                                               ms=3, mfc="white"),
                Line2D([], [], marker="x", color=P.INK2, ls="", ms=3), Line2D([], [], marker="|", color=P.INK2, ls="",
                                                                              ms=6)],
-              ["signed weights", "non-negative", "scrambled", "no labels"], loc="lower left", frameon=False,
-              fontsize=4.2, handletextpad=0.2)
+              ["signed weights", "non-negative", "scrambled", "no labels"], loc="upper center", frameon=False,
+              fontsize=4.2, handletextpad=0.2, ncol=4, columnspacing=0.6, bbox_to_anchor=(0.5, -0.2))
     ax.grid(axis="y", visible=False)
     P.panel(ax, "b", x=-0.45)
 
@@ -640,7 +640,7 @@ def fig4c(out):
     ax.set_title("Linear (filled), network (open)", loc="left", fontsize=6)
     ax.grid(axis="y", visible=False)
     P.panel(ax, "d", x=-0.1)
-    fig.subplots_adjust(wspace=0.5, left=0.065, right=0.99, bottom=0.13, top=0.9)
+    fig.subplots_adjust(wspace=0.5, left=0.065, right=0.99, bottom=0.17, top=0.9)
     P.save(fig, os.path.join(out, "fig5_channels"))
 
 
