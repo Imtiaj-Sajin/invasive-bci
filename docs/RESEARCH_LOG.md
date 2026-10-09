@@ -1209,3 +1209,10 @@ abstract 144 words. Next: six more BrainGate participants (owners to download), 
   nine; weight-firing link in 5/6 participants (not T10), impedance link in T9, T7, T8; slowest recalibration T8.
   New keys: hum:*, all:* (ranges and counts across individuals). Figures 3 and 5 use separate monkey and human panels.
 - 12:25-12:40 T11 block-normalized sensitivity runs done. Default penalty: median reference R2 0.14 (351/677 pairs > 0.1); retention 0.53 (1 d), 0.32 (7 d), -0.06 (30 d), -0.65 (480 d); re-weighting restores 0.86-0.99. Tuned penalty: reference R2 0.22-0.28, retention 0.87 (1 d), 0.70 (30 d), 0.56 (120 d), 0.01 (480 d). Consistent with the included participants; reported in Supplementary Note 4.
+
+### 2026-10-09 — FALCON feasibility check
+
+- Checked whether the simple recipe could be tested head-to-head on FALCON (decision 0004). Held-out calibration data
+  are labelled and few-shot supervised is an official category, but the linear-decoder oracle bounds any correction of
+  a linear decoder (H1 0.21 vs NDT2 few-shot 0.52 and leaderboard 0.68). Not pursued; paper claims stay scoped to
+  corrections for a given decoder.
