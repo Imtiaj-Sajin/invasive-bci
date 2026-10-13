@@ -1265,3 +1265,21 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   rerun after lanes A/B finish.
 - Lane B was waiting for 6 GB free RAM (the PC has ~4 GB spare with VS Code and WSL open); restarted with
   `MIN_FREE_GB=3 bash scripts/run_audit_reruns.sh B`.
+
+### 2026-10-13 — Step 2: year-scale benchmark (commit b3d46aa)
+
+- `benchmark/manifests/<subject>.csv`: the paper's pairs at gaps 1, 7, 30, 120, 480 days; 1,824 pairs (1,684 valid,
+  reference R2 > 0.1) over nine individuals. Built by `python scripts/bench_manifest.py` (reference R2 from the tuned
+  ladders; not affected by the CV fix). Rebuild after lane A and confirm identical.
+- `src/ibci/bench`: Task API (public arrays src_x/src_y, cal_x, cal_y_lab for the first n trials, eval_x; evaluation
+  labels used only by `score`), `summarize` with the training-session bootstrap, and the ladder as reference methods
+  (`baselines.py`).
+- Check: `python scripts/bench_check.py --subjects C T6 --pairs 3 --label-free-only` reproduces L0, L1, L2, L4u and the
+  reference R2 of the paper to 4e-16; a decoder built from public arrays only matches L2 to 6e-8. Supervised methods
+  to be checked against the rerun ladders.
+- `scripts/bench_run.py` (reference methods or `--plugin module:function`), tested on monkey M.
+- README corrections found while checking: monkeys C and M use summed spike counts (no spike-band power in 000688)
+  and four cursor outputs; T6 and T10 have one array; monkey M has 192 channels (M1 and PMd). Licences verified on the
+  DANDI API (000688 and 001201: CC-BY-4.0).
+- Freed RAM (owner's permission): closed Docker/WSL, Chrome, NVIDIA Broadcast, EA app, Phone Link. Lane B now runs as
+  two queue workers (`scripts/run_audit_queue.sh`, lock directories per step).
