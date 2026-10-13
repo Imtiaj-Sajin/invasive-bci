@@ -39,6 +39,8 @@ def permuted(dec, perm):
 def fit_nonneg(Ftr, Y, b0, lam):
     """min ||Y - sum_c g_c F_c - d||^2 + lam*T*(||g - 1||^2 + ||d - b0||^2), g >= 0."""
     T, C, K = Ftr.shape
+    if np.isinf(lam):                       # CV chose no update: gains 1, offsets unchanged
+        return np.ones(C), np.asarray(b0, float)
     A = np.concatenate([Ftr.transpose(0, 2, 1).reshape(T * K, C), np.tile(np.eye(K), (T, 1))], axis=1)
     y = Y.reshape(-1)
     s = np.sqrt(lam * T)

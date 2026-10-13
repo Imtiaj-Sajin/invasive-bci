@@ -191,6 +191,7 @@ def cv_pick(fit_fn, err_fn, trial_id, n, grid, k=5):
 
 # ---- fast CV for shrunk least squares (one eigendecomposition per fold, all regularization values) ---------------
 def _fold_blocks(trial_id, n, k):
+    assert n >= 2, "cross-validation needs at least two labelled trials"
     k = max(2, min(k, n // 2))
     return [np.isin(trial_id, blk) for blk in np.array_split(np.arange(n), k)]
 
@@ -235,6 +236,8 @@ def _eig_solver(F, r, fit, center=True):
 
 def _solve(eig, lam, anchor):
     ev, Q, Qtb, Fm, rm = eig
+    if np.isinf(lam):                          # infinite shrinkage: the anchor itself (free intercept still refit if centred)
+        return np.asarray(anchor, dtype=np.float64), Fm, rm
     rhs = Qtb + lam * (Q.T @ anchor)
     theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
     return theta, Fm, rm
@@ -246,17 +249,21 @@ def _predict(F, theta, Fm, rm):
     return (F - Fm) @ theta + rm
 
 
-def cv_shrunk(F, r, trial_id, n, grid, anchor, k=5, scale_by_rows=True, intercept_anchor=None):
+def cv_shrunk(F, r, trial_id, n, grid, anchor, k=5, scale_by_rows=True, intercept_anchor=None, include_anchor=True):
     """k-fold CV (contiguous trial blocks within the first n trials) for argmin ||r - F theta - d||^2 + lam' ||theta - anchor||^2
     with lam' = lam * n_fit_rows (if scale_by_rows). Intercepts d are unpenalised, unless ``intercept_anchor`` (K,) is
     given: then d is shrunk toward it with the same lam' (everything shrinks toward the previous decoder, so tiny
-    calibration sets cannot shift the output offset). Returns (best_lam, predict_fn(F_new) fitted on all n trials)."""
+    calibration sets cannot shift the output offset). Returns (best_lam, predict_fn(F_new) fitted on all n trials).
+
+    With ``include_anchor`` the anchor itself (lam = infinity: no update) is one of the candidates, so a correction can
+    never be chosen when CV says it does worse than leaving the decoder unchanged (audit 2026-10-13)."""
     lab = trial_id < n
     center = intercept_anchor is None
     if not center:
         ia = np.asarray(intercept_anchor, dtype=np.float64)
         anchor = (np.concatenate([anchor, ia]) if F.ndim == 3 else np.vstack([anchor, ia[None]]))
         F = _with_intercept(F)
+    grid = np.append(np.asarray(grid, dtype=float), np.inf) if include_anchor else np.asarray(grid, dtype=float)
     err = np.zeros(len(grid))
     for val in _fold_blocks(trial_id, n, k):
         fit = lab & ~val

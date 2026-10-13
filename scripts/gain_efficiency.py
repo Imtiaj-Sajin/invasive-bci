@@ -21,7 +21,7 @@ from decay_alpha import GAPS, LADDER, sessions_for  # noqa: E402
 from ibci.anatomy import ladder  # noqa: E402
 
 N_LIST = [10, 20, 50, 100, 300]
-BASE_ALPHA = {"N": 0.1, "C": 1.0, "M": 1.0}
+BASE_ALPHA = {}          # all individuals use the tuned penalty (alpha = 1e4), as stated in the paper
 
 
 def main():
@@ -38,7 +38,7 @@ def main():
     trains = sorted(lin.train.unique())
     keep = set(rng.choice(trains, min(args.max_train, len(trains)), replace=False))
     pairs = lin[lin.train.isin(keep)].reset_index(drop=True)
-    sess = sessions_for(args.subject, BASE_ALPHA.get(args.subject, 0.1), set(pairs.train) | set(pairs.test))
+    sess = sessions_for(args.subject, BASE_ALPHA.get(args.subject, 1e4), set(pairs.train) | set(pairs.test))
     rows, t0 = [], time.time()
     out_csv = os.path.join(args.out, f"{args.subject}.csv")
     for c, r in pairs.iterrows():
