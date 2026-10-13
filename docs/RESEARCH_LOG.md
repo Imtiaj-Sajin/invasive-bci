@@ -1294,3 +1294,13 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   anchor candidate stays as a safeguard.
 - `bench_check.py --subjects N --pairs 3 --n-labels 300`: all seven reference methods reproduce the rerun ladder to
   1e-16, including the supervised ones.
+
+### 2026-10-13 — Step 3: foundation-model feasibility (decision 0005, proposed)
+
+- NDT3 has public weights (45M, 350M; CC-BY-NC-4.0) and takes threshold crossings in 20 ms bins (<= 320 channels),
+  which our LINK and compact BrainGate files already hold. Its pretraining includes DANDI 000688 (monkeys C, M):
+  usable only as an in-pretraining control. Monkey N and BrainGate look clean (re-check configs before running).
+- POYO family: no usable clean weights. NDT2: weak, secondary. No published year-scale decay study of a pretrained
+  decoder found.
+- Recommendation to the owners: NDT3-45M pilot (monkey N + two humans, ~3-4 days) with a stop rule, then the full
+  benchmark if it works. Waiting for go/stop.
