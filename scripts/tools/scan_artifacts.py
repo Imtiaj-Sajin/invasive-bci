@@ -20,7 +20,7 @@ sys.path[:0] = [os.path.join(os.path.dirname(__file__), "..", "..", "src"), os.p
 from replicate_braingate_decoding import TRAIN_FRAC, load_session  # noqa: E402
 
 ROOTS = {"T6": "D:/ibci-data", "T5": "D:/ibci-data", "T9": "G:/ibci-data", "T7": "F:/ibci-data", "T10": "F:/ibci-data",
-         "T8": "G:/ibci-data", "T11": "D:/ibci-data", "T2": "F:/ibci-data", "T3": "F:/ibci-data"}
+         "T8": "H:/ibci-data", "T11": "D:/ibci-data", "T2": "F:/ibci-data", "T3": "F:/ibci-data"}
 
 
 def main():

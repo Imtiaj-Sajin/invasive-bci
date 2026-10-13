@@ -48,7 +48,7 @@ NAME = {k: n for k, n, _, _, _ in IND}
 RET = "retention (R² / fresh R²)"
 DECODING_ROOTS = {"T6": "D:/ibci-data/braingate/decoding/T6", "T5": "D:/ibci-data/braingate/decoding/T5",
                   "T9": "G:/ibci-data/braingate/decoding/T9", "T7": "F:/ibci-data/braingate/decoding/T7",
-                  "T10": "F:/ibci-data/braingate/decoding/T10", "T8": "G:/ibci-data/braingate/decoding/T8",
+                  "T10": "F:/ibci-data/braingate/decoding/T10", "T8": "H:/ibci-data/braingate/decoding/T8",
                   "T11": "D:/ibci-data/braingate/decoding/T11", "T2": "F:/ibci-data/braingate/decoding/T2",
                   "T3": "F:/ibci-data/braingate/decoding/T3"}
 
