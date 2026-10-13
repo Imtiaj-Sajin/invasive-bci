@@ -1283,3 +1283,14 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   DANDI API (000688 and 001201: CC-BY-4.0).
 - Freed RAM (owner's permission): closed Docker/WSL, Chrome, NVIDIA Broadcast, EA app, Phone Link. Lane B now runs as
   two queue workers (`scripts/run_audit_queue.sh`, lock directories per step).
+
+### 2026-10-13 — Monkey N tuned ladder rerun: identical; audit reading corrected
+
+- `decay_alpha.py --subject N` with the anchor candidate gives byte-identical results to the previous run (max
+  difference 0 in every rung). CV never chose 'no update' (lam_L3: 1e-5 in 187 pairs, 1e-6 in 67, 1e-4 in 5).
+- The audit's '41% of N pairs below the anchor' compared test R2, not CV error. By gap, re-weighting minus
+  renormalized R2 in monkey N has median +0.001 (1 d), -0.007 (7 d), +0.001 (30 d), +0.019 (120 d), +0.053 (480 d):
+  at short gaps there is little to correct and the difference is noise around zero. It is not a selection bug. The
+  anchor candidate stays as a safeguard.
+- `bench_check.py --subjects N --pairs 3 --n-labels 300`: all seven reference methods reproduce the rerun ladder to
+  1e-16, including the supervised ones.
