@@ -13,6 +13,7 @@ researchers will reuse and cite for years. Read this file first, then `docs/RESE
 | `docs/decisions/` | Decision records: why a topic/method/dataset was chosen and what was rejected. |
 | `src/` | Library code for the project. |
 | `scripts/` | Runnable entry points (download, preprocess, train, evaluate). |
+| `benchmark/` | Year-scale decoder-transfer benchmark: fixed splits (`manifests/`) and its README. API in `src/ibci/bench/`. |
 | `results/` | Small result artefacts (tables, figures, JSON metrics). Large files stay out of git. |
 | `data/` | Downloaded datasets. **Git-ignored.** Recreate with the download scripts. |
 
