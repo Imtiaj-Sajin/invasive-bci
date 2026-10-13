@@ -16,6 +16,7 @@ import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from ibci.participants import humans, valid_pairs  # noqa: E402
+from ibci.stats import t_half as _t_half  # noqa: E402
 
 SUBJ = [("monkey N", "results/anatomy/ladder.csv"), ("monkey C", "results/replication/C_ladder.csv"),
         ("monkey M", "results/replication/M_ladder.csv")]
@@ -24,11 +25,7 @@ GAPS = [1, 7, 30, 120, 480]
 
 
 def t_half(med):
-    lg = np.log(GAPS)
-    for k in range(1, len(GAPS)):
-        if med[k] < 0.5 <= med[k - 1]:
-            return float(np.exp(lg[k - 1] + (med[k - 1] - 0.5) / (med[k - 1] - med[k]) * (lg[k] - lg[k - 1])))
-    return np.inf if med[-1] >= 0.5 else (GAPS[0] if med[0] < 0.5 else np.nan)
+    return _t_half(med, GAPS)     # 0 = below one half at the first gap; inf = never
 
 
 def curve(d):

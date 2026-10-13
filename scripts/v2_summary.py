@@ -19,8 +19,9 @@ import pandas as pd
 from scipy import stats
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from ibci.participants import ALL_PAIRS, humans, valid_pairs  # noqa: E402
-from ibci.stats import cluster_bootstrap  # noqa: E402
+from ibci.participants import ALL_PAIRS, complete_budgets, humans, valid_pairs  # noqa: E402
+from ibci.stats import cluster_bootstrap, last_gap  # noqa: E402
+from ibci.stats import t_half as _t_half  # noqa: E402
 
 GAPS = [1, 7, 30, 120, 480]
 IND = {"N": ("Monkey N", "results/anatomy/ladder.csv"), "C": ("Monkey C", "results/replication/C_ladder.csv"),
@@ -37,11 +38,7 @@ def ci(d, col, n_boot=2000):
 
 
 def t_half(curve):
-    lg = np.log(GAPS)
-    for k in range(1, len(GAPS)):
-        if np.isfinite(curve[k]) and curve[k] < 0.5 <= curve[k - 1]:
-            return float(np.exp(lg[k - 1] + (curve[k - 1] - 0.5) / (curve[k - 1] - curve[k]) * (lg[k] - lg[k - 1])))
-    return float("inf") if curve[-1] >= 0.5 else (1.0 if curve[0] < 0.5 else float("nan"))
+    return _t_half(curve, GAPS)
 
 
 def decay_block(d, l2="L2", own="own", l3="L3_n300"):
@@ -59,7 +56,8 @@ def decay_block(d, l2="L2", own="own", l3="L3_n300"):
     for k, q in one.groupby("days"):
         out[f"strict_{int(k)}day"] = {"n": int(len(q)), "retention": ci(q, "ret")}
     curve = [d[d.gap_target == g].ret.median() if (d.gap_target == g).any() else np.nan for g in GAPS]
-    out["t_half_days"] = round(t_half(curve), 1)
+    out["t_half_days"] = round(t_half(curve), 1)        # 0 = below one half at the first gap; inf = never
+    out["t_half_maxgap"] = last_gap(curve, GAPS)
     return out
 
 
@@ -125,7 +123,7 @@ def main():
                 "fa_stab_vs_renorm": paired(q, "fa_stab", "renorm", max_gap=480)}
         ge = f"results/gain_efficiency/{k}.csv"
         if os.path.exists(ge):
-            q = valid_pairs(pd.read_csv(ge))
+            q = complete_budgets(valid_pairs(pd.read_csv(ge)), [f"{r}_n{n}" for r in ("L3", "L6p", "L6") for n in (10, 20, 50, 100, 300)])   # same pairs at every budget
             eff = {}
             for n in (10, 20, 50, 100, 300):
                 for rung in ("L3", "L6p", "L6"):

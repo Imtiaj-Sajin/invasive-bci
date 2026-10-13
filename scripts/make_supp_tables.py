@@ -13,12 +13,9 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from ibci.participants import humans, valid_pairs  # noqa: E402
+from ibci.participants import complete_budgets, filter_valid, humans, valid_pairs  # noqa: E402
 from ibci.stats import cluster_bootstrap  # noqa: E402
 
-LADDERS = {"Monkey N": "results/anatomy/ladder.csv", "Monkey C": "results/replication/C_ladder.csv",
-           "Monkey M": "results/replication/M_ladder.csv"}
-LADDERS.update({f"Human {p}": f"results/replication_bg/{p}_ladder.csv" for p in humans()})
 GAPS = [1, 7, 30, 120, 480]
 
 
@@ -37,9 +34,11 @@ def write(path, rows):
 
 
 def ladder_table(out):
+    """Correction ladder at the tuned (primary) penalty, so the supervised rungs use the corrected cross-validation."""
     rows = []
-    for name, p in LADDERS.items():
-        d = valid_pairs(pd.read_csv(p))
+    for k in ["N", "C", "M"] + humans():
+        name = f"Monkey {k}" if k in ("N", "C", "M") else f"Human {k}"
+        d = valid_pairs(pd.read_csv(f"results/decay_alpha/{k}_alpha10000.csv"))
         d = d[d.gap_target.isin(GAPS)].assign(ret=lambda x: x.L2 / x.own)
         rows.append(r"\multicolumn{11}{l}{\textit{" + name + r"}}\\")
         for g, q in d.groupby("gap_target"):
@@ -97,7 +96,7 @@ def policy_table(out):
     for n, q in p.groupby("n"):
         h = st[str(int(n))]
         cells = [str(int(n)), str(len(q)), f"{100 * h['cv'] / len(q):.1f}", f"{100 * h['history'] / len(q):.1f}",
-                 f"{mc[str(int(n))]['P_exact']:.3f}" if mc[str(int(n))]["P_exact"] < 1 else "1.0"]
+                 f"{mc[str(int(n))]['P_cluster']:.3f}" if mc[str(int(n))]["P_cluster"] < 1 else "1.0"]   # clustered
         for c in ("cv", "history", "oracle"):
             cells.append(f3((q[c] / q.own).median()))
         rows.append(" & ".join(cells) + r"\\")
@@ -213,7 +212,7 @@ def angle_table(out):
         p = f"results/weight_angles/{k}.csv"
         if not os.path.exists(p):
             continue
-        med = pd.read_csv(p).groupby("gap_target")[["angle_global", "angle_channel", "angle_null"]].median()
+        med = filter_valid(pd.read_csv(p), k).groupby("gap_target")[["angle_global", "angle_channel", "angle_null"]].median()
         for g, r in med.iterrows():
             rows.append(" & ".join([name if g == med.index[0] else "", str(g), f"{r.angle_global:.0f}",
                                     f"{r.angle_channel:.0f}", f"{r.angle_null:.0f}"]) + r"\\")
@@ -243,7 +242,7 @@ def human_eff_table(out):
         p = f"results/gain_efficiency/{k}.csv"
         if not os.path.exists(p):
             continue
-        q = valid_pairs(pd.read_csv(p))
+        q = complete_budgets(valid_pairs(pd.read_csv(p)), [f"{r}_n{n}" for r in ("L3", "L6p", "L6") for n in (10, 20, 50, 100, 300)])   # same pairs at every budget
         cells = [NAMES[k], str(len(q)), f3((q.L2 / q.own).median())]
         for n in (10, 20, 50, 100, 300):
             vals = []
@@ -283,7 +282,7 @@ def controls_table(out):
                                          for c in ("renorm", "rew", "rew_perm", "rew_nonneg", "rew_perm_nn")]
         m = f"results/gain_mechanism/{k}.csv"
         if os.path.exists(m):
-            g = pd.read_csv(m)
+            g = filter_valid(pd.read_csv(m), k)
             for c in ("rho_rate", "rho_imp"):
                 sv = g.groupby("train")[c].mean().dropna() if c in g else pd.Series(dtype=float)
                 cells.append(f"{sv.median():.2f} ({(sv > 0).mean() * 100:.0f}\\%)".replace("-", "$-$") if len(sv) >= 6
