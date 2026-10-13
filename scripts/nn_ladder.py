@@ -30,7 +30,8 @@ from decay_alpha import GAPS, LADDER, sessions_for  # noqa: E402
 from drift_anatomy_nn import DEV, batched_predict, fit_decoder, fit_front, windows  # noqa: E402
 from ibci.anatomy import r2  # noqa: E402
 
-BASE_ALPHA = {"N": 0.1, "C": 1.0, "M": 1.0}
+BASE_ALPHA = {}          # all individuals use the tuned penalty (alpha = 1e4)
+N_LABELLED = 300
 HID, P_DROP, WD, MAX_IT = 64, 0.5, 1e-2, 4000
 
 
@@ -79,14 +80,15 @@ def main():
     ap.add_argument("--out", default="results/nn_ladder")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
-    src = LADDER.get(args.subject, f"results/replication_bg/{args.subject}_ladder.csv")
+    # linear comparison values come from the tuned-penalty ladder (alpha = 1e4), as in the rest of the paper
+    src = f"results/decay_alpha/{args.subject}_alpha10000.csv"
     lin = pd.read_csv(src)
     lin = lin[lin.gap_target.isin(GAPS)].reset_index(drop=True)
     rng = np.random.default_rng(0)
     trains = sorted(lin.train.unique())
     keep = set(rng.choice(trains, min(args.max_train, len(trains)), replace=False))
     pairs = lin[lin.train.isin(keep)].reset_index(drop=True)
-    sess = sessions_for(args.subject, BASE_ALPHA.get(args.subject, 0.1), set(pairs.train) | set(pairs.test))
+    sess = sessions_for(args.subject, BASE_ALPHA.get(args.subject, 1e4), set(pairs.train) | set(pairs.test))
     print(f"{args.subject}: {len(pairs)} pairs from {len(keep)} training sessions on {DEV}", flush=True)
 
     t = lambda a: torch.tensor(np.asarray(a), device=DEV, dtype=torch.float32)  # noqa: E731
@@ -105,28 +107,33 @@ def main():
                 X_, Y_, _, _, tid_ = data(s)
                 models[s.key] = fit_es(X_, Y_, tid_)
         Xtr, Ytr, Xte, yte, tid = data(sj)
-        n_lab = int(tid.max()) + 1
-        fit_m = torch.tensor(tid < int(0.8 * n_lab), device=DEV)
-        val_m = ~fit_m
+        lab = tid < N_LABELLED                         # same labelled trials as the linear corrections (first 300)
+        n_lab = int(tid[lab].max()) + 1
+        lab_t = torch.tensor(lab, device=DEV)
+        fit_m = torch.tensor(lab & (tid < int(0.8 * n_lab)), device=DEV)
+        val_m = lab_t & ~fit_m
+        Xtr, Ytr = Xtr[lab_t], Ytr[lab_t]
+        fit_m, val_m = fit_m[lab_t], val_m[lab_t]
         mi = models[si.key]
         row = dict(subject=args.subject, train=r.train, test=r.test, gap_target=int(r.gap_target), days=int(r.days),
                    L2=r2(batched_predict(mi, Xte).cpu().numpy(), yte),
                    own=r2(batched_predict(models[sj.key], Xte).cpu().numpy(), yte),
                    ridge_L2=r.L2, ridge_L3=r.L3_n300, ridge_L6p=r.L6p_n300, ridge_own=r.own)
-        errs = {}
+        base_err = float(((batched_predict(mi, Xtr[val_m]) - Ytr[val_m]) ** 2).mean())   # 'no update' candidate
+        errs = {None: base_err}
         for lam in (1e-4, 1e-3, 1e-2):
             f = fit_front(mi, Xtr[fit_m], Ytr[fit_m], "gain", lam)
             errs[lam] = float(((batched_predict(mi, Xtr[val_m], f) - Ytr[val_m]) ** 2).mean())
         lam = min(errs, key=errs.get)
-        row["L3"] = r2(batched_predict(mi, Xte, fit_front(mi, Xtr, Ytr, "gain", lam)).cpu().numpy(), yte)
-        row["lam_L3"] = lam
-        errs = {}
+        row["L3"] = row["L2"] if lam is None else             r2(batched_predict(mi, Xte, fit_front(mi, Xtr, Ytr, "gain", lam)).cpu().numpy(), yte)
+        row["lam_L3"] = np.inf if lam is None else lam
+        errs = {None: base_err}
         for lam in (1e-4, 1e-2, 1.0):
             m = fit_decoder(Xtr[fit_m], Ytr[fit_m], n_iter=400, init=mi, prior_lam=lam)
             errs[lam] = float(((batched_predict(m, Xtr[val_m]) - Ytr[val_m]) ** 2).mean())
         lam = min(errs, key=errs.get)
-        row["L6p"] = r2(batched_predict(fit_decoder(Xtr, Ytr, n_iter=400, init=mi, prior_lam=lam), Xte).cpu().numpy(), yte)
-        row["lam_L6p"] = lam
+        row["L6p"] = row["L2"] if lam is None else             r2(batched_predict(fit_decoder(Xtr, Ytr, n_iter=400, init=mi, prior_lam=lam), Xte).cpu().numpy(), yte)
+        row["lam_L6p"] = np.inf if lam is None else lam
         for p in mi.parameters():
             p.requires_grad_(True)
         rows.append(row)

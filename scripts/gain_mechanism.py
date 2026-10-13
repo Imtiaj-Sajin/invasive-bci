@@ -24,6 +24,7 @@ from scipy.io import loadmat
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 sys.path.insert(0, os.path.dirname(__file__))
 from decay_alpha import GAPS, sessions_for  # noqa: E402
+from replicate_braingate_decoding import channel_info  # noqa: E402
 from ibci.anatomy import LAMS_CF, cv_shrunk, gain_features  # noqa: E402
 
 
@@ -39,7 +40,8 @@ def yield_day(root, p, day):
     if "impedance" not in el:
         el["impedance"] = np.nan
     el["impedance"] = el.impedance.where(el.impedance < 4000)
-    return el.set_index("electrode_id")[["rate", "impedance"]]
+    el["array"] = el["array"].astype(str)
+    return el.set_index(["array", "x", "y"])[["rate", "impedance"]]
 
 
 def fit_gains(dec, sj, n=300):
@@ -48,6 +50,8 @@ def fit_gains(dec, sj, n=300):
     lab = tid < n
     lam, _ = cv_shrunk(Ftr, sj.y_tr, tid, n, LAMS_CF, np.ones(Ftr.shape[1]), 5, intercept_anchor=dec.b)
     T, C, K = Ftr[lab].shape
+    if np.isinf(lam):                       # CV chose no update: all gains 1 (no information about channels)
+        return np.ones(C)
     A = np.concatenate([Ftr[lab].transpose(0, 2, 1).reshape(T * K, C), np.tile(np.eye(K), (T, 1))], axis=1)
     s = np.sqrt(lam * T)
     A_aug = np.vstack([A, s * np.eye(C + K)])
@@ -63,6 +67,10 @@ def main():
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
     root = os.path.join(os.environ.get("IBCI_DATA", "D:/ibci-data"), "braingate")
+    # decoder channels are matched to yield electrodes by (array, x, y): T10 decodes only its dPCG array, which is
+    # electrodes 96-191 in its yield files (audit 2026-10-13)
+    chan = channel_info(sorted(glob.glob(os.path.join(root, "decoding", args.subject, "*_decoding.mat")))[0])
+    key = pd.MultiIndex.from_arrays([chan.array, chan.x, chan.y])
     yroot = os.environ.get("IBCI_YIELD", "D:/ibci-data/braingate")   # folder that contains yield/<P>/
     lin = pd.read_csv(f"results/replication_bg/{args.subject}_ladder.csv")
     lin = lin[lin.gap_target.isin(GAPS)][["train", "test", "gap_target", "days"]].reset_index(drop=True)
@@ -78,10 +86,9 @@ def main():
         if yi is None or yj is None:
             continue
         g = fit_gains(si.dec, sj)
-        n_ch = len(g)
-        ids = np.arange(n_ch)
-        d_rate = np.log(yj.rate.reindex(ids).to_numpy(float) + 0.1) - np.log(yi.rate.reindex(ids).to_numpy(float) + 0.1)
-        d_imp = np.log(yj.impedance.reindex(ids).to_numpy(float)) - np.log(yi.impedance.reindex(ids).to_numpy(float))
+        assert len(g) == len(key)
+        d_rate = np.log(yj.rate.reindex(key).to_numpy(float) + 0.1) - np.log(yi.rate.reindex(key).to_numpy(float) + 0.1)
+        d_imp = np.log(yj.impedance.reindex(key).to_numpy(float)) - np.log(yi.impedance.reindex(key).to_numpy(float))
         row = dict(subject=args.subject, **r.to_dict())
         for name, x in (("rate", d_rate), ("imp", d_imp)):
             ok = np.isfinite(x)

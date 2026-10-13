@@ -34,11 +34,26 @@ TRAIN_FRAC = 0.8
 BLOCKNORM = os.environ.get("IBCI_BLOCKNORM") == "1"   # off for all main analyses
 
 
+def channel_order(electrodes):
+    """Column order that groups channels by array name (alphabetical, so 'lateral' before 'medial'), keeping the stored
+    order within each array. Files already in this order (all except 15 T11 sessions) are unchanged."""
+    return np.argsort(np.atleast_1d(electrodes["array"]).astype(str), kind="stable")
+
+
+def channel_info(path):
+    """(array, x, y) of each decoder channel, in the column order used by load_session."""
+    e = loadmat(path, simplify_cells=True, variable_names=["electrodes"])["electrodes"]
+    o = channel_order(e)
+    return pd.DataFrame({"array": np.atleast_1d(e["array"]).astype(str)[o], "x": np.atleast_1d(e["x"])[o],
+                         "y": np.atleast_1d(e["y"])[o]})
+
+
 def load_session(path):
     """Return (day, X (T20, C) float32 SBP at 20 ms, Y (T20, 2) intention, trial index per 20 ms bin)."""
     d = loadmat(path, simplify_cells=True)
     day = int(d["post_implant_day"])
     sbp = np.asarray(d["neural"]["sbp"], dtype=np.float32)
+    sbp = sbp[:, channel_order(d["electrodes"])]   # fixed array order (some T11 files store the medial array first)
     if BLOCKNORM:              # sensitivity analysis: z-score each recording block separately (as in the dataset paper)
         b = d["blocks"]
         for a0, a1 in zip(np.atleast_1d(b["sample_start_index"]).astype(int), np.atleast_1d(b["sample_end_index"]).astype(int)):

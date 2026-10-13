@@ -1224,3 +1224,21 @@ abstract 144 words. Next: six more BrainGate participants (owners to download), 
   13 GB free. Owners approved H: and D: for project data.
 - Agreed order: (1) code audit, (2) year-scale benchmark packaging, (3) feasibility check for foundation-model decoders
   over years, then (4) that test if feasible (PC2 when available), (5) manuscript writing last.
+
+### 2026-10-13 — Code audit and fixes
+
+Three independent reviews (decoding maths; human-data pipeline; statistics and reporting). No test-trial leakage, lags
+causal, solvers correct. Fixed so far:
+- `cv_shrunk` now includes the anchor ('no update') as a CV candidate. Before, the CV-chosen re-weighting fell below
+  its own anchor (renormalized decoder) in 41% of monkey N pairs and 3-14% elsewhere (tuned ladders).
+- `gain_mechanism.py` matches decoder channels to yield electrodes by (array, x, y). T10's decoding files hold only its
+  dPCG array (yield ids 96-191); the old index match used the MFG array (rate correlation 0.25 vs 0.99 when matched).
+  The reported 'no relation in T10' was this bug.
+- `load_session` orders channels by array name; 15 T11 sessions stored the medial array first (others unchanged).
+- Label-free (align_variants, label_free_plus), label efficiency and the network ladder now use the tuned penalty, as
+  the manuscript states; the network ladder uses the same first 300 labelled trials as the linear corrections and has
+  a 'no update' candidate; it compares with the tuned linear ladder.
+- Verified: channel matching correlations 0.91-0.99 (T10, T5, T8, T11 swapped and normal days); smoke tests of all
+  changed scripts.
+Reruns: `bash scripts/run_audit_reruns.sh A|B|G` (results/audit_reruns/). Reporting fixes (consistent pair filter,
+half-life below the first gap, Holm-corrected counts, McNemar clustering, text) follow after the reruns.

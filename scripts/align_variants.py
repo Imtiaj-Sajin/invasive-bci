@@ -34,7 +34,7 @@ def main():
     ap.add_argument("--out", default="results/align_variants")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
-    alpha = args.alpha if args.alpha is not None else (1.0 if args.subject in ("C", "M") else 0.1)
+    alpha = args.alpha if args.alpha is not None else 1e4   # tuned penalty, as in the rest of the paper
     src = LADDER.get(args.subject, f"results/replication_bg/{args.subject}_ladder.csv")
     pairs = pd.read_csv(src)
     pairs = pairs[pairs.gap_target.isin(GAPS)][["train", "test", "gap_target", "days"]].reset_index(drop=True)

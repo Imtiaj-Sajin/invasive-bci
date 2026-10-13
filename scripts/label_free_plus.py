@@ -28,7 +28,7 @@ from decay_alpha import GAPS, LADDER, sessions_for  # noqa: E402
 from ibci.anatomy import N_LAGS, r2  # noqa: E402
 from ibci.linear import LagDecoder  # noqa: E402
 
-BASE_ALPHA = {"N": 0.1, "C": 1.0, "M": 1.0}
+BASE_ALPHA = {}          # all individuals use the tuned penalty (alpha = 1e4), as stated in the paper
 
 
 def mat_pow(C, p, shrink=0.05):
@@ -70,7 +70,7 @@ def main():
     ap.add_argument("--out", default="results/label_free_plus")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
-    alpha = BASE_ALPHA.get(args.subject, 0.1)
+    alpha = BASE_ALPHA.get(args.subject, 1e4)
     src = LADDER.get(args.subject, f"results/replication_bg/{args.subject}_ladder.csv")
     pairs = pd.read_csv(src)
     pairs = pairs[pairs.gap_target.isin(GAPS)][["train", "test", "gap_target", "days"]].reset_index(drop=True)
