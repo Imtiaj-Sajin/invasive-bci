@@ -21,7 +21,7 @@ mkdir -p "$OUT"
 
 data_root() {   # where each participant's compact files live (chosen by free space, see RESEARCH_LOG 2026-10-07)
   case "$1" in
-    T8) echo G:/ibci-data ;;
+    T8) echo H:/ibci-data ;;
     T11) echo D:/ibci-data ;;
     *) echo F:/ibci-data ;;
   esac

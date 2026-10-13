@@ -1216,3 +1216,11 @@ abstract 144 words. Next: six more BrainGate participants (owners to download), 
   are labelled and few-shot supervised is an official category, but the linear-decoder oracle bounds any correction of
   a linear decoder (H1 0.21 vs NDT2 few-shot 0.52 and leaderboard 0.68). Not pursued; paper claims stay scoped to
   corrections for a given decoder.
+
+### 2026-10-13 — Disk and order of work
+
+- G: (repository drive) had 0.6 GB free. Moved T8 compact sessions G:/ibci-data -> H:/ibci-data (new SSD; 58 files,
+  sizes identical, sampled MD5 match, load test passed) and updated the six scripts that hard-code data roots. G: now
+  13 GB free. Owners approved H: and D: for project data.
+- Agreed order: (1) code audit, (2) year-scale benchmark packaging, (3) feasibility check for foundation-model decoders
+  over years, then (4) that test if feasible (PC2 when available), (5) manuscript writing last.

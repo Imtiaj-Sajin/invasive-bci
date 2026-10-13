@@ -11,7 +11,7 @@ PY=.venv/Scripts/python.exe
 OUT=results/new_participants
 MIN_FREE_GB=${MIN_FREE_GB:-6}
 P="$1"; shift
-case "$P" in T8|T9) R=G:/ibci-data ;; T11|T5|T6) R=D:/ibci-data ;; *) R=F:/ibci-data ;; esac
+case "$P" in T8) R=H:/ibci-data ;; T9) R=G:/ibci-data ;; T11|T5|T6) R=D:/ibci-data ;; *) R=F:/ibci-data ;; esac
 
 free_gb() { powershell -NoProfile -Command "[int]((Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory/1MB)" | tr -dc 0-9; }
 
