@@ -1304,3 +1304,16 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   decoder found.
 - Recommendation to the owners: NDT3-45M pilot (monkey N + two humans, ~3-4 days) with a stop rule, then the full
   benchmark if it works. Waiting for go/stop.
+
+### 2026-10-13 — Reruns paused at the owner's request (14:10)
+
+- 13:57: three steps failed together with out-of-memory errors (decay_alpha C, reweight_controls C and M): monkeys C
+  and M load all sessions at once and the commit limit (44 GB = 24 GB RAM + page files) was reached with four lanes.
+- Added `scripts/retry_failed_reruns.sh` (re-runs failed steps one at a time once enough commit memory is free; at
+  most 3 tries; locks shared with the queue) and `scripts/resume_audit_reruns.sh` (clears stale locks, sets aside
+  logs of interrupted steps, restarts lanes A and G, queue workers W1 and W2, and the sweeper; refuses to start while
+  any lane is running).
+- Paused at 14:10 (owner needs the PC). Finished: decay_alpha N and reweight_controls N (both identical to the
+  previous results). Everything else reruns on resume. Partial outputs of interrupted steps were restored to their
+  committed versions.
+- Resume with: `bash scripts/resume_audit_reruns.sh`
