@@ -133,6 +133,9 @@ def main():
     ap.add_argument("--resume", action="store_true", help="continue an interrupted run from its CSV")
     ap.add_argument("--skip", nargs="*", default=[], help="supervised rungs to skip, e.g. L4 L5 (not reported for humans)")
     args = ap.parse_args()
+    if BLOCKNORM and os.path.normpath(args.out) == os.path.normpath("results/replication_bg"):
+        sys.exit("IBCI_BLOCKNORM=1 must write to its own --out (e.g. results/replication_bg_blocknorm), "
+                 "not over the main ladders")
     os.makedirs(args.out, exist_ok=True)
     files = sorted(glob.glob(os.path.join(args.root, "decoding", args.participant, "*_decoding.mat")),
                    key=lambda p: int(re.search(r"_day_(\d+)_", p).group(1)))

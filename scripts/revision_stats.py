@@ -2,7 +2,8 @@
 
 1. Regularization: the 1% rule compared with each training session's own best same-day penalty (an optimistic
    same-day choice, since it uses the held-out same-day trials), and with a per-session version of the 1% rule.
-2. Harmful recalibration: exact McNemar tests on paired outcomes (cross-validation vs history policy), Holm-adjusted
+2. Harmful recalibration: Wilcoxon signed-rank tests clustered on training sessions (primary; per-session harmful
+   rates, cross-validation vs history policy) and exact McNemar tests on paired outcomes (for reference), Holm-adjusted
    over the five data budgets, and the shrinkage values the history policy chose.
 3. Long electrode silences: revival after >= 30-day silence versus the shuffled-order null (Fisher's exact test).
 4. True one-day versus two-day pairs in the 'overnight' set, per subject.
@@ -55,11 +56,35 @@ for n, q in p.groupby("n"):
     pv = float(stats.binomtest(b01, b01 + b10, 0.5).pvalue) if b01 + b10 else 1.0
     ps.append(pv)
     out.setdefault("mcnemar", {})[int(n)] = {"cv_only_harmful": b01, "history_only_harmful": b10, "P_exact": pv}
-order = np.argsort(ps)
-m = len(ps)
-adj = np.minimum(1, np.maximum.accumulate([ps[i] * (m - k) for k, i in enumerate(order)]))
-for k, i in enumerate(order):
-    out["mcnemar"][int(sorted(p.n.unique())[i])]["P_holm"] = float(adj[k])
+
+
+def holm(pv):
+    order = np.argsort(pv)
+    m = len(pv)
+    adj = np.minimum(1, np.maximum.accumulate([pv[i] * (m - k) for k, i in enumerate(order)]))
+    res = np.empty(m)
+    res[order] = adj
+    return res
+
+
+budgets = sorted(int(n) for n in p.n.unique())
+for n, a in zip(budgets, holm(ps)):
+    out["mcnemar"][n]["P_holm"] = float(a)
+
+# Pairs that share a training session are not independent, so the primary test is clustered on training sessions:
+# per training session, the fraction of its test sessions where each policy was harmful; Wilcoxon signed-rank on the
+# per-session difference (cv - history). Holm-corrected over the data budgets.
+pc = []
+for n in budgets:
+    q = p[p.n == n].assign(cv_h=lambda x: x.cv < x.renorm - 0.01, hi_h=lambda x: x.history < x.renorm - 0.01)
+    g = q.groupby("train")[["cv_h", "hi_h"]].mean()
+    diff = g.cv_h - g.hi_h
+    pv = float(stats.wilcoxon(diff).pvalue) if (diff != 0).any() else 1.0
+    pc.append(pv)
+    out["mcnemar"][n].update({"n_train": int(len(g)), "n_train_cv_worse": int((diff > 0).sum()),
+                              "n_train_history_worse": int((diff < 0).sum()), "P_cluster": pv})
+for n, a in zip(budgets, holm(pc)):
+    out["mcnemar"][n]["P_cluster_holm"] = float(a)
 
 r = json.load(open("results/failure_robustness/summary.json"))["revival"]
 a, b = r["long_silence"], r["shuffle_long"]

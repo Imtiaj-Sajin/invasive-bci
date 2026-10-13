@@ -58,6 +58,21 @@ def valid_pairs(d, *own_cols):
     return d[keep]
 
 
+def filter_valid(d, k):
+    """Pair rule for result tables without their own reference R2 (e.g. weight angles, gain-electrode link): keep the
+    (train, test, gap) pairs whose tuned-penalty reference decoder works. With IBCI_ALL_PAIRS=1 every pair is kept."""
+    if ALL_PAIRS:
+        return d
+    ref = pd.read_csv(f"results/decay_alpha/{k}_alpha10000.csv")
+    ok = ref[ref.own > MIN_REF_R2][["train", "test", "gap_target"]]
+    return d.merge(ok, on=["train", "test", "gap_target"], how="inner")
+
+
+def complete_budgets(d, cols):
+    """Rows that have a value for every labelled-trial budget in ``cols`` (same pairs at every budget)."""
+    return d.dropna(subset=[c for c in cols if c in d.columns])
+
+
 def individuals():
     return MONKEYS + humans()
 

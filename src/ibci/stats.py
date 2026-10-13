@@ -41,3 +41,32 @@ def by_gap_table(df, cols, gap="gap_target", cluster="train", n_boot=1000):
             row[c] = f"{est:.3f} [{lo:.3f}, {hi:.3f}]"
         rows.append(row)
     return pd.DataFrame(rows)
+
+
+def t_half(curve, gaps):
+    """Days until median retention falls to one half, interpolated linearly in log days between target gaps.
+
+    Returns 0.0 when retention is already below one half at the first tested gap (report as 'under the first gap'),
+    +inf when it never falls below one half up to the longest tested gap with data (report as 'more than that gap'),
+    and nan when the curve has no data. Missing gaps (nan) are skipped.
+    """
+    g = np.asarray(gaps, float)
+    c = np.asarray(curve, float)
+    ok = np.isfinite(c)
+    if not ok.any():
+        return float("nan")
+    g, c = g[ok], c[ok]
+    if c[0] < 0.5:
+        return 0.0
+    lg = np.log(g)
+    for k in range(1, len(g)):
+        if c[k] < 0.5 <= c[k - 1]:
+            return float(np.exp(lg[k - 1] + (c[k - 1] - 0.5) / (c[k - 1] - c[k]) * (lg[k] - lg[k - 1])))
+    return float("inf")
+
+
+def last_gap(curve, gaps):
+    """Longest target gap that has data (for reporting '+inf' half-lives as 'more than X days')."""
+    c = np.asarray(curve, float)
+    ok = np.flatnonzero(np.isfinite(c))
+    return float(np.asarray(gaps, float)[ok[-1]]) if len(ok) else float("nan")

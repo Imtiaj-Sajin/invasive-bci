@@ -9,14 +9,13 @@ import argparse
 import json
 import os
 import re
-
 import sys
 
 import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from ibci.participants import excluded_humans, humans  # noqa: E402
+from ibci.participants import complete_budgets, excluded_humans, filter_valid, humans, valid_pairs  # noqa: E402
 
 HUM = humans()   # included participants (pre-specified reference-decoder rule)
 IND = ["N", "C", "M"] + HUM
@@ -24,16 +23,25 @@ GAPS = [1, 7, 30, 120, 480]
 V = {}
 
 
+def _fmt(x, d):
+    if x is None or not np.isfinite(x):
+        return "--"
+    t = f"{x:.{d}f}"
+    if float(t) == 0:                       # no '-0.00'
+        t = f"{0:.{d}f}"
+    return t.replace("-", "$-$")
+
+
 def f2(x):
-    return "--" if x is None or not np.isfinite(x) else f"{x:.2f}".replace("-", "$-$")
+    return _fmt(x, 2)
 
 
 def f3(x):
-    return "--" if x is None or not np.isfinite(x) else f"{x:.3f}".replace("-", "$-$")
+    return _fmt(x, 3)
 
 
 def pct(x):
-    return "--" if x is None or not np.isfinite(x) else f"{100 * x:.0f}".replace("-", "$-$")
+    return "--" if x is None or not np.isfinite(x) else _fmt(100 * x, 0)
 
 
 def pval(p):
@@ -47,9 +55,15 @@ def pval(p):
     return f"{m}\\times10^{{{int(e)}}}"
 
 
-def days(x):
-    if x is None or not np.isfinite(x):
-        return "more than 480"
+def days(x, maxgap=480):
+    """Half-life in days. 0 means retention was already below one half at the first tested gap (1-2 days); inf means
+    it never fell below one half up to the longest tested gap with data."""
+    if x is None or (isinstance(x, float) and np.isnan(x)):
+        return "--"
+    if x == 0:
+        return "$<$1"
+    if not np.isfinite(x):
+        return f"more than {maxgap:.0f}"
     return f"{x:.0f}" if x >= 10 else f"{x:.1f}"
 
 
@@ -74,7 +88,7 @@ def main():
         d = r["default"]
         put(f"{k}:pairs", str(d["n_pairs"]))
         put(f"{k}:ntrain", str(d["n_train"]))
-        put(f"{k}:thalf", days(d["t_half_days"]))
+        put(f"{k}:thalf", days(d["t_half_days"], d.get("t_half_maxgap", 480)))
         g1 = d.get("gap1", {}).get("retention")
         if g1:
             put(f"{k}:ret1", f2(g1[0]))
@@ -100,7 +114,7 @@ def main():
             put(f"{k}:gainretmin", f2(min(rg)))
             put(f"{k}:gainretmax", f2(max(rg)))
         if "tuned" in r:
-            put(f"{k}:thalftuned", days(r["tuned"]["t_half_days"]))
+            put(f"{k}:thalftuned", days(r["tuned"]["t_half_days"], r["tuned"].get("t_half_maxgap", 480)))
             for g in GAPS:
                 e = r["tuned"].get(f"gap{g}", {}).get("retention")
                 if e:
@@ -143,8 +157,8 @@ def main():
                 put(f"{k}:eff{c.replace('_', '')}", f2(v))
 
     # pooled human data efficiency
-    frames = [pd.read_csv(f"results/gain_efficiency/{k}.csv") for k in HUM
-              if os.path.exists(f"results/gain_efficiency/{k}.csv")]
+    frames = [complete_budgets(valid_pairs(pd.read_csv(f"results/gain_efficiency/{k}.csv")), [f"{r}_n{n}" for r in ("L3", "L6p", "L6") for n in (10, 20, 50, 100, 300)])
+              for k in HUM if os.path.exists(f"results/gain_efficiency/{k}.csv")]
     if frames:
         e = pd.concat(frames)
         put("hum:effpairs", str(len(e)))
@@ -160,7 +174,7 @@ def main():
     for k in IND:
         p = f"results/weight_angles/{k}.csv"
         if os.path.exists(p):
-            q = pd.read_csv(p)
+            q = filter_valid(pd.read_csv(p), k)
             med = q.groupby("gap_target")[["angle_global", "angle_channel", "angle_null"]].median()
             red = med.angle_global - med.angle_channel
             red_all += list(red.values)
@@ -177,7 +191,7 @@ def main():
     for k in ("C", "M"):
         p = f"results/matched_output_tuned/{k}.csv" if os.path.exists(f"results/matched_output_tuned/{k}.csv") else f"results/matched_output/{k}.csv"
         if os.path.exists(p):
-            q = pd.read_csv(p).assign(rec=lambda x: (x.L3_n300 - x.L2) / (x.own - x.L2))
+            q = valid_pairs(pd.read_csv(p)).assign(rec=lambda x: (x.L3_n300 - x.L2) / (x.own - x.L2))
             med = q.groupby("gap_target").rec.median()
             put(f"{k}:matchrecmin", pct(med.min()))
             put(f"{k}:matchrecmax", pct(med.max()))
@@ -216,6 +230,12 @@ def main():
         put(f"mcn:{n}:p", pval(m["P_exact"]))
         put(f"mcn:{n}:holm", pval(m["P_holm"]))
         put(f"mcn:{n}:cv", str(m["cv_only_harmful"]))
+        if "P_cluster" in m:   # primary: clustered on training sessions
+            put(f"mcn:{n}:pc", pval(m["P_cluster"]))
+            put(f"mcn:{n}:holmc", pval(m["P_cluster_holm"]))
+            put(f"mcn:{n}:ntrain", str(m["n_train"]))
+            put(f"mcn:{n}:ncvworse", str(m["n_train_cv_worse"]))
+            put(f"mcn:{n}:nhistworse", str(m["n_train_history_worse"]))
     h = ps.get("harmful", {})
     for n, m in h.items():
         put(f"harm:{n}:cv", f"{100 * m['cv'] / m['n_pairs']:.1f}")
@@ -315,7 +335,7 @@ def main():
     for k in HUM:
         p = f"results/gain_mechanism/{k}.csv"
         if os.path.exists(p):
-            q = pd.read_csv(p)
+            q = filter_valid(pd.read_csv(p), k)
             for name in ("rate", "imp"):
                 c = f"rho_{name}"
                 if c in q and q[c].notna().sum() >= 6:
@@ -347,7 +367,7 @@ def main():
     for k in IND:
         p = f"results/reweight_controls/{k}.csv"
         if os.path.exists(p):
-            q = pd.read_csv(p)
+            q = valid_pairs(pd.read_csv(p))
             for c in ("renorm", "rew", "rew_nonneg", "rew_perm", "rew_perm_nn"):
                 put(f"{k}:ctl:{c}", f2(float((q[c] / q.own).median())))
             put(f"{k}:ctl:pairs", str(len(q)))
@@ -357,11 +377,38 @@ def main():
 
 
 def _num(s):
-    """Parse a formatted value back to a number ('$-$0.12' -> -0.12); None if it is not numeric."""
+    """Parse a formatted value back to a number ('$-$0.12' -> -0.12; '$<$1' -> 0; 'more than X' -> inf); None if not
+    numeric."""
+    s = str(s)
+    if s == "$<$1":
+        return 0.0
+    if s.startswith("more than"):
+        return float("inf")
     try:
-        return float(str(s).replace("$-$", "-").replace("\\%", ""))
+        return float(s.replace("$-$", "-").replace(chr(92) + "%", ""))
     except ValueError:
         return None
+
+
+def _pnum(s):
+    """Parse a formatted P value back to a float ('3.2\\times10^{-5}' -> 3.2e-5); None if not numeric."""
+    if s is None:
+        return None
+    m = re.fullmatch(r"([0-9.]+)\\times10\^\{(-?[0-9]+)\}", str(s))
+    if m:
+        return float(m.group(1)) * 10 ** int(m.group(2))
+    return _num(s)
+
+
+def holm_sig(pairs, alpha=0.05):
+    """Names whose P stays below alpha after Holm correction over all tested names. pairs: [(name, formatted P)]."""
+    v = sorted((x, n) for n, x in ((n, _pnum(p)) for n, p in pairs) if x is not None)
+    m, out = len(v), []
+    for k, (x, n) in enumerate(v):
+        if x * (m - k) >= alpha:
+            break
+        out.append(n)
+    return out
 
 
 def _join(names):
@@ -432,14 +479,17 @@ def group_keys():
         ps = [V.get(f"{i}:{s}") for i in IND if f"{i}:{s}" in V]
         put(f"all:{s}:nsig", str(sum(1 for p in ps if "times10" in p or (_num(p) is not None and _num(p) < 0.05))))
         put(f"all:{s}:ntested", str(len(ps)))
+        put(f"all:{s}:nsigholm", str(len(holm_sig([(i, V[f"{i}:{s}"]) for i in IND if f"{i}:{s}" in V]))))
     hs = [h for h in HUM if f"{h}:coralp" in V]
     put("hum:coral:nworse", str(sum(1 for h in hs if (_num(V[f"{h}:coraldiff"]) or 0) < 0 and
                                     ("times10" in V[f"{h}:coralp"] or (_num(V[f"{h}:coralp"]) or 1) < 0.05))))
+    hsig = holm_sig([(h, V[f"{h}:coralp"]) for h in hs])
+    put("hum:coral:nworseholm", str(sum(1 for h in hsig if (_num(V[f"{h}:coraldiff"]) or 0) < 0)))
     ap = load("results/v2_summary_allpairs.json")                  # sensitivity: every pair kept
     for k, r in ap.items():
         d = r.get("default", {})
         if d.get("t_half_days") is not None:
-            put(f"ap:{k}:thalf", days(d["t_half_days"]))
+            put(f"ap:{k}:thalf", days(d["t_half_days"], d.get("t_half_maxgap", 480)))
         g1 = d.get("gap1", {}).get("retention")
         if g1:
             put(f"ap:{k}:ret1", f2(g1[0]))
@@ -475,6 +525,9 @@ def group_keys():
         put(f"hum:mech:{name}:ntested", str(len(ps)))
         put(f"hum:mech:{name}:nsig", str(len(sig)))
         put(f"hum:mech:{name}:sigwho", _join(sig) if sig else "none")
+        hsig = [h for h, _ in ps if h in holm_sig(ps)]
+        put(f"hum:mech:{name}:nsigholm", str(len(hsig)))
+        put(f"hum:mech:{name}:sigwhoholm", _join(hsig) if hsig else "none")
 
 
 def write(args):
