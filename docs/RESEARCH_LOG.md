@@ -1242,3 +1242,26 @@ causal, solvers correct. Fixed so far:
   changed scripts.
 Reruns: `bash scripts/run_audit_reruns.sh A|B|G` (results/audit_reruns/). Reporting fixes (consistent pair filter,
 half-life below the first gap, Holm-corrected counts, McNemar clustering, text) follow after the reruns.
+
+### 2026-10-13 — Reporting fixes (commit e76cb58)
+
+- Half-life: shared `ibci.stats.t_half`; 0 now means retention was already below one half at the first tested gap
+  (printed "<1"), inf means it never fell below one half up to the longest gap with data (printed "more than X"). The
+  old placeholder 1.0 day is gone.
+- Pair rule (reference R2 > 0.1) now applied in every summary and table, including the files without their own
+  reference R2 (weight angles, gain-electrode link), via `filter_valid` against the tuned ladder. Label-efficiency
+  medians use the same pairs at every budget (`complete_budgets`).
+- Harmful recalibration (monkey N): pairs sharing a training session are not independent, so the primary test is now a
+  Wilcoxon signed-rank test on per-training-session harmful rates (30 sessions), Holm-adjusted over five budgets.
+  On the current (pre-rerun) policies file: 10 trials, CV worse in 6/30 sessions, history in 0, P = 0.027 (Holm 0.14);
+  20 trials, 5 vs 0, P = 0.042 (Holm 0.17). The old pair-level McNemar gave Holm P = 0.039 at 10 trials. The direction
+  holds but the effect no longer survives correction; the text must say so (final numbers after the recal_policy rerun).
+- Holm-adjusted counts across individuals (`*:nsigholm`, `hum:mech:*:sigwhoholm`). On pre-rerun files the decay and
+  regularization counts are unchanged (9/9, 8/9); the weight-firing-rate link drops from 5/6 to 3/6 (T5, T9, T8) and
+  the impedance link from 3/6 to 2/6 (T9, T8). Gain-mechanism files are being rerun with the fixed channel matching.
+- Supplementary Table 2 now uses the tuned ladder (supervised rungs with the corrected CV).
+- `IBCI_BLOCKNORM=1` refuses to write into results/replication_bg.
+- Pending: T11 block-normalized ladder still has supervised rungs from the old CV (affects `t11b:gainret*` only);
+  rerun after lanes A/B finish.
+- Lane B was waiting for 6 GB free RAM (the PC has ~4 GB spare with VS Code and WSL open); restarted with
+  `MIN_FREE_GB=3 bash scripts/run_audit_reruns.sh B`.
