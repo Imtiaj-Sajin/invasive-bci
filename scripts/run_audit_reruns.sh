@@ -8,28 +8,29 @@
 #
 # Three lanes: A = tuned ladders (decay_alpha), B = the other per-pair analyses, G = network ladder on the GPU (after
 # each individual's lane-A result, which it reads). Each step writes <log>.ok when it finishes, so the queue can be
-# restarted safely. Every step waits for MIN_FREE_GB of free RAM before it starts.
+# restarted safely. Memory rules in scripts/rerun_lib.sh.
 #
 # Usage: bash scripts/run_audit_reruns.sh A|B|G >> results/audit_reruns/queue.log 2>&1
 set -u
 cd "$(dirname "$0")/.."
 PY=.venv/Scripts/python.exe
 OUT=results/audit_reruns
-MIN_FREE_GB=${MIN_FREE_GB:-6}
 mkdir -p "$OUT"
 ALL="N C M T6 T5 T9 T7 T10 T8"
 HUM="T6 T5 T9 T7 T10 T8"
 
 root() { case "$1" in T8) echo H:/ibci-data ;; T9) echo G:/ibci-data ;; T7|T10) echo F:/ibci-data ;; *) echo D:/ibci-data ;; esac; }
-free_gb() { powershell -NoProfile -Command "[int]((Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory/1MB)" | tr -dc 0-9; }
+. scripts/rerun_lib.sh   # memory rules: one monkey C/M step at a time, commit-memory gate
 
 step() {   # step NAME SUBJECT COMMAND...
   local log="$OUT/$1_$2.log" k="$2"; shift 2
   if [ -f "$log.ok" ]; then echo "skip  $log"; return; fi
-  while [ "$(free_gb)" -lt "$MIN_FREE_GB" ]; do sleep 60; done
+  heavy_acquire "$k"
+  wait_mem "$k"
   echo "$(date +%T) start $log"
   if IBCI_DATA="$(root "$k")" "$PY" "$@" > "$log" 2>&1; then touch "$log.ok"; echo "$(date +%T) done  $log"
   else echo "$(date +%T) FAILED $log"; fi
+  heavy_release "$k"
 }
 
 case "$1" in

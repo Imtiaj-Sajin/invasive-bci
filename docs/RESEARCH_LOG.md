@@ -1317,3 +1317,13 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   previous results). Everything else reruns on resume. Partial outputs of interrupted steps were restored to their
   committed versions.
 - Resume with: `bash scripts/resume_audit_reruns.sh`
+
+### 2026-10-14 — Reruns resumed with memory rules (09:36)
+
+- First resume (09:33) ran decay_alpha C and reweight_controls C together; commit memory fell to 1 GB free within a
+  minute (each monkey C job ~9 GB while loading). Stopped at once (2 min lost).
+- `scripts/rerun_lib.sh`: one monkey C/M step at a time across all lanes (`heavy.lock`), and every step waits for free
+  commit memory (6 GB; 12 GB for C/M) instead of free RAM. Used by lanes A/G, the queue and the sweeper.
+- Queue workers now make several passes: a C/M step is skipped while the slot is busy and taken up later; each step is
+  run once by the queue (`.qtried`), failures go to the sweeper. Resume clears markers of unfinished steps.
+- Owner closed nothing needed; Chrome, WhatsApp, Phone Link closed before the start.

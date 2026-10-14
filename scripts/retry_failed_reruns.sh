@@ -14,7 +14,7 @@ ALL="N C M T6 T5 T9 T7 T10 T8"
 HUM="T6 T5 T9 T7 T10 T8"
 
 root() { case "$1" in T8) echo H:/ibci-data ;; T9) echo G:/ibci-data ;; T7|T10) echo F:/ibci-data ;; *) echo D:/ibci-data ;; esac; }
-commit_free_gb() { powershell -NoProfile -Command "[int]((Get-CimInstance Win32_OperatingSystem).FreeVirtualMemory/1MB)" | tr -dc 0-9; }
+. scripts/rerun_lib.sh   # memory rules: one monkey C/M step at a time, commit-memory gate
 running() {   # running SCRIPT_BASENAME SUBJECT|-   -> true if a python process runs it
   local pat="scripts/$1"; [ "$2" != - ] && pat="$pat.* --subject $2( |\$)"
   powershell -NoProfile -Command "Get-CimInstance Win32_Process -Filter \"Name='python.exe'\" | Where-Object { \$_.CommandLine -match '$pat' } | Select-Object -First 1 -ExpandProperty ProcessId" | grep -q .
@@ -46,14 +46,15 @@ while :; do
     script=$(basename "${cmd%% *}"); subj=$k; [ "$name" = recal_policy ] && subj=-
     running "$script" "$subj" && continue                       # lane A, G or a worker is running it
     [ "$name" = nn_ladder ] && [ ! -f "$OUT/decay_alpha_$k.log.ok" ] && continue
-    need=6; case "$k" in C|M) need=12 ;; esac                   # monkeys C and M hold all sessions in memory
     mkdir "$log.lock" 2>/dev/null || continue
-    while [ "$(commit_free_gb)" -lt "$need" ]; do sleep 120; done
+    heavy_acquire "$k"
+    wait_mem "$k"
     cp "$log" "$log.try_$((tries + 1))"                          # keep the failed log, count the attempt
     echo "$(date +%T) RETRY start $log (attempt $((tries + 1)))"
     # shellcheck disable=SC2086
     if IBCI_DATA="$(root "$k")" "$PY" $cmd > "$log" 2>&1; then touch "$log.ok"; echo "$(date +%T) RETRY done  $log"
     else echo "$(date +%T) RETRY FAILED $log"; fi
+    heavy_release "$k"
     rmdir "$log.lock"
   done
   [ "$left" -eq 0 ] && break
