@@ -37,15 +37,26 @@ def load(subject, key):
     return dict(np.load(f"{PILOT}/{subject}/{key}.npz"))
 
 
+COLS = ["subject", "kind", "train", "test", "gap_target", "condition", "r2", "epochs", "val", "bins", "seconds",
+        "base_epochs", "base_val"]
+
+
+def read_rows(path):
+    """Rows of a pilot CSV. Files written before 2026-10-15 have an 11-column header but 13-field pair rows, so the
+    header is skipped and the fixed column list is used."""
+    return pd.read_csv(path, header=None, skiprows=1, names=COLS)
+
+
 def done_rows(path):
     if not os.path.exists(path):
-        return pd.DataFrame(), set()
-    d = pd.read_csv(path)
+        return pd.DataFrame(columns=COLS), set()
+    d = read_rows(path)
     return d, set(zip(d.kind, d.train.fillna(""), d.test, d.condition))
 
 
 def append(path, row):
-    pd.DataFrame([row]).to_csv(path, mode="a", header=not os.path.exists(path), index=False, float_format="%.6f")
+    pd.DataFrame([row]).reindex(columns=COLS).to_csv(path, mode="a", header=not os.path.exists(path), index=False,
+                                                    float_format="%.6f")
 
 
 def tune(init, s, n_trials, norm, D, C, job, args, kin_weight=1.0):
