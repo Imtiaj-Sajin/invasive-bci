@@ -1410,3 +1410,21 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   rule results, re-weighting recovery, scrambled-channel controls, label efficiency (slowest recovery still T8).
 - Pending: T11 block-normalized rerun with the CV fix (running on PC2, branch pc2-t11-blocknorm); affects
   Supplementary Note 4 only.
+
+### 2026-10-15 — NDT3 pilot: monkey N done; T5 same-day below linear; learning-rate rule (decision 0005)
+
+- Monkey N complete (60 rows, results/ndt3/pilot/N.csv; lr 1e-4). Median retention (R2 / own same-day R2) by gap 7,
+  30, 120, 480 d: NDT3 no update 0.13, -0.55, -0.47, -0.23 (renormalized linear 0.53, -0.03, -0.42, -0.59); NDT3 with
+  300 labelled trials 1.17, 1.06, 0.90, 1.02 (linear refit toward prior 0.98, 0.92, 0.88, 0.92); 50 trials 0.38, 0.23,
+  0.29, 0.38; neural-loss-only adaptation negative at every gap. Same-day R2: NDT3 0.39, linear 0.20.
+- T5: five same-day references at lr 1e-4 below the linear decoder in 4/5 sessions (0.17-0.54 vs 0.36-0.55); all
+  stopped near epoch 31 (validation peak ~epoch 11). Diagnostic on T5 day 1519 (`scripts/ndt3/diag_human.py`,
+  results/ndt3/diag_T5.csv; linear 0.489): lr 1e-4 0.26 and 0.32 (two runs: run-to-run spread ~0.07); lr 4e-4 0.38;
+  patience 50 0.30 (peak still ~epoch 13); shorter evaluation context 0.29 vs 0.26.
+- Incident: the diagnostic ran alongside the pilot; the WSL VM (6 GB cap) ran out of memory, both NDT3 processes were
+  killed and the WSL service failed (E_UNEXPECTED). `wsl --shutdown` restored it; no finished rows lost. Rule: run one
+  NDT3 process at a time.
+- Pre-specified learning-rate rule (before any result with chosen rates): per individual, lr from {1e-4, 4e-4} by NDT3's
+  own validation R2 on the earliest pilot session's training segment; test R2 recorded but not used
+  (`scripts/ndt3/lr_select.py`, results/ndt3/lr_select.csv). The pilot then uses the chosen rate per individual;
+  individuals whose chosen rate differs from 1e-4 are rerun completely at that rate (earlier rows kept separately).
