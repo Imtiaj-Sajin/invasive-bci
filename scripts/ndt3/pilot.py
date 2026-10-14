@@ -92,14 +92,20 @@ def main():
     ap.add_argument("--unsup-epochs", type=int, default=30)
     ap.add_argument("--patience", type=int, default=20)
     ap.add_argument("--lr", type=float, default=1e-4)
+    ap.add_argument("--lr-map", default="", help="per-individual rates chosen by scripts/ndt3/lr_select.py, e.g. N=4e-4,T5=4e-4")
+    ap.add_argument("--tag", default="", help="suffix of the results file, e.g. _lr4e-4")
     ap.add_argument("--batch-size", type=int, default=32)
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
     os.makedirs(OUT, exist_ok=True)
-    json.dump(vars(args), open(f"{OUT}/settings.json", "w"), indent=1)
+    json.dump(vars(args), open(f"{OUT}/settings{args.tag}.json", "w"), indent=1)
     pairs = pd.read_csv(f"{PILOT}/pairs.csv")
+    lr_map = {a.split("=")[0]: float(a.split("=")[1]) for a in args.lr_map.split(",") if a}
+    base_lr = args.lr
     for k in args.subjects:
-        path = f"{OUT}/{k}.csv"
+        args.lr = lr_map.get(k, base_lr)
+        print(k, "learning rate", args.lr, flush=True)
+        path = f"{OUT}/{k}{args.tag}.csv"
         _, done = done_rows(path)
         P = pairs[pairs.subject == k]
         # same-day references

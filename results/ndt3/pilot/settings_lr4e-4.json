@@ -1,0 +1,14 @@
+{
+ "subjects": [
+  "N",
+  "T5"
+ ],
+ "epochs": 100,
+ "unsup_epochs": 30,
+ "patience": 20,
+ "lr": 0.0001,
+ "lr_map": "N=4e-4,T5=4e-4",
+ "tag": "_lr4e-4",
+ "batch_size": 32,
+ "seed": 0
+}
