@@ -74,10 +74,20 @@ def base_cfg():
 
 
 def register(job, n_channels):
+    """Register the split(s) in <ROOT>/<job>, first dropping any earlier registry entries for that folder. NDT3's
+    registry keeps entries for the life of the process and keys them by file name and array layout; re-registering a
+    job folder with a different layout (96 vs 192 channels) left both entries matching the alias, so the files were
+    loaded twice (caught by the item-count assertion, 2026-10-15). With the drop there is exactly one entry per job."""
     from context_general_bci.contexts.context_info import RTTContextInfo
-    from context_general_bci.contexts.context_registry import context_registry
-    context_registry.register([*RTTContextInfo.build_preproc(str(ROOT / job), alias_prefix=f"ours{job}",
-                                                             arrays=arrays_for(n_channels))])
+    from context_general_bci.contexts.context_registry import context_registry as reg
+    folder = str((ROOT / job).resolve())
+    if len(reg.search_index):
+        stale = reg.search_index[reg.search_index.datapath.astype(str).str.startswith(folder + "/")]
+        for i in stale.id:
+            reg._registry.pop(i, None)
+        reg.search_index = reg.search_index[~reg.search_index.id.isin(stale.id)]
+    reg.register([*RTTContextInfo.build_preproc(str(ROOT / job), alias_prefix=f"ours{job}",
+                                                arrays=arrays_for(n_channels))])
     return f"ours{job}-.*"
 
 
