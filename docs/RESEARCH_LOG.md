@@ -1373,3 +1373,14 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   88% of 40 training sessions, P = 2.8e-7 (shuffled-channel null median 0.024); impedance median rho -0.025,
   P = 0.017. The paper's earlier "no relation in T10" came from matching decoder channels to the wrong array.
   Final numbers (pair rule, Holm across participants) come with the regenerated summaries.
+
+### 2026-10-15 — Lane A (tuned ladders) finished: effect of the anchor candidate
+
+- `decay_alpha.py` rerun for all nine individuals with 'no update' as a CV candidate. Label-free rungs and the
+  reference decoder unchanged everywhere (max difference 0). Supervised rungs changed in 18 of 1,824 pairs:
+  C 1 (L6p, max 0.044), M 1 (L3, 2e-5), T6 13 (L3 6 pairs, max 0.002; L6p 7 pairs, max 0.047), T9 3 (L3 2, L6p 1,
+  max 0.022); N, T5, T7, T10, T8 identical. The decay and correction results do not depend on the fix.
+- Pause/resume during the run: processes were suspended (NtSuspendProcess; `kill -STOP` in WSL) during an owner call
+  and resumed without loss.
+- NDT3 pilot resumed 22:21 after the monkey C/M rerun steps; results file had mixed column counts (ref rows 11, pair
+  rows 13); `pilot.py` now writes a fixed column list and reads older files with it (commit edf2751).
