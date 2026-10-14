@@ -1428,3 +1428,17 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   own validation R2 on the earliest pilot session's training segment; test R2 recorded but not used
   (`scripts/ndt3/lr_select.py`, results/ndt3/lr_select.csv). The pilot then uses the chosen rate per individual;
   individuals whose chosen rate differs from 1e-4 are rerun completely at that rate (earlier rows kept separately).
+
+### 2026-10-15 — NDT3 learning-rate selection; T8 problem; pilot rerun at the chosen rate
+
+- `lr_select.py` (results/ndt3/lr_select.csv), validation R2 on each individual's earliest pilot session:
+  N 1e-4 0.417 vs 4e-4 0.440 -> 4e-4; T5 0.593 vs 0.609 -> 4e-4; T8 0.053 vs 0.042 -> 1e-4 (test R2 -0.01 / 0.01).
+  Bug found on the way: one process registering 96- and 192-channel splits under the same job left two registry
+  entries matching (files loaded twice; caught by the assertion). `ndt3_lib.register` now drops earlier entries for
+  the job folder first (commit c41054a). Pilot rows were unaffected (one layout per process).
+- T8: NDT3 fails to fit (same-day ~0) at both rates while the linear decoder gets 0.20-0.35 on every T8 session.
+  T8 crossings are sparser (0.09 vs 0.20 per bin; 91 vs 135 of 192 channels active). Ruled out: input scaling (a
+  linear decoder on raw counts 0.40 vs z-scored 0.38 on T8 day 45). T8 pilot on hold; GPU checks queued (from-scratch
+  NDT3, one array or active channels only, prediction collapse).
+- Pilot rerun for N and T5 at 4e-4 (`pilot.py --lr-map N=4e-4,T5=4e-4 --tag _lr4e-4`); earlier 1e-4 rows kept as
+  results/ndt3/pilot/N_lr1e-4.csv and T5_lr1e-4.csv.
