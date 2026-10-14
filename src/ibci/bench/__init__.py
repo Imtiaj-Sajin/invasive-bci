@@ -118,23 +118,32 @@ class Task:
                 "r2": r2, "ref_r2": ref, "retention": r2 / ref}
 
 
-def _sessions(subject, keys):
-    """Session objects exactly as in the paper's tuned-penalty analysis (scripts/decay_alpha.py)."""
+FEATURES = ("sbp", "tx")
+
+
+def _sessions(subject, keys, features="sbp"):
+    """Session objects exactly as in the paper's tuned-penalty analysis (scripts/decay_alpha.py); with
+    features='tx', the same sessions and splits with threshold-crossing counts (ibci.bench.features)."""
+    if features == "tx":
+        from .features import sessions_tx
+        return sessions_tx(subject, REF_ALPHA, keys)
     sys.path.insert(0, os.path.join(_ROOT, "scripts"))
     from decay_alpha import sessions_for
     return sessions_for(subject, REF_ALPHA, keys)
 
 
-def tasks(subject, n_labels=0, gaps=GAPS, valid_only=True, limit=None):
-    """Yield one Task per manifest pair (in manifest order). Sessions are loaded lazily."""
+def tasks(subject, n_labels=0, gaps=GAPS, valid_only=True, limit=None, features="sbp"):
+    """Yield one Task per manifest pair (in manifest order). Sessions are loaded lazily. ``valid`` always refers to
+    the spike-band-power reference, so both feature sets are scored on the same pairs."""
     assert n_labels in BUDGETS, f"n_labels must be one of {BUDGETS}"
+    assert features in FEATURES, f"features must be one of {FEATURES}"
     m = manifest(subject)
     m = m[m.gap_target.isin(gaps)]
     if valid_only:
         m = m[m.valid]
     if limit:
         m = m.head(limit)
-    sess = _sessions(subject, set(m.train) | set(m.test))
+    sess = _sessions(subject, set(m.train) | set(m.test), features)
     for r in m.itertuples():
         yield Task(subject, r.train, r.test, int(r.gap_target), int(r.days), n_labels, bool(r.valid),
                    sess[r.train], sess[r.test])
