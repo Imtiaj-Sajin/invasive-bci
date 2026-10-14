@@ -1349,3 +1349,20 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   H:/ndt3/ckpt (45M 200 h and 45M 2 kh; sha256 in decision 0005).
 - Checkpoint contents: 200 h = monkeys only; 2 kh adds 25,181 Pitt human sessions. Neither contains BrainGate or
   monkey N; both contain monkeys C and M. Pilot uses 45M 2 kh on N, T5, T8.
+
+### 2026-10-14 — NDT3 pipeline works end to end (smoke test, monkey N)
+
+- `scripts/ndt3/export_pilot.py`: 36 pilot pairs (N, T5, T8; 3 training sessions each, 12 pairs per individual)
+  exported as threshold-crossing sessions to H:/ibci-data/ndt3_pilot with the linear reference results
+  (pairs.csv). Linear TX medians: same-day reference N 0.20, T5 0.43, T8 0.28.
+- `scripts/ndt3/ndt3_lib.py` uses NDT3's own data path (preprocessed RTT-style splits registered with
+  RTTContextInfo.build_preproc; Indy array layout M1 / M1+S1 for 96 / 192 channels), its SpikingDataset, Lightning
+  training step and predict_simple_batch. Fixes needed, none touching NDT3's code: single-process dataset loading
+  (NDT3's pool deadlocks, as its code warns); tolerant checkpoint loading (2 kh lists Pitt subjects absent from the
+  public enum; strict weight loading passes); behaviour labels sized to the output count; validation R2 metric
+  sized to the output count (torchmetrics 1.4); unique file names per job; behaviour outputs requested explicitly.
+- Behaviour scale fixed from the fine-tuning source (99.9th percentile of |y|), passed as explicit_norm; R2 computed
+  on our unclamped labels. Alignment check: NDT3's served targets equal our normalized labels (max diff < 1e-3).
+- Smoke (N 2020-01-30, 20 epochs, 220 s): same-day R2 0.401 (streaming, 1 s context) / 0.392 (chunked: 2 s windows,
+  1 s step, last 1 s kept); 7 days later without update 0.087 / 0.083. Chunked evaluation is ~30x faster (7 s vs
+  180 s) and is used for the pilot, with streaming as a spot check.
