@@ -1,0 +1,62 @@
+installing to /root/.local/bin
+  uv
+  uvx
+everyPython 3.11 is alreUsing Python 3WARNING:context_general_bci.contexts.context_info:Datapath folder data/odoherty_rtt does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath foldetorch 2.1.0+cu118 cuda 11.8 gpu NVIDIA GeForce RTX 3060 Ti
+flash_attn 2.6.3
+flash_attn_func ok (1, 64, 4, 32)
+NDT3 imports ok
+NDT3 environment ready: /opt/ndt3-venv (code /opt/ndt3 @ 877f9f5)
+EXIT=0
+i.contexts.context_info:Datapath not found, skipping (data/dyer_co/full-chewie-12192013.mat)
+WARNING:context_general_bci.contexts.context_info:Datapath not found, skipping (./data/gallego_co)
+WARNING:context_general_bci.contexts.context_info:Datapath not found, skipping (data/nlb/000128/sub-Jenkins)
+WARNING:context_general_bci.contexts.context_info:Datapath not found, skipping (data/nlb/000138/sub-Jenkins)
+WARNING:context_general_bci.contexts.context_info:Datapath not found, skipping (data/nlb/000139/sub-Jenkins)
+WARNING:context_general_bci.contexts.context_info:Datapath not found, skipping (data/nlb/000140/sub-Jenkins)
+WARNING:context_general_bci.contexts.context_info:Datapath not found, skipping (data/nlb/000129/sub-Indy)
+WARNING:context_general_bci.contexts.context_info:Datapath folder not found, skipping (data/churchland_reaching/000070/sub-Jenkins)
+WARNING:context_general_bci.contexts.context_info:Datapath folder not found, skipping (data/churchland_reaching/000070/sub-Nitschke)
+WARNING:context_general_bci.contexts.context_info:Datapath folder not found, skipping (data/delay_reach/000121/sub-Reggie)
+WARNING:context_general_bci.contexts.context_info:Datapath folder not found, skipping (data/churchland_misc)
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/miller/Jango_ISO_2015 does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/miller/Spike_ISO_2012 does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/miller/Chewie_CO_2016 does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/miller/Mihili_CO_2014 does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/miller/Mihili_RT_2013_2014 does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/miller/Greyson_Key_2019 does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/rouse_precision/monk_p/COT_SpikesCombined does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/rouse_precision/monk_q/COT_SpikesCombined does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/rouse does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/flint does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/chase does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/mayo does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/schwartz/MonkeyN does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/schwartz/MonkeyR does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/perich/000688/sub-C does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/perich/000688/sub-M does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/perich/000688/sub-J does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/perich/000688/sub-T does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/falcon/000954/sub-HumanPitt-held-in-calib does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/falcon/000954/sub-HumanPitt-held-out-calib does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/falcon/000941/sub-MonkeyL-held-in-calib does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/falcon/000941/sub-MonkeyL-held-out-calib does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/falcon/000950/sub-T5-held-in-calib does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/falcon/000950/sub-T5-held-out-calib does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/falcon/000953/sub-MonkeyN-held-in-calib does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/falcon/000953/sub-MonkeyN-held-out-calib does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/calib/odoherty_rtt does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/calib/s1rtt does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/calib/cst does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/eval/odoherty_rtt does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/eval/s1rtt does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/eval/chicago_grasp does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/eval/cst does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/cst does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/marino_batista/earl_multi_posture_isometric_force does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/marino_batista/earl_multi_posture_dco_reaching does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath not found, skipping (./data/pitt_heli_block)
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/mender_fingerctx/monkeyN_1D_0.mat does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/mender_fingerctx/monkeyN_1D_1.mat does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/mender_fingerctx/monkeyN_1D_2.mat does not exist. Skipping.
+WARNING:context_general_bci.contexts.context_info:Datapath folder data/deo does not exist. Skipping.
