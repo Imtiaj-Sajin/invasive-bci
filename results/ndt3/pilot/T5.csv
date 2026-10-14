@@ -1,0 +1,6 @@
+subject,kind,train,test,gap_target,condition,r2,epochs,val,bins,seconds,base_epochs,base_val
+T5,ref,,T5_day1048,0,sameday,0.166637,31,0.286433,57724,246,,
+T5,ref,,T5_day1519,0,sameday,0.322122,31,0.396451,63417,256,,
+T5,ref,,T5_day166,0,sameday,0.349598,31,0.354298,23911,211,,
+T5,ref,,T5_day47,0,sameday,0.542235,30,0.548165,21095,229,,
+T5,ref,,T5_day525,0,sameday,0.241235,30,0.367225,23960,214,,
