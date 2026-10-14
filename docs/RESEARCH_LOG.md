@@ -1340,3 +1340,12 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
 - NDT3's model code imports flash_attn modules at top level (components.py); there is no official Windows build.
   Options: WSL2 Ubuntu with official wheels (preferred, needs the owner's approval), a community Windows wheel, or
   patching NDT3 to PyTorch attention.
+
+### 2026-10-14 — NDT3 environment ready (decision 0005 addendum)
+
+- Ubuntu-24.04 WSL distro installed on H:\wsl\ndt3 (owner's choice); `C:\Users\User\.wslconfig` caps the WSL VM at
+  6 GB RAM (swap on H:) while reruns run. Cleared pip's download cache on C: (C: had 2 GB free, now 7.4 GB).
+- `scripts/ndt3/setup_wsl.sh` builds the environment; log in results/ndt3/setup.log. Checkpoints in
+  H:/ndt3/ckpt (45M 200 h and 45M 2 kh; sha256 in decision 0005).
+- Checkpoint contents: 200 h = monkeys only; 2 kh adds 25,181 Pitt human sessions. Neither contains BrainGate or
+  monkey N; both contain monkeys C and M. Pilot uses 45M 2 kh on N, T5, T8.

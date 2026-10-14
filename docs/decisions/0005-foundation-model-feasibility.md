@@ -64,3 +64,20 @@ FALCON held-out sessions of days to months). Search not exhaustive.
 Pending. Recommendation: GO for NDT3-45M, limited first to a pilot on monkey N and two humans (about 3-4 days) with a
 stop rule: continue to the full benchmark only if the pilot runs end to end and the fine-tuned NDT3 matches or beats
 the threshold-crossing ridge decoder on same-day data.
+
+## Addendum 2026-10-14: owners' go for the pilot; environment and checkpoints checked
+
+- Owners approved the NDT3-45M pilot ("do the best") and an Ubuntu-24.04 WSL distro on H: for it.
+- Environment: `scripts/ndt3/setup_wsl.sh` (Python 3.11, torch 2.1.0+cu118, official FlashAttention 2.6.3 wheel,
+  NDT3 @ 877f9f5, mid-2024 pins for packages whose latest releases need torch >= 2.5). FlashAttention runs on the
+  3060 Ti and NDT3 imports.
+- Pretraining contents read from the checkpoints' own stored context (`hyper_parameters.data_attrs.context`):
+  - 45M 200 h (`753jmg4u`, sha256 74e39356...8745): 485 sessions, 15 monkeys, no humans. Includes Chewie, Mihi and
+    Perich C/J/M/T.
+  - 45M 2 kh (`l2ulo75e`, sha256 b6b8eef2...a2e): 26,298 sessions, 23 subjects; 25,181 Pitt human sessions
+    (CRS02b, CRS07, CRS08, BCI02, BCI03, BMI01) plus the monkeys above. No BrainGate (Stanford/MGH/Brown) or Chestek
+    monkey-N sessions.
+  - Monkeys C and M overlap directly (e.g. Perich_C CO 2013-10-03 is one of our training sessions): excluded from
+    the NDT3 comparison except as an explicit in-pretraining control.
+- Pilot model: 45M 2 kh (human data in pretraining, clean for monkey N and BrainGate). Pilot individuals: monkey N,
+  T5, T8 (threshold crossings decode well; T6 does not).
