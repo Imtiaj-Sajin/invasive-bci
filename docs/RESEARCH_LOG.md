@@ -1366,3 +1366,10 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
 - Smoke (N 2020-01-30, 20 epochs, 220 s): same-day R2 0.401 (streaming, 1 s context) / 0.392 (chunked: 2 s windows,
   1 s step, last 1 s kept); 7 days later without update 0.087 / 0.083. Chunked evaluation is ~30x faster (7 s vs
   180 s) and is used for the pilot, with streaming as a spot check.
+
+### 2026-10-14 — T10 electrode link after the channel-matching fix
+
+- `gain_mechanism.py --subject T10` (rerun 12:19): weight-change vs firing-rate-change median rho 0.066, positive in
+  88% of 40 training sessions, P = 2.8e-7 (shuffled-channel null median 0.024); impedance median rho -0.025,
+  P = 0.017. The paper's earlier "no relation in T10" came from matching decoder channels to the wrong array.
+  Final numbers (pair rule, Holm across participants) come with the regenerated summaries.
