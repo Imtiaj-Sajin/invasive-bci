@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.5.16)  7 OCT 2026 13:23
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.5.16)  15 OCT 2026 02:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -755,7 +755,26 @@ Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
 )
 Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
 ))
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 18
+(C:\Users\User\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
+
+(C:\Users\User\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 274.
+
+(C:\Users\User\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1353.
+Package xcolor Info: Model `RGB' extended on input line 1365.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1367.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
+) (numbers.tex)
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 20
 .
 
 (C:\Users\User\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd
@@ -768,24 +787,24 @@ File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 ) (supplementary.aux)
 \openout1 = `supplementary.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 18.
-LaTeX Font Info:    ... okay on input line 18.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 18.
-LaTeX Font Info:    ... okay on input line 18.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 18.
-LaTeX Font Info:    ... okay on input line 18.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 18.
-LaTeX Font Info:    ... okay on input line 18.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 18.
-LaTeX Font Info:    ... okay on input line 18.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 18.
-LaTeX Font Info:    ... okay on input line 18.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 18.
-LaTeX Font Info:    ... okay on input line 18.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 18.
-LaTeX Font Info:    ... okay on input line 18.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 18.
-LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -848,104 +867,95 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 g
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-LaTeX Info: Redefining \S on input line 18.
-LaTeX Font Info:    Redeclaring symbol font `AMSa' on input line 18.
+LaTeX Info: Redefining \S on input line 20.
+LaTeX Font Info:    Redeclaring symbol font `AMSa' on input line 20.
 LaTeX Font Info:    Overwriting symbol font `AMSa' in version `normal'
-(Font)                  U/msa/m/n --> U/msa/m/n on input line 18.
+(Font)                  U/msa/m/n --> U/msa/m/n on input line 20.
 LaTeX Font Info:    Overwriting symbol font `AMSa' in version `bold'
-(Font)                  U/msa/m/n --> U/msa/m/n on input line 18.
- (C:\Users\User\AppData\Local\Programs\MiKTeX\tex/latex/graphics\color.sty
-Package: color 2025/01/14 v1.3e Standard LaTeX Color (DPC)
-
-(C:\Users\User\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
-File: color.cfg 2016/01/02 v1.6 sample color configuration
-)
-Package color Info: Driver file: pdftex.def on input line 149.
-
-(C:\Users\User\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx))
-Package hyperref Info: Link coloring ON on input line 18.
-(supplementary.out) (supplementary.out)
+(Font)                  U/msa/m/n --> U/msa/m/n on input line 20.
+Package hyperref Info: Link coloring ON on input line 20.
+ (supplementary.out) (supplementary.out)
 \@outlinefile=\write3
 \openout3 = `supplementary.out'.
 
-LaTeX Font Info:    Calculating math sizes for size <12.045> on input line 33.
+LaTeX Font Info:    Calculating math sizes for size <12.045> on input line 35.
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 3
-3.
+5.
 
 (C:\Users\User\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 3
-3.
+5.
 
 (C:\Users\User\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-33.
+35.
 
 (C:\Users\User\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-33.
+35.
 
 (C:\Users\User\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12.045> on input line 33.
+(Font)              <12.045> on input line 35.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8.43146> on input line 33.
+(Font)              <8.43146> on input line 35.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6.02249> on input line 33.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 33.
+(Font)              <6.02249> on input line 35.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 35.
 
 
 (C:\Users\User\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 33.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 35.
 
 
 (C:\Users\User\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Calculating math sizes for size <11.04124> on input line 33
+LaTeX Font Info:    Calculating math sizes for size <11.04124> on input line 35
 .
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <11.04124> on input line 33.
+(Font)              <11.04124> on input line 35.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7.72884> on input line 33.
+(Font)              <7.72884> on input line 35.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5.52061> on input line 33.
+(Font)              <5.52061> on input line 35.
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 3
-3.
+5.
 
 (C:\Users\User\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-Underfull \hbox (badness 4144) in paragraph at lines 33--33
- \T1/lmr/m/n/9.03374 This doc-u-ment con-tains Sup-ple-men-tary Notes 1--3 and 
+Underfull \hbox (badness 4144) in paragraph at lines 35--35
+ \T1/lmr/m/n/9.03374 This doc-u-ment con-tains Sup-ple-men-tary Notes 1--4 and 
 Sup-ple-men-tary 
  []
 
 
-Underfull \hbox (badness 1454) in paragraph at lines 33--33
- \T1/lmr/m/n/9.03374 Tables 1--13. Every table is gen-er-ated from the released
+Underfull \hbox (badness 1454) in paragraph at lines 35--35
+ \T1/lmr/m/n/9.03374 Tables 1--14. Every table is gen-er-ated from the released
  result files by 
  []
 
-LaTeX Font Info:    Calculating math sizes for size <10.03749> on input line 33
+LaTeX Font Info:    Calculating math sizes for size <10.03749> on input line 35
 .
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.03749> on input line 33.
+(Font)              <10.03749> on input line 35.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7.0262> on input line 33.
+(Font)              <7.0262> on input line 35.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5.01874> on input line 33.
+(Font)              <5.01874> on input line 35.
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 4
-3.
+5.
 (C:\Users\User\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
@@ -969,13 +979,14 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [4]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 143.
+(Font)              <9> on input line 178.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 143.
+(Font)              <7> on input line 178.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 143.
+(Font)              <5> on input line 178.
 
-Overfull \hbox (8.92418pt too wide) in paragraph at lines 138--157
+(supp/tab_data_humans.tex)
+Overfull \hbox (59.03497pt too wide) in paragraph at lines 173--190
  [] 
  []
 
@@ -988,20 +999,20 @@ Overfull \hbox (361.38956pt too wide) has occurred while \output is active
  []
 
 [5] (supp/tab_ladder.tex)
-LaTeX Font Info:    Calculating math sizes for size <8.03> on input line 175.
+LaTeX Font Info:    Calculating math sizes for size <8.03> on input line 208.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8.03> on input line 175.
+(Font)              <8.03> on input line 208.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5.62097> on input line 175.
+(Font)              <5.62097> on input line 208.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <4.015> on input line 175.
+(Font)              <4.015> on input line 208.
 
-Overfull \hbox (4.0161pt too wide) in paragraph at lines 161--176
+Overfull \hbox (4.0161pt too wide) in paragraph at lines 194--209
  [] 
  []
 
 
-LaTeX Warning: Float too large for page by 61.35263pt on input line 176.
+LaTeX Warning: Float too large for page by 220.65302pt on input line 209.
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -1012,7 +1023,7 @@ Overfull \hbox (361.38956pt too wide) has occurred while \output is active
  []
 
 [6] (supp/tab_labelfree.tex)
-Overfull \hbox (3.34384pt too wide) in paragraph at lines 180--195
+Overfull \hbox (7.96884pt too wide) in paragraph at lines 213--228
  [] 
  []
 
@@ -1025,12 +1036,12 @@ Overfull \hbox (361.38956pt too wide) has occurred while \output is active
  []
 
 [7] (supp/tab_mindful_link.tex) (supp/tab_mindful.tex)
-Underfull \hbox (badness 10000) in paragraph at lines 215--224
+Underfull \hbox (badness 10000) in paragraph at lines 248--257
 
  []
 
 
-Overfull \hbox (6.08505pt too wide) in paragraph at lines 198--225
+Overfull \hbox (6.08505pt too wide) in paragraph at lines 231--258
  [] 
  []
 
@@ -1046,7 +1057,11 @@ Overfull \hbox (361.38956pt too wide) has occurred while \output is active
 []| []
  []
 
-[9] (supp/tab_nn.tex) (supp/tab_matched.tex) (supp/tab_angles.tex)
+[9] (supp/tab_nn.tex)
+
+LaTeX Warning: Float too large for page by 23.96709pt on input line 295.
+
+(supp/tab_matched.tex) (supp/tab_angles.tex)
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [10]
@@ -1058,7 +1073,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
  [12]
 (supp/tab_reg.tex)
 
-LaTeX Warning: Float too large for page by 110.62651pt on input line 311.
+LaTeX Warning: Float too large for page by 298.2099pt on input line 344.
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -1069,12 +1084,12 @@ Overfull \hbox (361.38956pt too wide) has occurred while \output is active
  []
 
 [13] (supp/tab_efficiency.tex) (supp/tab_eff_human.tex)
-Underfull \hbox (badness 10000) in paragraph at lines 334--341
+Underfull \hbox (badness 10000) in paragraph at lines 367--374
 
  []
 
 (supp/tab_policy.tex)
-Underfull \hbox (badness 10000) in paragraph at lines 344--353
+Underfull \hbox (badness 10000) in paragraph at lines 377--386
 
  []
 
@@ -1087,12 +1102,12 @@ Overfull \hbox (361.38956pt too wide) has occurred while \output is active
  []
 
 [14] (supp/tab_revival.tex) (supp/tab_failure.tex)
-Underfull \hbox (badness 10000) in paragraph at lines 379--387
+Underfull \hbox (badness 10000) in paragraph at lines 412--420
 
  []
 
 
-LaTeX Warning: Float too large for page by 86.15111pt on input line 388.
+LaTeX Warning: Float too large for page by 86.15111pt on input line 421.
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -1103,7 +1118,12 @@ Overfull \hbox (361.38956pt too wide) has occurred while \output is active
  []
 
 [15] (supp/tab_sim.tex) (supp/tab_augment.tex)
-Overfull \hbox (86.90775pt too wide) in paragraph at lines 406--421
+Overfull \hbox (86.90775pt too wide) in paragraph at lines 439--454
+ [] 
+ []
+
+(supp/tab_decoding.tex)
+Overfull \hbox (126.15485pt too wide) in paragraph at lines 456--471
  [] 
  []
 
@@ -1111,6 +1131,9 @@ Overfull \hbox (86.90775pt too wide) in paragraph at lines 406--421
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [16]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [17]
 (supplementary.aux)
  ***********
 LaTeX2e <2025-11-01>
@@ -1120,13 +1143,13 @@ Package rerunfilecheck Info: File `supplementary.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 12389 strings out of 467871
- 193720 string characters out of 5418860
- 634426 words of memory out of 5000000
- 40940 multiletter control sequences out of 15000+600000
+ 14365 strings out of 467871
+ 224602 string characters out of 5418860
+ 670145 words of memory out of 5000000
+ 42902 multiletter control sequences out of 15000+600000
  737723 words of font info for 136 fonts, out of 8000000 for 9000
  1151 hyphenation exceptions out of 8191
- 90i,14n,93p,1057b,541s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,14n,93p,1057b,558s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/User/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb
 ><C:/Users/User/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx8.pfb><
 C:/Users/User/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx9.pfb><C:
@@ -1147,9 +1170,9 @@ rograms/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/User/AppData/Local/Pro
 grams/MiKTeX/fonts/type1/public/lm/lmsy9.pfb><C:/Users/User/AppData/Local/Progr
 ams/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/User/AppData/Local/Progra
 ms/MiKTeX/fonts/type1/public/lm/lmtt9.pfb>
-Output written on supplementary.pdf (16 pages, 450679 bytes).
+Output written on supplementary.pdf (17 pages, 461414 bytes).
 PDF statistics:
- 217 PDF objects out of 1000 (max. 8388607)
- 34 named destinations out of 1000 (max. 500000)
+ 226 PDF objects out of 1000 (max. 8388607)
+ 37 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

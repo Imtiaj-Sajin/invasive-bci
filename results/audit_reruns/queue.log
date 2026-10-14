@@ -1,0 +1,166 @@
+13:09:19 start results/audit_reruns/decay_alpha_N.log
+13:18:37 start results/audit_reruns/reweight_controls_N.log
+13:26:00 start results/audit_reruns/reweight_controls_N.log
+13:26:15 FAILED results/audit_reruns/reweight_controls_N.log
+13:26:15 FAILED results/audit_reruns/reweight_controls_N.log
+13:26:16 start results/audit_reruns/reweight_controls_C.log
+13:26:16 start results/audit_reruns/reweight_controls_C.log
+13:27:10 W1 start results/audit_reruns/reweight_controls_N.log
+13:28:41 W2 start results/audit_reruns/reweight_controls_C.log
+13:48:41 done  results/audit_reruns/decay_alpha_N.log
+13:48:42 start results/audit_reruns/decay_alpha_C.log
+13:49:22 start results/audit_reruns/nn_ladder_N.log
+13:50:52 W1 done  results/audit_reruns/reweight_controls_N.log
+13:50:53 W1 start results/audit_reruns/reweight_controls_M.log
+13:57:44 W1 FAILED results/audit_reruns/reweight_controls_M.log
+13:57:44 W1 start results/audit_reruns/reweight_controls_T6.log
+13:57:51 FAILED results/audit_reruns/decay_alpha_C.log
+13:57:51 start results/audit_reruns/decay_alpha_M.log
+13:57:55 W2 FAILED results/audit_reruns/reweight_controls_C.log
+13:57:56 W2 start results/audit_reruns/reweight_controls_M.log
+09:33:23 ==== resumed after restart
+skip  results/audit_reruns/decay_alpha_N.log
+09:33:24 start results/audit_reruns/decay_alpha_C.log
+09:33:24 W1 start results/audit_reruns/reweight_controls_C.log
+09:33:24 start results/audit_reruns/nn_ladder_N.log
+09:36:08 ==== resumed after restart
+skip  results/audit_reruns/decay_alpha_N.log
+09:36:08 start results/audit_reruns/decay_alpha_C.log
+09:36:08 start results/audit_reruns/nn_ladder_N.log
+09:38:33 W1 start results/audit_reruns/reweight_controls_T6.log
+09:38:53 W2 start results/audit_reruns/reweight_controls_T5.log
+09:58:26 W1 done  results/audit_reruns/reweight_controls_T6.log
+09:58:27 W1 start results/audit_reruns/reweight_controls_T9.log
+10:25:19 W2 done  results/audit_reruns/reweight_controls_T5.log
+10:25:21 W2 start results/audit_reruns/reweight_controls_T7.log
+10:31:29 done  results/audit_reruns/nn_ladder_N.log
+10:57:22 W1 done  results/audit_reruns/reweight_controls_T9.log
+10:57:22 W1 start results/audit_reruns/reweight_controls_T10.log
+11:10:50 W2 done  results/audit_reruns/reweight_controls_T7.log
+11:10:51 W2 start results/audit_reruns/reweight_controls_T8.log
+11:21:35 W1 done  results/audit_reruns/reweight_controls_T10.log
+11:21:36 W1 start results/audit_reruns/gain_mechanism_T6.log
+11:30:45 W1 done  results/audit_reruns/gain_mechanism_T6.log
+11:30:46 W1 start results/audit_reruns/gain_mechanism_T5.log
+11:41:42 done  results/audit_reruns/decay_alpha_C.log
+11:45:32 W1 done  results/audit_reruns/gain_mechanism_T5.log
+11:45:32 W1 start results/audit_reruns/gain_mechanism_T9.log
+12:00:59 start results/audit_reruns/decay_alpha_M.log
+12:02:46 W1 done  results/audit_reruns/gain_mechanism_T9.log
+12:02:47 W1 start results/audit_reruns/gain_mechanism_T7.log
+12:10:48 W2 done  results/audit_reruns/reweight_controls_T8.log
+12:10:49 W2 start results/audit_reruns/gain_mechanism_T10.log
+12:13:31 W1 done  results/audit_reruns/gain_mechanism_T7.log
+12:13:32 W1 start results/audit_reruns/gain_mechanism_T8.log
+12:19:28 W2 done  results/audit_reruns/gain_mechanism_T10.log
+12:19:28 W2 start results/audit_reruns/align_variants_N.log
+12:23:18 W2 done  results/audit_reruns/align_variants_N.log
+12:23:19 W2 start results/audit_reruns/align_variants_T6.log
+12:31:28 done  results/audit_reruns/decay_alpha_M.log
+12:31:28 start results/audit_reruns/decay_alpha_T6.log
+12:31:36 start results/audit_reruns/nn_ladder_C.log
+12:37:09 W1 done  results/audit_reruns/gain_mechanism_T8.log
+12:37:10 W1 start results/audit_reruns/align_variants_T5.log
+12:41:47 W2 done  results/audit_reruns/align_variants_T6.log
+12:59:02 W2 start results/audit_reruns/align_variants_T9.log
+12:59:04 done  results/audit_reruns/nn_ladder_C.log
+12:59:05 start results/audit_reruns/nn_ladder_M.log
+12:59:27 W1 done  results/audit_reruns/align_variants_T5.log
+12:59:27 W1 start results/audit_reruns/align_variants_T7.log
+13:11:25 W1 done  results/audit_reruns/align_variants_T7.log
+13:11:25 W1 start results/audit_reruns/align_variants_T10.log
+13:22:04 done  results/audit_reruns/nn_ladder_M.log
+13:23:37 W1 done  results/audit_reruns/align_variants_T10.log
+13:23:38 W1 start results/audit_reruns/align_variants_T8.log
+13:39:16 W2 done  results/audit_reruns/align_variants_T9.log
+13:39:17 W2 start results/audit_reruns/label_free_plus_N.log
+13:43:23 W2 done  results/audit_reruns/label_free_plus_N.log
+13:43:24 W2 start results/audit_reruns/label_free_plus_C.log
+13:48:59 W2 done  results/audit_reruns/label_free_plus_C.log
+13:48:59 W2 start results/audit_reruns/label_free_plus_M.log
+13:54:21 done  results/audit_reruns/decay_alpha_T6.log
+13:54:22 start results/audit_reruns/decay_alpha_T5.log
+13:56:07 start results/audit_reruns/nn_ladder_T6.log
+14:00:53 W1 done  results/audit_reruns/align_variants_T8.log
+14:00:54 W1 start results/audit_reruns/label_free_plus_T6.log
+14:08:52 W2 done  results/audit_reruns/label_free_plus_M.log
+14:08:53 W2 start results/audit_reruns/label_free_plus_T5.log
+14:13:46 W1 done  results/audit_reruns/label_free_plus_T6.log
+14:13:47 W1 start results/audit_reruns/label_free_plus_T9.log
+14:25:11 W2 done  results/audit_reruns/label_free_plus_T5.log
+14:25:12 W2 start results/audit_reruns/label_free_plus_T7.log
+14:32:11 W2 done  results/audit_reruns/label_free_plus_T7.log
+14:32:12 W2 start results/audit_reruns/label_free_plus_T10.log
+14:35:58 W1 done  results/audit_reruns/label_free_plus_T9.log
+14:35:59 W1 start results/audit_reruns/label_free_plus_T8.log
+14:40:55 W2 done  results/audit_reruns/label_free_plus_T10.log
+14:40:56 W2 start results/audit_reruns/gain_efficiency_T6.log
+14:42:28 done  results/audit_reruns/nn_ladder_T6.log
+14:55:06 W1 done  results/audit_reruns/label_free_plus_T8.log
+14:55:06 W1 start results/audit_reruns/gain_efficiency_T5.log
+15:15:47 W2 done  results/audit_reruns/gain_efficiency_T6.log
+15:15:48 W2 start results/audit_reruns/gain_efficiency_T9.log
+16:09:18 done  results/audit_reruns/decay_alpha_T5.log
+16:09:19 start results/audit_reruns/decay_alpha_T9.log
+16:10:31 start results/audit_reruns/nn_ladder_T5.log
+16:34:28 W1 done  results/audit_reruns/gain_efficiency_T5.log
+16:34:29 W1 start results/audit_reruns/gain_efficiency_T7.log
+16:51:38 done  results/audit_reruns/nn_ladder_T5.log
+17:05:38 W2 done  results/audit_reruns/gain_efficiency_T9.log
+17:05:39 W2 start results/audit_reruns/gain_efficiency_T10.log
+17:45:36 W2 done  results/audit_reruns/gain_efficiency_T10.log
+17:45:37 W2 start results/audit_reruns/gain_efficiency_T8.log
+18:07:19 W1 done  results/audit_reruns/gain_efficiency_T7.log
+18:07:20 W1 start results/audit_reruns/matched_output_C.log
+19:16:49 W1 done  results/audit_reruns/matched_output_C.log
+19:16:49 W1 start results/audit_reruns/matched_output_M.log
+19:44:34 W1 done  results/audit_reruns/matched_output_M.log
+19:44:35 W1 start results/audit_reruns/recal_policy_N.log
+19:54:07 done  results/audit_reruns/decay_alpha_T9.log
+19:54:08 start results/audit_reruns/decay_alpha_T7.log
+19:54:51 W2 done  results/audit_reruns/gain_efficiency_T8.log
+19:54:52 W2 start results/audit_reruns/reweight_controls_C.log
+19:55:43 start results/audit_reruns/nn_ladder_T9.log
+20:05:56 W1 done  results/audit_reruns/recal_policy_N.log
+20:37:54 W2 done  results/audit_reruns/reweight_controls_C.log
+20:38:02 done  results/audit_reruns/nn_ladder_T9.log
+20:38:55 W2 start results/audit_reruns/reweight_controls_M.log
+20:51:10 done  results/audit_reruns/decay_alpha_T7.log
+20:51:11 start results/audit_reruns/decay_alpha_T10.log
+20:52:04 start results/audit_reruns/nn_ladder_T7.log
+20:53:55 ==== paused by owner request (break)
+21:40:02 ==== resumed after restart
+skip  results/audit_reruns/decay_alpha_N.log
+skip  results/audit_reruns/decay_alpha_C.log
+skip  results/audit_reruns/decay_alpha_M.log
+skip  results/audit_reruns/decay_alpha_T6.log
+skip  results/audit_reruns/decay_alpha_T5.log
+skip  results/audit_reruns/decay_alpha_T9.log
+skip  results/audit_reruns/decay_alpha_T7.log
+skip  results/audit_reruns/nn_ladder_N.log
+skip  results/audit_reruns/nn_ladder_C.log
+skip  results/audit_reruns/nn_ladder_M.log
+skip  results/audit_reruns/nn_ladder_T6.log
+skip  results/audit_reruns/nn_ladder_T5.log
+skip  results/audit_reruns/nn_ladder_T9.log
+21:40:02 start results/audit_reruns/decay_alpha_T10.log
+21:40:02 start results/audit_reruns/nn_ladder_T7.log
+21:40:03 W1 start results/audit_reruns/reweight_controls_M.log
+22:01:53 W1 done  results/audit_reruns/reweight_controls_M.log
+22:06:08 done  results/audit_reruns/nn_ladder_T7.log
+22:06:56 W1 start results/audit_reruns/align_variants_C.log
+22:15:23 W1 done  results/audit_reruns/align_variants_C.log
+22:15:24 W1 start results/audit_reruns/align_variants_M.log
+22:15:37 ==== queue worker W2 finished
+22:17:48 done  results/audit_reruns/decay_alpha_T10.log
+22:17:49 start results/audit_reruns/decay_alpha_T8.log
+22:18:09 start results/audit_reruns/nn_ladder_T10.log
+22:19:20 W1 done  results/audit_reruns/align_variants_M.log
+22:19:21 ==== queue worker W1 finished
+23:23:56 done  results/audit_reruns/nn_ladder_T10.log
+00:09:57 done  results/audit_reruns/decay_alpha_T8.log
+00:09:57 ==== lane A finished
+00:11:58 start results/audit_reruns/nn_ladder_T8.log
+01:57:52 done  results/audit_reruns/nn_ladder_T8.log
+01:57:52 ==== lane G finished
+02:02:42 ==== sweeper finished

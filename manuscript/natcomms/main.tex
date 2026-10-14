@@ -148,7 +148,7 @@ Longer-term decay differed far more. Retention fell to one half within a day in 
 \val{T9:thalf} days in T9 and T10 and within \val{T5:thalf} days in T5 (95\% confidence interval \val{T5:thalfci}). It took
 \val{N:thalf} days in monkey N (\val{N:thalfci}), \val{C:thalf} in monkey C (\val{C:thalfci}), \val{M:thalf} in monkey M
 (\val{M:thalfci}) and \val{T6:thalf} in T6 (\val{T6:thalfci}; Fig.~\ref{fig:decay}a,c). In monkey N and all
-\val{hum:nword} participants, the reference decoder was equally accurate at short and long gaps (Supplementary Table~2).
+\val{hum:nword} participants, the reference decoder did not decline from short to long gaps (Supplementary Table~2).
 The decline therefore reflects a growing mismatch between decoder and day, not poorer recordings.
 
 \begin{figure}[tbp]
@@ -189,11 +189,11 @@ not close this gap. Applied after updating means, it lowered $R^2$ further in mo
 $P = \val{N:rotmeanp}$). Applied after renormalization, it lowered $R^2$ slightly in every individual (median changes
 \val{all:rotrendiff:min} to \val{all:rotrendiff:max}; $P < 0.05$ in \val{all:rotrenp:nsig} of
 \val{all:rotrenp:ntested}). Matching the full channel covariance (CORAL\cite{sun2016})
-improved slightly on renormalization in monkey N (by \val{N:coraldiff}; $P = \val{N:coralp}$), did not differ in monkeys
-C and M, and was worse in all \val{hum:nword} participants. A faithful implementation of the factor-analysis stabilizer
-of Degenhart and colleagues\cite{degenhart2020} was better than renormalization in T5 (by \val{T5:stabrendiff};
-$P = \val{T5:stabrenp}$). It did not differ in monkey N, T7, T10 and T8, and it was worse in monkeys C and M and in T6
-and T9. That method was
+did not improve on renormalization in any monkey (monkey N: difference \val{N:coraldiff}, $P = \val{N:coralp}$; slightly
+worse in monkey C, difference \val{C:coraldiff}, $P = \val{C:coralp}$) and was worse in all \val{hum:nword} participants. A faithful implementation of the factor-analysis stabilizer
+of Degenhart and colleagues\cite{degenhart2020} was worse than renormalization in all three monkeys and in T6, T9, T10
+and T8, did not differ in T7, and was nominally better in T5 (by \val{T5:stabrendiff}; $P = \val{T5:stabrenp}$, not
+significant after Holm correction over the nine individuals). That method was
 designed for closed-loop use with a latent decoder, and offline tests may understate it. Methods that align latent
 dynamics with labeled data\cite{gallego2020} or adversarial networks\cite{farshchian2019,ma2023,karpowicz2025} were not
 tested. Among the corrections we tested, however, the label-free step that mattered was rescaling each channel, and
@@ -268,12 +268,12 @@ was \val{N:ctl:rew_nonneg} versus \val{N:ctl:rew_perm_nn}, \val{C:ctl:rew_nonneg
 The per-channel weights also related to measured changes at each electrode (Fig.~\ref{fig:channels}c and Supplementary
 Table~5). For each pair, we compared the fitted weights with the change in each electrode's threshold-crossing rate
 between the two days, recorded independently in the BrainGate yield data. Channels whose spiking rose received larger
-weights in \val{hum:mech:rate:nsig} of \val{hum:mech:rate:ntested} participants (\val{hum:mech:rate:sigwho}; two-sided
-Wilcoxon signed-rank tests over training sessions, $P < 0.05$). The median Spearman correlation per training session was
+weights in \val{hum:mech:rate:nsig} of \val{hum:mech:rate:ntested} participants (two-sided Wilcoxon signed-rank tests over
+training sessions, $P < 0.05$; \val{hum:mech:rate:nsigholm} after Holm correction across participants). The median
+Spearman correlation per training session was
 up to \val{hum:mech:rate:rho:max} and was positive in up to \val{hum:mech:rate:pos:max}\% of sessions, against near zero
-after shuffling channels. T10, with the shortest recordings, showed no relation (median correlation
-\val{T10:mech:rate:rho}). Channels whose impedance rose received smaller weights in \val{hum:mech:imp:sigwho} (median
-correlations \val{hum:mech:imp:rho:min} to \val{T7:mech:imp:rho}). These relations are weak for single channels but
+after shuffling channels. Channels whose impedance rose received smaller weights in \val{hum:mech:imp:sigwho} (median
+correlations \val{hum:mech:imp:rho:min} to \val{T7:mech:imp:rho}; \val{hum:mech:imp:sigwhoholm} after Holm correction). These relations are weak for single channels but
 consistent, linking the decoder's corrections to physical changes at the array.
 
 The results held for nonlinear decoders. We trained a recurrent network decoder, regularized so that it could not
@@ -281,8 +281,8 @@ memorize the closed-loop sessions (Methods). It was as accurate as the linear de
 \val{hum:nnown:min}--\val{hum:nnown:max} versus \val{hum:linown:min}--\val{hum:linown:max}) and more accurate in monkeys.
 Re-weighting its input channels recovered \val{hum:nnrec:min}--\val{hum:nnrec:max}\% of its loss in the participants and
 \val{N:nnrecmin}--\val{N:nnrecmax}\%, \val{C:nnrecmin}--\val{C:nnrecmax}\% and \val{M:nnrecmin}--\val{M:nnrecmax}\% in the
-monkeys (Fig.~\ref{fig:channels}d and Supplementary Table~6). Which decoder benefited more differed between people: in
-T8, re-weighting recovered more for the network than for the linear decoder, and in T10 less.
+monkeys (Fig.~\ref{fig:channels}d and Supplementary Table~6). In the monkeys this was more than for the linear
+decoder at every gap; in the participants the two ranges overlapped.
 
 Finally, we measured the angle between decoders fitted on different days. Allowing one scale per channel reduced this
 angle by \val{ang:redmin}--\val{ang:redmax}\textdegree{} in every individual (Supplementary Table~8). Angles that allow
@@ -321,9 +321,11 @@ the participants ($P < 0.05$ in all \val{ind:nword} individuals). Ordinary same-
 Second, with very few trials, refitting can make a decoder worse. In monkey N (86 session pairs), choosing the shrinkage
 strength by cross-validation on 10 trials made \val{harm:10:cv}\% of recalibrations worse than no recalibration
 (Fig.~\ref{fig:recipes}d). A fixed strong shrinkage, the value that worked best on other training sessions, lowered this
-to \val{harm:10:hist}\% (exact McNemar test, $P = \val{mcn:10:p}$; Holm-adjusted over five data budgets,
-$P = \val{mcn:10:holm}$); with 20 trials the rates were \val{harm:20:cv}\% and \val{harm:20:hist}\%
-($P = \val{mcn:20:p}$; adjusted $P = \val{mcn:20:holm}$).
+to \val{harm:10:hist}\%. Cross-validation was worse in \val{mcn:10:ncvworse} of \val{mcn:10:ntrain} training
+sessions and the fixed value in \val{mcn:10:nhistworse} (Wilcoxon signed-rank test over training sessions,
+$P = \val{mcn:10:pc}$; Holm-adjusted over five data budgets, $P = \val{mcn:10:holmc}$); with 20 trials the rates were
+\val{harm:20:cv}\% and \val{harm:20:hist}\% ($P = \val{mcn:20:pc}$; adjusted $P = \val{mcn:20:holmc}$). The direction was
+consistent, but the difference does not survive correction for the five budgets.
 
 \begin{figure}[tbp]
 \centering
@@ -430,8 +432,8 @@ regularization exaggerates decay, comparisons of decoder longevity are meaningfu
 decoders. Per-channel renormalization is the appropriate baseline for evaluating label-free methods; earlier
 comparisons against fixed or mean-only decoders\cite{ma2023,wilson2025} probably overstated their benefit. For
 recalibration in people, any well-regularized refit with about 100 labeled trials recovered most of the accuracy in our
-data. When only a few trials are available, shrinking toward the previous decoder, including its intercept, prevents
-harmful updates. These are simple, inexpensive steps, and they set the bar that more sophisticated methods should
+data. When only a few trials are available, shrinking toward the previous decoder, including its intercept, made
+harmful updates rarer in monkey N, although that difference did not survive correction for multiple comparisons. These are simple, inexpensive steps, and they set the bar that more sophisticated methods should
 clear.
 
 The channel analyses clarify what changes. Earlier work modeled per-electrode drift as shifts in baseline over
@@ -708,8 +710,10 @@ Session pairs that share a training session are not independent. Confidence inte
 cluster bootstrap over training sessions\cite{field2007} (2,000 resamples, percentile intervals), and paired tests used
 one value per training session (two-sided Wilcoxon signed-rank tests). Pairs also share test sessions, so these
 intervals and $P$ values may be somewhat optimistic; we emphasize effect sizes. Harmful recalibrations were compared
-with exact McNemar tests on paired outcomes, Holm-adjusted over the five data budgets\cite{holm1979}. With three
-participants and three monkeys, comparisons between species are descriptive. Exact $P$ values are reported. Analyses
+per training session (the share of its pairs made worse by each policy; two-sided Wilcoxon signed-rank test over training
+sessions), Holm-adjusted over the five data budgets\cite{holm1979}. Counts of significant individuals are also given after
+Holm correction across individuals. With six participants and three monkeys, comparisons between species are
+descriptive. Exact $P$ values are reported. Analyses
 used Python 3.11 with NumPy, SciPy, pandas, scikit-learn and PyTorch.
 
 \subsection*{Use of AI tools}

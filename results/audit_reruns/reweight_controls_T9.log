@@ -1,0 +1,22 @@
+20/128 pairs, 524s
+40/128 pairs, 1169s
+60/128 pairs, 1813s
+80/128 pairs, 2361s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:242: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:273: RuntimeWarning: invalid value encountered in scalar multiply
+  th, Fm, rm = _solve(eig, lam * mult, anchor)
+100/128 pairs, 2840s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:242: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:273: RuntimeWarning: invalid value encountered in scalar multiply
+  th, Fm, rm = _solve(eig, lam * mult, anchor)
+120/128 pairs, 3328s
+128/128 pairs, 3522s
+            rec_rew  rec_rew_nonneg  rec_rew_perm  rec_rew_perm_nn
+gap_target                                                        
+1              0.80            0.77          0.12            -0.29
+7              0.75            0.74          0.42             0.09
+30             0.73            0.67          0.39             0.16
+120            0.74            0.66          0.57             0.26
+480            0.77            0.65          0.63             0.48

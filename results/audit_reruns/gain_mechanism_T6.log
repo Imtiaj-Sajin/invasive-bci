@@ -1,0 +1,6 @@
+G:\codes\invasive bci\scripts\gain_mechanism.py:96: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  row[f"rho_{name}"] = float(stats.spearmanr(g[ok], x[ok]).correlation)
+G:\codes\invasive bci\scripts\gain_mechanism.py:97: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  row[f"rho_{name}_null"] = float(stats.spearmanr(g[ok], rng.permutation(x[ok])).correlation)
+T6 rate: pairs 119, sessions 39, median rho 0.048, positive 0.69, P 0.016; null median -0.011
+T6 imp: pairs 109, sessions 37, median rho -0.016, positive 0.43, P 0.12; null median 0.007
