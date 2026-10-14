@@ -1,0 +1,5 @@
+subject,kind,train,test,gap_target,condition,r2,epochs,val,bins,seconds
+N,ref,,2020-02-06_CO,0,sameday,0.534137,57,0.386505,21729,407
+N,ref,,2020-02-25_CO,0,sameday,0.353606,63,0.358974,21549,411
+N,ref,,2020-06-26_CO,0,sameday,0.368297,50,0.336895,21691,289
+N,ref,,2021-05-20_CO,0,sameday,0.516172,100,0.461009,18828,552
