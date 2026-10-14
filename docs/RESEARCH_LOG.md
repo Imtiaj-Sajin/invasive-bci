@@ -1384,3 +1384,29 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   and resumed without loss.
 - NDT3 pilot resumed 22:21 after the monkey C/M rerun steps; results file had mixed column counts (ref rows 11, pair
   rows 13); `pilot.py` now writes a fixed column list and reads older files with it (commit edf2751).
+
+### 2026-10-15 — Audit reruns complete; paper regenerated and claims re-checked (commit ff8147c)
+
+- All 60 rerun steps finished (01:57); no step needed a retry after the memory rules. Regenerated with
+  `bash scripts/regenerate_paper.sh` (summaries, numbers.tex, supplementary tables, figures, both PDFs; no undefined
+  references). `python scripts/tools/diff_numbers.py OLD_numbers.tex` lists changed generated values: 437 of 1,525
+  changed, 45 used in the text.
+- Claims that changed and were corrected in the text:
+  - Weight vs firing-rate change: significant in 6/6 participants, also after Holm across participants (was 5/6;
+    "no relation in T10" was the channel-matching bug; T10 rho 0.06, P = 6e-7). Impedance: T9, T7, T10, T8 (P < 0.05);
+    T9, T10, T8 after Holm.
+  - CORAL: monkey N difference 0.000 (P = 0.95; was +0.011 at the default penalty); slightly worse in C; worse in all
+    participants.
+  - Factor-analysis stabilizer: worse in N, C, M, T6, T9, T10, T8 (all survive Holm over nine individuals), no
+    difference in T7, nominally better in T5 (+0.018, P = 0.038; not after Holm). Text previously said better in T5 and
+    no difference in N, T10, T8.
+  - Network vs linear recovery with the same labelled trials: monkeys higher at every gap; participants overlap
+    (27-101% vs linear ranges); the T8/T10 sentence was removed.
+  - Harmful recalibration (monkey N): clustered test over 30 training sessions, P = 0.027 (10 trials) and 0.042 (20);
+    Holm over five budgets 0.14 and 0.17. Reported as a consistent direction that does not survive correction;
+    Discussion no longer says shrinkage "prevents" harmful updates.
+  - Reference decoder "did not decline" with gap (T7, T8 higher at 480 days); Methods: six participants.
+- Unchanged in substance: decay half-lives (T8 now "<1" day, T5 3.2, T9/T10 1.8, N 8.1, T6 138), tuned-penalty and 1%
+  rule results, re-weighting recovery, scrambled-channel controls, label efficiency (slowest recovery still T8).
+- Pending: T11 block-normalized rerun with the CV fix (running on PC2, branch pc2-t11-blocknorm); affects
+  Supplementary Note 4 only.
