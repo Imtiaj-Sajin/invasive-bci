@@ -1327,3 +1327,16 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
 - Queue workers now make several passes: a C/M step is skipped while the slot is busy and taken up later; each step is
   run once by the queue (`.qtried`), failures go to the sweeper. Resume clears markers of unfinished steps.
 - Owner closed nothing needed; Chrome, WhatsApp, Phone Link closed before the start.
+
+### 2026-10-14 — Threshold-crossing features for the benchmark (NDT3 pilot preparation)
+
+- `src/ibci/bench/features.py`, `bench.tasks(..., features="tx")`: same pairs and splits with threshold-crossing
+  counts (BrainGate -4.5 RMS 'tx_4_5' summed over 10 ms pairs; LINK stored crossings; C, M unchanged). NDT3 takes
+  only threshold crossings, so the linear reference methods must be run on them too.
+- Same-day reference R2 (8 sessions spread over each individual, tuned ridge): SBP vs TX = N 0.29 vs 0.22,
+  T5 0.54 vs 0.50, T9 0.31 vs 0.20, T7 0.37 vs 0.29, T10 0.31 vs 0.27, T8 0.34 vs 0.32, T6 0.28 vs 0.04.
+  T6's -4.5 RMS crossings are too sparse to decode; T6 cannot enter any threshold-crossing comparison.
+- Pilot individuals chosen: monkey N, T5 (best decoding, 7.2 years), T8 (two arrays).
+- NDT3's model code imports flash_attn modules at top level (components.py); there is no official Windows build.
+  Options: WSL2 Ubuntu with official wheels (preferred, needs the owner's approval), a community Windows wheel, or
+  patching NDT3 to PyTorch attention.
