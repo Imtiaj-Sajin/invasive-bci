@@ -84,7 +84,8 @@ regularization exaggerated decay. In people, about 100 labeled trials restored m
 well-regularized refit, and label-free alignment added little beyond rescaling each channel. Corrections recovered
 far more when channels kept their identity, and the per-channel corrections tracked each electrode's changing
 activity. At the electrode level, brief silences matched session-to-session fluctuation, whereas silences lasting over
-a month were real and often reversed. We release the code, a calibrated simulator and all derived results.
+a month were real and often reversed. We release the code, a benchmark for decoder transfer over years, a calibrated
+simulator and all derived results.
 
 \begin{figure}[tbp]
 \centering
@@ -385,10 +386,19 @@ electrodes, per human array, before (filled) and after (open) adjusting for init
 \label{fig:electrodes}
 \end{figure}
 
-\subsection*{A calibrated simulator for testing new corrections}
+\subsection*{A benchmark and a simulator for testing new corrections}
 
-Methods for stable decoding are hard to compare without a common test bed\cite{karpowicz2024falcon}. We built a
-feature-level simulator that takes a real session and returns it as it might appear days to years later (Methods). It
+Methods for stable decoding are hard to compare without a common test bed\cite{karpowicz2024falcon}, and existing
+benchmarks span days to months. We therefore released our session pairs as a benchmark for decoder transfer over years
+(Methods). It fixes \val{bench:npairs} pairs from the \val{ind:nword} individuals at gaps of 1 to 480 days
+(\val{bench:nvalid} with a working reference decoder), defines which data a method may use on the new day, and scores
+retention with confidence intervals over training sessions. The correction ladder serves as its baseline. Across
+individuals, the renormalized fixed decoder kept a median retention of \val{bench:renorm:1} after one day and
+\val{bench:renorm:480} after 480 days. With 300 labeled trials, re-weighting each channel kept \val{bench:reweight:1} and
+\val{bench:reweight:480}, and a refit shrunk toward the old decoder kept \val{bench:prior_refit:1} and
+\val{bench:prior_refit:480} (Supplementary Table~15).
+
+We also built a feature-level simulator that takes a real session and returns it as it might appear days to years later (Methods). It
 combines mixing of signals between channels, gradual turnover of each channel's tuning and switching of electrodes
 between active and silent states. Switching rates came from monkey N's electrode statistics. The mixing and turnover
 parameters were calibrated so that the simulated correction ladder matched monkey N's during its first 700 days. The
@@ -704,6 +714,18 @@ Augmentation added eight simulated futures per training session ($\Delta t$ log-
 compared with stronger regularization, random channel dropout with gain noise\cite{sussillo2016} and training on the
 three previous sessions.
 
+\subsection*{Benchmark}
+
+The benchmark fixes the session pairs of the tuned-penalty analysis at the five main gaps: one pair per training session
+and gap, with the closest later session of the same task within 25\% of the gap. For each pair, a method may use the
+training segment of day $i$ with its kinematics, the training segment of day $j$ without kinematics and the kinematics of
+its first $n$ trials ($n = 0$, 10, 20, 50, 100 or 300), and the neural features of day $j$'s evaluation segment. It
+returns predictions for that segment, which are scored by $R^2$ and by retention relative to a same-day ridge decoder
+(8 lags, penalty $10^4$). Pairs count when that reference exceeds $R^2 = 0.1$. Summaries report medians with cluster
+bootstrap intervals over training sessions. The reference methods are the rungs of the correction ladder. Through the
+benchmark's interface they reproduce the values of this study to within $10^{-14}$. A threshold-crossing version of the
+features is included for decoders that require spike counts.
+
 \subsection*{Statistics}
 
 Session pairs that share a training session are not independent. Confidence intervals for medians therefore came from a
@@ -732,7 +754,8 @@ code repository.
 
 \section*{Code availability}
 
-All code, including the simulator with its calibrated parameters, is available at
+All code, including the benchmark (fixed splits, data interface, reference methods and scoring) and the simulator with
+its calibrated parameters, is available at
 \url{https://github.com/Imtiaj-Sajin/invasive-bci} under the MIT license. A versioned archive will be deposited on Zenodo
 upon publication.
 

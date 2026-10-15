@@ -373,6 +373,7 @@ def main():
             put(f"{k}:ctl:pairs", str(len(q)))
             put(f"{k}:ctl:zero", pct(float(q.nonneg_zero_frac.median())))
     group_keys()
+    bench_keys()
     write(args)
 
 
@@ -528,6 +529,25 @@ def group_keys():
         hsig = [h for h, _ in ps if h in holm_sig(ps)]
         put(f"hum:mech:{name}:nsigholm", str(len(hsig)))
         put(f"hum:mech:{name}:sigwhoholm", _join(hsig) if hsig else "none")
+
+
+def bench_keys():
+    """Benchmark (benchmark/manifests, results/bench/summary.csv): pair counts and baseline retention, median across
+    individuals of each individual's median retention."""
+    man = [f"benchmark/manifests/{k}.csv" for k in IND]
+    if not all(os.path.exists(p) for p in man) or not os.path.exists("results/bench/summary.csv"):
+        return
+    m = pd.concat([pd.read_csv(p) for p in man])
+    put("bench:npairs", f"{len(m):,}")
+    put("bench:nvalid", f"{int(m.valid.sum()):,}")
+    put("bench:ntrain", f"{m.groupby('subject').train.nunique().sum():,}")
+    s = pd.read_csv("results/bench/summary.csv")
+    for meth in ("renorm", "reweight", "prior_refit", "retrain", "procrustes"):
+        q = s[s.method == meth]
+        for g in GAPS:
+            v = q[q.gap_target == g].retention
+            if len(v):
+                put(f"bench:{meth}:{g}", f2(float(v.median())))
 
 
 def write(args):

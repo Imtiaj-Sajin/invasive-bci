@@ -470,4 +470,21 @@ Participant & Arrays (channels) & Sessions & Span (years) & Trials per session &
 \end{tabular}
 \end{table}
 
+\begin{table}[p]
+\caption{\textbf{Benchmark baselines.} Valid pairs per individual and median retention of three reference methods after
+1, 30 and 480 days: the renormalized fixed decoder (no labels), re-weighting each channel and a refit shrunk toward the
+old decoder (both with 300 labeled trials). Linear decoder, tuned penalty. T10 had no 480-day pairs. Per-pair scores and
+bootstrap intervals are released with the benchmark.}
+\label{tab:bench}
+\small
+\begin{tabular}{@{}lr@{\hspace{8pt}}rrr@{\hspace{8pt}}rrr@{\hspace{8pt}}rrr@{}}
+\toprule
+& & \multicolumn{3}{c}{Renormalized} & \multicolumn{3}{c}{Re-weighted (300)} & \multicolumn{3}{c}{Refit to prior (300)} \\
+Individual & Pairs & 1 d & 30 d & 480 d & 1 d & 30 d & 480 d & 1 d & 30 d & 480 d \\
+\midrule
+\tabinput{supp/tab_bench.tex}
+\botrule
+\end{tabular}
+\end{table}
+
 \end{document}

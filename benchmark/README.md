@@ -101,7 +101,7 @@ python scripts/bench_run.py --summary
 
 ## Baseline results (v1)
 
-Median retention over all nine individuals' valid pairs, by gap (per-individual medians with training-session bootstrap
+Median across the nine individuals of each individual's median retention on its valid pairs, by gap (per-individual medians with training-session bootstrap
 intervals are in `results/bench/summary.csv`; per-pair scores in `results/bench/<method>/<subject>.csv`). Built with
 `python scripts/bench_from_paper.py` from the paper's tuned-penalty ladders, which are these methods on these pairs.
 Budgets of 10-100 labelled trials on all pairs are planned for the next version.
