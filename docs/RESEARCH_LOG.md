@@ -1442,3 +1442,8 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   NDT3, one array or active channels only, prediction collapse).
 - Pilot rerun for N and T5 at 4e-4 (`pilot.py --lr-map N=4e-4,T5=4e-4 --tag _lr4e-4`); earlier 1e-4 rows kept as
   results/ndt3/pilot/N_lr1e-4.csv and T5_lr1e-4.csv.
+- 07:xx NDT3 evaluation stopped on T5 (922 of 944 windows served): NDT3's loader drops windows with constant behaviour
+  (cursor-to-target direction fixed for 2 s). `predict_chunked` now adds a 1e-3 ramp to the behaviour written for
+  evaluation windows (behaviour inputs are masked at prediction) and refuses windows without spikes. Verified on the
+  smoke model: chunked R2 unchanged (0.3919 and 0.0828). No earlier row was affected (all passed the item-count check).
+- T5 same-day at lr 4e-4 (8 of 12 sessions): NDT3 below the linear decoder in 7, tied in 1 (0.23-0.64 vs 0.36-0.65).
