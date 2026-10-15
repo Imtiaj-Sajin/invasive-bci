@@ -1458,3 +1458,19 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   (17/96 active; linear 0.02 on it alone).
 - Stop rule met in 1 of 3 individuals -> recommendation STOP the full benchmark; keep the pilot as a supplementary
   analysis. Waiting for the owners' decision.
+
+### 2026-10-15 — Owners: continue as recommended; benchmark baselines v1; T8 pilot with array rule
+
+- Owners left the choice to the agent ("do whatever you like, just don't reduce quality"): full NDT3 benchmark stopped,
+  pilot completed as a supplementary analysis. PC2 Job 2 (tuned T11 block-norm) is not used by the paper and was
+  dropped; Job 1 (T11 block-norm ladder, Supplementary Note 4) continues; PC2 downloads continue (second data copy).
+- Pre-specified array rule (`scripts/ndt3/channel_rule.py`, results/ndt3/channel_rule.json): arrays with < 25% active
+  channels on the earliest pilot session are left out of NDT3's input; linear keeps all channels. Keeps all arrays of N
+  and T5 (their runs unchanged); leaves out T8's first array (18% active). T8 lr by validation on the kept array: 1e-4
+  (0.369 vs 0.339). T8 pilot running (`pilot.py --subjects T8 --lr-map T8=1e-4 --tag _rule`).
+- Benchmark baselines v1 (`python scripts/bench_from_paper.py`; results/bench, README table): label-free and 300-trial
+  reference methods on all 1,824 pairs from the tuned ladders. `bench_check.py --pairs 2 --n-labels 300` reproduces them
+  through the benchmark API for N and all six humans (max difference 3.6e-15); C and M checked after the NDT3 run
+  (memory). Manifests rebuilt from the rerun ladders are identical. Median retention over all individuals, 1/30/480 d:
+  renorm 0.73/0.29/-0.06; re-weight (300) 0.83/0.73/0.64; refit toward prior (300) 0.97/0.98/0.98; retrain (300)
+  1.00/1.00/1.00.
