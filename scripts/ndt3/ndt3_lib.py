@@ -179,9 +179,14 @@ def finetune(cfg, init, workdir, monitor="val_kinematic_r2", mode="max"):
     ds.subset_split(keep_index=True)
     attrs = ds.get_data_attrs()
     train, val = ds.create_tv_datasets(train_ratio=cfg.dataset.tv_ratio)
-    if isinstance(init, str):
-        init = load_pretrained(init)
-    model = transfer_model(init, cfg.model, attrs)
+    if init is None:          # from scratch: the pretrained model's architecture with NDT3's own initialization
+        from context_general_bci.model import transfer_cfg
+        transfer_cfg(src_cfg=load_pretrained(CKPT_2KH).cfg, target_cfg=cfg.model)
+        model = BrainBertInterface(cfg.model, attrs)
+    else:
+        if isinstance(init, str):
+            init = load_pretrained(init)
+        model = transfer_model(init, cfg.model, attrs)
     fix_r2_metrics(model, cfg.dataset.behavior_dim - 1)
     ck = ModelCheckpoint(dirpath=workdir, monitor=monitor, mode=mode, save_top_k=1, filename="best")
     trainer = pl.Trainer(accelerator="gpu", devices=1, precision="bf16-mixed", max_epochs=cfg.train.epochs,
