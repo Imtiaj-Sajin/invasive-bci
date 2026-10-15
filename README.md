@@ -1,3 +1,6 @@
+![Figure 1](results/figures/v2/fig1_overview.png)
+
+
 # Anatomy of chronic neural drift in intracortical BCIs
 
 What changes in chronic Utah-array recordings over days to years, which of those changes break BCI decoders, and a
