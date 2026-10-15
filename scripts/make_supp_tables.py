@@ -339,6 +339,26 @@ def decoding_tables(out):
     write(os.path.join(out, "tab_decoding.tex"), rows)
 
 
+def bench_table(out):
+    """Benchmark baselines per individual: valid pairs and median retention of three reference methods at 1, 30 and
+    480 days (results/bench/summary.csv, built by scripts/bench_from_paper.py)."""
+    p = "results/bench/summary.csv"
+    if not os.path.exists(p):
+        return
+    s = pd.read_csv(p)
+    rows = []
+    for k in ["N", "C", "M"] + humans():
+        name = f"Monkey {k}" if k in ("N", "C", "M") else f"Human {k}"
+        q = s[s.subject == k]
+        cells = [name, str(int(q[(q.method == "renorm")].pairs.sum()))]
+        for meth in ("renorm", "reweight", "prior_refit"):
+            for g in (1, 30, 480):
+                v = q[(q.method == meth) & (q.gap_target == g)].retention
+                cells.append(f3(float(v.iloc[0])) if len(v) else "--")
+        rows.append(" & ".join(cells) + r"\\")
+    write(os.path.join(out, "tab_bench.tex"), rows)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="manuscript/natcomms/supp")
@@ -346,7 +366,7 @@ def main():
     os.makedirs(args.out, exist_ok=True)
     for fn in (ladder_table, failure_table, efficiency_table, policy_table, sim_table, augment_table, mindful_table,
                reg_table, nn_table, angle_table, labelfree_table, human_eff_table, revival_table,
-               controls_table, matched_table, decoding_tables):
+               controls_table, matched_table, decoding_tables, bench_table):
         fn(args.out)
         print("wrote", fn.__name__, flush=True)
 
