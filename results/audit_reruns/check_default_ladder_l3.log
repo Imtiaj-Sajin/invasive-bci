@@ -1,0 +1,6 @@
+100/537 pairs; max |diff| so far 2.44e-07
+200/537 pairs; max |diff| so far 5.11e-07
+300/537 pairs; max |diff| so far 5.11e-07
+400/537 pairs; max |diff| so far 5.11e-07
+500/537 pairs; max |diff| so far 5.11e-07
+537 pairs: max |L3 new - stored| = 5.11e-07; pairs changed (>1e-9): 509; anchor chosen: 0
