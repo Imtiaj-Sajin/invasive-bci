@@ -81,3 +81,28 @@ the threshold-crossing ridge decoder on same-day data.
     the NDT3 comparison except as an explicit in-pretraining control.
 - Pilot model: 45M 2 kh (human data in pretraining, clean for monkey N and BrainGate). Pilot individuals: monkey N,
   T5, T8 (threshold crossings decode well; T6 does not).
+
+## Addendum 2026-10-15: pilot result and recommendation
+
+Pilot (`scripts/ndt3/pilot.py`, NDT3-45M-2kh, threshold crossings, learning rate chosen per individual by NDT3's own
+validation R2 with a rule fixed beforehand; results/ndt3/pilot/*_lr4e-4.csv). Linear = the paper's ridge decoder on the
+same threshold crossings. Medians over 12 pairs (3 training days x up to 4 gaps of 1-480 days).
+
+| | Monkey N | Human T5 |
+| --- | --- | --- |
+| Same-day R2, NDT3 vs linear | 0.42 vs 0.20 (NDT3 better in 12/12 sessions) | 0.33 vs 0.43 (better in 0/11) |
+| No update, R2 (NDT3 vs renormalized linear) | -0.06 vs -0.04 | -0.24 vs -0.19 |
+| 50 labelled trials (vs linear refit toward prior) | 0.16 vs 0.08 (NDT3 better 10/12) | 0.06 vs 0.30 (2/12) |
+| 300 labelled trials | 0.41 vs 0.18 (12/12); retention 0.97 vs 0.94 | 0.26 vs 0.41 (1/12); retention 0.72 vs 0.91 |
+| Neural-loss-only (unsupervised) adaptation | harmful (median retention -0.43) | harmful (-0.16) |
+
+Monkey N gave the same pattern at lr 1e-4 (results/ndt3/pilot/N_lr1e-4.csv). T8: NDT3 does not fit when both arrays are
+used (R2 ~0, pretrained or from scratch); T8's first array is nearly silent (17/96 channels active, linear R2 0.02 on
+it alone). With the second array only, NDT3 reaches 0.31 on T8 day 45, against 0.38 for the linear decoder on all
+channels (results/ndt3/diag_T8.csv). Not a pipeline fault: a near-silent array prevents NDT3 from learning here.
+
+Stop rule (fixed beforehand): continue only if NDT3 matches or beats the linear decoder on same-day data in at least
+2 of 3 individuals. Met in monkey N only (T5 no; T8 no, also with the silent array removed). **Recommendation: STOP the
+full NDT3 benchmark.** The pilot itself is informative and can be reported as a supplementary analysis: a pretrained
+foundation decoder did not decay more slowly than a linear decoder without recalibration, neural-loss adaptation did
+not help, and its same-day advantage held in a monkey but not in two human participants. Decision for the owners.

@@ -1447,3 +1447,14 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   evaluation windows (behaviour inputs are masked at prediction) and refuses windows without spikes. Verified on the
   smoke model: chunked R2 unchanged (0.3919 and 0.0828). No earlier row was affected (all passed the item-count check).
 - T5 same-day at lr 4e-4 (8 of 12 sessions): NDT3 below the linear decoder in 7, tied in 1 (0.23-0.64 vs 0.36-0.65).
+
+### 2026-10-15 — NDT3 pilot finished; T8 explained; recommendation STOP (decision 0005 addendum)
+
+- N and T5 complete at lr 4e-4 (60 and 59 rows). N: NDT3 same-day 0.42 vs linear 0.20 (12/12), 300-trial update 0.41 vs
+  0.18 (12/12). T5: same-day 0.33 vs 0.43 (0/11), 300-trial update 0.26 vs 0.41 (1/12). Both: no update collapses for
+  both decoders; neural-loss-only adaptation harmful.
+- T8 diagnostic (`scripts/ndt3/diag_t8.py`): pretrained all channels R2 -0.001; from scratch -0.007 (collapsed);
+  first array only -0.02; second array only 0.31 (linear on all channels 0.38). T8's first array is nearly silent
+  (17/96 active; linear 0.02 on it alone).
+- Stop rule met in 1 of 3 individuals -> recommendation STOP the full benchmark; keep the pilot as a supplementary
+  analysis. Waiting for the owners' decision.
