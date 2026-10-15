@@ -1480,3 +1480,14 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
 - `python scripts/tools/check_default_ladder_l3.py`: re-weighting rung (L3, 300 trials) of monkey N's default-penalty
   ladder recomputed with the current code for all pairs. 537 pairs: max |L3 new - stored| = 5.11e-07; pairs changed (>1e-9): 509; anchor chosen: 0
   The simulator calibration (targets L2, L3, L5; L2 and L5 do not use cv_shrunk) therefore needs no rerun.
+
+### 2026-10-15 — PC2 T11 rerun not usable; rerun on PC1
+
+- PC2 finished the T11 block-normalized ladder (677 pairs) but failed the pre-agreed check: columns the CV fix cannot
+  change (L0, L1, L2, L4u, L4s, own) differed in 213-282 rows (up to 1e7 on degenerate pairs, e.g. train T11_day413 with
+  L0 about -4e4). "own" cannot change with channel order, so the main cause is PC2's library versions (numpy 2.4.6,
+  torch 2.13) on T11's numerically unstable sessions; the channel-order fix (15 swapped sessions) adds legitimate
+  changes. Nothing from PC2 was pushed or merged. PC2 keeps its downloads (second copy of the data).
+- T11 block-normalized ladder rerun on PC1 in the paper's environment:
+  `IBCI_BLOCKNORM=1 python scripts/replicate_braingate_decoding.py --participant T11 --skip L4 L5 --out results/replication_bg_blocknorm_rerun`
+  (compared with the committed file before replacing it; affects Supplementary Note 4 only).
