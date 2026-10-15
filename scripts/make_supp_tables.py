@@ -359,6 +359,29 @@ def bench_table(out):
     write(os.path.join(out, "tab_bench.tex"), rows)
 
 
+def ndt3_table(out):
+    """NDT3 pilot: per individual, NDT3 against the linear decoder on the same threshold-crossing pairs (medians; in
+    parentheses the number of pairs or sessions where NDT3 was higher)."""
+    import json
+    p = "results/ndt3/pilot_summary.json"
+    if not os.path.exists(p):
+        return
+    rows = []
+    for k, r in json.load(open(p)).items():
+        if not r.get("n_pairs"):
+            continue
+        name = f"Monkey {k}" if k in ("N", "C", "M") else f"Human {k}"
+        cells = [name, str(r["n_pairs"]),
+                 f"{f3(r['sameday']['ndt3'])} / {f3(r['sameday']['linear'])} ({r['sameday']['ndt3_better']}/{r['n_sessions']})"]
+        for c in ("zeroshot", "fewshot_n50", "fewshot_n300"):
+            v = r.get(c)
+            cells.append(f"{f3(v['ndt3'])} / {f3(v['linear'])} ({v['ndt3_better']}/{v['n']})" if v else "--")
+        u = r.get("unsup")
+        cells.append(f"{f3(u['ndt3_ret'])}" if u else "--")
+        rows.append(" & ".join(cells) + r"\\")
+    write(os.path.join(out, "tab_ndt3.tex"), rows)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="manuscript/natcomms/supp")
@@ -366,7 +389,7 @@ def main():
     os.makedirs(args.out, exist_ok=True)
     for fn in (ladder_table, failure_table, efficiency_table, policy_table, sim_table, augment_table, mindful_table,
                reg_table, nn_table, angle_table, labelfree_table, human_eff_table, revival_table,
-               controls_table, matched_table, decoding_tables, bench_table):
+               controls_table, matched_table, decoding_tables, bench_table, ndt3_table):
         fn(args.out)
         print("wrote", fn.__name__, flush=True)
 

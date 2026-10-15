@@ -13,6 +13,7 @@ run scripts/decay_summary.py
 run scripts/rule_summary.py
 run scripts/paper_stats.py
 run scripts/bench_from_paper.py                     # benchmark baselines (results/bench)
+run scripts/ndt3/summarize_pilot.py                 # NDT3 pilot summary (results/ndt3/pilot_summary.json)
 run scripts/revision_stats.py
 run scripts/make_numbers_tex.py
 run scripts/make_supp_tables.py
