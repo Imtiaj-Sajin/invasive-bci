@@ -374,6 +374,7 @@ def main():
             put(f"{k}:ctl:zero", pct(float(q.nonneg_zero_frac.median())))
     group_keys()
     bench_keys()
+    ndt3_keys()
     write(args)
 
 
@@ -548,6 +549,33 @@ def bench_keys():
             v = q[q.gap_target == g].retention
             if len(v):
                 put(f"bench:{meth}:{g}", f2(float(v.median())))
+
+
+def ndt3_keys():
+    """NDT3 pilot against the linear decoder on threshold crossings (results/ndt3/pilot_summary.json)."""
+    p = "results/ndt3/pilot_summary.json"
+    if not os.path.exists(p):
+        return
+    for k, r in json.load(open(p)).items():
+        if not r.get("n_pairs"):
+            continue
+        put(f"ndt3:{k}:pairs", str(r["n_pairs"]))
+        put(f"ndt3:{k}:sessions", str(r["n_sessions"]))
+        put(f"ndt3:{k}:sd:ndt3", f2(r["sameday"]["ndt3"]))
+        put(f"ndt3:{k}:sd:lin", f2(r["sameday"]["linear"]))
+        put(f"ndt3:{k}:sd:better", str(r["sameday"]["ndt3_better"]))
+        for c, short in (("zeroshot", "zs"), ("fewshot_n50", "n50"), ("fewshot_n300", "n300")):
+            if c in r:
+                put(f"ndt3:{k}:{short}:ndt3", f2(r[c]["ndt3"]))
+                put(f"ndt3:{k}:{short}:lin", f2(r[c]["linear"]))
+                put(f"ndt3:{k}:{short}:ret", f2(r[c]["ndt3_ret"]))
+                put(f"ndt3:{k}:{short}:linret", f2(r[c]["linear_ret"]))
+                put(f"ndt3:{k}:{short}:better", str(r[c]["ndt3_better"]))
+                put(f"ndt3:{k}:{short}:n", str(r[c]["n"]))
+        if "unsup" in r:
+            put(f"ndt3:{k}:unsup:ret", f2(r["unsup"]["ndt3_ret"]))
+            put(f"ndt3:{k}:unsup:better", str(r["unsup"]["better_than_zeroshot"]))
+            put(f"ndt3:{k}:unsup:n", str(r["unsup"]["n"]))
 
 
 def write(args):
