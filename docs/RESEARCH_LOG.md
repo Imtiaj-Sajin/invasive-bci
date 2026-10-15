@@ -1474,3 +1474,9 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   (memory). Manifests rebuilt from the rerun ladders are identical. Median retention over all individuals, 1/30/480 d:
   renorm 0.73/0.29/-0.06; re-weight (300) 0.83/0.73/0.64; refit toward prior (300) 0.97/0.98/0.98; retrain (300)
   1.00/1.00/1.00.
+
+### 2026-10-15 — Simulator inputs unaffected by the CV fix
+
+- `python scripts/tools/check_default_ladder_l3.py`: re-weighting rung (L3, 300 trials) of monkey N's default-penalty
+  ladder recomputed with the current code for all pairs. 537 pairs: max |L3 new - stored| = 5.11e-07; pairs changed (>1e-9): 509; anchor chosen: 0
+  The simulator calibration (targets L2, L3, L5; L2 and L5 do not use cv_shrunk) therefore needs no rerun.
