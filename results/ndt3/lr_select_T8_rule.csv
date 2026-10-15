@@ -1,0 +1,3 @@
+subject,session,lr,epochs,val,test_r2,seconds
+T8,T8_day45,0.000100,34,0.369161,0.285606,138
+T8,T8_day45,0.000400,28,0.339349,0.199499,114

@@ -33,8 +33,19 @@ OUT = "/mnt/g/codes/invasive bci/results/ndt3/pilot"
 WORK = "/mnt/h/ndt3/work/pilot"
 
 
+RULE = "/mnt/g/codes/invasive bci/results/ndt3/channel_rule.json"   # arrays kept for NDT3 (scripts/ndt3/channel_rule.py)
+
+
 def load(subject, key):
-    return dict(np.load(f"{PILOT}/{subject}/{key}.npz"))
+    """Session arrays; NDT3 inputs restricted to the arrays kept by the pre-specified channel rule (the linear
+    reference in pairs.csv keeps all channels)."""
+    s = dict(np.load(f"{PILOT}/{subject}/{key}.npz"))
+    if os.path.exists(RULE):
+        ranges = json.load(open(RULE)).get(subject)
+        if ranges:
+            sel = np.concatenate([np.arange(a, b) for a, b in ranges])
+            s["x_tr"], s["x_te"] = s["x_tr"][:, sel], s["x_te"][:, sel]
+    return s
 
 
 COLS = ["subject", "kind", "train", "test", "gap_target", "condition", "r2", "epochs", "val", "bins", "seconds",

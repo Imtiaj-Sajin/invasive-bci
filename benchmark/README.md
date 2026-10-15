@@ -96,8 +96,25 @@ python scripts/bench_run.py --summary
 | `prior_refit` | *n* | Ridge decoder refitted on the labelled trials, shrunk toward the day-*i* decoder |
 | `retrain` | *n* | New ridge decoder on the labelled trials only |
 
-`python scripts/bench_check.py` confirms that these methods reproduce the paper's numbers. The baseline results table
-will be added when the full run has finished (`results/bench/summary.csv`).
+`python scripts/bench_check.py` confirms that these methods reproduce the paper's numbers (largest difference below
+1e-14 on every individual checked).
+
+## Baseline results (v1)
+
+Median retention over all nine individuals' valid pairs, by gap (per-individual medians with training-session bootstrap
+intervals are in `results/bench/summary.csv`; per-pair scores in `results/bench/<method>/<subject>.csv`). Built with
+`python scripts/bench_from_paper.py` from the paper's tuned-penalty ladders, which are these methods on these pairs.
+Budgets of 10-100 labelled trials on all pairs are planned for the next version.
+
+| Method | Labels | 1 d | 7 d | 30 d | 120 d | 480 d |
+| --- | --- | --- | --- | --- | --- | --- |
+| `none` | 0 | -2.06 | -2.73 | -5.49 | -8.21 | -4.38 |
+| `mean_update` | 0 | 0.18 | -0.33 | -0.98 | -1.03 | -0.97 |
+| `renorm` | 0 | 0.73 | 0.52 | 0.29 | 0.09 | -0.06 |
+| `procrustes` | 0 | 0.68 | 0.52 | 0.28 | -0.04 | -0.25 |
+| `reweight` | 300 | 0.83 | 0.80 | 0.73 | 0.72 | 0.64 |
+| `prior_refit` | 300 | 0.97 | 0.98 | 0.98 | 0.96 | 0.98 |
+| `retrain` | 300 | 1.00 | 0.99 | 1.00 | 1.00 | 1.00 |
 
 ## Rules for fair comparison
 

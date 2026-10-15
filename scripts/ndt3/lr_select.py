@@ -31,12 +31,19 @@ def session_time(key):
 
 def main():
     pairs = pd.read_csv(f"{PILOT}/pairs.csv")
-    rows = pd.read_csv(OUT).to_dict("records") if os.path.exists(OUT) else []
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--subjects", nargs="+", default=["N", "T5", "T8"])
+    ap.add_argument("--out", default=OUT)
+    args = ap.parse_args()
+    out = args.out
+    rows = pd.read_csv(out).to_dict("records") if os.path.exists(out) else []
     done = {(r["subject"], r["lr"]) for r in rows}
-    for k in ["N", "T5", "T8"]:
+    from pilot import load                       # applies the pre-specified channel rule
+    for k in args.subjects:
         P = pairs[pairs.subject == k]
         key = min(set(P.train) | set(P.test), key=session_time)
-        s = dict(np.load(f"{PILOT}/{k}/{key}.npz"))
+        s = load(k, key)
         C, D = s["x_tr"].shape[1], s["y_tr"].shape[1]
         norm, cov_max = L.write_norm(f"lrnorm{k}", s["y_tr"])
         for lr in RATES:
@@ -52,7 +59,7 @@ def main():
             rows.append({"subject": k, "session": key, "lr": lr, "epochs": info["epochs"], "val": info["best_score"],
                          "test_r2": L.r2(pred, s["y_te"]), "seconds": round(time.time() - t0)})
             print(rows[-1], flush=True)
-            pd.DataFrame(rows).to_csv(OUT, index=False, float_format="%.6f")
+            pd.DataFrame(rows).to_csv(out, index=False, float_format="%.6f")
     d = pd.DataFrame(rows)
     chosen = d.loc[d.groupby("subject").val.idxmax(), ["subject", "lr", "val"]]
     print("chosen by validation R2:\n" + chosen.to_string(index=False), flush=True)
