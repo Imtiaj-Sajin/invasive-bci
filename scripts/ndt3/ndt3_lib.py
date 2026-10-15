@@ -234,6 +234,12 @@ def predict_chunked(model, job, x, y, n_channels, behavior_dim, norm_path, cov_m
     yp = np.concatenate([np.asarray(y, np.float32), np.zeros((max(pad, 0), y.shape[1]), np.float32)])
     xw = np.concatenate([xp[s:s + win] for s in starts])
     yw = np.concatenate([yp[s:s + win] for s in starts])
+    # NDT3's loader drops windows whose behaviour is constant (heuristic_sanitize) or that have no spikes. Behaviour
+    # inputs are masked at prediction, so a tiny ramp on the written behaviour keeps every window without affecting the
+    # predictions (it is used only for the alignment check below); R2 is computed on the true labels by the caller.
+    yw = yw + 1e-3 * np.tile((np.arange(win) / win)[:, None], (len(starts), yw.shape[1])).astype(np.float32)
+    empty = [i for i, s in enumerate(starts) if xw[i * win:(i + 1) * win].sum() == 0]
+    assert not empty, f"{len(empty)} evaluation windows without any spike would be dropped by NDT3"
     write_split(job, "chunks", xw, yw)
     cfg = make_cfg(register(job, n_channels), behavior_dim, norm_path, chop_ms=win * 20)
     ds = dataset(cfg)
