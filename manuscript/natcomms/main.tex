@@ -178,7 +178,7 @@ With $\alpha = 10^4$, the time to half retention about doubled or more in monkey
 \val{N:thalftuned} days), T5 (\val{T5:thalf} to \val{T5:thalftuned} days) and T7 (under one day to \val{T7:thalftuned}
 days). It grew by about half in T6, T9 and T10 and changed little in monkeys C and M and in T8 (Fig.~\ref{fig:decay}c,d).
 Absolute $R^2$ on later days rose in all nine individuals, by medians of \val{all:tunedabsdiff:min} to
-\val{all:tunedabsdiff:max}, and same-day accuracy did not fall (Fig.~\ref{fig:recipes}a,b). Ordinary same-day
+\val{all:tunedabsdiff:max}, and same-day accuracy did not fall (Supplementary Table~9). Ordinary same-day
 cross-validation of the penalty gave almost the same cross-day accuracy as the 1\% rule (Methods). The lesson is
 not that a special rule is needed, but that decay should only be compared between decoders whose penalty was
 tuned at all. We use $\alpha = 10^4$ for the remaining decoder analyses unless stated.
@@ -238,9 +238,61 @@ error in predicting cursor angular error from elapsed days alone, or with a dive
 \label{fig:labelfree}
 \end{figure}
 
+\subsection*{A few minutes of labeled data restore decoders in people}
+
+The tuned penalty also mattered for recalibration: the 1\% rule raised cross-day $R^2$ at every gap without lowering
+same-day accuracy (Fig.~\ref{fig:recipes}a,b). How much labeled data does recalibration need? In the \val{hum:nword} participants, retention pooled over all gaps
+rose from
+\val{hum:effnone} without labels to \val{hum:effL6n50} with 50 labeled trials and \val{hum:effL6n100} with 100 for a
+freshly trained, strongly regularized decoder (Fig.~\ref{fig:recipes}c and Supplementary Table~10). Refitting while
+shrinking toward the old decoder reached \val{hum:effL6pn50} and \val{hum:effL6pn100}, and re-weighting reached
+\val{hum:effL3n50} and \val{hum:effL3n100}. Movement periods lasted 1.6--3.9~s in these sessions, so 100 trials take a few
+minutes. Recovery was slowest in \val{hum:effL6n100:slowwho}, where 100 trials restored a retrained decoder to
+\val{hum:effL6n100:slow}, against \val{hum:effL6n100:restmin}--\val{hum:effL6n100:restmax} in the other participants
+(Supplementary Table~10). In people, the old decoder was not a useful starting point: a fresh decoder learned
+more from the same trials than a refit toward the old one. Re-weighting indicates what changes, but it is not an
+efficient way to recalibrate in these sessions.
+
+With very few trials, refitting can make a decoder worse. In monkey N (86 session pairs), choosing the shrinkage
+strength by cross-validation on 10 trials made \val{harm:10:cv}\% of recalibrations worse than no recalibration, and a
+fixed strong shrinkage made \val{harm:10:hist}\% worse (Fig.~\ref{fig:recipes}d). This difference was not significant
+after correction for the five data budgets (Supplementary Table~10).
+
+\begin{figure}[tbp]
+\centering
+\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig6_recipes.pdf}}
+\caption{\textbf{Simple recipes for recalibration.} \textbf{a}, Decoding $R^2$ in monkey N against the ridge penalty, on the
+training day (lightest) and on later days (darker). The dotted line marks $\alpha = 0.1$. \textbf{b}, Gain from the 1\%
+rule over $\alpha = 0.1$, per individual and gap (medians over training sessions with 95\% confidence intervals;
+intervals beyond the axis are clipped, arrows). \textbf{c}, Retention in the six human participants against the number
+of labeled trials, for a retrained decoder, a refit shrunk toward the old decoder and re-weighting. The dotted line marks
+the renormalized fixed decoder. \textbf{d}, Recalibrations in monkey N that made the decoder worse than no recalibration,
+with the shrinkage chosen by cross-validation (grey) or fixed (blue).}
+\label{fig:recipes}
+\end{figure}
+
+\subsection*{A pretrained foundation decoder still needed labels in a pilot}
+
+Large decoders pretrained on many recordings might be expected to resist drift. We tested NDT3\cite{ye2025ndt3}, a
+transformer pretrained on about 2,000 hours of motor-cortex recordings, in monkey N and in participants T5 and T8, none of
+which were in its pretraining data (Methods). NDT3 and the ridge decoder received the same threshold crossings, on
+\val{ndt3:N:pairs} session pairs per individual. Within a day, NDT3 was about twice as accurate as the ridge decoder in
+monkey N (median $R^2$ \val{ndt3:N:sd:ndt3} versus \val{ndt3:N:sd:lin}) but less accurate in T5 (\val{ndt3:T5:sd:ndt3}
+versus \val{ndt3:T5:sd:lin}) and T8 (\val{ndt3:T8:sd:ndt3} versus \val{ndt3:T8:sd:lin}). Without an update, both decoders
+fell below $R^2 = 0$ on later days in all three individuals. Continuing NDT3's own self-supervised training on the new day,
+without labels, left its median retention below zero in all three (\val{ndt3:N:unsup:ret}, \val{ndt3:T5:unsup:ret} and
+\val{ndt3:T8:unsup:ret}). With 300 labeled trials, NDT3 recovered fully in monkey N (median $R^2$ \val{ndt3:N:n300:ndt3}
+versus \val{ndt3:N:n300:lin} for the ridge decoder refit toward its previous weights), but it stayed below the refit ridge
+decoder in T5 (\val{ndt3:T5:n300:ndt3} versus \val{ndt3:T5:n300:lin}) and T8 (\val{ndt3:T8:n300:ndt3} versus
+\val{ndt3:T8:n300:lin}; Supplementary Table~16 and Supplementary Note~5). This was a pilot, with three training sessions
+per individual and two learning rates. NDT3 was weaker than the ridge decoder in people even within a day, so better
+fine-tuning may close part of that gap. Within this pilot, a large pretrained decoder did not remove the need for
+labeled recalibration.
+
 \subsection*{Channel tuning is partly preserved over months}
 
-Label-free corrections left much of the loss in place. To see what kind of change remained, we re-weighted each
+Label-free corrections left much of the loss in place, and labels were needed to recover it. To see what kind of
+change remained, we re-weighted each
 channel in front of the otherwise unchanged decoder, using labeled trials from the later day. Re-weighting lets each
 channel's contribution grow, shrink or vanish, but keeps the decoder's pattern across time lags and outputs. In the
 participants it recovered \val{hum:trec:min}--\val{hum:trec:max}\% of the loss at gaps up to 480 days, least in T8 and
@@ -290,56 +342,6 @@ the lost accuracy recovered by re-weighting, for linear (filled) and recurrent (
 confidence intervals.}
 \label{fig:channels}
 \end{figure}
-
-\subsection*{A few minutes of labeled data restore decoders in people}
-
-How much labeled data does recalibration need? In the \val{hum:nword} participants, retention pooled over all gaps
-rose from
-\val{hum:effnone} without labels to \val{hum:effL6n50} with 50 labeled trials and \val{hum:effL6n100} with 100 for a
-freshly trained, strongly regularized decoder (Fig.~\ref{fig:recipes}c and Supplementary Table~10). Refitting while
-shrinking toward the old decoder reached \val{hum:effL6pn50} and \val{hum:effL6pn100}, and re-weighting reached
-\val{hum:effL3n50} and \val{hum:effL3n100}. Movement periods lasted 1.6--3.9~s in these sessions, so 100 trials take a few
-minutes. Recovery was slowest in \val{hum:effL6n100:slowwho}, where 100 trials restored a retrained decoder to
-\val{hum:effL6n100:slow}, against \val{hum:effL6n100:restmin}--\val{hum:effL6n100:restmax} in the other participants
-(Supplementary Table~10). In people, the old decoder was not a useful starting point: a fresh decoder learned
-more from the same trials than a refit toward the old one. Re-weighting indicates what changes, but it is not an
-efficient way to recalibrate in these sessions.
-
-With very few trials, refitting can make a decoder worse. In monkey N (86 session pairs), choosing the shrinkage
-strength by cross-validation on 10 trials made \val{harm:10:cv}\% of recalibrations worse than no recalibration, and a
-fixed strong shrinkage made \val{harm:10:hist}\% worse (Fig.~\ref{fig:recipes}d). This difference was not significant
-after correction for the five data budgets (Supplementary Table~10).
-
-\begin{figure}[tbp]
-\centering
-\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig6_recipes.pdf}}
-\caption{\textbf{Simple recipes for recalibration.} \textbf{a}, Decoding $R^2$ in monkey N against the ridge penalty, on the
-training day (lightest) and on later days (darker). The dotted line marks $\alpha = 0.1$. \textbf{b}, Gain from the 1\%
-rule over $\alpha = 0.1$, per individual and gap (medians over training sessions with 95\% confidence intervals;
-intervals beyond the axis are clipped, arrows). \textbf{c}, Retention in the six human participants against the number
-of labeled trials, for a retrained decoder, a refit shrunk toward the old decoder and re-weighting. The dotted line marks
-the renormalized fixed decoder. \textbf{d}, Recalibrations in monkey N that made the decoder worse than no recalibration,
-with the shrinkage chosen by cross-validation (grey) or fixed (blue).}
-\label{fig:recipes}
-\end{figure}
-
-\subsection*{A pretrained foundation decoder still needed labels in a pilot}
-
-Large decoders pretrained on many recordings might be expected to resist drift. We tested NDT3\cite{ye2025ndt3}, a
-transformer pretrained on about 2,000 hours of motor-cortex recordings, in monkey N and in participants T5 and T8, none of
-which were in its pretraining data (Methods). NDT3 and the ridge decoder received the same threshold crossings, on
-\val{ndt3:N:pairs} session pairs per individual. Within a day, NDT3 was about twice as accurate as the ridge decoder in
-monkey N (median $R^2$ \val{ndt3:N:sd:ndt3} versus \val{ndt3:N:sd:lin}) but less accurate in T5 (\val{ndt3:T5:sd:ndt3}
-versus \val{ndt3:T5:sd:lin}) and T8 (\val{ndt3:T8:sd:ndt3} versus \val{ndt3:T8:sd:lin}). Without an update, both decoders
-fell below $R^2 = 0$ on later days in all three individuals. Continuing NDT3's own self-supervised training on the new day,
-without labels, left its median retention below zero in all three (\val{ndt3:N:unsup:ret}, \val{ndt3:T5:unsup:ret} and
-\val{ndt3:T8:unsup:ret}). With 300 labeled trials, NDT3 recovered fully in monkey N (median $R^2$ \val{ndt3:N:n300:ndt3}
-versus \val{ndt3:N:n300:lin} for the ridge decoder refit toward its previous weights), but it stayed below the refit ridge
-decoder in T5 (\val{ndt3:T5:n300:ndt3} versus \val{ndt3:T5:n300:lin}) and T8 (\val{ndt3:T8:n300:ndt3} versus
-\val{ndt3:T8:n300:lin}; Supplementary Table~16 and Supplementary Note~5). This was a pilot, with three training sessions
-per individual and two learning rates. NDT3 was weaker than the ridge decoder in people even within a day, so better
-fine-tuning may close part of that gap. Within this pilot, a large pretrained decoder did not remove the need for
-labeled recalibration.
 
 \subsection*{Brief electrode silences look like fluctuation}
 
