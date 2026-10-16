@@ -512,19 +512,28 @@ def fig2(out):
 
     ax = axes[2]
     summ = json.load(open("results/v2_summary.json"))
+    lo_edge, hi_edge = 0.66, 380        # half-lives under one day (0) or never reached (inf) are drawn at the edges
+
+    def at_edge(v):
+        return lo_edge if v == 0 else hi_edge if not np.isfinite(v) else v
+
     for i, k in enumerate(L):
         d0 = summ.get(k, {}).get("default", {}).get("t_half_days")
         d1 = summ.get(k, {}).get("tuned", {}).get("t_half_days")
         if d0 is None:
             continue
-        ax.plot(d0, i, MK[k], color=COL[k], ms=3, mfc="white", mew=0.8)
-        if d1 is not None and np.isfinite(d1):
-            ax.annotate("", xy=(d1, i), xytext=(d0, i), arrowprops=dict(arrowstyle="-|>", lw=0.6, color=COL[k]))
-            ax.plot(d1, i, MK[k], color=COL[k], ms=3)
+        x0 = at_edge(d0)
+        ax.plot(x0, i, MK[k], color=COL[k], ms=3, mfc="white", mew=0.8)
+        if d1 is not None:
+            x1 = at_edge(d1)
+            if abs(x1 - x0) > 1e-9:
+                ax.annotate("", xy=(x1, i), xytext=(x0, i), arrowprops=dict(arrowstyle="-|>", lw=0.6, color=COL[k]))
+            ax.plot(x1, i, MK[k], color=COL[k], ms=3)
+    ax.axvspan(0.5, 0.85, color=P.NEUTRAL, alpha=0.18, lw=0)
     ax.set_xscale("log")
-    ax.set_xlim(0.8, 400)
-    ax.set_xticks([1, 3, 10, 30, 100, 300])
-    ax.set_xticklabels(["1", "3", "10", "30", "100", "300"])
+    ax.set_xlim(0.5, 400)
+    ax.set_xticks([lo_edge, 3, 10, 30, 100, 300])
+    ax.set_xticklabels(["<1", "3", "10", "30", "100", "300"])
     ax.minorticks_off()
     ax.set_yticks(range(len(L)))
     ax.set_yticklabels([])
