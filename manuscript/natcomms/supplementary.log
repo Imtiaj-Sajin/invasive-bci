@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.5.16)  16 OCT 2026 11:18
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.5.16)  16 OCT 2026 11:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1156,7 +1156,7 @@ Package rerunfilecheck Info: File `supplementary.out' has not changed.
 Here is how much of TeX's memory you used:
  14528 strings out of 467871
  227759 string characters out of 5418860
- 672285 words of memory out of 5000000
+ 672300 words of memory out of 5000000
  43053 multiletter control sequences out of 15000+600000
  740715 words of font info for 137 fonts, out of 8000000 for 9000
  1151 hyphenation exceptions out of 8191
@@ -1182,7 +1182,7 @@ grams/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/User/AppData/Local/Progr
 ams/MiKTeX/fonts/type1/public/lm/lmsy9.pfb><C:/Users/User/AppData/Local/Program
 s/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/User/AppData/Local/Programs
 /MiKTeX/fonts/type1/public/lm/lmtt9.pfb>
-Output written on supplementary.pdf (19 pages, 482402 bytes).
+Output written on supplementary.pdf (19 pages, 482413 bytes).
 PDF statistics:
  246 PDF objects out of 1000 (max. 8388607)
  42 named destinations out of 1000 (max. 500000)
