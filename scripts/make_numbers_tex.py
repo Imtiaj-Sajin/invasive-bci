@@ -353,6 +353,19 @@ def main():
                     put(f"{k}:mech:{name}:n", str(len(sv)))
                     put(f"{k}:mech:{name}:p", pval(float(_st.wilcoxon(sv).pvalue)))
                     put(f"{k}:mech:{name}:null", f2(float(q[c + "_null"].median())))
+    if os.path.exists("results/heterogeneity/summary.json"):     # mixed model: do decay curves differ between individuals?
+        het = load("results/heterogeneity/summary.json")
+        for key, tag in (("main", "all"), ("humans", "hum"), ("floor_minus1", "fl1"), ("humans_floor_minus1", "humfl1"),
+                         ("abs_loss", "abs"), ("humans_abs_loss", "humabs")):
+            if key in het:
+                for test in ("curves", "slopes"):
+                    t = het[key][test]
+                    put(f"het:{tag}:{test}:chi", f"{t['chi2']:.1f}")
+                    put(f"het:{tag}:{test}:df", str(t["df"]))
+                    put(f"het:{tag}:{test}:p", pval(t["P"]))
+                put(f"het:{tag}:n", f"{het[key]['n_pairs']:,}")
+        cp = [het[k]["curves"]["P"] for k in het if isinstance(het[k], dict) and "curves" in het[k]]
+        put("het:curves:pmax", pval(max(cp)))
     nl = load("results/failure_robustness/null_summary.json")
     for k, v in nl.items():
         put(f"null:{k}:obs", pct(v["fraction_obs"]))
