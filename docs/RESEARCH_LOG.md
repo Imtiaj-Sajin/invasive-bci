@@ -1554,3 +1554,16 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   (output divergence did help in T11); channel identity stated for monkeys, weaker in people; weight-angle reduction
   qualified by the permuted baseline (new keys hum:angperm, hum:anggap); NDT3 framed as a pilot; electrode
   silences "could not be told apart from" fluctuation instead of "matched".
+
+### 2026-10-16 — Heterogeneity mixed model (referee M2, M12)
+
+- `python scripts/heterogeneity_model.py` (statsmodels 0.15 added to the venv and pyproject; about 4 min):
+  linear mixed model on the 1,684 valid tuned-decoder pairs; retention floored at 0 against log2(days/30); intercept
+  and slope per individual; crossed random intercepts for training and test sessions; ML fits, likelihood-ratio tests.
+- Curves differ between individuals under every outcome: floor 0 chi2(16) = 174.6, P = 1e-28 (participants chi2(10) =
+  116.3, P = 3e-20); floor -1 P = 4e-20 (participants 1e-13); absolute loss P = 3e-7 (participants 1e-35).
+- Slopes beyond level: all nine P = 2e-6 / 0.002 / 0.008 (floor 0 / floor -1 / absolute); participants P = 0.059 /
+  0.004 / 1e-6. The floor at 0 compresses the slopes of participants whose decoders often fail (T8 median retention
+  -0.08), so "similar slopes in people" is NOT claimed. Paper claims only that curves differ (Results, Methods,
+  Supplementary Note 4). Keys het:*.
+- Latent-alignment ceiling running (`bash scripts/run_latent_ceiling.sh`, all nine, restartable; T7 ~26 s/pair).

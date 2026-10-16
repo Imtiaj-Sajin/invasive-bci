@@ -170,6 +170,20 @@ T6 changed from \val{ap:T6:thalf} to \val{T6:thalf} days, which is small relativ
 individuals changed by less than one day. Full results with all pairs are in
 \texttt{results/v2\_summary\_allpairs.json}.
 
+\textit{Do decay curves differ between individuals?} Half-lives are censored below one day and have wide intervals,
+so we also fitted a linear mixed model (Methods; \texttt{scripts/heterogeneity\_model.py}). Whether the curves differ
+was clear under every outcome definition. With retention floored at 0, the likelihood-ratio statistic was
+$\chi^2_{\val{het:all:curves:df}} = \val{het:all:curves:chi}$ ($P = \val{het:all:curves:p}$) for all nine individuals and
+$\chi^2_{\val{het:hum:curves:df}} = \val{het:hum:curves:chi}$ ($P = \val{het:hum:curves:p}$) for the participants. With a
+floor of $-1$, it was $\val{het:fl1:curves:chi}$ ($P = \val{het:fl1:curves:p}$) and $\val{het:humfl1:curves:chi}$
+($P = \val{het:humfl1:curves:p}$). For the absolute loss in $R^2$, it was $\val{het:abs:curves:chi}$
+($P = \val{het:abs:curves:p}$) and $\val{het:humabs:curves:chi}$ ($P = \val{het:humabs:curves:p}$). Whether the slopes
+also differ, beyond the level of each curve, was less clear. For all nine individuals the slope test gave
+$P = \val{het:all:slopes:p}$ (floor 0), $\val{het:fl1:slopes:p}$ (floor $-1$) and $\val{het:abs:slopes:p}$
+(absolute loss). For the participants alone it gave $P = \val{het:hum:slopes:p}$, $\val{het:humfl1:slopes:p}$ and
+$\val{het:humabs:slopes:p}$. The floor at 0 compresses the slopes of participants whose decoders often fail, which
+may explain the weaker result with that outcome. We therefore claim only that the curves differ.
+
 \section*{Supplementary Note 5: Pretrained foundation decoder}
 
 \textit{Pretraining data.} The public NDT3 checkpoint pretrained on about 2,000 hours (45 million parameters) stores the

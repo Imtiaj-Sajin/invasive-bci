@@ -20,7 +20,7 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Topic :: Scientific/Engineering :: Medical Science Apps.",
 ]
-dependencies = ["numpy>=1.23", "scipy>=1.9", "pandas>=1.5", "scikit-learn>=1.1", "matplotlib>=3.6"]
+dependencies = ["numpy>=1.23", "scipy>=1.9", "pandas>=1.5", "scikit-learn>=1.1", "matplotlib>=3.6", "statsmodels>=0.14"]
 
 [project.optional-dependencies]
 gpu = ["torch>=2.0"]

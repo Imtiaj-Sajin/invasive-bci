@@ -152,7 +152,12 @@ Longer-term decay differed far more. Retention fell to one half within a day in 
 \val{N:thalf} days in monkey N (\val{N:thalfci}), \val{C:thalf} in monkey C (\val{C:thalfci}), \val{M:thalf} in monkey M
 (\val{M:thalfci}) and \val{T6:thalf} in T6 (\val{T6:thalfci}; Fig.~\ref{fig:decay}a,c). The intervals were wide, and
 values under one day are censored, so we compare individuals by range rather than by ratio. With the better-regularized
-decoder of the next section, the range stayed wide: under one day in T8 and \val{T6:thalftuned} days in T6. In monkey N and all
+decoder of the next section, the range stayed wide: under one day in T8 and \val{T6:thalftuned} days in T6. A mixed
+model of retention against log elapsed time, with random effects for training and test sessions, confirmed that the
+decay curves differed between individuals (likelihood-ratio test with the better-regularized decoder,
+$\chi^2_{\val{het:all:curves:df}} = \val{het:all:curves:chi}$, $P = \val{het:all:curves:p}$; participants alone,
+$\chi^2_{\val{het:hum:curves:df}} = \val{het:hum:curves:chi}$, $P = \val{het:hum:curves:p}$). This held for every
+outcome definition we tried ($P \le \val{het:curves:pmax}$; Methods and Supplementary Note~4). In monkey N and all
 \val{hum:nword} participants, the reference decoder did not decline from short to long gaps (Supplementary Table~2).
 The decline therefore reflects a growing mismatch between decoder and day, not poorer recordings.
 
@@ -807,8 +812,17 @@ intervals and $P$ values may be somewhat optimistic; we emphasize effect sizes. 
 per training session (the share of its pairs made worse by each policy; two-sided Wilcoxon signed-rank test over training
 sessions), Holm-adjusted over the five data budgets\cite{holm1979}. Counts of significant individuals are also given after
 Holm correction across individuals. With six participants and three monkeys, comparisons between species are
-descriptive. Exact $P$ values are reported. Analyses
-used Python 3.11 with NumPy, SciPy, pandas, scikit-learn and PyTorch.
+descriptive. Exact $P$ values are reported.
+
+Whether decay differed between individuals was tested with a linear mixed model on the valid pairs of the
+better-regularized decoder ($n = \val{het:all:n}$ pairs). The outcome was the retention of the renormalized fixed decoder,
+floored at 0 so that every failed decoder counts as no retention (the raw ratio reaches $-50$ when a broken decoder is
+divided by a small reference). The predictor was $\log_2$ of the days between sessions. The full model had an intercept
+and slope per individual; random intercepts for the training session and for the test session were crossed, because
+pairs share both. Models were fitted by maximum likelihood and compared by likelihood-ratio tests against one shared
+curve (curves differ) and against individual intercepts with one shared slope (slopes differ). Sensitivity analyses used
+a floor of $-1$ and the absolute loss in $R^2$ (reference minus renormalized decoder), which needs no ratio. Analyses
+used Python 3.11 with NumPy, SciPy, pandas, scikit-learn, statsmodels and PyTorch.
 
 \subsection*{Use of AI tools}
 
