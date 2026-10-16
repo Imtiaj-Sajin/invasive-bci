@@ -28,7 +28,7 @@ intracortical brain--computer interfaces}
 \affil*[1]{\orgdiv{Department of Computer Science}, \orgname{American International University-Bangladesh},
 \orgaddress{\city{Dhaka}, \postcode{1229}, \country{Bangladesh}}}
 
-\abstract{This document contains Supplementary Notes 1--4 and Supplementary Tables 1--14. Every table is generated
+\abstract{This document contains Supplementary Notes 1--5 and Supplementary Tables 1--16. Every table is generated
 from the released result files by \texttt{scripts/make\_supp\_tables.py}, so its values match the code repository.}
 
 \maketitle
@@ -163,7 +163,7 @@ analysis because the inclusion rule was fixed in advance.
 \textit{Session pairs with a failed reference decoder.} Within included individuals, pairs whose reference $R^2$ was at
 most 0.1 were left out (0--18\% of pairs per individual). With all pairs kept, the main conclusions did not change.
 Time to half retention ranged from \val{ap:T8:thalf} days (T8) to \val{ap:T6:thalf} days (T6), compared with
-\val{T8:thalf} to \val{T6:thalf} days with the rule, so the spread between individuals remained about a hundredfold.
+\val{T8:thalf} to \val{T6:thalf} days with the rule, so the spread between individuals remained wide.
 The largest single change was in T7, whose retention after one day lay close to one half (\val{ap:T7:ret1} with all
 pairs, \val{T7:ret1} with the rule), so its time to half retention moved from \val{ap:T7:thalf} days to under one day.
 T6 changed from \val{ap:T6:thalf} to \val{T6:thalf} days, which is small relative to its slow decay, and the other
@@ -227,7 +227,7 @@ SBP, spike-band power; TC, threshold crossings.}
 Individual & Source & Arrays and site & Signal & Task & Sessions (span) \\
 \midrule
 Monkey N & DANDI 001201 (LINK) & 2 Utah, motor cortex & SBP, TC & finger flexion & 312 on 303 days (3.4 years) \\
-Monkey C & DANDI 000688 & Utah, motor/premotor & sorted spikes & reaching & 68 (3.0 years) \\
+Monkey C & DANDI 000688 & Utah, motor & sorted spikes & reaching & 68 (3.0 years) \\
 Monkey M & DANDI 000688 & Utah, motor/premotor & sorted spikes & reaching & 28 (1.5 years) \\
 \tabinput{supp/tab_data_humans.tex}
 14 humans & Dryad x0k6djj1h & 20 Utah arrays & TC rates, impedance & research sessions & 2,289 ($\leq$7.3 years) \\
@@ -438,8 +438,8 @@ Trials & Pairs & Cross-validation & Fixed & $P$ (Fisher) & Cross-validation & Fi
 \begin{landscape}
 \begin{table}[p]
 \caption{\textbf{Electrode statistics.} \textbf{a}, Silence and recovery in initially active human electrodes under
-different definitions, observed and after shuffling each electrode's session order (shuffled silent episodes in
-parentheses). \textbf{b}, Per array: yield is the percentage of electrodes with a threshold-crossing rate of at least
+different definitions, observed and after shuffling each electrode's session order (mean of 200 shuffles; mean number of
+shuffled silent episodes in parentheses). \textbf{b}, Per array: yield is the percentage of electrodes with a threshold-crossing rate of at least
 2~Hz (median of the first / last three sessions); $h_{\mathrm{off}}$ and $h_{\mathrm{on}}$ are switching rates per
 1,000 days; Rev./sil., recovered and silenced initially active electrodes; Kurt., excess kurtosis of
 session-to-session changes in log rate after removing session-wide changes; Imp.\ $\rho$, Spearman correlation of

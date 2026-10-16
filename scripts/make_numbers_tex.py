@@ -170,7 +170,7 @@ def main():
                     put(f"hum:eff{rung}n{n}", f2(float((e[c] / e.own).median())))
                     put(f"hum:effpct{rung}n{n}", pct(float((e[c] / e.own).median())))
     # weight angles: reduction of the decoder-weight angle when one scale per channel is allowed
-    red_all = []
+    red_all, null_hum, gap_hum = [], [], []
     for k in IND:
         p = f"results/weight_angles/{k}.csv"
         if os.path.exists(p):
@@ -178,6 +178,9 @@ def main():
             med = q.groupby("gap_target")[["angle_global", "angle_channel", "angle_null"]].median()
             red = med.angle_global - med.angle_channel
             red_all += list(red.values)
+            if k in HUM:      # permuted-channel baseline, and its distance from the per-channel angle at the longest gap
+                null_hum += list(med.angle_null.values)
+                gap_hum.append(med.angle_null.iloc[-1] - med.angle_channel.iloc[-1])
             put(f"{k}:angred", f"{red.median():.0f}")
             put(f"{k}:anggl1", f"{med.angle_global.iloc[0]:.0f}")
             put(f"{k}:anggl480", f"{med.angle_global.iloc[-1]:.0f}")
@@ -187,6 +190,11 @@ def main():
     if red_all:
         put("ang:redmin", f"{min(red_all):.0f}")
         put("ang:redmax", f"{max(red_all):.0f}")
+    if null_hum:
+        put("hum:angperm:min", f"{min(null_hum):.0f}")
+        put("hum:angperm:max", f"{max(null_hum):.0f}")
+        put("hum:anggap:min", f"{min(gap_hum):.0f}")
+        put("hum:anggap:max", f"{max(gap_hum):.0f}")
     # matched-output control
     for k in ("C", "M"):
         p = f"results/matched_output_tuned/{k}.csv" if os.path.exists(f"results/matched_output_tuned/{k}.csv") else f"results/matched_output/{k}.csv"

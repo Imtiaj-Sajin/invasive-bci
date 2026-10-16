@@ -14,7 +14,8 @@ It is undefined when the reference decoder does not work. Adding six BrainGate p
 
 ## Decision
 
-1. **Participants** (fixed 2026-10-07, before the T7, T8, T10 and T11 results were seen): a human participant enters
+1. **Participants** (fixed 2026-10-07 when T3 failed, before the T2, T7, T8, T10 and T11 results were seen;
+   RESEARCH_LOG 2026-10-07): a human participant enters
    the decay and correction summaries only if the median reference R² across its ladder pairs is above 0.1.
    Included: T6, T5, T9, T7, T10, T8 (T11 pending). Excluded: T2, T3, reported in the Supplement.
 2. **Pairs** (adopted 2026-10-08, after seeing the T7 artefact): within included individuals, session pairs whose

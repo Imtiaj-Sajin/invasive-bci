@@ -1533,3 +1533,24 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
 - Benchmark check passes for C and M too (max difference 9e-17): all nine individuals verified.
 - `bash scripts/regenerate_paper.sh` from scratch: exit 0; all 1,708 generated values unchanged; refs in citation
   order; no undefined references.
+
+### 2026-10-16 — Hostile review; target changed to J. Neural Eng.; factual fixes and narrowed claims
+
+- Two adversarial reviews (Nature Communications referee; editor/prose). Referee: reject for insufficient conceptual
+  advance, headline claims beyond the evidence, closed-loop human labels. Owner decision: fix and submit to J. Neural
+  Eng.; one added analysis (latent-alignment ceiling, below); no further scope unless reviewers ask.
+- Factual fixes checked against data:
+  - Supplementary Table 11 used a single shuffle (79%, 594; long silences 41%, 81) while the text used the mean of 200
+    shuffles (78%, 601; 44%, 79). The table now reads `failure_robustness/null_summary.json`, as the text does.
+  - Monkey C: all 96 electrodes are M1 (`elecM1bank*`), only monkey M has a PMd array; the decoded variable is cursor
+    position/velocity (`cursor_pos`, planar manipulandum). Methods, matched-output control and Supplementary Table 1
+    corrected (the paper had "motor and premotor" and "hand"; the benchmark README was right).
+  - Abstract/Discussion "14 people" now say decoders in six, electrodes in all 14. Supplement abstract: Notes 1-5,
+    Tables 1-16.
+  - "Five added participants" is correct (log 2026-10-07: rule fixed when T3 failed, before T2, T7, T8, T10, T11);
+    decision record 0003 listed four and was corrected.
+- Narrowed claims: "hundredfold" removed (censored values, wide intervals; range stated, tuned range <1 d to 206 d);
+  label-free claims limited to the methods tested; Wilson 2025 speculation removed; monitoring section retitled
+  (output divergence did help in T11); channel identity stated for monkeys, weaker in people; weight-angle reduction
+  qualified by the permuted baseline (new keys hum:angperm, hum:anggap); NDT3 framed as a pilot; electrode
+  silences "could not be told apart from" fluctuation instead of "matched".
