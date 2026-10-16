@@ -4,7 +4,9 @@ Retention = R2 of the renormalized frozen decoder divided by own-day R2 (paired 
 at each target gap is interpolated in log(days) to find where it first falls below 0.5. CIs: resampling training
 sessions with replacement (2,000 draws).
 
-Usage: python scripts/decay_summary.py [--out results/decay_summary.csv]
+With --tuned, the same summary for the tuned-penalty decoders (results/decay_alpha, alpha = 1e4).
+
+Usage: python scripts/decay_summary.py [--tuned] [--out results/decay_summary.csv]
 """
 import argparse
 import os
@@ -34,11 +36,14 @@ def curve(d):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default="results/decay_summary.csv")
+    ap.add_argument("--tuned", action="store_true", help="tuned-penalty decoders (results/decay_alpha)")
+    ap.add_argument("--out", default=None)
     args = ap.parse_args()
+    out = args.out or ("results/decay_summary_tuned.csv" if args.tuned else "results/decay_summary.csv")
+    subj = [(n, f"results/decay_alpha/{n.split()[-1]}_alpha10000.csv") for n, _ in SUBJ] if args.tuned else SUBJ
     rng = np.random.default_rng(0)
     rows = []
-    for name, path in SUBJ:
+    for name, path in subj:
         d = valid_pairs(pd.read_csv(path))
         d = d[d.gap_target.isin(GAPS)].assign(ret=lambda x: x.L2 / x.own)
         med = curve(d)
@@ -58,7 +63,7 @@ def main():
                          t_half_ci=f"[{np.nanpercentile(bt_half, 2.5):.1f}, {np.nanpercentile(bt_half, 97.5):.1f}]"))
     df = pd.DataFrame(rows)
     print(df.to_string(index=False))
-    df.to_csv(args.out, index=False)
+    df.to_csv(out, index=False)
 
 
 if __name__ == "__main__":

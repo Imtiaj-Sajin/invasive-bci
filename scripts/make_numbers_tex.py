@@ -353,6 +353,15 @@ def main():
                     put(f"{k}:mech:{name}:n", str(len(sv)))
                     put(f"{k}:mech:{name}:p", pval(float(_st.wilcoxon(sv).pvalue)))
                     put(f"{k}:mech:{name}:null", f2(float(q[c + "_null"].median())))
+    for k in IND:      # reference-decoder R2 by gap (tuned penalty, valid pairs): does decoding itself get harder?
+        p = f"results/decay_alpha/{k}_alpha10000.csv"
+        if os.path.exists(p):
+            own = valid_pairs(pd.read_csv(p)).groupby("gap_target").own.median()
+            for g, v in own.items():
+                put(f"{k}:own{int(g)}", f2(float(v)))
+            short = own[own.index <= 30]
+            put(f"{k}:ownshort:min", f2(float(short.min())))
+            put(f"{k}:ownshort:max", f2(float(short.max())))
     if os.path.exists("results/heterogeneity/summary.json"):     # mixed model: do decay curves differ between individuals?
         het = load("results/heterogeneity/summary.json")
         for key, tag in (("main", "all"), ("humans", "hum"), ("floor_minus1", "fl1"), ("humans_floor_minus1", "humfl1"),
@@ -501,6 +510,12 @@ def group_keys():
         if vals:
             put(f"all:{s}:min", V[f"{min(vals, key=lambda x: x[1])[0]}:{s}"])
             put(f"all:{s}:max", V[f"{max(vals, key=lambda x: x[1])[0]}:{s}"])
+    for s in ("strict1", "thalf", "thalftuned"):                                 # the three monkeys
+        vals = [(i, _num(V.get(f"{i}:{s}"))) for i in ("N", "C", "M")]
+        vals = [(i, v) for i, v in vals if v is not None]
+        if vals:
+            put(f"mon:{s}:min", V[f"{min(vals, key=lambda x: x[1])[0]}:{s}"])
+            put(f"mon:{s}:max", V[f"{max(vals, key=lambda x: x[1])[0]}:{s}"])
     for s in ("tunedabsp", "rotrenp", "rulep", "renmeanp", "coralp"):          # how many individuals reach P < 0.05
         ps = [V.get(f"{i}:{s}") for i in IND if f"{i}:{s}" in V]
         put(f"all:{s}:nsig", str(sum(1 for p in ps if "times10" in p or (_num(p) is not None and _num(p) < 0.05))))
