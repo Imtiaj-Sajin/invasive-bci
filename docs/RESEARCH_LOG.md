@@ -1491,3 +1491,20 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
 - T11 block-normalized ladder rerun on PC1 in the paper's environment:
   `IBCI_BLOCKNORM=1 python scripts/replicate_braingate_decoding.py --participant T11 --skip L4 L5 --out results/replication_bg_blocknorm_rerun`
   (compared with the committed file before replacing it; affects Supplementary Note 4 only).
+
+### 2026-10-16 — NDT3 pilot complete (T8) and written into the paper; benchmark in the paper
+
+- T8 (array rule, lr 1e-4) complete: same-day NDT3 0.22 vs ridge 0.28 (NDT3 higher in 4/12 sessions); 300-trial update
+  -0.04 vs 0.18 (1/12); 50 trials -0.12 vs 0.07 (0/12); no update both below zero. Final pilot (results/ndt3/
+  pilot_summary.json, `python scripts/ndt3/summarize_pilot.py`): NDT3 better than ridge only in monkey N; worse in T5
+  and T8; both collapse without an update; self-supervised adaptation leaves retention below zero everywhere.
+- Paper: new Results subsection "A pretrained foundation decoder does not escape decay", Methods "Pretrained foundation
+  decoder", Supplementary Table 16 and Note 5 (pretraining contents, feature/individual choice from
+  `scripts/ndt3/tx_survey.py` -> results/ndt3/tx_survey.csv, learning-rate diagnostics and rule, T8 silent array, evaluation
+  checks, scope and stop rule). All numbers are generated keys (ndt3:*, ndt3d:*, ndt3lr*:*, ndt3tx:*).
+- Benchmark: Results paragraph, Methods "Benchmark", Supplementary Table 15, Code availability; keys bench:*.
+- Abstract rewritten (148 words; foundation decoder and benchmark added; decay range "under a day to over four months").
+  Introduction and Discussion updated; limitations state the pilot scope. Supplementary Note 4 fixed (T6 half-life with
+  all pairs 125 vs 138 days; others < 1 day).
+- References: NDT3 added (verified against the paper: NeurIPS 2025, doi 10.52202/085713-3692); refs.tex reordered to
+  citation order with `python scripts/tools/check_refs.py --fix-order` (it was not fully in order before).

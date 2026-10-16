@@ -164,8 +164,53 @@ Time to half retention ranged from \val{ap:T8:thalf} days (T8) to \val{ap:T6:tha
 \val{T8:thalf} to \val{T6:thalf} days with the rule, so the spread between individuals remained about a hundredfold.
 The largest single change was in T7, whose retention after one day lay close to one half (\val{ap:T7:ret1} with all
 pairs, \val{T7:ret1} with the rule), so its time to half retention moved from \val{ap:T7:thalf} days to under one day.
-All other individuals changed by less than a few days. Full results with all pairs are in
+T6 changed from \val{ap:T6:thalf} to \val{T6:thalf} days, which is small relative to its slow decay, and the other
+individuals changed by less than one day. Full results with all pairs are in
 \texttt{results/v2\_summary\_allpairs.json}.
+
+\section*{Supplementary Note 5: Pretrained foundation decoder}
+
+\textit{Pretraining data.} The public NDT3 checkpoint pretrained on about 2,000 hours (45 million parameters) stores the
+list of its pretraining sessions: 26,298 sessions from 23 subjects, mostly human sessions from the University of Pittsburgh
+plus monkey reaching datasets. The monkey datasets include those of monkeys C and M of this study, so we did not test them.
+No BrainGate session and no session of monkey N is listed.
+
+\textit{Choice of features and individuals.} NDT3 takes threshold-crossing counts. With threshold crossings, the same-day
+ridge decoder reached a median $R^2$ of \val{ndt3tx:N:tx} in monkey N (\val{ndt3tx:N:sbp} with spike-band power),
+\val{ndt3tx:T5:tx} in T5 (\val{ndt3tx:T5:sbp}) and \val{ndt3tx:T8:tx} in T8 (\val{ndt3tx:T8:sbp}). The crossings of T6 at
+$-4.5$ times the RMS were too sparse to decode (\val{ndt3tx:T6:tx}, against \val{ndt3tx:T6:sbp} with spike-band power), so
+T6 was not used. We chose monkey N and the two participants with the best threshold-crossing decoding and the longest
+recordings among those whose decoders worked well.
+
+\textit{Learning rate.} A first run used a learning rate of $10^{-4}$. In T5, NDT3's same-day $R^2$ then fell below the
+ridge decoder in most sessions. On one T5 session (ridge decoder $R^2$ 0.49), a learning rate of $4 \times 10^{-4}$ gave
+\val{ndt3d:T5:B}, against \val{ndt3d:T5:A} with $10^{-4}$; longer training gave \val{ndt3d:T5:C}, and a shorter context
+during evaluation \val{ndt3d:T5:D}. Repeated runs with identical settings differed by up to 0.07. We then fixed the rule
+described in Methods: the rate with the higher NDT3 validation $R^2$ on each individual's earliest session (monkey N
+\val{ndt3lr:N:0.0004} with $4 \times 10^{-4}$ versus \val{ndt3lr:N:0.0001}; T5 \val{ndt3lr:T5:0.0004} versus
+\val{ndt3lr:T5:0.0001}; T8, on the array kept by the array rule, \val{ndt3lrrule:T8:0.0001} with $10^{-4}$ versus
+\val{ndt3lrrule:T8:0.0004}). Monkey N and T5 were rerun completely with the chosen rate. In monkey N, the first run
+($10^{-4}$) gave the same pattern: same-day $R^2$ \val{ndt3d:N1e4:sd} and median retention \val{ndt3d:N1e4:n300ret} with
+300 trials.
+
+\textit{A nearly silent array in T8.} With both arrays, NDT3 did not learn T8 ($R^2$ \val{ndt3d:T8:P} on its earliest
+session). Training the same architecture from scratch gave \val{ndt3d:T8:S}, and the first array alone
+\val{ndt3d:T8:A1}. With the second array alone, NDT3 reached \val{ndt3d:T8:A2}, against 0.38 for the ridge decoder on all
+channels. Only 17 of the first array's 96 channels were active, and the ridge decoder reached 0.02 on that array alone
+and 0.38 with or without it, whereas NDT3 failed whenever it was present. We therefore fixed the array rule
+in Methods before running T8's pairs. It removed this array only.
+
+\textit{Evaluation.} Predictions were made in overlapping 2-s windows advancing by 1~s, keeping the last second of each.
+On a monkey N session this gave $R^2$ of 0.39 against 0.40 for NDT3's streaming evaluation with 1~s of context, and
+0.08 against 0.09 seven days later. NDT3's data loader drops windows whose behaviour is constant, which happens when the
+cursor-to-target direction does not change for 2~s. Because behaviour inputs are masked during prediction, we added a
+ramp of $10^{-3}$ to the behaviour written for evaluation windows so that every window was kept; predictions were
+unchanged.
+
+\textit{Scope.} The pilot used one model size, threshold crossings and 12 session pairs in each of three individuals, all
+offline. A rule fixed before the pilot required NDT3 to match or exceed the ridge decoder on same-day data in at least two
+of three individuals before a full benchmark run. It was met only in monkey N, so the analysis was not extended. Larger
+models, other adaptation schemes or more labeled data may behave differently.
 
 \clearpage
 
@@ -483,6 +528,25 @@ bootstrap intervals are released with the benchmark.}
 Individual & Pairs & 1 d & 30 d & 480 d & 1 d & 30 d & 480 d & 1 d & 30 d & 480 d \\
 \midrule
 \tabinput{supp/tab_bench.tex}
+\botrule
+\end{tabular}
+\end{table}
+
+\begin{table}[p]
+\caption{\textbf{Pretrained foundation decoder (NDT3) against the ridge decoder.} Both decoders received threshold
+crossings on the same 12 session pairs per individual (gaps of 1 to 480 days). Each cell gives the median $R^2$ of NDT3 /
+the ridge decoder, and in parentheses the number of sessions (same day) or pairs where NDT3 was higher. No update: NDT3
+applied unchanged versus the renormalized ridge decoder. 50 and 300 trials: NDT3 fine-tuned with the first labeled trials
+of the new day versus the ridge decoder refit toward its previous weights. Self-supervised: median retention of NDT3 after
+continued training with its neural prediction loss only. T8's nearly silent first array was left out of NDT3's input by a
+rule fixed in advance (Methods); the ridge decoder used all channels.}
+\label{tab:ndt3}
+\footnotesize
+\begin{tabular}{@{}lrlllll@{}}
+\toprule
+Individual & Pairs & Same day & No update & 50 trials & 300 trials & Self-supervised \\
+\midrule
+\tabinput{supp/tab_ndt3.tex}
 \botrule
 \end{tabular}
 \end{table}

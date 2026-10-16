@@ -375,6 +375,7 @@ def main():
     group_keys()
     bench_keys()
     ndt3_keys()
+    ndt3_diag_keys()
     write(args)
 
 
@@ -576,6 +577,38 @@ def ndt3_keys():
             put(f"ndt3:{k}:unsup:ret", f2(r["unsup"]["ndt3_ret"]))
             put(f"ndt3:{k}:unsup:better", str(r["unsup"]["better_than_zeroshot"]))
             put(f"ndt3:{k}:unsup:n", str(r["unsup"]["n"]))
+
+
+def ndt3_diag_keys():
+    """NDT3 pilot diagnostics (Supplementary Note 5): T5 learning-rate/patience/context checks, T8 array checks,
+    learning-rate selection, and monkey N at the first learning rate."""
+    if os.path.exists("results/ndt3/diag_T5.csv"):
+        d = pd.read_csv("results/ndt3/diag_T5.csv").drop_duplicates("variant", keep="last").set_index("variant")
+        for v in d.index:
+            put(f"ndt3d:T5:{v}", f2(float(d.loc[v, "r2"])))
+    if os.path.exists("results/ndt3/diag_T8.csv"):
+        d = pd.read_csv("results/ndt3/diag_T8.csv").set_index("variant")
+        for v in d.index:
+            put(f"ndt3d:T8:{v}", f2(float(d.loc[v, "r2"])))
+    for f, tag in (("results/ndt3/lr_select.csv", ""), ("results/ndt3/lr_select_T8_rule.csv", "rule")):
+        if os.path.exists(f):
+            d = pd.read_csv(f)
+            for r in d.itertuples():
+                put(f"ndt3lr{tag}:{r.subject}:{r.lr:g}", f2(float(r.val)))
+    if os.path.exists("results/ndt3/tx_survey.csv"):
+        d = pd.read_csv("results/ndt3/tx_survey.csv").groupby("subject")[["r2_sbp", "r2_tx"]].median()
+        for k, r in d.iterrows():
+            put(f"ndt3tx:{k}:sbp", f2(float(r.r2_sbp)))
+            put(f"ndt3tx:{k}:tx", f2(float(r.r2_tx)))
+    p = "results/ndt3/pilot/N_lr1e-4.csv"
+    if os.path.exists(p):
+        cols = ["subject", "kind", "train", "test", "gap_target", "condition", "r2", "epochs", "val", "bins",
+                "seconds", "base_epochs", "base_val"]
+        d = pd.read_csv(p, header=None, skiprows=1, names=cols)
+        put("ndt3d:N1e4:sd", f2(float(d[d.kind == "ref"].r2.median())))
+        ref = d[d.kind == "ref"].set_index("test").r2
+        q = d[(d.kind == "pair") & (d.condition == "fewshot_n300")]
+        put("ndt3d:N1e4:n300ret", f2(float(np.median(q.r2.values / q.test.map(ref).values))))   # median over pairs
 
 
 def write(args):

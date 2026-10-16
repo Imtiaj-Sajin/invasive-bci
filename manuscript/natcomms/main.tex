@@ -26,16 +26,16 @@ brain--computer interfaces}
 \affil*[1]{\orgdiv{Department of Computer Science}, \orgname{American International University-Bangladesh},
 \orgaddress{\city{Dhaka}, \postcode{1229}, \country{Bangladesh}}}
 
-\abstract{Implanted brain--computer interfaces can restore communication and movement after paralysis, but their
-decoders lose accuracy as recordings change over days and years. How fast this happens, and which corrections work,
-have not been measured consistently across individuals. Here, we analyzed public long-term recordings from three
-monkeys and 14 people with one pipeline. A fixed decoder lost half of its accuracy within one day to four months,
-depending on the individual, and weak regularization exaggerated this decay. In people, about 100 labeled trials
-restored most of the accuracy with any well-regularized refit, whereas label-free alignment added little beyond
-rescaling each channel. Corrections recovered far more when each channel kept its identity, and per-channel
-corrections tracked changes in each electrode's firing. Brief electrode silences matched session-to-session
-fluctuation, but silences longer than a month were real and often reversed. These results provide evidence-based
-baselines for building durable interfaces.}
+\abstract{Implanted brain--computer interfaces can restore communication and movement after paralysis, but their decoders lose
+accuracy as recordings change over days and years. How fast this happens, and which corrections work, have not been
+measured consistently across individuals. We analyzed public long-term recordings from three monkeys and 14 people
+with one pipeline. A fixed decoder lost half of its accuracy in under a day to over four months, depending on the
+individual, and weak regularization exaggerated this decay. In people, about 100 labeled trials restored most accuracy
+with any well-regularized refit, whereas label-free alignment added little beyond rescaling each channel, and a
+pretrained foundation decoder did not escape decay. Per-channel corrections worked best when channels kept their
+identity and tracked changes in each electrode's firing. Brief electrode silences matched session-to-session
+fluctuation, but month-long silences were real and often reversed. We release a \val{bench:npairs}-pair benchmark spanning up to
+480 days.}
 
 \keywords{brain--computer interface, intracortical recording, Utah array, neural drift, decoder recalibration,
 electrode stability}
@@ -81,8 +81,9 @@ one array lost about half of its electrodes with spikes, and the remaining spike
 trained 478 days earlier failed until each
 channel was re-weighted. Decay rates differed about a hundredfold between individuals, and weak
 regularization exaggerated decay. In people, about 100 labeled trials restored most of the accuracy with any
-well-regularized refit, and label-free alignment added little beyond rescaling each channel. Corrections recovered
-far more when channels kept their identity, and the per-channel corrections tracked each electrode's changing
+well-regularized refit, and label-free alignment added little beyond rescaling each channel. A large pretrained
+decoder did not escape decay either, and in people it did not improve on a well-regularized linear decoder. Corrections
+recovered far more when channels kept their identity, and the per-channel corrections tracked each electrode's changing
 activity. At the electrode level, brief silences matched session-to-session fluctuation, whereas silences lasting over
 a month were real and often reversed. We release the code, a benchmark for decoder transfer over years, a calibrated
 simulator and all derived results.
@@ -340,6 +341,22 @@ with the shrinkage chosen by cross-validation (grey) or fixed (blue).}
 \label{fig:recipes}
 \end{figure}
 
+\subsection*{A pretrained foundation decoder does not escape decay}
+
+Large decoders pretrained on many recordings might be expected to resist drift. We tested NDT3\cite{ye2025ndt3}, a
+transformer pretrained on about 2,000 hours of motor-cortex recordings, in monkey N and in participants T5 and T8, none of
+which were in its pretraining data (Methods). NDT3 and the ridge decoder received the same threshold crossings, on
+\val{ndt3:N:pairs} session pairs per individual. Within a day, NDT3 was about twice as accurate as the ridge decoder in
+monkey N (median $R^2$ \val{ndt3:N:sd:ndt3} versus \val{ndt3:N:sd:lin}) but less accurate in T5 (\val{ndt3:T5:sd:ndt3}
+versus \val{ndt3:T5:sd:lin}) and T8 (\val{ndt3:T8:sd:ndt3} versus \val{ndt3:T8:sd:lin}). Without an update, both decoders
+fell below $R^2 = 0$ on later days in all three individuals. Continuing NDT3's own self-supervised training on the new day,
+without labels, left its median retention below zero in all three (\val{ndt3:N:unsup:ret}, \val{ndt3:T5:unsup:ret} and
+\val{ndt3:T8:unsup:ret}). With 300 labeled trials, NDT3 recovered fully in monkey N (median $R^2$ \val{ndt3:N:n300:ndt3}
+versus \val{ndt3:N:n300:lin} for the ridge decoder refit toward its previous weights), but it stayed below the refit ridge
+decoder in T5 (\val{ndt3:T5:n300:ndt3} versus \val{ndt3:T5:n300:lin}) and T8 (\val{ndt3:T8:n300:ndt3} versus
+\val{ndt3:T8:n300:lin}; Supplementary Table~16 and Supplementary Note~5). In these data, a large pretrained decoder did not
+remove the need for labeled recalibration, and in people it did not improve on the ridge decoder.
+
 \subsection*{Most electrode silences are transient fluctuations}
 
 We next asked how single electrodes change over years. The BrainGate yield data report threshold-crossing rates and
@@ -432,8 +449,8 @@ for the simulator (dark blue), the median retention measured before day 700 (lig
 We measured how intracortical BCIs age, at the level of decoders and of electrodes, in three monkeys and 14 people with
 one pipeline. Five findings stand out. Decay rates differ about a hundredfold between individuals. Measured decay
 depends on how strongly the decoder is regularized. In people, a few minutes of labeled data restore most of the
-accuracy, whereas the label-free corrections we tested add little beyond rescaling each channel. Corrections work far
-better when each channel keeps its identity, and they track changes at each electrode. And most brief electrode
+accuracy, whereas the label-free corrections we tested add little beyond rescaling each channel, and a pretrained
+foundation decoder still needs labeled recalibration. Corrections work far better when each channel keeps its identity, and they track changes at each electrode. And most brief electrode
 silences are noise, while long ones are real and often reverse.
 
 These findings have direct implications for building durable interfaces. Because decay rates vary so widely, a fixed
@@ -472,7 +489,8 @@ BrainGate participants with decoding data were excluded. In two, the decoders di
 in scale between blocks, which our session-wise normalization did not handle (Supplementary Information).
 \val{hum:nWord} participants and three monkeys cannot establish population rates, and the datasets differ in task,
 signal type, array placement and implant age. The label-free comparisons covered three classes of method and did not include latent-dynamics or
-adversarial alignment. The simulator is calibrated to feature-level statistics in one monkey and does not model
+adversarial alignment. The foundation-decoder comparison was a pilot with one model size, threshold crossings and
+three individuals; larger models or other ways of adapting them may do better. The simulator is calibrated to feature-level statistics in one monkey and does not model
 biophysics.
 
 Long-term public datasets made this study possible. We release our code, derived results, the benchmark and the
