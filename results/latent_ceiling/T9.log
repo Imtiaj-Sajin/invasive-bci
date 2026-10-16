@@ -1,0 +1,64 @@
+10/361 pairs, 127s
+20/361 pairs, 286s
+30/361 pairs, 437s
+40/361 pairs, 574s
+50/361 pairs, 709s
+60/361 pairs, 846s
+70/361 pairs, 967s
+80/361 pairs, 1082s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:242: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:273: RuntimeWarning: invalid value encountered in scalar multiply
+  th, Fm, rm = _solve(eig, lam * mult, anchor)
+90/361 pairs, 1227s
+100/361 pairs, 1429s
+110/361 pairs, 1552s
+120/361 pairs, 1729s
+130/361 pairs, 1876s
+140/361 pairs, 2009s
+150/361 pairs, 2133s
+160/361 pairs, 2274s
+170/361 pairs, 2430s
+180/361 pairs, 2578s
+190/361 pairs, 2734s
+200/361 pairs, 2863s
+210/361 pairs, 2970s
+220/361 pairs, 3119s
+230/361 pairs, 3283s
+240/361 pairs, 3394s
+250/361 pairs, 3519s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:242: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:273: RuntimeWarning: invalid value encountered in scalar multiply
+  th, Fm, rm = _solve(eig, lam * mult, anchor)
+260/361 pairs, 3644s
+270/361 pairs, 3826s
+280/361 pairs, 3950s
+290/361 pairs, 4067s
+300/361 pairs, 4174s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:242: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:273: RuntimeWarning: invalid value encountered in scalar multiply
+  th, Fm, rm = _solve(eig, lam * mult, anchor)
+310/361 pairs, 4276s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:242: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:273: RuntimeWarning: invalid value encountered in scalar multiply
+  th, Fm, rm = _solve(eig, lam * mult, anchor)
+320/361 pairs, 4400s
+330/361 pairs, 4515s
+340/361 pairs, 4635s
+350/361 pairs, 4753s
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:242: RuntimeWarning: invalid value encountered in divide
+  theta = Q @ (rhs / (ev + lam)[:, None] if rhs.ndim == 2 else rhs / (ev + lam))
+G:\codes\invasive bci\scripts\..\src\ibci\anatomy.py:273: RuntimeWarning: invalid value encountered in scalar multiply
+  th, Fm, rm = _solve(eig, lam * mult, anchor)
+360/361 pairs, 4869s
+361/361 pairs, 4881s
+              L2   L4u   L4s  L3_n300  L4_n300  L3_nall  L4_nall
+gap_target                                                      
+1           0.56  0.43  0.44     0.84     0.75     0.89     0.75
+7           0.35  0.31  0.30     0.84     0.66     0.88     0.75
+30          0.28  0.18  0.28     0.77     0.63     0.81     0.66
+120         0.12 -0.05  0.01     0.71     0.51     0.74     0.59
+480        -0.41 -0.43 -0.51     0.69     0.35     0.73     0.50

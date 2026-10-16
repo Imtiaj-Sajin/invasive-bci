@@ -353,6 +353,36 @@ def main():
                     put(f"{k}:mech:{name}:n", str(len(sv)))
                     put(f"{k}:mech:{name}:p", pval(float(_st.wilcoxon(sv).pvalue)))
                     put(f"{k}:mech:{name}:null", f2(float(q[c + "_null"].median())))
+    if os.path.exists("results/latent_ceiling/summary.json"):   # latent-alignment ceiling (scripts/ceiling_summary.py)
+        cs = load("results/latent_ceiling/summary.json")
+        for k, r in cs.items():
+            sl = r.get("share_long", {})
+            for col, tag in (("L4u", "lf"), ("L4_nall", "rot"), ("L3_nall", "rew")):
+                if col in sl:
+                    put(f"{k}:ceil:{tag}", pct(sl[col][0]))
+                    put(f"{k}:ceil:{tag}ci", f"{pct(sl[col][1])}--{pct(sl[col][2])}")
+            put(f"{k}:ceil:rewvsrot", f"{r['reweight_vs_ceiling']['median_diff']:+.3f}".replace("-", "$-$"))
+            put(f"{k}:ceil:rewvsrotp", pval(r["reweight_vs_ceiling"]["P"]))
+            put(f"{k}:ceil:rotvslfp", pval(r["ceiling_vs_labelfree"]["P"]))
+        for grp, members in (("mon", [k for k in ("N", "C", "M") if k in cs]), ("hum", [k for k in HUM if k in cs])):
+            for tag, col in (("lf", "L4u"), ("rot", "L4_nall"), ("rew", "L3_nall")):
+                v = [cs[k]["share_long"][col][0] for k in members if col in cs[k].get("share_long", {})]
+                if v:
+                    put(f"{grp}:ceil:{tag}:min", pct(min(v)))
+                    put(f"{grp}:ceil:{tag}:max", pct(max(v)))
+            rw = [cs[k]["reweight_vs_ceiling"] for k in members]
+            put(f"{grp}:ceil:rewwins", str(sum(1 for r in rw if r["median_diff"] > 0 and r["P"] is not None and r["P"] < 0.05)))
+            put(f"{grp}:ceil:rotwins", str(sum(1 for r in rw if r["median_diff"] < 0 and r["P"] is not None and r["P"] < 0.05)))
+            put(f"{grp}:ceil:rewwinsholm", str(sum(1 for k in holm_sig([(k, pval(cs[k]["reweight_vs_ceiling"]["P"]))
+                                                                          for k in members])
+                                                  if cs[k]["reweight_vs_ceiling"]["median_diff"] > 0)))
+            put(f"{grp}:ceil:rotwinsholm", str(sum(1 for k in holm_sig([(k, pval(cs[k]["reweight_vs_ceiling"]["P"]))
+                                                                          for k in members])
+                                                  if cs[k]["reweight_vs_ceiling"]["median_diff"] < 0)))
+            put(f"{grp}:ceil:n", str(len(members)))
+        lr = [cs[k]["share_long"]["L4_nall"][0] for k in cs if "L4_nall" in cs[k].get("share_long", {})]
+        put("all:ceil:unrec:min", pct(1 - max(lr)))
+        put("all:ceil:unrec:max", pct(1 - min(lr)))
     for k in IND:      # reference-decoder R2 by gap (tuned penalty, valid pairs): does decoding itself get harder?
         p = f"results/decay_alpha/{k}_alpha10000.csv"
         if os.path.exists(p):
