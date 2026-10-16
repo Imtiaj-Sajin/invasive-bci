@@ -85,14 +85,44 @@
  },
  "T8": {
   "run": "_rule",
-  "n_pairs": 0,
-  "n_sessions": 0,
+  "n_pairs": 12,
+  "n_sessions": 12,
   "sameday": {
-   "ndt3": NaN,
-   "linear": NaN,
-   "ndt3_better": 0
+   "ndt3": 0.2153225,
+   "linear": 0.2765185,
+   "ndt3_better": 4
+  },
+  "zeroshot": {
+   "ndt3": -0.0865895,
+   "linear": -0.1027435,
+   "ndt3_ret": -0.6640997226948031,
+   "linear_ret": -0.45451155313444586,
+   "ndt3_better": 4,
+   "n": 12
+  },
+  "fewshot_n50": {
+   "ndt3": -0.12091,
+   "linear": 0.07349900000000001,
+   "ndt3_ret": -0.8365790048823127,
+   "linear_ret": 0.266436107209823,
+   "ndt3_better": 0,
+   "n": 12
+  },
+  "fewshot_n300": {
+   "ndt3": -0.040429,
+   "linear": 0.181646,
+   "ndt3_ret": -0.2167724302024681,
+   "linear_ret": 0.8053077472870731,
+   "ndt3_better": 1,
+   "n": 12
+  },
+  "unsup": {
+   "ndt3": -0.018549,
+   "ndt3_ret": -0.07522618820473012,
+   "better_than_zeroshot": 8,
+   "n": 12
   },
   "epoch_cap_hits": 0,
-  "rows": 8
+  "rows": 60
  }
 }
