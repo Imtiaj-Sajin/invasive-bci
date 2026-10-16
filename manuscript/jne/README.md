@@ -1,27 +1,33 @@
-# Journal of Neural Engineering version (planned)
+# Journal of Neural Engineering version
 
-The second target, prepared after the Nature Communications version (`../natcomms/`) is final. Both versions use
-the same verified numbers (`scripts/make_numbers_tex.py --out ../natcomms/numbers.tex ../jne/numbers.tex`), the same
-reference metadata (`../tools/make_bib.py`) and the same figure code (`scripts/make_v2_figures.py`).
+Built from the same text as `../natcomms/` (master text), with the same verified numbers
+(`scripts/make_numbers_tex.py`), reference metadata (`../tools/make_bib.py`) and figure code
+(`scripts/make_v2_figures.py`). A third version for IEEE TNSRE lives in `../ieee_tnsre/`. When the manuscript changes,
+all three versions are updated together so they never disagree.
 
-## Why JNE as the second venue
+## Requirements (IOP Publishing JNE pages, checked 2026-10-16)
 
-- Q1 and the core journal of the intracortical BCI engineering community, where the readers who would reuse the
-  recalibration recipes and the simulator publish.
-- More room than Nature Communications: no tight display-item limit, so the main text can show what the NC version
-  keeps in the Supplementary Information.
+Source: https://publishingsupport.iopscience.iop.org/journals/journal-of-neural-engineering/about-journal-neural-engineering/
 
-## What changes relative to the NC version (check the current author guidelines before writing)
+- Papers: "not normally more than 12 000 words (14 journal pages)".
+- Structured abstract with the headings Objective, Approach, Main results, Significance. IOP's general guidance: an
+  abstract should not normally exceed 300 words.
+- No required template (free-format submission); numeric references in order of citation.
+- Data: IOP research data policy; supplementary files allowed.
+- Hybrid journal: publishing under the subscription route is free; optional gold open access APC GBP 2655 /
+  USD 3665, with discounts for many lower- and middle-income countries.
+- Conflict-of-interest statement in the cover letter.
 
-- Abstract: JNE uses a structured abstract (Objective, Approach, Main results, Significance).
-- Template: IOP Publishing LaTeX template; numeric references.
-- Main text can include, as full figures or tables rather than supplementary items:
-  - the per-individual correction ladder (current Supplementary Table 2) as a figure;
-  - the network-decoder ladder for all six individuals;
-  - the data-efficiency curves per participant;
-  - the label-free monitoring pilot (Supplementary Note 1);
-  - the electrode robustness controls (thresholds, fixed microvolt threshold, waveform, array-wide shifts);
-  - the simulator model and its validation in more detail, as a resource section.
-- Methods can be fuller (decoder and correction details now split between Methods and Supplementary Notes).
+## Why JNE as the primary target (decided 2026-10-16, after the hostile review)
 
-Nothing here is written until the analyses and the NC text are final, so the two versions stay consistent.
+- Q1 and the core journal of the intracortical BCI engineering community, whose readers would reuse the recalibration
+  recipes, the benchmark and the simulator.
+- More room than Nature Communications or TNSRE: items kept in the Supplementary Information elsewhere can move into
+  the main text.
+
+## What changes relative to the master text
+
+- Structured abstract; numbered sections with Methods before Results (IOP convention); numeric references renumbered
+  for the new citation order.
+- Candidates to move from the supplement into the main text: the per-individual correction ladder, data-efficiency
+  curves per participant, the latent-alignment ceiling table.
