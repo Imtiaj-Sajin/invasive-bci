@@ -1,0 +1,834 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=20mm]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{textcomp}
+\usepackage{lineno}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[hidelinks]{hyperref}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf,labelsep=period}
+
+\raggedbottom
+\graphicspath{{../../results/figures/v2/}}
+\input{../natcomms/numbers}
+
+\title{Decoder decay and its correction over years in intracortical brain--computer interfaces}
+\author{Md. Imtiaj Alam Sajin$^{1,*}$, Esm E Moula Chowdhury Abha$^{1}$ and Md Wahiduzzaman Suva$^{1}$\\[4pt]
+\small $^{1}$Department of Computer Science, American International University-Bangladesh, Dhaka 1229, Bangladesh\\
+\small $^{*}$Author for correspondence: imtiajsajin@gmail.com\\
+\small ORCID: Sajin 0009-0009-2423-1835; Chowdhury Abha 0009-0008-3776-2283; Suva 0009-0007-6227-7282}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\input{abstract}
+\end{abstract}
+
+\noindent\textbf{Keywords:} brain--computer interface, intracortical recording, Utah array, neural drift, decoder recalibration, electrode stability
+
+\linenumbers
+
+\section{Introduction}
+Intracortical brain--computer interfaces (BCIs) record from small populations of neurons and turn their activity into
+commands. They have allowed people with paralysis to move robotic arms and computer cursors~\cite{hochberg2006,
+hochberg2012,collinger2013,pandarinath2017}, to type by attempted handwriting~\cite{willett2021} and to speak through a
+decoded voice~\cite{willett2023,card2024,wairagkar2025}. Recent work describes daily home use over years~\cite{card2026}.
+For these devices to become everyday tools, their decoders must stay accurate with little effort from the user.
+
+The recorded signals are not stable. Within a day, signals shift as electrodes move or neurons change their
+firing~\cite{perge2013}. Across days, the activity seen by each electrode changes~\cite{chestek2011,downey2018,
+bishop2014}, and over months and years, arrays gradually lose the ability to record spikes~\cite{barrese2013,
+sponheim2021,bjanes2025,hahn2026}. Decoders lose accuracy over time~\cite{chestek2011,nuyujukian2014,
+temmar2025,wilson2025}, and most systems recalibrate often, which takes time away from the user~\cite{jarosiewicz2015,
+brandman2018}. Many methods aim to reduce this cost. Decoders can be trained on data from many
+days~\cite{sussillo2016}, updated during use~\cite{jarosiewicz2015,orsborn2012,dangi2013,wilson2025}, or given input
+layers learned for each day~\cite{willett2021,fan2023}. Neural activity can be aligned to a reference day without new
+labels~\cite{degenhart2020,gallego2020,farshchian2019,ma2023,karpowicz2025}, and monitoring scores have been proposed to
+signal when recalibration is needed~\cite{pun2024}.
+
+How fast do decoders decay in different individuals, and how much of that decay comes from the decoder itself? Which
+corrections recover the loss, and with how much labeled data? What happens at the electrodes over the years? Answers
+have come mostly from single datasets, spans of weeks and different baselines~\cite{karpowicz2024falcon}, so results are
+hard to compare. In one participant, for example, a decoder whose channel means were updated still failed after months,
+whereas adjusting its weights recovered it~\cite{wilson2025}. Whether such results hold across individuals and species
+is not known.
+
+Public long-term recordings now make a common analysis possible~\cite{temmar2025,gallego2020,perich2018,hahn2026,pun2024}.
+We analyzed four such datasets with one pipeline. We trained decoders on one day, tested them on later days and applied
+a series of corrections, from none to full retraining. Figure~\ref{fig:overview} shows the problem in one participant:
+over seven years, one array lost about half of its electrodes with spikes, the remaining spikes shrank by about half,
+and a decoder trained 478 days earlier failed until each channel was re-weighted. We asked how fast decoders decay in
+each individual, which corrections recover the loss and with how many labels, why label-free alignment falls short, and
+what changes at the electrodes. We release the code, a benchmark for decoder transfer over years, a calibrated
+simulator and all derived results.
+
+\begin{figure}[tbp]
+\centering
+\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig1_overview.pdf}}
+\caption{\textbf{Recordings change over years, and decoders decay with them.} \textbf{a}, Approximate array sites
+(white) on the precentral gyrus (green) of a standard cortical surface, and a rendered Utah array. \textbf{b}, Spike
+amplitude on each electrode of T5's lateral array, 7.3 years apart. Grey cells had no spikes; outlines mark the
+electrodes in \textbf{c}. \textbf{c}, Mean spike waveforms of three electrodes in every session, coloured by time since
+implant. \textbf{d}, Threshold-crossing rate of every electrode on the same array, in 30-day bins. \textbf{e}, Cursor
+paths in a closed-loop session of T5. Colours mark targets. \textbf{f}, The same movements reconstructed offline by
+three decoders. The decoder trained on day 355, 478 days earlier, fails until each channel is re-weighted (Methods).}
+\label{fig:overview}
+\end{figure}
+
+\section{Methods}
+\subsection{Datasets and ethics}
+
+All data were public and de-identified. The original studies obtained ethical approval and informed consent, as
+described in the cited publications. We collected no new data.
+
+\textit{Monkey N} (LINK; DANDI Archive 001201~\cite{data_link}; ref.~\cite{temmar2025}). One rhesus macaque had Utah arrays
+in the hand area of primary motor cortex~\cite{nason2021}. The release contains 312 sessions on 303 days over 1,242 days,
+in which the monkey moved two finger groups to targets in center-out or random-target blocks. We used the 96 released
+channels (64 on the medial array and 32 on the lateral array), with spike-band power and threshold crossings at $-4.5$
+times the root-mean-square noise in 20~ms bins~\cite{nason2020}. Outputs were the position and velocity of the two finger
+groups. Electrode impedance was stored on 228 days.
+
+\textit{Monkeys C and M} (DANDI Archive 000688~\cite{data_perich}; refs.~\cite{gallego2020,perich2018}). Both monkeys moved a
+cursor with a planar manipulandum in center-out and random-target reaching tasks. Monkey C had one Utah array in
+primary motor cortex (96 channels in these data), and monkey M had one in primary motor and one in dorsal premotor
+cortex. Monkey C had 68 sessions
+from October 2013 to October 2016, and monkey M had 28 sessions from January 2014 to June 2015. We summed the spikes of
+all sorted units on each electrode in 20~ms bins, giving 96 (C) or 192 (M) channels. Cursor position and velocity, which followed the hand, were
+interpolated to bin centers.
+
+\textit{BrainGate participants} (Dryad~\cite{data_braingate}; ref.~\cite{hahn2026}). The yield data contain one recording
+from each of 2,289 research sessions in 14 participants with 20 arrays (A1, S1--S3, T1--T3 and T5--T11). For every
+electrode, they list threshold-crossing rates at several thresholds (with the threshold in microvolts), impedance and
+grid position. Nineteen arrays were in the hand area of motor cortex and one was in the middle frontal gyrus. The
+decoding data contain closed-loop cursor sessions with spike-band power in 10~ms bins, cursor and target positions and
+the periods of attempted movement, for nine participants (T2, T3 and T5--T11). We used all sessions of each
+participant. Sessions, spans, arrays, trials per session and movement durations are listed in Supplementary Tables~1
+and~14.
+All sessions of a participant were treated as one task type.
+
+\textit{Inclusion of participants and session pairs.} Retention is undefined when the reference decoder does not work.
+A participant therefore entered the decay and correction analyses only if the median $R^2$ of its reference decoder
+across session pairs exceeded 0.1. We fixed this rule when the first added participant (T3) failed, before the results
+of the other five added participants were seen. \val{hum:nWord} participants met it (\val{hum:list}). T2 and T3
+did not (median reference $R^2$ \val{T2:refr2} and \val{T3:refr2}). Their movement periods lasted a median of 15.6~s,
+against 1.6--3.9~s in the other participants, and neither block-wise normalization nor threshold crossings recovered a
+usable decoder (Supplementary Table~14). T11 also failed the rule (median reference $R^2$ \val{T11:refr2}) because its
+recordings jumped in scale between recording blocks; it was analyzed with block-wise normalization as a sensitivity
+analysis (Supplementary Note~4). Within included individuals, session pairs whose reference $R^2$ was at most 0.1
+were left out of retention summaries, in monkeys and humans alike. This rule was adopted after a single failed test
+session (reference $R^2$ $-42.8$) made bootstrap intervals meaningless; it removed 0--18\% of pairs per individual and
+changed median retention by less than 0.05 in nearly all individuals and gaps. Results with all pairs are given in the
+Supplementary Material.
+
+\textit{MINDFUL} (Dryad~\cite{data_mindful}; ref.~\cite{pun2024}). Closed-loop cursor blocks in which T11 (15 days) and T5
+(6 days) used a fixed decoder, with neural features in 20~ms bins (spike-band power for T11 and threshold crossings for
+T5), the decoder's velocity output and the angular error of the cursor.
+
+\subsection{Features, decoders and accuracy}
+
+For monkey N and the human participants we used spike-band power (human 10~ms bins averaged in pairs). For monkeys C and
+M we used per-electrode spike counts. Each channel was z-scored with the mean and standard deviation of the decoding
+session's training segment, computed without labels (renormalization). The linear decoder was ridge
+regression~\cite{hoerl1970} on 8 causal lags (160~ms) of the z-scored features, with an unpenalized intercept. The default
+penalty was $\alpha = 0.1$ for monkey N and the humans, adopted from ref.~\cite{temmar2025}, and $\alpha = 1$ for monkeys C
+and M; the tuned penalty was $\alpha = 10^4$ for the decoder trained on day $i$ and for the reference decoder. Outputs were
+finger position and velocity for monkey N, cursor position and velocity for monkeys C and M, and for the humans the
+intended movement direction, defined as the unit vector from cursor to target during attempted movement. Accuracy was
+the coefficient of determination $R^2$, averaged over outputs and computed on held-out trials of the test session. In
+monkey N the first 300 of 375 trials trained the decoder, as in ref.~\cite{temmar2025}; in the other datasets the first
+80\% of trials did.
+
+The recurrent decoder was a long short-term memory network~\cite{hochreiter1997} with 64 hidden units, input
+dropout~\cite{srivastava2014} of 0.5 and 20-bin input windows (400~ms). It was trained with AdamW~\cite{loshchilov2019}
+(learning rate $10^{-3}$, weight decay 0.01) for up to 4,000 iterations of 256 samples, with early stopping on the last
+20\% of training trials checked every 100 iterations. Without these measures, a 256-unit network memorized the human
+training sessions (training $R^2$ 0.97, test $R^2$ $-1.1$ on one session). The network analyses used 25 training
+sessions per individual chosen at random with a fixed seed.
+
+\subsection{Session pairs}
+
+For each training session $i$ and target gap $g \in \{1, 7, 30, 120, 480\}$ days, we selected the later session $j$ of
+the same task type whose gap was closest to $g$, within 25\% of $g$ or one day, whichever was larger. The one-day set
+therefore contains one- and two-day gaps, which we report separately. In monkey N, 80 training sessions were drawn at
+random with a fixed seed; the full monkey N set (537 pairs) also includes further gaps and was used for monitoring. Pair
+counts are listed in Supplementary Table~2. The time to half retention was found by interpolating median retention at
+the target gaps linearly in log days, with 95\% confidence intervals from a cluster bootstrap over training sessions.
+When median retention was already below one half at the one-day gap (pairs 1 or 2 days apart), we report less than one
+day; when it never fell below one half, we report the longest gap with data as a lower bound.
+
+\subsection{Correction ladder}
+
+Let $\mathbf{x}_j(t) \in \mathbb{R}^C$ be the raw features of test day $j$, $\boldsymbol{\mu}_d$ and
+$\boldsymbol{\sigma}_d$ the channel means and standard deviations of day $d$, and $f_i$ the decoder trained on day $i$.
+
+\begin{itemize}
+\item \textit{No correction}: $f_i\big((\mathbf{x}_j - \boldsymbol{\mu}_i)/\boldsymbol{\sigma}_i\big)$.
+\item \textit{Mean updating}: $f_i\big((\mathbf{x}_j - \boldsymbol{\mu}_j)/\boldsymbol{\sigma}_i\big)$.
+\item \textit{Renormalization}: $f_i(\mathbf{z}_j)$ with $\mathbf{z}_j = (\mathbf{x}_j - \boldsymbol{\mu}_j)/
+\boldsymbol{\sigma}_j$.
+\item \textit{Re-weighting}: $f_i$ applied to $g_c z_{j,c}$ for each channel $c$, with one offset per output. The weights
+$g_c$ (unconstrained in sign unless stated) were shrunk toward 1 and the offsets toward the old intercept; the penalty,
+scaled by the number of samples, was chosen from $\{10^{-6}, \ldots, 10^2\}$ by five-fold cross-validation over contiguous
+blocks of trials. Here and for the ridge-to-prior refit, the candidates also included an infinite penalty, which keeps
+the previous decoder, so that cross-validation could decline an update.
+\item \textit{Ridge to prior}: a new decoder $(\mathbf{W}, \mathbf{b})$ fitted on the lagged features $\mathbf{H}$ of day
+$j$ by minimizing
+\begin{equation}
+\|\mathbf{Y} - \mathbf{H}\mathbf{W} - \mathbf{1}\mathbf{b}^\top\|_F^2 + \lambda\left(\|\mathbf{W} - \mathbf{W}_i\|_F^2
++ \|\mathbf{b} - \mathbf{b}_i\|_2^2\right),
+\label{eq:prior}
+\end{equation}
+where $(\mathbf{W}_i, \mathbf{b}_i)$ is the old decoder and $\lambda$ was chosen from $\{0.1, 1, \ldots, 10^6\}$ by
+cross-validation.
+\item \textit{Retrained decoder}: ridge regression on day $j$'s first $n$ labeled trials, with $\alpha$ chosen from the same
+grid by cross-validation.
+\item \textit{Reference}: a decoder trained on all of day $j$'s training trials.
+\end{itemize}
+
+\noindent Supervised rungs used the first $n$ labeled trials of day $j$ ($n = 300$, or all training trials if fewer,
+unless stated). Retention was the ratio of a rung's $R^2$ to the reference $R^2$ on the same test trials, and the share
+of the loss recovered by re-weighting was $(R^2_{\text{reweight}} - R^2_{\text{renorm}})/(R^2_{\text{ref}} -
+R^2_{\text{renorm}})$. For the network decoder, re-weighting was a learned gain and offset per channel in front of the
+frozen network, and the refit was fine-tuning with an $L_2$ penalty toward the old weights; penalties were chosen on the
+last 20\% of labeled trials. We also computed a full input remap fitted by L-BFGS~\cite{liu1989}; because it can represent
+any linear decoder of the same form, we used it only as a calibration target for the simulator.
+
+\textit{Channel controls.} For 40 training sessions per individual (22 for monkey M and 33 for T7, all they had; fixed
+seed), re-weighting was repeated with weights
+constrained to be non-negative (bounded least squares with the cross-validated penalty), and for a copy of the day-$i$
+decoder whose channel weights were randomly permuted, with signed and with non-negative weights.
+
+\textit{Electrode link.} For the same pairs in the human participants, the signed re-weighting weights were correlated
+(Spearman) across channels with the change in log threshold-crossing rate ($\log(\text{rate} + 0.1)$ at $-4.5$ times the
+noise) and in log impedance between the yield recordings of the two days, matched by electrode identity. A null
+correlation was computed after permuting channels.
+
+\textit{Matched-output control.} For monkeys C and M, sessions were rebuilt with a two-dimensional unit-vector target,
+the direction of cursor velocity, on bins where cursor speed exceeded the session's 25th percentile, and the ladder was run on
+the same pairs with the tuned penalty.
+
+\textit{Decoder-weight angles.} Each channel's block of ridge weights (8 lags by all outputs) was stacked into
+$\mathbf{B}_i$ and $\mathbf{B}_j$. We computed the angle between $\mathrm{vec}(\mathbf{B}_i)$ and $\mathrm{vec}(\mathbf{B}_j)$,
+which allows one global scale, and the angle between $\mathrm{vec}(\mathbf{B}_j)$ and $\mathrm{vec}(\mathrm{diag}(\mathbf{s})
+\mathbf{B}_i)$, with each channel's scale $s_c$ fitted by least squares.
+
+\textit{Example in Fig.~\ref{fig:overview}.} Waveforms are the released robust mean waveforms (15~kHz, in microvolts)
+for electrodes with a threshold-crossing rate of at least 2~Hz at $-4.5$ times the robust standard deviation. Amplitude is the
+peak-to-peak value of these waveforms. Rates in panel d are the released threshold-crossing rates at the same
+threshold, averaged within 30-day bins. The cortical surface was rendered with PyVista, with the precentral gyrus taken from the Desikan--Killiany
+atlas. Array sites were placed on its crown near the hand knob by MNI coordinates and are approximate. The array
+inset is a rendering from published dimensions, not a photograph. Silhouettes are from PhyloPic (CC0). For the
+reconstructions, decoders used the tuned penalty: one trained on T5's day 355, one trained on day 833, and the day-355
+decoder re-weighted with 300 labeled trials from day 833. Paths are shown for held-out movements that started at the
+center. Each path integrates the decoded direction from the cursor's start position. The step size was set so that
+the intended direction would reach the target in the trial's duration, multiplied by a common display gain of 2 for
+all decoders. $R^2$ values are those of the analysis on the same held-out trials.
+
+\subsection{Label-free corrections}
+
+\textit{Procrustes rotation.} Let $\mathbf{V}_i, \mathbf{V}_j \in \mathbb{R}^{C\times k}$ hold the top $k = 16$ principal
+axes of the corrected training features on each day. The orthogonal matrix $\mathbf{R}$ minimizing
+$\|\mathbf{V}_j\mathbf{R} - \mathbf{V}_i\|_F$ was found by Procrustes analysis~\cite{schonemann1966}, and inputs were mapped
+as $(\mathbf{I} - \mathbf{V}_j\mathbf{V}_j^\top)\mathbf{z} + \mathbf{V}_i\mathbf{R}^\top\mathbf{V}_j^\top\mathbf{z}$. We
+applied it to renormalized features and, separately, to mean-updated features with $\mathbf{V}_j$ estimated from those
+features.
+
+\textit{CORAL.} Renormalized day-$j$ features were re-colored to match day $i$'s covariance,
+$\mathbf{z}' = \mathbf{C}_i^{1/2}\mathbf{C}_j^{-1/2}\mathbf{z}$~\cite{sun2016}, with covariances shrunk 5\% toward a scaled
+identity.
+
+\textit{Factor-analysis stabilizer.} Following ref.~\cite{degenhart2020}, a factor-analysis model with 10 latent factors
+was fitted to each day's renormalized training features, and a ridge decoder on 8 lags of the day-$i$ posterior latent
+means was trained. On day $j$, a model fitted without labels was aligned to day $i$ by orthogonal Procrustes analysis of
+the loadings of stable channels, found by iteratively keeping the 60\% of channels with the smallest loading residuals;
+latents were then inferred from stable channels only and passed to the frozen latent decoder. The comparison baseline
+reused the day-$i$ factor model on day $j$.
+
+All label-free comparisons were summarized per training session over its pairs at all gaps.
+
+\textit{Alignment ceiling.} To ask whether label-free alignment failed because no good alignment existed or because it
+could not be found without labels, we fitted the best alignment of the dominant subspace with labels. Inputs were mapped
+as $(\mathbf{I} - \mathbf{V}_j\mathbf{V}_j^\top)\mathbf{z} + \mathbf{V}_i\mathbf{Q}\mathbf{V}_j^\top\mathbf{z}$ in front of
+the unchanged day-$i$ decoder, as for the Procrustes rotation, but with $\mathbf{Q}$ a free $16 \times 16$ matrix fitted
+to day $j$'s labeled trials, which allows rotation, scaling and mixing within the subspace. $\mathbf{Q}$ was shrunk toward
+the Procrustes solution and the offsets toward the old intercept, with the penalty chosen as for re-weighting. It was
+fitted on all of day $j$'s labeled training trials, the same trials the reference decoder uses, and re-weighting was
+refitted on the same trials for comparison. Any method that aligns activity only within this subspace, with or without
+labels, cannot exceed this ceiling on these trials. For gaps of 120 and 480 days, the share of the loss recovered by a
+correction was computed from medians over pairs, $(\tilde{R}^2 - \tilde{R}^2_{\text{renorm}})/(\tilde{R}^2_{\text{ref}}
+- \tilde{R}^2_{\text{renorm}})$, with 95\% intervals from a cluster bootstrap over training sessions. Re-weighting and
+the ceiling were compared per training session over all gaps (two-sided Wilcoxon signed-rank test, Holm correction
+across individuals). The label-free columns and the reference decoder reproduced the main analysis exactly.
+
+\subsection{Monitoring analyses}
+
+In monkey N, for every pair we computed Gaussian Kullback--Leibler divergences between days $i$ and $j$ of the
+projections of renormalized features on day $i$'s top ten principal axes (neural divergence) and of the decoder's
+outputs (output divergence). We report raw Spearman correlations with $R^2$, partial correlations given log elapsed days
+and time-blocked cross-validated linear prediction of $R^2$. The pilot statistics (first 46--61 sessions, 283 pairs) are
+described in Supplementary Note~1; split-half reliability of the residual after the time trend used alternating pairs of
+trials and the Spearman--Brown formula. For the MINDFUL data we followed the original definitions~\cite{pun2024}:
+non-overlapping 60~s windows, divergences against the first day, and the median angular error over non-excluded trials
+(windows with fewer than 500 valid bins skipped). We report Pearson and partial correlations given elapsed days across
+windows, and leave-one-day-out linear prediction of angular error; the reference day was excluded from evaluation.
+
+\subsection{Regularization and recalibration}
+
+Ridge decoders were trained with $\alpha \in \{0.1, 10, 10^3, 10^4, 3\times10^4, 10^5, 3\times10^5, 10^6\}$ on 40
+training sessions per individual (22 for monkey M and 33 for T7) and evaluated on held-out same-day trials and on later sessions at
+the five gaps. The 1\% rule chose the largest $\alpha$ whose median same-day $R^2$ was at least 99\% of the best median. These
+analyses compare absolute $R^2$ between penalties rather than retention, so the pair rule was not applied.
+Compared with each training session's own best same-day penalty, the rule changed cross-day $R^2$ by a median of
+\val{N:rulevsbest} in monkey N ($P = \val{N:rulevsbestp}$) and \val{hum:rulevsbest:min}--\val{hum:rulevsbest:max} in the
+participants, and not at all in monkeys C and M.
+For the human data-efficiency analysis, the ladder was run for 30 training sessions per participant (fixed seed) with
+$n \in \{10, 20, 50, 100, 300\}$. For harmful recalibrations we used 86 monkey N pairs with default-penalty decoders; the
+shrinkage $\lambda$ in equation~(\ref{eq:prior}) was chosen per pair by cross-validation on the $n$ trials, or as the value
+with the best median $R^2$ over pairs from other training sessions, which was $10^4$ for every pair with up to 50
+trials. A recalibration was harmful when its $R^2$ was more than 0.01 below that of the renormalized fixed decoder.
+
+\subsection{Electrode statistics}
+
+Statistics were computed per array. An electrode was active in a session when its threshold-crossing rate at $-4.5$ times
+the root-mean-square noise was at least 2~Hz. An initially active electrode (mean rate of at least 2~Hz over the first
+three sessions) was silenced at its first run of at least three consecutive observed sessions below threshold, and
+recovered when it later exceeded 4~Hz for at least three consecutive sessions. Missing sessions were skipped, not
+imputed. Control analyses (Supplementary Table~11) varied these definitions. They used thresholds of $-3.5$ and $-5.5$ times
+the noise, and a fixed threshold per electrode in microvolts: its $-4.5$ value over the first three sessions, applied by
+choosing in each session the noise multiple whose microvolt threshold was closest. They also removed sessions with
+array-wide shifts (absolute median change in log rate above 1), required a mean waveform trough of at least 30~$\mu$V,
+required silence below 0.5~Hz, or required silences lasting at least 30 days. The null distribution permuted each electrode's session order
+independently, 200 times; we report the observed recovery fraction, the null mean and 95\% range, and a one-sided
+permutation $P$ value. For impedance, values of 4,000~k$\Omega$ or more were excluded and the trend was the Spearman
+correlation of the array median with day. For the edge effect, edge electrodes were those on the outer ring of the grid
+($10\times10$ in humans and $8\times8$ in monkey N), each initially active electrode's decline was the slope of
+$\log(\text{rate} + 0.1)$ against years, and arrays with at least 10 initially active electrodes were tested with the
+array as the unit. The direction was predicted from mechanical models~\cite{forrest2025}, so we report one-sided tests;
+two-sided $P$ values are twice as large. The adjusted analysis regressed slopes on edge membership and initial log rate
+within each array.
+
+\subsection{Simulator}
+
+The simulator transforms the z-scored features $\mathbf{Z} \in \mathbb{R}^{T\times C}$ of a real base session into those
+of a simulated session $\Delta t$ days later (Supplementary Note~2). \textit{Mixing}: $\mathbf{Z} \leftarrow
+\mathbf{Z}(\mathbf{I} + \mathbf{E})^\top$, with $\mathbf{E} = s(\Delta t)[(1 - \beta)\mathbf{G} + \beta\mathbf{L}]$, where
+$\mathbf{G}$ is a Gaussian matrix with zero diagonal, $\mathbf{L}$ a Gaussian matrix restricted to grid neighbors,
+$\beta = 0.5$ and $s(\Delta t)^2 = s_0^2 + [s_\infty(1 - e^{-\Delta t/\tau_s})]^2$. \textit{Turnover}: each channel
+replaces a fraction $\rho_c$ of its signal by a unit with rotated tuning in the session's 20-dimensional latent space;
+$\rho_c$ follows a beta distribution with mean $\rho_0 + (\rho_\infty - \rho_0)(1 - e^{-\Delta t/\tau_\rho})$ and
+concentration 5. \textit{Silencing}: each channel active in the base session becomes silent with probability
+$h_{\text{off}}/(h_{\text{off}} + h_{\text{on}})\,[1 - e^{-(h_{\text{off}} + h_{\text{on}})\Delta t}]$ and keeps 37\% of
+its signal variance, the ratio of tuning strength of silent to active channels in monkey N. The switching rates
+($h_{\text{off}} = \val{sim:hoff}$ and $h_{\text{on}} = \val{sim:hon}$ per day) were measured from monkey N's activity in
+the calibration period. The six mixing and turnover parameters were calibrated on 12 base sessions before day 700 by
+minimizing the summed squared difference between simulated and real median retention for three rungs (renormalized,
+re-weighted and full input remap) at five gaps, with the same correction code and regularization as for real data,
+using a 24-point Sobol search~\cite{sobol1967} followed by Nelder--Mead~\cite{nelder1965}. Validation used 10 base sessions
+after day 700 and compared predicted and real medians for all rungs and for $n \in \{20, 50, 100\}$; rungs not fitted
+were the label-free alignments, the subspace rotation fitted with labels and the two refits. The empirical baseline
+predicted each late-period median by the corresponding median over pairs whose training session preceded day 700.
+Augmentation added eight simulated futures per training session ($\Delta t$ log-uniform between 1 and 120 days) and was
+compared with stronger regularization, random channel dropout with gain noise~\cite{sussillo2016} and training on the
+three previous sessions.
+
+\subsection{Pretrained foundation decoder}
+
+We tested NDT3 (ref.~\cite{ye2025ndt3}), a transformer pretrained on about 2,000 hours of intracortical recordings, using
+its public 45-million-parameter checkpoint (code at commit 877f9f5, run with the authors' software versions). The
+checkpoint stores the list of its pretraining sessions. It includes the datasets of monkeys C and M, but no BrainGate or
+monkey N sessions, so we tested monkey N and two BrainGate participants. NDT3 takes threshold-crossing counts, so all
+comparisons in this section used threshold crossings (20 ms bins; $-4.5$ times the RMS for BrainGate), with the ridge
+decoder of the correction ladder fitted to the same features. We chose participants whose threshold crossings decoded
+well (T5 and T8; same-day $R^2$ of the ridge decoder 0.50 and 0.32) and 12 session pairs per individual: the pairs of three
+training sessions spread over the recordings, each with pairs at four or five of the main gaps.
+
+Sessions entered NDT3 through its own data pipeline (1-s windows, its tokenization of 32-channel patches, its training
+step and prediction function), so that the model saw data as in its original evaluations. Behaviour was scaled by the
+99.9th percentile of its magnitude on the training day only, and $R^2$ was computed on unscaled labels. Two rules
+were fixed before the session pairs were run. The learning rate was chosen per individual from $10^{-4}$ and
+$4 \times 10^{-4}$ by NDT3's own validation $R^2$ on its earliest session ($4 \times 10^{-4}$ for monkey N and T5,
+$10^{-4}$ for T8). An array was left out of NDT3's input when fewer than 25\% of its channels were active on that session.
+We wrote this rule after a diagnostic showed that NDT3 failed to train on T8 while one nearly silent array (17 of 96
+active channels) was present (Supplementary Note~5). It removed only that array. The ridge decoder always used all
+channels.
+
+For each training session, the pretrained model was fine-tuned on day $i$ (all labeled trials; early stopping on a random
+20\% of 1-s windows). On day $j$ it was applied unchanged, fine-tuned further with the first 50 or 300 labeled trials, or
+adapted without labels by continuing training on day $j$ with its neural prediction loss only. A model fine-tuned on
+day $j$ alone gave the same-day reference for retention. Predictions were causal: overlapping 2-s windows advancing by
+1~s, keeping the last second of each. This gave $R^2$ within 0.01 of NDT3's streaming evaluation (Supplementary Note~5).
+
+\subsection{Benchmark}
+
+The benchmark fixes the session pairs of the tuned-penalty analysis at the five main gaps: one pair per training session
+and gap, with the closest later session of the same task within 25\% of the gap. For each pair, a method may use the
+training segment of day $i$ with its kinematics, the training segment of day $j$ without kinematics and the kinematics of
+its first $n$ trials ($n = 0$, 10, 20, 50, 100 or 300), and the neural features of day $j$'s evaluation segment. It
+returns predictions for that segment, which are scored by $R^2$ and by retention relative to a same-day ridge decoder
+(8 lags, penalty $10^4$). Pairs count when that reference exceeds $R^2 = 0.1$. Summaries report medians with cluster
+bootstrap intervals over training sessions. The reference methods are the rungs of the correction ladder. Through the
+benchmark's interface they reproduce the values of this study to within $10^{-14}$. A threshold-crossing version of the
+features is included for decoders that require spike counts.
+
+\subsection{Statistics}
+
+Session pairs that share a training session are not independent. Confidence intervals for medians therefore came from a
+cluster bootstrap over training sessions~\cite{field2007} (2,000 resamples, percentile intervals), and paired tests used
+one value per training session (two-sided Wilcoxon signed-rank tests). Pairs also share test sessions, so these
+intervals and $P$ values may be somewhat optimistic; we emphasize effect sizes. Harmful recalibrations were compared
+per training session (the share of its pairs made worse by each policy; two-sided Wilcoxon signed-rank test over training
+sessions), Holm-adjusted over the five data budgets~\cite{holm1979}. Counts of significant individuals are also given after
+Holm correction across individuals. With six participants and three monkeys, comparisons between species are
+descriptive. Exact $P$ values are reported.
+
+Whether decay differed between individuals was tested with a linear mixed model on the valid pairs of the
+better-regularized decoder ($n = \val{het:all:n}$ pairs). The outcome was the retention of the renormalized fixed decoder,
+floored at 0 so that every failed decoder counts as no retention (the raw ratio reaches $-50$ when a broken decoder is
+divided by a small reference). The predictor was $\log_2$ of the days between sessions. The full model had an intercept
+and slope per individual; random intercepts for the training session and for the test session were crossed, because
+pairs share both. Models were fitted by maximum likelihood and compared by likelihood-ratio tests against one shared
+curve (curves differ) and against individual intercepts with one shared slope (slopes differ). Sensitivity analyses used
+a floor of $-1$ and the absolute loss in $R^2$ (reference minus renormalized decoder), which needs no ratio. Analyses
+used Python 3.11 with NumPy, SciPy, pandas, scikit-learn, statsmodels and PyTorch.
+
+\section{Results}
+\subsection{Datasets and approach}
+
+We assembled four public datasets (Fig.~\ref{fig:design}a and Supplementary Table~1). Decoder analyses used
+\val{ind:nword} individuals. Monkey N was recorded over 1,242 days with Utah arrays in motor cortex during a two-finger
+task~\cite{temmar2025,nason2021}. Monkeys C and M were recorded over three and 1.5 years during
+reaching~\cite{gallego2020,perich2018}. BrainGate participants \val{hum:list} contributed \val{hum:nsess:min}--\val{hum:nsess:max}
+closed-loop cursor sessions each, over \val{hum:years:min}--\val{hum:years:max} years (\val{hum:nsess:total} sessions in
+total; Supplementary Table~14)~\cite{hahn2026}. Three further participants were excluded by a rule fixed when the first of
+them failed (Methods): the decoders of T2 and T3 did not work even on the day they were trained, and T11's recordings jumped in scale
+between recording blocks (Supplementary Note~4). Electrode analyses used all 20 arrays from 14 BrainGate
+participants (2,289 sessions) and monkey N. Monitoring analyses used closed-loop sessions in which participants T11
+and T5 controlled a cursor with a fixed decoder~\cite{pun2024}.
+
+For each individual, we trained a linear decoder on one session and tested it on later sessions at gaps of 1 to 480
+days. Before testing, every channel of the later session was z-scored with that session's own mean and standard
+deviation. We call this step renormalization. It needs no labels, and the result is the renormalized fixed decoder. We
+then applied a ladder of corrections (Fig.~\ref{fig:design}b and Methods). Label-free corrections updated channel means
+or aligned neural activity to the training day. Corrections with labeled trials from the later day either re-weighted
+each channel in front of the otherwise unchanged decoder, or refitted the decoder while shrinking it toward the old one.
+Renormalization (no labels) and re-weighting (labels) both act on single channels, and we keep the two names distinct
+throughout. A decoder trained on the later day served as the reference. We report retention, the ratio of a decoder's
+accuracy (coefficient of determination, $R^2$) to that of the reference on the same test trials.
+
+\begin{figure}[tbp]
+\centering
+\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig2_design.pdf}}
+\caption{\textbf{Datasets and the correction ladder.} \textbf{a}, Sessions analyzed, by individual. Each tick is one
+session. Numbers give sessions per analysis. \textbf{b}, The correction ladder. A decoder trained on day $i$ is tested on
+a later day $j$ after increasingly strong corrections. A decoder trained on day $j$ is the reference.}
+\label{fig:design}
+\end{figure}
+
+\subsection{Decay rates differ widely between individuals}
+
+Without any correction, decoders failed: reusing the training day's normalization gave median $R^2$ below zero at most
+gaps (Supplementary Table~2). We use the renormalized fixed decoder as the baseline.
+
+A single night already cost accuracy. After exactly one day, retention was \val{mon:strict1:min}--\val{mon:strict1:max} in the
+monkeys and \val{T10:strict1}--\val{T9:strict1} in T9 and T10, the participants with enough one-day pairs
+(Fig.~\ref{fig:decay}b; intervals in Supplementary Table~17).
+
+Longer-term decay differed far more. Retention fell to one half in under a day in T7 and T8, within
+\val{T5:thalf} days in T5, T9 and T10, within \val{mon:thalf:min}--\val{mon:thalf:max} days in the monkeys and after
+\val{T6:thalf} days in T6 (Fig.~\ref{fig:decay}a,c). Values under one day are censored and the intervals are wide
+(Supplementary Table~17), so we compare individuals by range, not by ratio. With the better-regularized decoder of the
+next section, the range stayed wide, from under one day in T8 to \val{T6:thalftuned} days in T6. A mixed model of
+retention against log elapsed time, with random effects for training and test sessions, confirmed that the decay curves
+differed between individuals ($P = \val{het:all:curves:p}$; participants alone, $P = \val{het:hum:curves:p}$; Methods).
+This held for every outcome definition we tried (Supplementary Note~4). In monkey N and all \val{hum:nword}
+participants, the reference decoder did not decline from short to long gaps (Supplementary Table~2), so the old decoder
+no longer fits the new day even though the recordings decode as well as before. Monkey M fluctuated without a trend. In
+monkey C the reference decoder itself fell at the longest gaps (median $R^2$ \val{C:own120} and \val{C:own480} after 120 and 480
+days, against \val{C:ownshort:min}--\val{C:ownshort:max} at gaps up to 30 days), so there the recordings also became harder to decode. Retention divides this out.
+
+\begin{figure}[tbp]
+\centering
+\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig3_decay.pdf}}
+\caption{\textbf{Decoders decay at rates that differ between individuals.} \textbf{a}, Retention of the renormalized fixed
+decoder, the $R^2$ of the old decoder divided by that of the reference decoder, against days since training, for monkeys
+(top, circles) and humans (bottom, squares). Bands show 95\% confidence intervals. \textbf{b}, Retention after exactly one day (filled) and
+two days (open). Numbers give session pairs. \textbf{c}, Days until retention falls to one half, with the default ridge
+penalty (open) and the tuned penalty (filled). Values under one day are drawn in the shaded band ($<$1). \textbf{d}, As in \textbf{a}, with the tuned penalty.}
+\label{fig:decay}
+\end{figure}
+
+\subsection{Weak regularization exaggerates decay}
+
+Part of the measured decay came from the decoder rather than the recordings. We had adopted the ridge penalty used in
+the original monkey N study~\cite{temmar2025} ($\alpha = 0.1$; $\alpha = 1$ for the sparser spike counts of monkeys C and
+M). On 1,536 lagged features, this is almost no regularization. A stronger penalty can be chosen from training-day data
+alone: we took the largest penalty whose same-day accuracy stayed within 1\% of the best (the 1\% rule). The rule chose
+$\alpha = 10^4$ in monkeys N and C and in T6 and T5, $3 \times 10^4$ in the other four participants and $10^3$ in monkey
+M (Supplementary Table~9). We first saw the benefit of stronger penalties in monkey N's cross-day curves. The rule, which
+uses same-day data only, then chose $10^4$ in monkeys N and C and in T6, and we fixed this value for everyone in all later
+analyses.
+
+With $\alpha = 10^4$, the time to half retention about doubled or more in monkey N (\val{N:thalf} to
+\val{N:thalftuned} days), T5 (\val{T5:thalf} to \val{T5:thalftuned} days) and T7 (under one day to \val{T7:thalftuned}
+days). It grew by about half in T6, T9 and T10 and changed little in monkeys C and M and in T8 (Fig.~\ref{fig:decay}c,d).
+Absolute $R^2$ on later days rose in all nine individuals, by medians of \val{all:tunedabsdiff:min} to
+\val{all:tunedabsdiff:max}, and same-day accuracy did not fall (Supplementary Table~9). Ordinary same-day
+cross-validation of the penalty gave almost the same cross-day accuracy as the 1\% rule (Methods). The lesson is
+not that a special rule is needed, but that decay should only be compared between decoders whose penalty was
+tuned at all. We use $\alpha = 10^4$ for the remaining decoder analyses unless stated.
+
+\subsection{Label-free alignment misses alignments that labels can find}
+
+Several methods realign neural activity to a reference day without labels~\cite{degenhart2020,gallego2020,
+farshchian2019,ma2023,karpowicz2025}. Their benefits were usually measured against a fixed decoder or against one whose
+channel means alone were updated~\cite{ma2023,wilson2025}. We compared such corrections with renormalization
+(Fig.~\ref{fig:labelfree}a; differences and $P$ values in Supplementary Table~3).
+
+Updating channel means alone was worse than renormalization in every individual. Adding an orthogonal Procrustes
+rotation of the dominant neural subspace~\cite{schonemann1966} lowered $R^2$ slightly in every individual (median changes
+\val{all:rotrendiff:min} to \val{all:rotrendiff:max}). Matching the full channel covariance (CORAL~\cite{sun2016}) was no
+better in the monkeys and worse in all \val{hum:nword} participants. Our implementation of the factor-analysis
+stabilizer~\cite{degenhart2020} was worse in seven of the nine individuals, did not differ in T7 and was nominally better
+in T5, which was not significant after Holm correction. That method was designed for closed-loop use with a latent
+decoder. Adversarial alignment~\cite{farshchian2019,ma2023,karpowicz2025} was not tested. Comparisons against mean-only
+baselines~\cite{wilson2025} should also report renormalization.
+
+Why did alignment fail? Either no good alignment existed, or it could not be found without labels. To tell these apart,
+we fitted the best possible alignment of the dominant 16-dimensional subspace with labels: a free linear map that can
+rotate, scale and mix activity within the subspace, fitted on all labeled trials of the later day (Methods). No method
+that aligns only this subspace can do better on these trials. At gaps of 120 and 480 days, this ceiling recovered
+\val{mon:ceil:rot:min}--\val{mon:ceil:rot:max}\% of the loss in the monkeys and
+\val{hum:ceil:rot:min}--\val{hum:ceil:rot:max}\% in the participants, whereas the label-free rotation recovered
+\val{mon:ceil:lf:min} to \val{mon:ceil:lf:max}\% and \val{hum:ceil:lf:min} to \val{hum:ceil:lf:max}\%
+(Supplementary Table~18). Large gains were therefore possible in principle, but the
+label-free method did not find them. Even the ceiling left \val{all:ceil:unrec:min}--\val{all:ceil:unrec:max}\% of the
+loss unrecovered, so part of the loss cannot be removed by any alignment within the subspace and needs new labels.
+
+The ceiling also separated the two species. In all three monkeys, it recovered more than re-weighting each channel on
+the same trials (\val{mon:ceil:rew:min}--\val{mon:ceil:rew:max}\%; Holm-corrected $P < 0.05$ in
+\val{mon:ceil:rotwinsholm} of \val{mon:ceil:n}). Their decoders predicted four signals and could not be rescued when
+their channels were scrambled (see below), so in the monkeys the change was mostly a remixing of activity across the
+population. In all six participants, re-weighting recovered more than any subspace alignment could
+(\val{hum:ceil:rew:min}--\val{hum:ceil:rew:max}\%; \val{hum:ceil:rewwinsholm} of \val{hum:ceil:n} after Holm correction),
+although only slightly in T6. With a two-dimensional target, per-channel weights are flexible enough to rescue even
+scrambled decoders, so this result fits per-channel change in people but does not prove it.
+
+\subsection{Neural divergence adds little to elapsed time as a monitor}
+
+A monitor that warns when a decoder is failing could make recalibration less frequent. MINDFUL scores instability as
+the divergence between distributions of neural features, or of decoder outputs, on a test day and a reference
+day~\cite{pun2024}. Such scores correlate with decoder error, but both grow with time since calibration.
+
+Offline in monkey N (537 session pairs), elapsed time alone correlated with decoder accuracy (Spearman
+$|\rho| = \val{mon:days}$; Fig.~\ref{fig:labelfree}b). Neural divergence correlated more weakly
+($|\rho| = \val{mon:neuralraw}$), and its partial correlation fell to \val{mon:neuralpart} after controlling for elapsed
+time; output divergence behaved the same way. Adding both divergences to elapsed time slightly increased the
+cross-validated error of predicted $R^2$ (\val{mon:maeboth} versus \val{mon:maedays}). A pilot on the first year of monkey
+N tested a broader set of label-free statistics, and none improved on elapsed time (Supplementary Note~1). This was not
+because the remaining variation was noise: day-to-day performance beyond the time trend was reliable (split-half
+reliability 0.84).
+
+We then re-analyzed the public MINDFUL data, in which T11 and T5 controlled a cursor in closed loop with a fixed decoder
+(Fig.~\ref{fig:labelfree}c and Supplementary Table~4). In T11 (\val{T11:mf:ndays} days), neural divergence correlated with
+angular error across 60-s windows ($r = \val{T11:mf:nraw}$), consistent with the original report~\cite{pun2024}. Most of
+this association was shared with elapsed time (partial $r = \val{T11:mf:npart}$), and adding neural divergence did not
+improve leave-one-day-out prediction of error (\val{T11:mf:dn}\textdegree{} versus \val{T11:mf:days}\textdegree{}).
+Output divergence kept a partial correlation of \val{T11:mf:opart}, and adding it reduced the error to
+\val{T11:mf:do}\textdegree. So output divergence carried information that elapsed time did not. Part of this link
+may be mechanical, because output divergence and angular error are both computed from the cursor's motion, and the
+window-level statistics are nested within few days. The six days available for T5 allow only a descriptive comparison.
+Within these limits, neural divergence was no better a guide than elapsed time, whereas output divergence deserves a
+test on more days.
+
+\begin{figure}[tbp]
+\centering
+\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig4_labelfree.pdf}}
+\caption{\textbf{Label-free corrections and neural monitoring add little.} \textbf{a}, Change in $R^2$ for five label-free
+corrections, relative to renormalization. Points show medians over training sessions; bars show 95\% confidence
+intervals. Values below the axis are printed. \textbf{b}, Offline monitoring in monkey N. Bars show how strongly each
+divergence score correlates with decoder accuracy, before (light) and after (dark) removing the effect of elapsed time.
+The dashed line marks elapsed time alone. \textbf{c}, Closed-loop monitoring in the public MINDFUL data. Bars show the
+error in predicting cursor angular error from elapsed days alone, or with a divergence score added.}
+\label{fig:labelfree}
+\end{figure}
+
+\subsection{A few minutes of labeled data restore decoders in people}
+
+The tuned penalty also mattered for recalibration: the 1\% rule raised cross-day $R^2$ at every gap without lowering
+same-day accuracy (Fig.~\ref{fig:recipes}a,b). How much labeled data does recalibration need? In the \val{hum:nword} participants, retention pooled over all gaps
+rose from
+\val{hum:effnone} without labels to \val{hum:effL6n50} with 50 labeled trials and \val{hum:effL6n100} with 100 for a
+freshly trained, strongly regularized decoder (Fig.~\ref{fig:recipes}c and Supplementary Table~10). Refitting while
+shrinking toward the old decoder reached \val{hum:effL6pn50} and \val{hum:effL6pn100}, and re-weighting reached
+\val{hum:effL3n50} and \val{hum:effL3n100}. Movement periods lasted 1.6--3.9~s in these sessions, so 100 trials take a few
+minutes. Recovery was slowest in \val{hum:effL6n100:slowwho}, where 100 trials restored a retrained decoder to
+\val{hum:effL6n100:slow}, against \val{hum:effL6n100:restmin}--\val{hum:effL6n100:restmax} in the other participants
+(Supplementary Table~10). In people, the old decoder was not a useful starting point: a fresh decoder learned
+more from the same trials than a refit toward the old one. Re-weighting indicates what changes, but it is not an
+efficient way to recalibrate in these sessions.
+
+With very few trials, refitting can make a decoder worse. In monkey N (86 session pairs), choosing the shrinkage
+strength by cross-validation on 10 trials made \val{harm:10:cv}\% of recalibrations worse than no recalibration, and a
+fixed strong shrinkage made \val{harm:10:hist}\% worse (Fig.~\ref{fig:recipes}d). This difference was not significant
+after correction for the five data budgets (Supplementary Table~10).
+
+\begin{figure}[tbp]
+\centering
+\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig6_recipes.pdf}}
+\caption{\textbf{Simple recipes for recalibration.} \textbf{a}, Decoding $R^2$ in monkey N against the ridge penalty, on the
+training day (lightest) and on later days (darker). The dotted line marks $\alpha = 0.1$. \textbf{b}, Gain from the 1\%
+rule over $\alpha = 0.1$, per individual and gap (medians over training sessions with 95\% confidence intervals;
+intervals beyond the axis are clipped, arrows). \textbf{c}, Retention in the six human participants against the number
+of labeled trials, for a retrained decoder, a refit shrunk toward the old decoder and re-weighting. The dotted line marks
+the renormalized fixed decoder. \textbf{d}, Recalibrations in monkey N that made the decoder worse than no recalibration,
+with the shrinkage chosen by cross-validation (grey) or fixed (blue).}
+\label{fig:recipes}
+\end{figure}
+
+\subsection{A pretrained foundation decoder still needed labels in a pilot}
+
+Large decoders pretrained on many recordings might be expected to resist drift. We tested NDT3~\cite{ye2025ndt3}, a
+transformer pretrained on about 2,000 hours of motor-cortex recordings, in monkey N and in participants T5 and T8, none of
+which were in its pretraining data (Methods). NDT3 and the ridge decoder received the same threshold crossings, on
+\val{ndt3:N:pairs} session pairs per individual. Within a day, NDT3 was about twice as accurate as the ridge decoder in
+monkey N (median $R^2$ \val{ndt3:N:sd:ndt3} versus \val{ndt3:N:sd:lin}) but less accurate in T5 (\val{ndt3:T5:sd:ndt3}
+versus \val{ndt3:T5:sd:lin}) and T8 (\val{ndt3:T8:sd:ndt3} versus \val{ndt3:T8:sd:lin}). Without an update, both decoders
+fell below $R^2 = 0$ on later days in all three individuals. Continuing NDT3's own self-supervised training on the new day,
+without labels, left its median retention below zero in all three (\val{ndt3:N:unsup:ret}, \val{ndt3:T5:unsup:ret} and
+\val{ndt3:T8:unsup:ret}). With 300 labeled trials, NDT3 recovered fully in monkey N (median $R^2$ \val{ndt3:N:n300:ndt3}
+versus \val{ndt3:N:n300:lin} for the ridge decoder refit toward its previous weights), but it stayed below the refit ridge
+decoder in T5 (\val{ndt3:T5:n300:ndt3} versus \val{ndt3:T5:n300:lin}) and T8 (\val{ndt3:T8:n300:ndt3} versus
+\val{ndt3:T8:n300:lin}; Supplementary Table~16 and Supplementary Note~5). This was a pilot, with three training sessions
+per individual and two learning rates. NDT3 was weaker than the ridge decoder in people even within a day, so better
+fine-tuning may close part of that gap. Within this pilot, a large pretrained decoder did not remove the need for
+labeled recalibration.
+
+\subsection{Channel tuning is partly preserved over months}
+
+Label-free corrections left much of the loss in place, and labels were needed to recover it. To see what kind of
+change remained, we re-weighted each
+channel in front of the otherwise unchanged decoder, using labeled trials from the later day. Re-weighting lets each
+channel's contribution grow, shrink or vanish, but keeps the decoder's pattern across time lags and outputs. In the
+participants it recovered \val{hum:trec:min}--\val{hum:trec:max}\% of the loss at gaps up to 480 days, least in T8 and
+most in T5 and T9 (Fig.~\ref{fig:channels}a and Supplementary Table~5). In monkeys N, C and M it recovered
+\val{N:trecmin}--\val{N:trecmax}\%, \val{C:trecmin}--\val{C:trecmax}\% and \val{M:trecmin}--\val{M:trecmax}\%.
+
+Scrambling the channels tests whether re-weighting repairs the old decoder or simply builds a new one. In the
+participants, re-weighting rescued even scrambled decoders (retention \val{hum:ctl:rew_perm:min}--\val{hum:ctl:rew_perm:max},
+against \val{hum:ctl:rew:min}--\val{hum:ctl:rew:max} with correct channels; Fig.~\ref{fig:channels}b), because a
+two-dimensional target can be fitted from almost any set of weights. In the monkeys, whose decoders predicted four
+kinematic signals, scrambled decoders could not be rescued (retention \val{N:ctl:rew_perm}, \val{C:ctl:rew_perm} and
+\val{M:ctl:rew_perm}). High recovery in people is therefore not, by itself, evidence that each channel kept its role.
+Decoding a two-dimensional movement direction in monkeys C and M did not reproduce the human pattern (Supplementary
+Table~7).
+
+When the weights could not change sign, correct channels beat scrambled ones in every individual (in the participants,
+\val{hum:ctl:rew_nonneg:min}--\val{hum:ctl:rew_nonneg:max} against
+\val{hum:ctl:rew_perm_nn:min}--\val{hum:ctl:rew_perm_nn:max}), and the constraint cost at most
+\val{all:ctl:nncost:max} in retention with correct channels (\val{all:ctl:nncost:who}). In the monkeys, drift
+therefore preserves much of each channel's tuning pattern. In the participants the evidence is weaker, because the sign
+constraint penalizes flipped channels by design.
+
+Re-weighting also tracked measured changes at each electrode (Fig.~\ref{fig:channels}c and Supplementary Table~5). We
+compared the fitted weights with each electrode's change in threshold-crossing rate between the two days, taken from the
+BrainGate yield data. This rate is a different feature from the decoder's spike-band power, although both come from the
+same electrode signal. Channels whose firing rose got larger weights in \val{hum:mech:rate:nsig} of
+\val{hum:mech:rate:ntested} participants (\val{hum:mech:rate:nsigholm} after Holm correction), and channels whose
+impedance rose got smaller weights in \val{hum:mech:imp:sigwho} (\val{hum:mech:imp:sigwhoholm} after Holm correction).
+The effects are weak for single channels (median Spearman $\rho$ up to \val{hum:mech:rate:rho:max}) but absent after
+shuffling channels.
+
+A recurrent network decoder gave the same picture. Re-weighting its inputs recovered
+\val{hum:nnrec:min}--\val{hum:nnrec:max}\% of its loss in the participants, overlapping the linear decoder, and more
+than for the linear decoder in the monkeys (Fig.~\ref{fig:channels}d and Supplementary Table~6). Angles between decoders
+fitted on different days shrank when one scale per channel was allowed, but much of that came from the added freedom
+(Supplementary Table~8).
+
+\begin{figure}[tbp]
+\centering
+\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig5_channels.pdf}}
+\caption{\textbf{Channel tuning is partly preserved over months.} \textbf{a}, Retention after re-weighting each channel in
+front of the unchanged decoder, for monkeys (top) and humans (bottom). \textbf{b}, Retention after re-weighting the correct decoder (circles and squares) or a
+decoder with scrambled channels (crosses). Upper rows use signed weights; lower rows use non-negative weights. Ticks mark
+the renormalized fixed decoder. \textbf{c}, Correlation between the fitted channel weights and each electrode's change in
+firing rate. Each point is one training session. Grey points show the same after shuffling channels. \textbf{d}, Share of
+the lost accuracy recovered by re-weighting, for linear (filled) and recurrent (open) decoders. Bars show 95\%
+confidence intervals.}
+\label{fig:channels}
+\end{figure}
+
+\subsection{Brief electrode silences look like fluctuation}
+
+How do single electrodes change over years? The BrainGate yield data report threshold-crossing rates and
+impedance for every electrode in every session~\cite{hahn2026}, and monkey N provides matching data. An
+electrode was active when its threshold-crossing rate exceeded 2~Hz, the definition used by BrainGate~\cite{hahn2026}.
+Array yield and impedance declined over years in both species (Fig.~\ref{fig:electrodes}a,b). Impedance fell in 17 of
+18 human arrays with measurements (median Spearman $\rho$ with time $-0.92$). In monkey N it fell from a median of
+302~k$\Omega$ in the first year to 171~k$\Omega$ in the fourth ($\rho = -0.88$). Both trends replicate earlier
+reports~\cite{barrese2013,sponheim2021,chen2023,bjanes2025,hahn2026}. Spikes also became smaller. On T5's lateral
+array, \val{amp:n} electrodes had spikes both in the first 200 days and after day 2,000. Their median spike amplitude
+fell from \val{amp:early} to \val{amp:late}~$\mu$V (median ratio \val{amp:ratio}, interquartile range \val{amp:iqr}),
+and it was smaller on \val{amp:smaller} of them ($P = \val{amp:p}$, Wilcoxon signed-rank test;
+Fig.~\ref{fig:overview}b,c).
+
+Electrodes often fell silent and later recovered~\cite{barrese2013,downey2018}, but most such events could not be told
+apart from fluctuation (Fig.~\ref{fig:electrodes}c and Supplementary Table~11). Of \val{null:base:sil} initially active human electrodes that
+stayed below threshold for at least three consecutive sessions, \val{null:base:obs}\% later recovered for at least three
+sessions. When each electrode's session order was shuffled 200 times, which destroys any temporal process, the recovery
+rate was \val{null:base:mean}\% (95\% range \val{null:base:ci}\%; permutation $P = \val{null:base:p}$). This is not proof of equivalence, but recovery was also not detectably above
+the shuffled rate when silence required rates below 0.5~Hz, and with a fixed threshold in microvolts for each electrode, which prevents
+changes in noise level from moving the threshold. Silences lasting at least 30 days were different. They were twice as common as in the
+shuffled data (\val{null:long_silence:sil} versus \val{null:long_silence:silnull} on average), and \val{null:long_silence:obs}\% of
+them ended in recovery, against \val{null:long_silence:mean}\% in the shuffled data (95\% range \val{null:long_silence:ci}\%;
+$P = \val{null:long_silence:p}$). Recovery here means that the electrode again recorded spiking, not necessarily from the
+same neuron.
+
+Spiking declined slightly faster at the edge of the array than in its interior, in \val{edge:raw:neg} of
+\val{edge:raw:n} human arrays (one-sided $P = \val{edge:raw:wil}$, with the array as the unit), but the effect weakened
+after adjusting for each electrode's initial firing rate (one-sided $P = \val{edge:adj:wil}$; Fig.~\ref{fig:electrodes}d).
+Models in which micromotion strains tissue most at the edges predict such a pattern~\cite{forrest2025}, but our evidence
+for it is weak.
+
+\begin{figure}[tbp]
+\centering
+\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig7_electrodes.pdf}}
+\caption{\textbf{Brief electrode silences look like fluctuation.} \textbf{a}, Percentage of electrodes with spiking
+activity over years, for 20 human arrays (purple) and two arrays in monkey N (blue). \textbf{b}, Median impedance of each
+array relative to its first sessions. \textbf{c}, Percentage of silenced human electrodes that later recovered, observed
+(purple) and after shuffling session order 200 times (grey, with 95\% range). Four definitions of silence are shown.
+Numbers give silenced electrodes. \textbf{d}, Difference in the yearly decline of firing rate between edge and interior
+electrodes, per human array, before (filled) and after (open) adjusting for initial firing rate.}
+\label{fig:electrodes}
+\end{figure}
+
+\subsection{A benchmark and a simulator for testing new corrections}
+
+Methods for stable decoding are hard to compare without a common test bed~\cite{karpowicz2024falcon}, and existing
+benchmarks span days to months. We released our session pairs as a benchmark for decoder transfer over years
+(Methods). It fixes \val{bench:npairs} pairs from the \val{ind:nword} individuals at gaps of 1 to 480 days
+(\val{bench:nvalid} with a working reference decoder), defines which data a method may use on the new day, and scores
+retention with confidence intervals over training sessions. The correction ladder serves as its baseline. Across
+individuals, the renormalized fixed decoder kept a median retention of \val{bench:renorm:1} after one day and
+\val{bench:renorm:480} after 480 days. With 300 labeled trials, re-weighting each channel kept \val{bench:reweight:1} and
+\val{bench:reweight:480}, and a refit shrunk toward the old decoder kept \val{bench:prior_refit:1} and
+\val{bench:prior_refit:480} (Supplementary Table~15). Two limits matter for users. With 300 labeled trials, a
+retrained decoder in many human sessions uses all training trials and so equals the reference; budgets of 10 to 100
+trials are the informative ones. The evaluation labels are public, so there is no hidden test set, and the valid-pair
+rule depends on the reference decoder's test accuracy; the manifests fix the valid pairs so that every method is scored
+on the same ones.
+
+We also built a feature-level simulator that takes a real session and returns it as it might appear days to years later (Methods). It
+combines mixing of signals between channels, gradual turnover of each channel's tuning and switching of electrodes
+between active and silent states. Switching rates came from monkey N's electrode statistics. The mixing and turnover
+parameters were calibrated so that the simulated correction ladder matched monkey N's during its first 700 days. The
+fit had a root-mean-square error of \val{sim:rms} in retention (Fig.~\ref{fig:sim}a).
+
+We tested the simulator on the later days, which it had not seen (Fig.~\ref{fig:sim}b). It beat a simulator without
+drift everywhere. It beat a simpler baseline, the median retention measured in the first 700 days, only for corrections
+it was not fitted to (median absolute error \val{sim:unfit:sim} versus \val{sim:unfit:early}); for the fitted corrections
+and for different amounts of labeled data, that empirical curve was as good or better. The
+simulator is therefore most useful for asking how a new correction might behave, not for predicting known ones. A
+calibration on the later years gave weaker mixing and slower turnover (time constant \val{sim:taurholate} versus
+\val{sim:taurho} days; Fig.~\ref{fig:sim}c and Supplementary Table~12), so drift may slow as an implant ages, at least in this monkey. Training
+decoders on simulated futures helped little (Supplementary Table~13).
+
+\begin{figure}[tbp]
+\centering
+\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig8_simulator.pdf}}
+\caption{\textbf{A calibrated simulator for testing new corrections.} \textbf{a}, Calibration on monkey N sessions before
+day 700. Points show real retention; lines show the simulator. \textbf{b}, Prediction error on sessions after day 700,
+for the simulator (dark blue), the median retention measured before day 700 (light blue) and a simulator without drift
+(grey). \textbf{c}, Parameters calibrated separately on early and late sessions.}
+\label{fig:sim}
+\end{figure}
+
+\section{Discussion}
+Earlier long-term studies each described one dataset~\cite{temmar2025,wilson2025,hahn2026}. We put three monkeys and six
+people on the same footing, with one decoder, one set of corrections and one inclusion rule, and added electrode
+statistics from 14 people. This comparison showed that decay curves differ widely between individuals, and that part
+of the decay reported for a decoder can come from its regularization rather than from the recordings. It showed that
+renormalization, not a fixed or mean-only decoder, is the baseline a label-free method has to beat. An alignment
+ceiling fitted with labels showed that much better alignments existed than the label-free methods found, and that part
+of the loss lies beyond any alignment of the dominant subspace. It also showed that
+per-channel corrections need a scrambled-channel control before they are read as per-channel drift: in people, even
+scrambled decoders could be rescued. At the electrodes, a permutation null separated brief silences, which looked like
+noise, from month-long ones, which were real and often reversed.
+
+The results suggest simple practices for building and testing decoders. Tune the ridge penalty on training-day data
+before reporting decay. Report label-free methods against renormalization. In people, recalibrate with about 100
+labeled trials; a fresh, strongly regularized decoder used them at least as well as a refit toward the old one. Set
+recalibration schedules per person, because one schedule will not suit individuals whose decoders lose half their
+accuracy within a day and others who keep it for months. Do not treat an electrode that falls silent for a few
+sessions as lost; most return. New methods should be judged against these steps.
+
+Earlier work modeled per-electrode drift as shifts in baseline over weeks~\cite{bishop2014,jarosiewicz2015}, and human
+decoders absorb day-to-day changes with input layers learned for each day~\cite{willett2021,fan2023}. Other studies
+describe changes in the preferred directions of individual features~\cite{pun2024} and rotation of decoder
+weights~\cite{wilson2025}. In our data, decoders with correctly assigned channels beat scrambled ones, and re-weighting
+tracked each electrode's firing, so some of each channel's tuning pattern survived for months, most clearly in the
+monkeys. The ceiling adds a second view. In the monkeys, an alignment within the population subspace beat per-channel
+re-weighting, which points to activity being remixed across channels. In people the reverse held, which fits
+per-channel change, although a two-dimensional target limits this inference. For label-free methods, the practical
+message is that the target exists: a method that could find the alignment the labels reveal would recover much of the
+loss, but not all of it. Changes in the number or proximity of neurons near each electrode would produce such per-channel
+changes~\cite{polikov2005,kozai2015}, but our data cannot identify the cause.
+
+Activity near the yield threshold fluctuated strongly between sessions. Yield counts from single sessions are therefore
+noisy, and channels that fall silent for a few sessions are likely to return. Hahn and colleagues analyzed yield,
+decoding signal quality and tuning stability in the same human data~\cite{hahn2026}. We add a permutation null for
+silence and recovery and a link between electrode changes and decoder corrections.
+
+All analyses were offline. Offline variability can overstate online decay~\cite{flint2013}, and in closed loop users
+adapt to their decoder~\cite{gilja2012}. Human decoding labels were inferred from the direction from cursor to target,
+and the online decoder shaped both the neural activity and the cursor path, so part of the cross-day change may reflect
+the user's control strategy or the task, not only the recordings. Three of the nine BrainGate participants with
+decoding data were excluded: in two the decoders did not work, and in T11 recordings jumped in scale between blocks,
+which session-wise normalization did not handle (Supplementary Note~4). Six participants and three monkeys cannot
+establish population rates, and the datasets differ in task, signal type, array placement and implant age. We did not
+test adversarial alignment. The foundation-decoder comparison was a pilot with one model size, threshold crossings and
+three individuals, and larger models or other ways of adapting them may do better. The simulator is calibrated to
+feature-level statistics in one monkey and does not model biophysics.
+
+We release our code, derived results, the benchmark and the simulator, with the correction ladder as the baseline to
+beat. In these data, keeping implanted decoders working over months depended less on elaborate corrections than on a
+well-regularized decoder, renormalization of each session and brief recalibration with labeled trials.
+
+\section*{Data availability}
+All data analyzed in this study are public. LINK (monkey N) is available from the DANDI Archive at
+\url{https://doi.org/10.48324/dandi.001201/0.251023.2336}. The recordings of monkeys C and M are available at
+\url{https://doi.org/10.48324/dandi.000688/0.250122.1735}. The BrainGate yield and decoding data are available from Dryad
+at \url{https://doi.org/10.5061/dryad.x0k6djj1h}. The MINDFUL data are available from Dryad at
+\url{https://doi.org/10.5061/dryad.n2z34tn5s}. All derived results underlying the figures and tables are provided in the
+code repository.
+
+\section*{Code availability}
+All code, including the benchmark (fixed splits, data interface, reference methods and scoring) and the simulator with
+its calibrated parameters, is available at
+\url{https://github.com/Imtiaj-Sajin/invasive-bci} under the MIT license. A versioned archive will be deposited on Zenodo
+upon publication.
+
+\section*{Use of AI tools}
+An AI assistant (Claude, Anthropic) was used to write analysis code, run analyses and draft the text under the
+authors' direction. The authors reviewed the code, analyses and text and take full responsibility for the content.
+
+\section*{Acknowledgements}
+We thank the participants of the BrainGate clinical trials and the teams who recorded and released the LINK, DANDI
+000688, BrainGate and MINDFUL datasets. This work received no specific funding.
+
+\section*{Author contributions}
+All authors contributed to the study design, analysis, interpretation and writing, and approved the final manuscript.
+
+\section*{Conflict of interest}
+The authors declare no competing interests.
+
+\input{refs}
+
+\end{document}

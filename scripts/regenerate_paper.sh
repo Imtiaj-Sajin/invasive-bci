@@ -20,12 +20,13 @@ run scripts/revision_stats.py
 run scripts/make_numbers_tex.py
 run scripts/make_supp_tables.py
 run scripts/make_v2_figures.py
+run manuscript/tools/make_jne.py                    # JNE version from the master text (manuscript/jne)
 
 if [ "${1:-}" != "--no-pdf" ]; then
-  cd manuscript/natcomms
-  for f in main supplementary; do
-    pdflatex -interaction=nonstopmode -halt-on-error "$f.tex" > /dev/null
-    pdflatex -interaction=nonstopmode -halt-on-error "$f.tex" > /dev/null
-    echo "== compiled $f.pdf"
+  for f in natcomms/main natcomms/supplementary jne/main; do
+    ( cd "manuscript/$(dirname "$f")" &&
+      pdflatex -interaction=nonstopmode -halt-on-error "$(basename "$f").tex" > /dev/null &&
+      pdflatex -interaction=nonstopmode -halt-on-error "$(basename "$f").tex" > /dev/null ) || exit 1
+    echo "== compiled manuscript/$f.pdf"
   done
 fi

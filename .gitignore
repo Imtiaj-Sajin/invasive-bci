@@ -43,3 +43,6 @@ manuscript/*.bbl
 
 # large intermediate caches
 results/failure_robustness/electrode_thresholds.csv.gz
+manuscript/jne/*.aux
+manuscript/jne/*.log
+manuscript/jne/*.out

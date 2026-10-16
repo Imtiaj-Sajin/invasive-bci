@@ -659,7 +659,7 @@ def fig3(out):
     fig, axes = plt.subplots(1, 3, figsize=(P.DOUBLE_COL, 2.1), gridspec_kw={"width_ratios": [1.6, 0.9, 0.9]})
     ax = axes[0]
     methods = [("mean_only", "align", "update means only"), ("mean_plus_align", "align", "means + rotation"),
-               ("renorm_plus_align", "align", "rescale + rotation"), ("coral", "lfp", "full covariance (CORAL)"),
+               ("renorm_plus_align", "align", "renormalize\n+ rotation"), ("coral", "lfp", "full covariance (CORAL)"),
                ("fa_stab", "lfp", "factor-analysis stabilizer")]
     xs = np.arange(len(methods))
     for j, k in enumerate(IND):
@@ -687,7 +687,7 @@ def fig3(out):
     ax.set_xticks(xs)
     ax.set_xticklabels([m[2].replace(" + ", "\n+ ").replace(" (CORAL)", "\n(CORAL)")
                         .replace("factor-analysis ", "factor-analysis\n") for m in methods], fontsize=4.8)
-    ax.set_ylabel("R² change vs rescaling each channel")
+    ax.set_ylabel("R² change vs renormalization")
     ax.set_title("Label-free corrections (all gaps)", loc="left")
     ax.legend(loc="upper center", frameon=False, ncol=5, fontsize=4.2, handletextpad=0.2, columnspacing=0.8,
               borderaxespad=0.2)

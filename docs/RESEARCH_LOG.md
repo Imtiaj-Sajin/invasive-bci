@@ -1587,3 +1587,12 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   scrambled decoders), so stated as consistent with, not proof of, per-channel change.
 - Text: Results paragraph in the label-free section (retitled), Methods "Alignment ceiling", Supplementary Table 18,
   Discussion, Introduction ending and abstract rewritten (148 words). Keys *:ceil:*.
+
+### 2026-10-17 — JNE version built from the master text
+
+- `python manuscript/tools/make_jne.py` writes manuscript/jne/main.tex from manuscript/natcomms/main.tex (single source):
+  article class, numbered sections, order Introduction-Methods-Results-Discussion, bracketed numeric citations, the
+  master's verified reference entries reordered by first citation (58 of 58), shared numbers.tex and figures.
+  Structured abstract in manuscript/jne/abstract.tex (296 words; JNE headings). Added to regenerate_paper.sh.
+  Compiles to 20 pages, no undefined references. Supplementary material: the master supplement.
+- Figure 4a labels changed from "rescaling" to "renormalization" (terminology fix).
