@@ -715,6 +715,32 @@ Augmentation added eight simulated futures per training session ($\Delta t$ log-
 compared with stronger regularization, random channel dropout with gain noise\cite{sussillo2016} and training on the
 three previous sessions.
 
+\subsection*{Pretrained foundation decoder}
+
+We tested NDT3 (ref.~\cite{ye2025ndt3}), a transformer pretrained on about 2,000 hours of intracortical recordings, using
+its public 45-million-parameter checkpoint (code at commit 877f9f5, run with the authors' software versions). The
+checkpoint stores the list of its pretraining sessions. It includes the datasets of monkeys C and M, but no BrainGate or
+monkey N sessions, so we tested monkey N and two BrainGate participants. NDT3 takes threshold-crossing counts, so all
+comparisons in this section used threshold crossings (20 ms bins; $-4.5$ times the RMS for BrainGate), with the ridge
+decoder of the correction ladder fitted to the same features. We chose participants whose threshold crossings decoded
+well (T5 and T8; same-day $R^2$ of the ridge decoder 0.50 and 0.32) and 12 session pairs per individual: the pairs of three
+training sessions spread over the recordings, each with pairs at four or five of the main gaps.
+
+Sessions entered NDT3 through its own data pipeline (1-s windows, its tokenization of 32-channel patches, its training
+step and prediction function), so that the model saw data as in its original evaluations. Behaviour was scaled by the
+99.9th percentile of its magnitude on the training day only, and $R^2$ was computed on unscaled labels. Before any
+result with these settings, two rules were fixed. The learning rate was chosen per individual from $10^{-4}$ and
+$4 \times 10^{-4}$ by NDT3's own validation $R^2$ on its earliest session ($4 \times 10^{-4}$ for monkey N and T5,
+$10^{-4}$ for T8). An array was left out of NDT3's input when fewer than 25\% of its channels were active on that session;
+this removed one T8 array with 17 of 96 active channels, on which NDT3 failed to train while the ridge decoder simply
+ignored it (Supplementary Note~5). The ridge decoder always used all channels.
+
+For each training session, the pretrained model was fine-tuned on day $i$ (all labeled trials; early stopping on a random
+20\% of 1-s windows). On day $j$ it was applied unchanged, fine-tuned further with the first 50 or 300 labeled trials, or
+adapted without labels by continuing training on day $j$ with its neural prediction loss only. A model fine-tuned on
+day $j$ alone gave the same-day reference for retention. Predictions were causal: overlapping 2-s windows advancing by
+1~s, keeping the last second of each. This gave $R^2$ within 0.01 of NDT3's streaming evaluation (Supplementary Note~5).
+
 \subsection*{Benchmark}
 
 The benchmark fixes the session pairs of the tuned-penalty analysis at the five main gaps: one pair per training session
