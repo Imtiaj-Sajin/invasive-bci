@@ -168,7 +168,7 @@ penalty (open) and the tuned penalty (filled). \textbf{d}, As in \textbf{a}, wit
 
 Part of the measured decay came from the decoder rather than the recordings. We had adopted the ridge penalty used in
 the original monkey N study\cite{temmar2025} ($\alpha = 0.1$; $\alpha = 1$ for the sparser spike counts of monkeys C and
-M). With a stronger penalty ($\alpha = 10^4$), the time to half retention at least doubled in monkey N
+M). With a stronger penalty ($\alpha = 10^4$), the time to half retention about doubled or more in monkey N
 (\val{N:thalf} to \val{N:thalftuned} days), T5 (\val{T5:thalf} to \val{T5:thalftuned} days) and T7 (under one day to
 \val{T7:thalftuned} days). It grew by about half in T6, T9 and T10 and changed little in monkeys C and M and in T8
 (Fig.~\ref{fig:decay}c,d). Per training session, absolute $R^2$ on later days rose in all nine individuals, by medians of
@@ -264,8 +264,8 @@ the difference was largest when weights could not change sign, so that scrambled
 non-negative weights, retention in the participants was \val{hum:ctl:rew_nonneg:min}--\val{hum:ctl:rew_nonneg:max} with
 correct channels and \val{hum:ctl:rew_perm_nn:min}--\val{hum:ctl:rew_perm_nn:max} with scrambled ones. In the monkeys it
 was \val{N:ctl:rew_nonneg} versus \val{N:ctl:rew_perm_nn}, \val{C:ctl:rew_nonneg} versus \val{C:ctl:rew_perm_nn} and
-\val{M:ctl:rew_nonneg} versus \val{M:ctl:rew_perm_nn}. Constraining the weights to be non-negative cost at most about
-0.1 in retention with correct channels. Drift therefore preserves much of each channel's tuning pattern.
+\val{M:ctl:rew_nonneg} versus \val{M:ctl:rew_perm_nn}. Constraining the weights to be non-negative cost at most
+\val{all:ctl:nncost:max} in retention with correct channels (in \val{all:ctl:nncost:who}). Drift therefore preserves much of each channel's tuning pattern.
 
 The per-channel weights also related to measured changes at each electrode (Fig.~\ref{fig:channels}c and Supplementary
 Table~5). For each pair, we compared the fitted weights with the change in each electrode's threshold-crossing rate
@@ -275,7 +275,7 @@ training sessions, $P < 0.05$; \val{hum:mech:rate:nsigholm} after Holm correctio
 Spearman correlation per training session was
 up to \val{hum:mech:rate:rho:max} and was positive in up to \val{hum:mech:rate:pos:max}\% of sessions, against near zero
 after shuffling channels. Channels whose impedance rose received smaller weights in \val{hum:mech:imp:sigwho} (median
-correlations \val{hum:mech:imp:rho:min} to \val{T7:mech:imp:rho}; \val{hum:mech:imp:sigwhoholm} after Holm correction). These relations are weak for single channels but
+correlations \val{hum:mech:imp:sigrho:min} to \val{hum:mech:imp:sigrho:max}; \val{hum:mech:imp:sigwhoholm} after Holm correction). These relations are weak for single channels but
 consistent, linking the decoder's corrections to physical changes at the array.
 
 The results held for nonlinear decoders. We trained a recurrent network decoder, regularized so that it could not
@@ -311,8 +311,9 @@ rose from
 freshly trained, strongly regularized decoder (Fig.~\ref{fig:recipes}c and Supplementary Table~10). Refitting while
 shrinking toward the old decoder reached \val{hum:effL6pn50} and \val{hum:effL6pn100}, and re-weighting reached
 \val{hum:effL3n50} and \val{hum:effL3n100}. Movement periods lasted 1.6--3.9~s in these sessions, so 100 trials take a few
-minutes. Recovery was slowest in T8, where 100 trials restored a retrained decoder to \val{T8:effL6n100}, against
-\val{T10:effL6n100}--\val{T9:effL6n100} in the other participants (Supplementary Table~10). Re-weighting therefore indicates what
+minutes. Recovery was slowest in \val{hum:effL6n100:slowwho}, where 100 trials restored a retrained decoder to
+\val{hum:effL6n100:slow}, against \val{hum:effL6n100:restmin}--\val{hum:effL6n100:restmax} in the other participants
+(Supplementary Table~10). Re-weighting therefore indicates what
 changes, but it is not the most data-efficient recalibration in these sessions.
 
 Two further choices made recalibration more reliable. First, the ridge penalty can be tuned on training-day data alone.
