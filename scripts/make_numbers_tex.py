@@ -373,6 +373,8 @@ def main():
             put(f"{k}:ctl:pairs", str(len(q)))
             put(f"{k}:ctl:zero", pct(float(q.nonneg_zero_frac.median())))
     group_keys()
+    control_cost_keys()
+    efficiency_extreme_keys()
     bench_keys()
     ndt3_keys()
     ndt3_diag_keys()
@@ -528,9 +530,42 @@ def group_keys():
         put(f"hum:mech:{name}:ntested", str(len(ps)))
         put(f"hum:mech:{name}:nsig", str(len(sig)))
         put(f"hum:mech:{name}:sigwho", _join(sig) if sig else "none")
+        rhos = [_num(V.get(f"{h}:mech:{name}:rho")) for h in sig]
+        rhos = [r for r in rhos if r is not None]
+        if rhos:                                   # range of median correlations among the significant participants
+            put(f"hum:mech:{name}:sigrho:min", f2(min(rhos)))
+            put(f"hum:mech:{name}:sigrho:max", f2(max(rhos)))
         hsig = [h for h, _ in ps if h in holm_sig(ps)]
         put(f"hum:mech:{name}:nsigholm", str(len(hsig)))
         put(f"hum:mech:{name}:sigwhoholm", _join(hsig) if hsig else "none")
+
+
+def control_cost_keys():
+    """Largest retention cost of constraining re-weighting to non-negative weights, over individuals (correct
+    channels)."""
+    costs = []
+    for i in IND:
+        a, b = _num(V.get(f"{i}:ctl:rew")), _num(V.get(f"{i}:ctl:rew_nonneg"))
+        if a is not None and b is not None:
+            costs.append((a - b, i))
+    if costs:
+        c, who = max(costs)
+        put("all:ctl:nncost:max", f2(c))
+        put("all:ctl:nncost:who", who)
+
+
+def efficiency_extreme_keys():
+    """Slowest-recovering participant (retrained decoder, 100 labelled trials) and the range of the others."""
+    vals = [(h, _num(V.get(f"{h}:effL6n100"))) for h in HUM]
+    vals = [(h, v) for h, v in vals if v is not None]
+    if len(vals) < 2:
+        return
+    lo = min(vals, key=lambda x: x[1])
+    rest = [v for h, v in vals if h != lo[0]]
+    put("hum:effL6n100:slowwho", lo[0])
+    put("hum:effL6n100:slow", V[f"{lo[0]}:effL6n100"])
+    put("hum:effL6n100:restmin", f2(min(rest)))
+    put("hum:effL6n100:restmax", f2(max(rest)))
 
 
 def bench_keys():
