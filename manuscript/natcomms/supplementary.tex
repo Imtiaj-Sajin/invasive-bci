@@ -158,7 +158,7 @@ normalization, the median reference $R^2$ of T11 was \val{t11b:refr2} (\val{t11b
 0.1). The renormalized fixed decoder kept a median retention of \val{t11b:ret1} after one day, \val{t11b:ret30} after 30
 days and \val{t11b:ret480} after 480 days, and re-weighting each channel restored retention to
 \val{t11b:gainretmin}--\val{t11b:gainretmax}, in line with the included participants. T11 is not part of the main
-analysis because the inclusion rule was fixed in advance.
+analysis because the inclusion rule was fixed before its results were seen.
 
 \textit{Session pairs with a failed reference decoder.} Within included individuals, pairs whose reference $R^2$ was at
 most 0.1 were left out (0--18\% of pairs per individual). With all pairs kept, the main conclusions did not change.
@@ -375,7 +375,11 @@ Individual & Target & Gap (days) & Renormalized & Re-weighted & Recovered (\%) \
 \begin{table}[p]
 \caption{\textbf{Angles between decoders fitted on different days} (degrees, medians over pairs). Global, angle that
 allows one global scale; per channel, angle after fitting one scale per channel; permuted, the per-channel angle
-after randomly permuting the channels of the earlier decoder.}
+after randomly permuting the channels of the earlier decoder. Allowing one scale per channel reduced the angle by
+\val{ang:redmin}--\val{ang:redmax}\textdegree{} in every individual, but permuted decoders given the same freedom reached
+\val{hum:angperm:min}--\val{hum:angperm:max}\textdegree{} in the participants, and at the longest gap the per-channel
+angle was only \val{hum:anggap:min}--\val{hum:anggap:max}\textdegree{} below that baseline. Angles that allow only a
+global scale can overstate rotation over days to months, but they say little about preserved tuning over years.}
 \label{tab:angles}
 \scriptsize\setlength{\tabcolsep}{3.5pt}
 \begin{tabular}{@{}lrrrr@{}}
@@ -413,7 +417,8 @@ labels and, for each number of labeled trials, ridge to prior / fresh decoder / 
 cross-validation). \textbf{b}, Human participants (30 training sessions each, all gaps): re-weighting / ridge to prior /
 fresh decoder. \textbf{c}, Harmful recalibrations in monkey N (more than 0.01 $R^2$ below the renormalized fixed
 decoder) with the shrinkage chosen by cross-validation or fixed at the value best on other training sessions, with
-$P$ from a Wilcoxon signed-rank test over training sessions, and median retention for both and for the best value in hindsight.}
+$P$ from a two-sided Wilcoxon signed-rank test over training sessions (share of each session's pairs made worse) and
+Holm-adjusted over the five budgets, and median retention for both and for the best value in hindsight.}
 \label{tab:recal}
 \scriptsize\setlength{\tabcolsep}{3.5pt}
 \textbf{a}\\[2pt]
@@ -437,11 +442,11 @@ Participant & Pairs & No labels & $n = 10$ & $n = 20$ & $n = 50$ & $n = 100$ & $
 
 \vspace{6pt}
 \textbf{c}\\[2pt]
-\begin{tabular}{@{}rrrrrrrr@{}}
+\begin{tabular}{@{}rrrrrrrrr@{}}
 \toprule
-& & \multicolumn{3}{c}{Harmful (\%)} & \multicolumn{3}{c}{Median retention} \\
-\cmidrule{3-5}\cmidrule{6-8}
-Trials & Pairs & Cross-validation & Fixed & $P$ (Fisher) & Cross-validation & Fixed & Hindsight \\
+& & \multicolumn{4}{c}{Harmful (\%)} & \multicolumn{3}{c}{Median retention} \\
+\cmidrule{3-6}\cmidrule{7-9}
+Trials & Pairs & Cross-validation & Fixed & $P$ & $P$ (Holm) & Cross-validation & Fixed & Hindsight \\
 \midrule
 \tabinput{supp/tab_policy.tex}
 \botrule
@@ -556,7 +561,7 @@ the ridge decoder, and in parentheses the number of sessions (same day) or pairs
 applied unchanged versus the renormalized ridge decoder. 50 and 300 trials: NDT3 fine-tuned with the first labeled trials
 of the new day versus the ridge decoder refit toward its previous weights. Self-supervised: median retention of NDT3 after
 continued training with its neural prediction loss only. T8's nearly silent first array was left out of NDT3's input by a
-rule fixed in advance (Methods); the ridge decoder used all channels.}
+rule written after a diagnostic on T8 and before its pairs were run (Methods); the ridge decoder used all channels.}
 \label{tab:ndt3}
 \footnotesize
 \begin{tabular}{@{}lrlllll@{}}
@@ -564,6 +569,22 @@ rule fixed in advance (Methods); the ridge decoder used all channels.}
 Individual & Pairs & Same day & No update & 50 trials & 300 trials & Self-supervised \\
 \midrule
 \tabinput{supp/tab_ndt3.tex}
+\botrule
+\end{tabular}
+\end{table}
+
+\begin{table}[p]
+\caption{\textbf{Decay summary.} Retention of the renormalized fixed decoder after exactly one day (median, 95\%
+confidence interval and number of one-day pairs; shown when there were at least three) and days until median retention
+fell to one half, with the default and the tuned ridge penalty. Intervals are from a cluster bootstrap over training
+sessions (2,000 resamples). $<$1, below one half at the first tested gap. Pairs, valid pairs with the default penalty.}
+\label{tab:decay}
+\footnotesize
+\begin{tabular}{@{}lrlll@{}}
+\toprule
+Individual & Pairs & One-day retention & Half-life, default (days) & Half-life, tuned (days) \\
+\midrule
+\tabinput{supp/tab_decay.tex}
 \botrule
 \end{tabular}
 \end{table}

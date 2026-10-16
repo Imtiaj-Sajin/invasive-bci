@@ -10,6 +10,8 @@ run() { echo "== $*"; "$PY" "$@"; }
 run scripts/v2_summary.py
 IBCI_ALL_PAIRS=1 run scripts/v2_summary.py          # all-pairs sensitivity (results/v2_summary_allpairs.json)
 run scripts/decay_summary.py
+run scripts/decay_summary.py --tuned                # tuned-penalty half-lives (results/decay_summary_tuned.csv)
+run scripts/heterogeneity_model.py                  # mixed model, curves differ (results/heterogeneity)
 run scripts/rule_summary.py
 run scripts/paper_stats.py
 run scripts/bench_from_paper.py                     # benchmark baselines (results/bench)

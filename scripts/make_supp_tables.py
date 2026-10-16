@@ -96,7 +96,8 @@ def policy_table(out):
     for n, q in p.groupby("n"):
         h = st[str(int(n))]
         cells = [str(int(n)), str(len(q)), f"{100 * h['cv'] / len(q):.1f}", f"{100 * h['history'] / len(q):.1f}",
-                 f"{mc[str(int(n))]['P_cluster']:.3f}" if mc[str(int(n))]["P_cluster"] < 1 else "1.0"]   # clustered
+                 f"{mc[str(int(n))]['P_cluster']:.3f}" if mc[str(int(n))]["P_cluster"] < 1 else "1.0",   # clustered
+                 f"{mc[str(int(n))]['P_cluster_holm']:.3f}" if mc[str(int(n))]["P_cluster_holm"] < 1 else "1.0"]
         for c in ("cv", "history", "oracle"):
             cells.append(f3((q[c] / q.own).median()))
         rows.append(" & ".join(cells) + r"\\")
@@ -384,6 +385,34 @@ def ndt3_table(out):
     write(os.path.join(out, "tab_ndt3.tex"), rows)
 
 
+def decay_table(out):
+    """Per individual: retention after exactly one day and time to half retention (default and tuned penalty), with
+    cluster-bootstrap 95% intervals."""
+    import json
+
+    def days(x):
+        x = float(x)
+        return "$<$1" if x == 0 else ("more than 480" if not np.isfinite(x) else (f"{x:.0f}" if x >= 10 else f"{x:.1f}"))
+
+    def half(r):
+        lo, hi = [float(v) for v in str(r.t_half_ci).strip("[]").split(",")]
+        return f"{days(r.t_half_days)} ({days(lo)}--{days(hi)})"
+
+    s = json.load(open("results/v2_summary.json"))
+    dflt = pd.read_csv("results/decay_summary.csv").set_index("subject")
+    tun = pd.read_csv("results/decay_summary_tuned.csv").set_index("subject")
+    rows = []
+    for k, name in NAMES.items():
+        subj = ("monkey " if k in ("N", "C", "M") else "human ") + k
+        one = s.get(k, {}).get("default", {}).get("strict_1day", {})
+        n, ret = one.get("n", 0), one.get("retention")
+        g = lambda v: f3(0.0 if abs(v) < 0.005 else v)
+        cell1 = f"{g(ret[0])} ({g(ret[1])} to {g(ret[2])}; {n})" if ret and n >= 3 else f"-- ({n})"
+        rows.append(" & ".join([name, f"{int(dflt.loc[subj, 'n_pairs']):,}", cell1, half(dflt.loc[subj]),
+                                half(tun.loc[subj])]) + r"\\")
+    write(os.path.join(out, "tab_decay.tex"), rows)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="manuscript/natcomms/supp")
@@ -391,7 +420,7 @@ def main():
     os.makedirs(args.out, exist_ok=True)
     for fn in (ladder_table, failure_table, efficiency_table, policy_table, sim_table, augment_table, mindful_table,
                reg_table, nn_table, angle_table, labelfree_table, human_eff_table, revival_table,
-               controls_table, matched_table, decoding_tables, bench_table, ndt3_table):
+               controls_table, matched_table, decoding_tables, bench_table, ndt3_table, decay_table):
         fn(args.out)
         print("wrote", fn.__name__, flush=True)
 
