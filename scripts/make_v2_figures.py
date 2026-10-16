@@ -3,7 +3,7 @@
   fig1_overview     real examples: array sites on the fsaverage surface (scripts/render_brain.py), T5 waveforms 7.3
                     years apart, closed-loop cursor paths and decoder reconstructions (old, re-weighted, same-day)
   fig2_design       sessions analyzed per individual and analysis; the correction ladder
-  fig3_decay        decay of a renormalized fixed decoder in six individuals; strict 1-day vs 2-day; tuned penalty
+  fig3_decay        decay of a renormalized fixed decoder in nine individuals; strict 1-day vs 2-day; tuned penalty
   fig4_labelfree    label-free corrections relative to renormalization; monitoring offline and in closed loop
   fig5_channels     re-weighting, scrambled-channel controls, gain-electrode link, loss recovered
   fig6_recipes      ridge penalty trade-off and the 1% rule; recalibration shrunk toward the old decoder
@@ -31,7 +31,7 @@ from matplotlib.patches import FancyBboxPatch
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 sys.path.insert(0, os.path.dirname(__file__))
 from ibci import plotting as P  # noqa: E402
-from ibci.participants import MONKEYS, humans, ladder_path, valid_pairs  # noqa: E402
+from ibci.participants import complete_budgets, MONKEYS, humans, ladder_path, valid_pairs  # noqa: E402
 from ibci.stats import cluster_bootstrap  # noqa: E402
 
 GAPS = [1, 7, 30, 120, 480]
@@ -668,26 +668,29 @@ def fig3(out):
             f = f"results/{'align_variants' if src == 'align' else 'label_free_plus'}/{k}.csv"
             if not os.path.exists(f):
                 continue
-            q = pd.read_csv(f)
+            q = valid_pairs(pd.read_csv(f))                 # same pairs as the text (pair rule)
             s = q.groupby("train")[[col, "renorm"]].mean()
             diff = (s[col] - s["renorm"]).rename("d").reset_index()
             est, lo, hi = cluster_bootstrap(diff.assign(train=diff.train), "d", n_boot=800)
             x = m_i + (j - (len(IND) - 1) / 2) * 0.11
             ylo, yhi = -0.3, 0.1
             if est < ylo:   # off-scale: arrow at the bottom with the value
-                ax.annotate(f"{est:.1f}", xy=(x, ylo + 0.01), xytext=(x, ylo + 0.06 + 0.035 * (j % 2)), fontsize=3.8, ha="center",
-                            color=COL[k], arrowprops=dict(arrowstyle="-|>", lw=0.5, color=COL[k]))
+                ax.annotate(f"{est:.1f}", xy=(x, ylo + 0.005), xytext=(x, ylo + 0.045), fontsize=3.6, ha="center",
+                            va="bottom", rotation=90, color=COL[k],
+                            arrowprops=dict(arrowstyle="-|>", lw=0.5, color=COL[k], shrinkA=0, shrinkB=0))
                 continue
             ax.plot([x, x], [max(lo, ylo), min(hi, yhi)], color=COL[k], lw=0.7)
             ax.plot(x, est, MK[k], color=COL[k], ms=2.6, label=NAME[k] if m_i == 3 else None)
     ax.axhline(0, color=P.INK2, lw=0.6)
-    ax.set_ylim(-0.3, 0.1)
+    ax.set_ylim(-0.3, 0.19)                         # band above 0.1 holds the legend
+    ax.set_yticks([-0.3, -0.2, -0.1, 0, 0.1])
     ax.set_xticks(xs)
     ax.set_xticklabels([m[2].replace(" + ", "\n+ ").replace(" (CORAL)", "\n(CORAL)")
                         .replace("factor-analysis ", "factor-analysis\n") for m in methods], fontsize=4.8)
     ax.set_ylabel("R² change vs rescaling each channel")
     ax.set_title("Label-free corrections (all gaps)", loc="left")
-    ax.legend(loc="lower right", frameon=False, ncol=3, fontsize=4.2)
+    ax.legend(loc="upper center", frameon=False, ncol=5, fontsize=4.2, handletextpad=0.2, columnspacing=0.8,
+              borderaxespad=0.2)
     ax.grid(axis="x", visible=False)
     P.panel(ax, "a", x=-0.12)
 
@@ -747,30 +750,38 @@ def fig5(out):
     P.panel(ax, "a", x=-0.3)
     ax = axes[1]
     t = pd.read_csv("results/reg_tradeoff/rule_across_subjects.csv")
-    names = {"N (LINK)": "N", "C": "C", "M": "M", "T6 (human)": "T6", "T5 (human)": "T5", "T9 (human)": "T9"}
-    keys = [k for k in names if (t.subject == k).any() and names[k] in COL]
-    offs = np.linspace(-0.12, 0.12, len(keys))
+    names = {key: key.split()[0] for key in t.subject.unique()}      # 'N (LINK)' -> 'N', 'T7 (human)' -> 'T7'
+    order = [k for k in COL if k in names.values()]                   # all individuals, in the paper's order
+    keys = sorted((key for key in names if names[key] in COL), key=lambda key: order.index(names[key]))
+    offs = np.linspace(-0.16, 0.16, len(keys))
     for o, key in zip(offs, keys):
         k = names[key]
         s = t[t.subject == key]
         xs = np.log10([max(g, 0.3) for g in s.gap]) + o
         lo = [float(v.strip("[]").split(",")[0]) for v in s.ci]
         hi = [float(v.strip("[]").split(",")[1]) for v in s.ci]
+        top = 0.2                                   # intervals beyond the axis are clipped and marked with an arrow
         for x, l_, h_ in zip(xs, lo, hi):
-            ax.plot([x, x], [l_, h_], color=COL[k], lw=0.7)
+            ax.plot([x, x], [l_, min(h_, top)], color=COL[k], lw=0.7)
+            if h_ > top:
+                ax.plot(x, top, marker="^", color=COL[k], ms=2.6, clip_on=False)
         ax.plot(xs, s.gain, MK[k], color=COL[k], ms=2.4, label=NAME[k])
+    ax.set_ylim(-0.02, 0.275)                      # band above 0.2 holds the legend
+    ax.set_yticks([0, 0.05, 0.1, 0.15, 0.2])
     ax.axhline(0, color=P.INK2, lw=0.5)
     ax.set_xticks(np.log10([0.3, 1, 7, 30, 120, 480]))
     ax.set_xticklabels(["same\nday", "1", "7", "30", "120", "480"])
     ax.set_xlabel("days since decoder training")
     ax.set_ylabel("R² gain over α = 0.1")
     ax.set_title("Tuned penalty (1% rule)", loc="left")
-    ax.legend(loc="upper left", frameon=False, fontsize=4.4, ncol=2)
+    ax.legend(loc="upper center", frameon=False, fontsize=4.0, ncol=3, handletextpad=0.2, columnspacing=0.6,
+              borderaxespad=0.2)
     P.panel(ax, "b", x=-0.25)
     ax = axes[2]
     ns = [10, 20, 50, 100, 300]
-    e = pd.concat([pd.read_csv(f"results/gain_efficiency/{k}.csv") for k in humans()
-                   if os.path.exists(f"results/gain_efficiency/{k}.csv")])
+    budget_cols = [f"{r}_n{n}" for r in ("L3", "L6p", "L6") for n in ns]
+    e = pd.concat([complete_budgets(valid_pairs(pd.read_csv(f"results/gain_efficiency/{k}.csv")), budget_cols)
+                   for k in humans() if os.path.exists(f"results/gain_efficiency/{k}.csv")])   # as in the text
     e = e.assign(train=e.subject + "_" + e.train.astype(str))
     for m, name, c in (("L6", "retrained on day j", P.NEUTRAL), ("L6p", "refit near old decoder", P.INK2),
                        ("L3", "re-weight channels", P.BLUE_ORDINAL[5])):
@@ -778,7 +789,7 @@ def fig5(out):
                                           "_r", n_boot=800) for n in ns])
         line_ci(ax, ns, est, c, name)
     ax.axhline(float((e.L2 / e.own).median()), color=P.NEUTRAL, ls=":", lw=0.7)
-    ax.text(12, float((e.L2 / e.own).median()) + 0.03, "no labels", fontsize=4.4, color=P.INK2)
+    ax.text(40, float((e.L2 / e.own).median()) - 0.07, "no labels", fontsize=4.4, color=P.INK2, ha="center")
     ax.set_xscale("log")
     ax.set_xticks(ns)
     ax.set_xticklabels([str(n) for n in ns])
@@ -786,8 +797,9 @@ def fig5(out):
     ax.set_ylim(-0.1, 1.1)
     ax.set_xlabel("labeled trials on day j")
     ax.set_ylabel(RET)
-    ax.set_title("Three humans, all gaps", loc="left")
-    ax.legend(loc="lower right", frameon=False, fontsize=4.4)
+    words = {3: "Three", 4: "Four", 5: "Five", 6: "Six", 7: "Seven", 8: "Eight", 9: "Nine"}
+    ax.set_title(f"{words.get(e.subject.nunique(), e.subject.nunique())} humans, all gaps", loc="left")
+    ax.legend(loc="upper left", frameon=False, fontsize=4.4)
     P.panel(ax, "c", x=-0.3)
     ax = axes[3]
     p = pd.read_csv("results/recal_policy/policies.csv")
