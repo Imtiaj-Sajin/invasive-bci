@@ -1,0 +1,13 @@
+{
+ "subjects": [
+  "T8"
+ ],
+ "epochs": 100,
+ "unsup_epochs": 30,
+ "patience": 20,
+ "lr": 0.0001,
+ "lr_map": "T8=0.0001",
+ "tag": "_rule",
+ "batch_size": 32,
+ "seed": 0
+}
