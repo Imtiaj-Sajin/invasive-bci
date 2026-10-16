@@ -262,12 +262,14 @@ def revival_table(out):
            ("no_global", "Array-wide shifts removed", None), ("waveform", "Mean waveform trough at least 30 $\\mu$V", None),
            ("deep", "Silence below 0.5 Hz", "shuffle_deep"), ("long_silence", "Silence lasting at least 30 days",
                                                               "shuffle_long")]
+    nl = json.load(open("results/failure_robustness/null_summary.json"))   # 200 shuffles, as in the main text
     rows = []
     for k, text, null in lab:
         v = r[k]
-        nv = r.get(null) if null else None
+        nv = nl.get(k) if null else None
         rows.append(" & ".join([text, f"{v['silenced']:,}", f"{v['revived']:,}", f"{100 * v['fraction']:.0f}",
-                                f"{100 * nv['fraction']:.0f} ({nv['silenced']:,})" if nv else "--"]) + r"\\")
+                                f"{100 * nv['fraction_null_mean']:.0f} ({nv['silenced_null_mean']:,.0f})" if nv else "--"])
+                    + r"\\")
     write(os.path.join(out, "tab_revival.tex"), rows)
 
 
