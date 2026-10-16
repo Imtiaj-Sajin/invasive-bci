@@ -1508,3 +1508,11 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   all pairs 125 vs 138 days; others < 1 day).
 - References: NDT3 added (verified against the paper: NeurIPS 2025, doi 10.52202/085713-3692); refs.tex reordered to
   citation order with `python scripts/tools/check_refs.py --fix-order` (it was not fully in order before).
+
+### 2026-10-16 — T11 block-normalized ladder rerun merged
+
+- PC1 rerun complete (677 pairs; resumed after the overnight shutdown at 240). Against the committed file: for the 617
+  pairs without one of the 15 array-swapped sessions, L0, L1, L2, L4u, L4s and own match to 4e-16 (this environment
+  reproduces the paper); supervised rungs changed in 7-20 of them (CV fix). Pairs with a swapped session changed as
+  expected from the channel-order fix. Merged into results/replication_bg_blocknorm/T11_ladder.csv.
+- Only one generated value changed: t11b:ret480 -0.65 -> -0.49 (Supplementary Note 4); the re-weighting range is unchanged.
