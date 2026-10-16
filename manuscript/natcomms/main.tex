@@ -110,8 +110,9 @@ We assembled four public datasets (Fig.~\ref{fig:design}a and Supplementary Tabl
 task\cite{temmar2025,nason2021}. Monkeys C and M were recorded over three and 1.5 years during
 reaching\cite{gallego2020,perich2018}. BrainGate participants \val{hum:list} contributed \val{hum:nsess:min}--\val{hum:nsess:max}
 closed-loop cursor sessions each, over \val{hum:years:min}--\val{hum:years:max} years (\val{hum:nsess:total} sessions in
-total; Supplementary Table~14)\cite{hahn2026}. Two further participants, T2 and T3, were excluded because their decoders
-did not work even on the day they were trained (Methods). Electrode analyses used all 20 arrays from 14 BrainGate
+total; Supplementary Table~14)\cite{hahn2026}. Three further participants were excluded by a rule fixed in advance
+(Methods): the decoders of T2 and T3 did not work even on the day they were trained, and T11's recordings jumped in scale
+between recording blocks (Supplementary Note~4). Electrode analyses used all 20 arrays from 14 BrainGate
 participants (2,289 sessions) and monkey N. Monitoring analyses used closed-loop sessions in which participants T11
 and T5 controlled a cursor with a fixed decoder\cite{pun2024}.
 
@@ -536,7 +537,9 @@ across session pairs exceeded 0.1. We fixed this rule when the first added parti
 of the other five added participants were seen. \val{hum:nWord} participants met it (\val{hum:list}). T2 and T3
 did not (median reference $R^2$ \val{T2:refr2} and \val{T3:refr2}). Their movement periods lasted a median of 15.6~s,
 against 1.6--3.9~s in the other participants, and neither block-wise normalization nor threshold crossings recovered a
-usable decoder (Supplementary Table~14). Within included individuals, session pairs whose reference $R^2$ was at most 0.1
+usable decoder (Supplementary Table~14). T11 also failed the rule (median reference $R^2$ \val{T11:refr2}) because its
+recordings jumped in scale between recording blocks; it was analyzed with block-wise normalization as a sensitivity
+analysis (Supplementary Note~4). Within included individuals, session pairs whose reference $R^2$ was at most 0.1
 were left out of retention summaries, in monkeys and humans alike. This rule was adopted after a single failed test
 session (reference $R^2$ $-42.8$) made bootstrap intervals meaningless; it removed 0--18\% of pairs per individual and
 changed median retention by less than 0.05 in nearly all individuals and gaps. Results with all pairs are given in the
@@ -575,6 +578,8 @@ therefore contains one- and two-day gaps, which we report separately. In monkey 
 random with a fixed seed; the full monkey N set (537 pairs) also includes further gaps and was used for monitoring. Pair
 counts are listed in Supplementary Table~2. The time to half retention was found by interpolating median retention at
 the target gaps linearly in log days, with 95\% confidence intervals from a cluster bootstrap over training sessions.
+When median retention was already below one half at the one-day gap (pairs 1 or 2 days apart), we report less than one
+day; when it never fell below one half, we report the longest gap with data as a lower bound.
 
 \subsection*{Correction ladder}
 
@@ -589,7 +594,8 @@ $\boldsymbol{\sigma}_d$ the channel means and standard deviations of day $d$, an
 \item \textit{Re-weighting}: $f_i$ applied to $g_c z_{j,c}$ for each channel $c$, with one offset per output. The weights
 $g_c$ (unconstrained in sign unless stated) were shrunk toward 1 and the offsets toward the old intercept; the penalty,
 scaled by the number of samples, was chosen from $\{10^{-6}, \ldots, 10^2\}$ by five-fold cross-validation over contiguous
-blocks of trials.
+blocks of trials. Here and for the ridge-to-prior refit, the candidates also included an infinite penalty, which keeps
+the previous decoder, so that cross-validation could decline an update.
 \item \textit{Ridge to prior}: a new decoder $(\mathbf{W}, \mathbf{b})$ fitted on the lagged features $\mathbf{H}$ of day
 $j$ by minimizing
 \begin{equation}
@@ -612,7 +618,8 @@ frozen network, and the refit was fine-tuning with an $L_2$ penalty toward the o
 last 20\% of labeled trials. We also computed a full input remap fitted by L-BFGS\cite{liu1989}; because it can represent
 any linear decoder of the same form, we used it only as a calibration target for the simulator.
 
-\textit{Channel controls.} For 40 training sessions per individual (fixed seed), re-weighting was repeated with weights
+\textit{Channel controls.} For 40 training sessions per individual (22 for monkey M and 33 for T7, all they had; fixed
+seed), re-weighting was repeated with weights
 constrained to be non-negative (bounded least squares with the cross-validated penalty), and for a copy of the day-$i$
 decoder whose channel weights were randomly permuted, with signed and with non-negative weights.
 
@@ -679,8 +686,9 @@ windows, and leave-one-day-out linear prediction of angular error; the reference
 \subsection*{Regularization and recalibration}
 
 Ridge decoders were trained with $\alpha \in \{0.1, 10, 10^3, 10^4, 3\times10^4, 10^5, 3\times10^5, 10^6\}$ on 40
-training sessions per individual (22 for monkey M) and evaluated on held-out same-day trials and on later sessions at
-the five gaps. The 1\% rule chose the largest $\alpha$ whose median same-day $R^2$ was at least 99\% of the best median.
+training sessions per individual (22 for monkey M and 33 for T7) and evaluated on held-out same-day trials and on later sessions at
+the five gaps. The 1\% rule chose the largest $\alpha$ whose median same-day $R^2$ was at least 99\% of the best median. These
+analyses compare absolute $R^2$ between penalties rather than retention, so the pair rule was not applied.
 Compared with each training session's own best same-day penalty, the rule changed cross-day $R^2$ by a median of
 \val{N:rulevsbest} in monkey N ($P = \val{N:rulevsbestp}$) and \val{hum:rulevsbest:min}--\val{hum:rulevsbest:max} in the
 participants, and not at all in monkeys C and M.

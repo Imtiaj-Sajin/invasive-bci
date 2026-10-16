@@ -151,7 +151,9 @@ contained spike-band power more than $10^3$ standard deviations from the trainin
 rare in the included participants (T7 \val{T7:artsess} of \val{T7:nscanned}, T8 \val{T8:artsess} of \val{T8:nscanned},
 T10 \val{T10:artsess} of \val{T10:nscanned} sessions), and such pairs are removed by the pair rule below. The jumps
 coincided with recording blocks. When each block was z-scored separately, as in the dataset
-paper (Hahn et al., 2026), most affected T11 sessions decoded normally, and clean sessions were unchanged. With block-wise
+paper (Hahn et al., 2026), most affected T11 sessions decoded normally, and clean sessions were unchanged. Block-wise
+z-scoring uses the statistics of every block, including blocks in the evaluation segment, so this analysis uses more
+unlabeled information from the test day than renormalization does. With block-wise
 normalization, the median reference $R^2$ of T11 was \val{t11b:refr2} (\val{t11b:valid} of \val{t11b:pairs} pairs above
 0.1). The renormalized fixed decoder kept a median retention of \val{t11b:ret1} after one day, \val{t11b:ret30} after 30
 days and \val{t11b:ret480} after 480 days, and re-weighting each channel restored retention to
@@ -304,7 +306,8 @@ Predictor & Raw $\rho$ & Partial $\rho$ \\
 
 \begin{landscape}
 \begin{table}[p]
-\caption{\textbf{Channel controls and electrode link.} For 40 training sessions per individual (tuned penalty), median
+\caption{\textbf{Channel controls and electrode link.} For 40 training sessions per individual (22 for monkey M and 33
+for T7; tuned penalty), median
 retention of the renormalized fixed decoder, after re-weighting the correctly assigned decoder, after re-weighting a
 decoder with scrambled channels, and the same two with non-negative weights. Electrode link (humans): median over
 training sessions of the Spearman correlation between fitted channel weights and the change in each electrode's log

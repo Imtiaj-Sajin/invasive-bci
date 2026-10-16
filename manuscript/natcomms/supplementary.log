@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.5.16)  16 OCT 2026 10:12
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.5.16)  16 OCT 2026 10:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -982,14 +982,14 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [5]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 223.
+(Font)              <9> on input line 225.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 223.
+(Font)              <7> on input line 225.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 223.
+(Font)              <5> on input line 225.
 
 (supp/tab_data_humans.tex)
-Overfull \hbox (59.03497pt too wide) in paragraph at lines 218--235
+Overfull \hbox (59.03497pt too wide) in paragraph at lines 220--237
  [] 
  []
 
@@ -1002,20 +1002,20 @@ Overfull \hbox (361.38956pt too wide) has occurred while \output is active
  []
 
 [6] (supp/tab_ladder.tex)
-LaTeX Font Info:    Calculating math sizes for size <8.03> on input line 253.
+LaTeX Font Info:    Calculating math sizes for size <8.03> on input line 255.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8.03> on input line 253.
+(Font)              <8.03> on input line 255.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5.62097> on input line 253.
+(Font)              <5.62097> on input line 255.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <4.015> on input line 253.
+(Font)              <4.015> on input line 255.
 
-Overfull \hbox (4.0161pt too wide) in paragraph at lines 239--254
+Overfull \hbox (4.0161pt too wide) in paragraph at lines 241--256
  [] 
  []
 
 
-LaTeX Warning: Float too large for page by 220.65302pt on input line 254.
+LaTeX Warning: Float too large for page by 220.65302pt on input line 256.
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -1026,7 +1026,7 @@ Overfull \hbox (361.38956pt too wide) has occurred while \output is active
  []
 
 [7] (supp/tab_labelfree.tex)
-Overfull \hbox (7.96884pt too wide) in paragraph at lines 258--273
+Overfull \hbox (7.96884pt too wide) in paragraph at lines 260--275
  [] 
  []
 
@@ -1039,12 +1039,12 @@ Overfull \hbox (361.38956pt too wide) has occurred while \output is active
  []
 
 [8] (supp/tab_mindful_link.tex) (supp/tab_mindful.tex)
-Underfull \hbox (badness 10000) in paragraph at lines 293--302
+Underfull \hbox (badness 10000) in paragraph at lines 295--304
 
  []
 
 
-Overfull \hbox (6.08505pt too wide) in paragraph at lines 276--303
+Overfull \hbox (6.08505pt too wide) in paragraph at lines 278--305
  [] 
  []
 
@@ -1062,7 +1062,7 @@ Overfull \hbox (361.38956pt too wide) has occurred while \output is active
 
 [10] (supp/tab_nn.tex)
 
-LaTeX Warning: Float too large for page by 23.96709pt on input line 340.
+LaTeX Warning: Float too large for page by 23.96709pt on input line 343.
 
 (supp/tab_matched.tex) (supp/tab_angles.tex)
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -1076,7 +1076,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
  [13]
 (supp/tab_reg.tex)
 
-LaTeX Warning: Float too large for page by 298.2099pt on input line 389.
+LaTeX Warning: Float too large for page by 298.2099pt on input line 392.
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -1087,12 +1087,12 @@ Overfull \hbox (361.38956pt too wide) has occurred while \output is active
  []
 
 [14] (supp/tab_efficiency.tex) (supp/tab_eff_human.tex)
-Underfull \hbox (badness 10000) in paragraph at lines 412--419
+Underfull \hbox (badness 10000) in paragraph at lines 415--422
 
  []
 
 (supp/tab_policy.tex)
-Underfull \hbox (badness 10000) in paragraph at lines 422--431
+Underfull \hbox (badness 10000) in paragraph at lines 425--434
 
  []
 
@@ -1105,12 +1105,12 @@ Overfull \hbox (361.38956pt too wide) has occurred while \output is active
  []
 
 [15] (supp/tab_revival.tex) (supp/tab_failure.tex)
-Underfull \hbox (badness 10000) in paragraph at lines 457--465
+Underfull \hbox (badness 10000) in paragraph at lines 460--468
 
  []
 
 
-LaTeX Warning: Float too large for page by 86.15111pt on input line 466.
+LaTeX Warning: Float too large for page by 86.15111pt on input line 469.
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -1121,17 +1121,17 @@ Overfull \hbox (361.38956pt too wide) has occurred while \output is active
  []
 
 [16] (supp/tab_sim.tex) (supp/tab_augment.tex)
-Overfull \hbox (86.90775pt too wide) in paragraph at lines 484--499
+Overfull \hbox (86.90775pt too wide) in paragraph at lines 487--502
  [] 
  []
 
 (supp/tab_decoding.tex)
-Overfull \hbox (126.15485pt too wide) in paragraph at lines 501--516
+Overfull \hbox (126.15485pt too wide) in paragraph at lines 504--519
  [] 
  []
 
 (supp/tab_bench.tex) (supp/tab_ndt3.tex)
-Overfull \hbox (87.1111pt too wide) in paragraph at lines 535--552
+Overfull \hbox (87.1111pt too wide) in paragraph at lines 538--555
  [] 
  []
 
@@ -1156,7 +1156,7 @@ Package rerunfilecheck Info: File `supplementary.out' has not changed.
 Here is how much of TeX's memory you used:
  14528 strings out of 467871
  227759 string characters out of 5418860
- 672254 words of memory out of 5000000
+ 672285 words of memory out of 5000000
  43053 multiletter control sequences out of 15000+600000
  740715 words of font info for 137 fonts, out of 8000000 for 9000
  1151 hyphenation exceptions out of 8191
@@ -1182,7 +1182,7 @@ grams/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/User/AppData/Local/Progr
 ams/MiKTeX/fonts/type1/public/lm/lmsy9.pfb><C:/Users/User/AppData/Local/Program
 s/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/User/AppData/Local/Programs
 /MiKTeX/fonts/type1/public/lm/lmtt9.pfb>
-Output written on supplementary.pdf (19 pages, 482227 bytes).
+Output written on supplementary.pdf (19 pages, 482402 bytes).
 PDF statistics:
  246 PDF objects out of 1000 (max. 8388607)
  42 named destinations out of 1000 (max. 500000)

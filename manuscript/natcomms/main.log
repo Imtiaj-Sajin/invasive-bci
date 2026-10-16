@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.5.16)  16 OCT 2026 10:12
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.5.16)  16 OCT 2026 10:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -971,36 +971,35 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 File: ../../results/figures/v2/fig2_design.pdf Graphic file (type pdf)
 <use ../../results/figures/v2/fig2_design.pdf>
 Package pdftex.def Info: ../../results/figures/v2/fig2_design.pdf  used on inpu
-t line 130.
+t line 131.
 (pdftex.def)             Requested size: 483.69684pt x 187.03386pt.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 133.
+(Font)              <8> on input line 134.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 133.
+(Font)              <6> on input line 134.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 133.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [4{C:/Users/User/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.en
-c}{C:/Users/User/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc} <.
-./../results/figures/v2/fig2_design.pdf>]
-<../../results/figures/v2/fig3_decay.pdf, id=230, 517.0569pt x 221.77718pt>
+(Font)              <5> on input line 134.
+<../../results/figures/v2/fig3_decay.pdf, id=180, 517.0569pt x 221.77718pt>
 File: ../../results/figures/v2/fig3_decay.pdf Graphic file (type pdf)
 <use ../../results/figures/v2/fig3_decay.pdf>
 Package pdftex.def Info: ../../results/figures/v2/fig3_decay.pdf  used on input
- line 158.
+ line 159.
 (pdftex.def)             Requested size: 483.69684pt x 207.47565pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [5{C:/Users/User/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.en
-c} <../../results/figures/v2/fig3_decay.pdf>]
+ [4{C:/Users/User/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.en
+c}{C:/Users/User/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{C:
+/Users/User/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [5 <../../results/figures/v2/fig2_design.pdf> <../../results/figures/v2/fig3_d
+ecay.pdf>]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [6]
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 2
-23.
+24.
 
 (C:\Users\User\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
@@ -1010,7 +1009,7 @@ File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 File: ../../results/figures/v2/fig4_labelfree.pdf Graphic file (type pdf)
 <use ../../results/figures/v2/fig4_labelfree.pdf>
 Package pdftex.def Info: ../../results/figures/v2/fig4_labelfree.pdf  used on i
-nput line 231.
+nput line 232.
 (pdftex.def)             Requested size: 483.69684pt x 132.28294pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -1021,47 +1020,47 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 File: ../../results/figures/v2/fig5_channels.pdf Graphic file (type pdf)
 <use ../../results/figures/v2/fig5_channels.pdf>
 Package pdftex.def Info: ../../results/figures/v2/fig5_channels.pdf  used on in
-put line 295.
+put line 296.
 (pdftex.def)             Requested size: 483.69684pt x 214.16817pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [8]
-<../../results/figures/v2/fig6_recipes.pdf, id=357, 517.97023pt x 145.4034pt>
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [9 <../../results/figures/v2/fig5_channels.pdf>]
+<../../results/figures/v2/fig6_recipes.pdf, id=404, 517.97023pt x 145.4034pt>
 File: ../../results/figures/v2/fig6_recipes.pdf Graphic file (type pdf)
 <use ../../results/figures/v2/fig6_recipes.pdf>
 Package pdftex.def Info: ../../results/figures/v2/fig6_recipes.pdf  used on inp
-ut line 335.
+ut line 336.
 (pdftex.def)             Requested size: 483.69684pt x 135.78064pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [9 <../../results/figures/v2/fig5_channels.pdf>]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
  [10 <../../results/figures/v2/fig6_recipes.pdf>]
-<../../results/figures/v2/fig7_electrodes.pdf, id=465, 524.47304pt x 157.3127pt
+<../../results/figures/v2/fig7_electrodes.pdf, id=464, 524.47304pt x 157.3127pt
 >
 File: ../../results/figures/v2/fig7_electrodes.pdf Graphic file (type pdf)
 <use ../../results/figures/v2/fig7_electrodes.pdf>
 Package pdftex.def Info: ../../results/figures/v2/fig7_electrodes.pdf  used on 
-input line 397.
+input line 398.
 (pdftex.def)             Requested size: 483.69684pt x 145.08228pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [11 <../../results/figures/v2/fig7_electrodes.pdf>]
-<../../results/figures/v2/fig8_simulator.pdf, id=500, 513.98825pt x 144.49142pt
+ [11]
+<../../results/figures/v2/fig8_simulator.pdf, id=477, 513.98825pt x 144.49142pt
 >
 File: ../../results/figures/v2/fig8_simulator.pdf Graphic file (type pdf)
 <use ../../results/figures/v2/fig8_simulator.pdf>
 Package pdftex.def Info: ../../results/figures/v2/fig8_simulator.pdf  used on i
-nput line 440.
+nput line 441.
 (pdftex.def)             Requested size: 483.69684pt x 135.98068pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [12]
+ [12 <../../results/figures/v2/fig7_electrodes.pdf>]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [13 <../../results/figures/v2/fig8_simulator.pdf>]
@@ -1121,7 +1120,7 @@ Here is how much of TeX's memory you used:
  43478 multiletter control sequences out of 15000+600000
  751921 words of font info for 133 fonts, out of 8000000 for 9000
  1151 hyphenation exceptions out of 8191
- 90i,7n,93p,940b,812s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,7n,93p,940b,796s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/User/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb
 ><C:/Users/User/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb>
 <C:/Users/User/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx8.pfb><C
@@ -1145,7 +1144,7 @@ ams/MiKTeX/fonts/type1/public/lm/lmss8.pfb><C:/Users/User/AppData/Local/Program
 s/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/User/AppData/Local/Programs
 /MiKTeX/fonts/type1/public/lm/lmsy7.pfb><C:/Users/User/AppData/Local/Programs/M
 iKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on main.pdf (26 pages, 2166897 bytes).
+Output written on main.pdf (26 pages, 2167695 bytes).
 PDF statistics:
  838 PDF objects out of 1000 (max. 8388607)
  128 named destinations out of 1000 (max. 500000)
