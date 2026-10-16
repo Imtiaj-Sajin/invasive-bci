@@ -413,6 +413,32 @@ def decay_table(out):
     write(os.path.join(out, "tab_decay.tex"), rows)
 
 
+def ceiling_table(out):
+    """Latent-alignment ceiling: share of the long-gap loss recovered (95% interval) and paired comparison of
+    re-weighting with the best rotation."""
+    p = "results/latent_ceiling/summary.json"
+    if not os.path.exists(p):
+        return
+    s = json.load(open(p))
+    pc = lambda v: f"{100 * v:.0f}".replace("-", "$-$")
+    rows = []
+    for k, name in NAMES.items():
+        r = s.get(k)
+        if not r:
+            continue
+        sl = r.get("share_long", {})
+        cells = [name, str(r["n_pairs"])]
+        for col in ("L4u", "L4_nall", "L3_nall"):
+            v = sl.get(col)
+            cells.append(f"{pc(v[0])} ({pc(v[1])} to {pc(v[2])})" if v else "--")
+        c = r["reweight_vs_ceiling"]
+        pv = c["P"]
+        ptxt = "--" if pv is None else (f"{pv:.2g}" if pv >= 1e-3 else f"{pv:.0e}").replace("e-0", "e-")
+        cells.append(f"{f3(c['median_diff'])} ({ptxt})")
+        rows.append(" & ".join(cells) + r"\\")
+    write(os.path.join(out, "tab_ceiling.tex"), rows)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="manuscript/natcomms/supp")
@@ -420,7 +446,7 @@ def main():
     os.makedirs(args.out, exist_ok=True)
     for fn in (ladder_table, failure_table, efficiency_table, policy_table, sim_table, augment_table, mindful_table,
                reg_table, nn_table, angle_table, labelfree_table, human_eff_table, revival_table,
-               controls_table, matched_table, decoding_tables, bench_table, ndt3_table, decay_table):
+               controls_table, matched_table, decoding_tables, bench_table, ndt3_table, decay_table, ceiling_table):
         fn(args.out)
         print("wrote", fn.__name__, flush=True)
 

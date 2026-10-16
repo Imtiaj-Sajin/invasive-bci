@@ -589,4 +589,23 @@ Individual & Pairs & One-day retention & Half-life, default (days) & Half-life, 
 \end{tabular}
 \end{table}
 
+\begin{table}[p]
+\caption{\textbf{Alignment ceiling.} Share of the loss recovered at gaps of 120 and 480 days (percent, with 95\%
+cluster-bootstrap intervals), relative to the renormalized fixed decoder (0\%) and the reference decoder (100\%), for the
+label-free Procrustes rotation of the dominant 16-dimensional subspace, the best alignment of that subspace fitted with
+all labeled training trials of the later day (ceiling), and re-weighting of each channel fitted on the same trials
+(tuned penalty). Last column: median over training sessions of the paired difference in $R^2$, re-weighting minus
+ceiling, over all gaps, with two-sided Wilcoxon signed-rank $P$; positive values mean per-channel re-weighting
+recovered more than any subspace alignment can.}
+\label{tab:ceiling}
+\footnotesize
+\begin{tabular}{@{}lrllll@{}}
+\toprule
+Individual & Pairs & Label-free rotation & Ceiling & Re-weighting & Re-weighting $-$ ceiling \\
+\midrule
+\tabinput{supp/tab_ceiling.tex}
+\botrule
+\end{tabular}
+\end{table}
+
 \end{document}

@@ -1567,3 +1567,23 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   -0.08), so "similar slopes in people" is NOT claimed. Paper claims only that curves differ (Results, Methods,
   Supplementary Note 4). Keys het:*.
 - Latent-alignment ceiling running (`bash scripts/run_latent_ceiling.sh`, all nine, restartable; T7 ~26 s/pair).
+
+### 2026-10-17 — Latent-alignment ceiling (referee M6; "why does label-free alignment fail?")
+
+- `bash scripts/run_latent_ceiling.sh` (16 Oct 17:42 to 17 Oct 00:08, all nine individuals, no failures) runs
+  `scripts/latent_ceiling.py`: on every tuned-decoder pair (alpha 1e4, five gaps), the supervised subspace alignment L4
+  (free 16 x 16 map of the dominant subspace, shrunk toward the Procrustes map, CV penalty) and re-weighting L3, each at
+  300 trials and with all labelled training trials of the later day ('nall', the reference decoder's trials).
+  Check: L2, L4u, L4s, L3_n300 and own reproduce results/decay_alpha exactly in all nine (max difference 0.0; no
+  missing or duplicate pairs). Sessions have ~230-300 training trials, so nall adds few labels beyond 300.
+- `python scripts/ceiling_summary.py` -> results/latent_ceiling/summary.json. Share of the loss recovered at 120-480 d
+  (medians, cluster bootstrap): label-free rotation -27% to 0%; ceiling 48-85% (monkeys), 42-77% (participants);
+  re-weighting 15-46% (monkeys), 75-86% (participants). Ceiling minus re-weighting per training session: ceiling better
+  in N, C, M; re-weighting better in all six participants (all P < 0.05 after Holm; T6 small, +0.006). Even the ceiling
+  leaves 15-58% of the loss.
+- Interpretation in the paper: good alignments exist but the label-free method does not find them; part of the loss is
+  beyond any subspace alignment. Monkeys: change mostly remixing across channels (4-D target, scrambled decoders not
+  rescued). Participants: fits per-channel change, but with a 2-D target re-weighting is flexible (it also rescues
+  scrambled decoders), so stated as consistent with, not proof of, per-channel change.
+- Text: Results paragraph in the label-free section (retitled), Methods "Alignment ceiling", Supplementary Table 18,
+  Discussion, Introduction ending and abstract rewritten (148 words). Keys *:ceil:*.

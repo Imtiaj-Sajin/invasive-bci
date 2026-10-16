@@ -26,16 +26,16 @@ brain--computer interfaces}
 \affil*[1]{\orgdiv{Department of Computer Science}, \orgname{American International University-Bangladesh},
 \orgaddress{\city{Dhaka}, \postcode{1229}, \country{Bangladesh}}}
 
-\abstract{Implanted brain--computer interfaces can restore communication and movement after paralysis, but their decoders lose
-accuracy as recordings change over days and years. How fast this happens, and which corrections work, have not been
-measured consistently across individuals. We analyzed public long-term recordings from three monkeys and 14 people
-with one pipeline, with decoders in six of the people and electrodes in all 14. A fixed decoder lost half of its accuracy in under a day to over four months, depending on the
-individual, and weak regularization exaggerated this decay. In people, about 100 labeled trials restored most accuracy
-with any well-regularized refit, whereas the label-free alignment methods we tested added little beyond rescaling
-each channel, and in a pilot a pretrained foundation decoder still needed labels. Per-channel corrections tracked
-changes in each electrode's firing. Brief electrode silences matched session-to-session
-fluctuation, but month-long silences were real and often reversed. We release a \val{bench:npairs}-pair benchmark spanning up to
-480 days.}
+\abstract{Implanted brain--computer interfaces let people with paralysis move cursors and communicate, but their
+decoders lose accuracy as recordings change. We measured this decay with one pipeline in public recordings from three
+monkeys and six people, and electrode changes in 14 people. Decay differed widely between individuals: a fixed decoder
+lost half its accuracy within a day in some and only after \val{T6:thalftuned} days in another, and weak regularization
+exaggerated decay. In people, about 100 labeled trials restored most accuracy. The label-free alignments we tested
+added nothing beyond normalizing each channel per session, although an alignment fitted with labels showed that better
+alignments existed. Even that ceiling left \val{all:ceil:unrec:min}--\val{all:ceil:unrec:max}\% of the loss, which
+needed new labels, and in a pilot a pretrained foundation decoder also needed labels. Most brief electrode silences
+looked like noise; month-long silences were real but often reversed. We release a \val{bench:npairs}-pair benchmark
+spanning 480 days.}
 
 \keywords{brain--computer interface, intracortical recording, Utah array, neural drift, decoder recalibration,
 electrode stability}
@@ -71,16 +71,11 @@ is not known.
 
 Public long-term recordings now make a common analysis possible\cite{temmar2025,gallego2020,perich2018,hahn2026,pun2024}.
 We analyzed four such datasets with one pipeline. We trained decoders on one day, tested them on later days and applied
-a series of corrections, from none to full retraining. Figure~\ref{fig:overview} shows the problem in one participant. Over seven years,
-one array lost about half of its electrodes with spikes, and the remaining spikes shrank by about half. A decoder
-trained 478 days earlier failed until each
-channel was re-weighted. Decay rates differed widely between individuals, and weak
-regularization exaggerated decay. In people, about 100 labeled trials restored most of the accuracy with any
-well-regularized refit, and the label-free alignment methods we tested added little beyond rescaling each channel. In
-a pilot, a large pretrained decoder still needed labeled recalibration. In the monkeys, corrections recovered far more
-when channels kept their identity, and in people the per-channel corrections tracked each electrode's changing
-activity. At the electrode level, brief silences matched session-to-session fluctuation, whereas silences lasting over
-a month were real and often reversed. We release the code, a benchmark for decoder transfer over years, a calibrated
+a series of corrections, from none to full retraining. Figure~\ref{fig:overview} shows the problem in one participant:
+over seven years, one array lost about half of its electrodes with spikes, the remaining spikes shrank by about half,
+and a decoder trained 478 days earlier failed until each channel was re-weighted. We asked how fast decoders decay in
+each individual, which corrections recover the loss and with how many labels, why label-free alignment falls short, and
+what changes at the electrodes. We release the code, a benchmark for decoder transfer over years, a calibrated
 simulator and all derived results.
 
 \begin{figure}[tbp]
@@ -183,7 +178,7 @@ cross-validation of the penalty gave almost the same cross-day accuracy as the 1
 not that a special rule is needed, but that decay should only be compared between decoders whose penalty was
 tuned at all. We use $\alpha = 10^4$ for the remaining decoder analyses unless stated.
 
-\subsection*{No label-free alignment we tested beat renormalization}
+\subsection*{Label-free alignment misses alignments that labels can find}
 
 Several methods realign neural activity to a reference day without labels\cite{degenhart2020,gallego2020,
 farshchian2019,ma2023,karpowicz2025}. Their benefits were usually measured against a fixed decoder or against one whose
@@ -198,6 +193,26 @@ stabilizer\cite{degenhart2020} was worse in seven of the nine individuals, did n
 in T5, which was not significant after Holm correction. That method was designed for closed-loop use with a latent
 decoder. Adversarial alignment\cite{farshchian2019,ma2023,karpowicz2025} was not tested. Comparisons against mean-only
 baselines\cite{wilson2025} should also report renormalization.
+
+Why did alignment fail? Either no good alignment existed, or it could not be found without labels. To tell these apart,
+we fitted the best possible alignment of the dominant 16-dimensional subspace with labels: a free linear map that can
+rotate, scale and mix activity within the subspace, fitted on all labeled trials of the later day (Methods). No method
+that aligns only this subspace can do better on these trials. At gaps of 120 and 480 days, this ceiling recovered
+\val{mon:ceil:rot:min}--\val{mon:ceil:rot:max}\% of the loss in the monkeys and
+\val{hum:ceil:rot:min}--\val{hum:ceil:rot:max}\% in the participants, whereas the label-free rotation recovered
+\val{mon:ceil:lf:min} to \val{mon:ceil:lf:max}\% and \val{hum:ceil:lf:min} to \val{hum:ceil:lf:max}\%
+(Supplementary Table~18). Large gains were therefore possible in principle, but the
+label-free method did not find them. Even the ceiling left \val{all:ceil:unrec:min}--\val{all:ceil:unrec:max}\% of the
+loss unrecovered, so part of the loss cannot be removed by any alignment within the subspace and needs new labels.
+
+The ceiling also separated the two species. In all three monkeys, it recovered more than re-weighting each channel on
+the same trials (\val{mon:ceil:rew:min}--\val{mon:ceil:rew:max}\%; Holm-corrected $P < 0.05$ in
+\val{mon:ceil:rotwinsholm} of \val{mon:ceil:n}). Their decoders predicted four signals and could not be rescued when
+their channels were scrambled (see below), so in the monkeys the change was mostly a remixing of activity across the
+population. In all six participants, re-weighting recovered more than any subspace alignment could
+(\val{hum:ceil:rew:min}--\val{hum:ceil:rew:max}\%; \val{hum:ceil:rewwinsholm} of \val{hum:ceil:n} after Holm correction),
+although only slightly in T6. With a two-dimensional target, per-channel weights are flexible enough to rescue even
+scrambled decoders, so this result fits per-channel change in people but does not prove it.
 
 \subsection*{Neural divergence adds little to elapsed time as a monitor}
 
@@ -434,7 +449,9 @@ Earlier long-term studies each described one dataset\cite{temmar2025,wilson2025,
 people on the same footing, with one decoder, one set of corrections and one inclusion rule, and added electrode
 statistics from 14 people. This comparison showed that decay curves differ widely between individuals, and that part
 of the decay reported for a decoder can come from its regularization rather than from the recordings. It showed that
-renormalization, not a fixed or mean-only decoder, is the baseline a label-free method has to beat. It also showed that
+renormalization, not a fixed or mean-only decoder, is the baseline a label-free method has to beat. An alignment
+ceiling fitted with labels showed that much better alignments existed than the label-free methods found, and that part
+of the loss lies beyond any alignment of the dominant subspace. It also showed that
 per-channel corrections need a scrambled-channel control before they are read as per-channel drift: in people, even
 scrambled decoders could be rescued. At the electrodes, a permutation null separated brief silences, which looked like
 noise, from month-long ones, which were real and often reversed.
@@ -451,7 +468,11 @@ decoders absorb day-to-day changes with input layers learned for each day\cite{w
 describe changes in the preferred directions of individual features\cite{pun2024} and rotation of decoder
 weights\cite{wilson2025}. In our data, decoders with correctly assigned channels beat scrambled ones, and re-weighting
 tracked each electrode's firing, so some of each channel's tuning pattern survived for months, most clearly in the
-monkeys. Changes in the number or proximity of neurons near each electrode would produce such per-channel
+monkeys. The ceiling adds a second view. In the monkeys, an alignment within the population subspace beat per-channel
+re-weighting, which points to activity being remixed across channels. In people the reverse held, which fits
+per-channel change, although a two-dimensional target limits this inference. For label-free methods, the practical
+message is that the target exists: a method that could find the alignment the labels reveal would recover much of the
+loss, but not all of it. Changes in the number or proximity of neurons near each electrode would produce such per-channel
 changes\cite{polikov2005,kozai2015}, but our data cannot identify the cause.
 
 Activity near the yield threshold fluctuated strongly between sessions. Yield counts from single sessions are therefore
@@ -645,6 +666,20 @@ latents were then inferred from stable channels only and passed to the frozen la
 reused the day-$i$ factor model on day $j$.
 
 All label-free comparisons were summarized per training session over its pairs at all gaps.
+
+\textit{Alignment ceiling.} To ask whether label-free alignment failed because no good alignment existed or because it
+could not be found without labels, we fitted the best alignment of the dominant subspace with labels. Inputs were mapped
+as $(\mathbf{I} - \mathbf{V}_j\mathbf{V}_j^\top)\mathbf{z} + \mathbf{V}_i\mathbf{Q}\mathbf{V}_j^\top\mathbf{z}$ in front of
+the unchanged day-$i$ decoder, as for the Procrustes rotation, but with $\mathbf{Q}$ a free $16 \times 16$ matrix fitted
+to day $j$'s labeled trials, which allows rotation, scaling and mixing within the subspace. $\mathbf{Q}$ was shrunk toward
+the Procrustes solution and the offsets toward the old intercept, with the penalty chosen as for re-weighting. It was
+fitted on all of day $j$'s labeled training trials, the same trials the reference decoder uses, and re-weighting was
+refitted on the same trials for comparison. Any method that aligns activity only within this subspace, with or without
+labels, cannot exceed this ceiling on these trials. For gaps of 120 and 480 days, the share of the loss recovered by a
+correction was computed from medians over pairs, $(\tilde{R}^2 - \tilde{R}^2_{\text{renorm}})/(\tilde{R}^2_{\text{ref}}
+- \tilde{R}^2_{\text{renorm}})$, with 95\% intervals from a cluster bootstrap over training sessions. Re-weighting and
+the ceiling were compared per training session over all gaps (two-sided Wilcoxon signed-rank test, Holm correction
+across individuals). The label-free columns and the reference decoder reproduced the main analysis exactly.
 
 \subsection*{Monitoring analyses}
 
