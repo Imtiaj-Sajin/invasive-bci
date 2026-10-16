@@ -1516,3 +1516,20 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   reproduces the paper); supervised rungs changed in 7-20 of them (CV fix). Pairs with a swapped session changed as
   expected from the channel-order fix. Merged into results/replication_bg_blocknorm/T11_ladder.csv.
 - Only one generated value changed: t11b:ret480 -0.65 -> -0.49 (Supplementary Note 4); the re-weighting range is unchanged.
+
+### 2026-10-16 — Read-through of the paper; figure fixes; full regeneration
+
+- Text fixes from checking every claim against the generated numbers: half-life doubling wording (N 1.98x);
+  non-negative-weight cost max 0.14 (T8), was "about 0.1"; slowest-recalibration range (others 0.74-0.92, T7 highest,
+  text had T10-T9); impedance correlations among significant participants (-0.07 to -0.03, text ended at T7 -0.06);
+  T11 exclusion stated in Results and Methods; half-life edge cases defined in Methods; no-update CV candidate
+  described; pair rule not applicable to regularization tests; training-session counts (M 22, T7 33); block-norm
+  caveat; Supplementary Table 3 caption (all gaps, not up to 120 days). `scripts/tools/check_ranges.py` now checks
+  every range that names individuals; ranges with named extremes are generated keys.
+- Figures: 3c drew half-lives under one day at x = 0 on a log axis (T7, T8 invisible); now a shaded "<1" band.
+  6b showed only six individuals (hard-coded list) and 6c said "Three humans" and used pairs differing from the text;
+  now all nine with clipped intervals marked, and six humans on the text's pairs. 4a: pair rule as in the text,
+  readable off-scale labels, legend moved. Figures 1, 2, 5, 7, 8 checked visually.
+- Benchmark check passes for C and M too (max difference 9e-17): all nine individuals verified.
+- `bash scripts/regenerate_paper.sh` from scratch: exit 0; all 1,708 generated values unchanged; refs in citation
+  order; no undefined references.
