@@ -473,5 +473,69 @@
   "var_train": 0.0337,
   "var_test": 0.1146,
   "var_resid": 0.0974
+ },
+ "kruskal_by_gap": {
+  "1": {
+   "H": 22.09,
+   "P": 0.004750242581939912,
+   "n_individuals": 9,
+   "n_sessions": 170
+  },
+  "7": {
+   "H": 43.46,
+   "P": 7.20207362822939e-07,
+   "n_individuals": 9,
+   "n_sessions": 275
+  },
+  "30": {
+   "H": 87.48,
+   "P": 1.5110368195124603e-15,
+   "n_individuals": 9,
+   "n_sessions": 403
+  },
+  "120": {
+   "H": 76.97,
+   "P": 1.989893274978041e-13,
+   "n_individuals": 9,
+   "n_sessions": 474
+  },
+  "480": {
+   "H": 99.93,
+   "P": 1.1174941470416313e-18,
+   "n_individuals": 8,
+   "n_sessions": 362
+  }
+ },
+ "kruskal_by_gap_humans": {
+  "1": {
+   "H": 7.38,
+   "P": 0.19362253274489552,
+   "n_individuals": 6,
+   "n_sessions": 90
+  },
+  "7": {
+   "H": 29.22,
+   "P": 2.0948056127659087e-05,
+   "n_individuals": 6,
+   "n_sessions": 190
+  },
+  "30": {
+   "H": 74.91,
+   "P": 9.735237454032629e-15,
+   "n_individuals": 6,
+   "n_sessions": 325
+  },
+  "120": {
+   "H": 57.88,
+   "P": 3.330726700650393e-11,
+   "n_individuals": 6,
+   "n_sessions": 377
+  },
+  "480": {
+   "H": 73.45,
+   "P": 4.2371836270988765e-15,
+   "n_individuals": 5,
+   "n_sessions": 270
+  }
  }
 }

@@ -71,6 +71,20 @@ def compare(d, y):
             "var_resid": round(float(full.scale), 4)}
 
 
+def kruskal_by_gap(d, y):
+    """Distribution-free check that does not assume equal variances: at each gap, one value per training session (the
+    mean of its pairs), Kruskal-Wallis test across individuals."""
+    out = {}
+    for g, q in d.groupby("gap_target"):
+        per = q.groupby(["subject", "train"])[y].mean().reset_index()
+        groups = [v[y].to_numpy() for _, v in per.groupby("subject") if len(v) >= 3]
+        if len(groups) >= 2:
+            h, p = stats.kruskal(*groups)
+            out[int(g)] = {"H": round(float(h), 2), "P": float(p), "n_individuals": len(groups),
+                           "n_sessions": int(sum(len(x) for x in groups))}
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="results/heterogeneity")
@@ -85,6 +99,8 @@ def main():
            "main": compare(d, "ret0"), "humans": compare(hum, "ret0"),
            "floor_minus1": compare(d, "ret1"), "abs_loss": compare(d, "loss"),
            "humans_abs_loss": compare(hum, "loss"), "humans_floor_minus1": compare(hum, "ret1")}
+    out["kruskal_by_gap"] = kruskal_by_gap(d, "ret")             # rank-based: floor irrelevant
+    out["kruskal_by_gap_humans"] = kruskal_by_gap(hum, "ret")
     with open(os.path.join(args.out, "summary.json"), "w") as f:
         json.dump(out, f, indent=1)
     for key in ("main", "humans", "floor_minus1", "humans_floor_minus1", "abs_loss", "humans_abs_loss"):

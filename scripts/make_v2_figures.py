@@ -293,10 +293,11 @@ def fig1(out):
     fig.text(0.215, 0.99, "Intracortical arrays in motor cortex", ha="center", va="top", fontsize=6.5,
              fontweight="bold")
     _icon(fig, [0.035, 0.902, 0.02, 0.06], "results/figures/assets/human_phylopic_b8c16fc6.png", P.INK2)
-    fig.text(0.06, 0.94, "People with paralysis\nT5, T6, T9", va="center", fontsize=5.2, color=P.INK, linespacing=1.25)
+    fig.text(0.06, 0.94, "People with paralysis\nT5–T10 (decoders)\n14 people (electrodes)", va="center", fontsize=5.2,
+             color=P.INK, linespacing=1.25)
     _icon(fig, [0.19, 0.912, 0.04, 0.036], "results/figures/assets/macaque_phylopic_63169c26.png", P.INK2)
     fig.text(0.235, 0.94, "Monkeys\nN, C, M", va="center", fontsize=5.2, color=P.INK, linespacing=1.25)
-    fig.text(0.215, 0.888, "1.5–7.3 years of recordings each", ha="center", va="center", fontsize=5.2,
+    fig.text(0.215, 0.888, "0.9–7.3 years of recordings each", ha="center", va="center", fontsize=5.2,
              color=P.INK2)
     ax = fig.add_axes([0.0, 0.60, 0.31, 0.275])
     brain, r0, c0 = _trimmed("results/figures/v2/brain_3d.png", offsets=True)
@@ -642,7 +643,7 @@ def fig4c(out):
             ax.plot([lo, hi], [i + 0.13] * 2, color=COL[k], lw=0.8)
             ax.plot(est, i + 0.13, MK[k], color=COL[k], ms=3, mfc="white", mew=0.8)
     ax.set_yticks(range(len(L)))
-    ax.set_yticklabels([])
+    ax.set_yticklabels(list(L))                     # short names; rows in the same order as panel b
     ax.invert_yaxis()
     ax.set_xlim(-0.1, 1.15)
     ax.set_xlabel("share of loss recovered")
@@ -812,6 +813,7 @@ def fig5(out):
     ax.set_xlabel("labeled trials on day j")
     ax.set_ylabel("worse than no recalibration (%)")
     ax.set_title("Harmful recalibrations", loc="left")
+    ax.set_ylim(0, max(rates.max().max() * 1.45, 1))   # head room above the bars for the legend
     ax.legend(loc="upper right", frameon=False, fontsize=4.4)
     ax.grid(axis="x", visible=False)
     P.panel(ax, "d", x=-0.32)
