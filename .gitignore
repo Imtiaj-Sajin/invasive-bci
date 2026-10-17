@@ -46,3 +46,14 @@ results/failure_robustness/electrode_thresholds.csv.gz
 manuscript/jne/*.aux
 manuscript/jne/*.log
 manuscript/jne/*.out
+
+# local data locations (see src/ibci/paths.py)
+data_roots.json
+
+# run logs of scripts/reproduce.py
+/logs/
+
+# empty status markers of the run queues
+results/audit_reruns/*.ok
+results/audit_reruns/*.qtried
+results/audit_reruns/*.interrupted_*
