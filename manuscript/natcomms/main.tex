@@ -598,8 +598,9 @@ $\boldsymbol{\sigma}_d$ the channel means and standard deviations of day $d$, an
 \boldsymbol{\sigma}_j$.
 \item \textit{Re-weighting}: $f_i$ applied to $g_c z_{j,c}$ for each channel $c$, with one offset per output. The weights
 $g_c$ (unconstrained in sign unless stated) were shrunk toward 1 and the offsets toward the old intercept; the penalty,
-scaled by the number of samples, was chosen from $\{10^{-6}, \ldots, 10^2\}$ by five-fold cross-validation over contiguous
-blocks of trials. Here and for the ridge-to-prior refit, the candidates also included an infinite penalty, which keeps
+scaled by the number of samples, was chosen from $\{10^{-6}, \ldots, 10^2\}$ by cross-validation over five contiguous
+blocks of the first $n$ trial indices. Sessions with fewer than $n$ trials therefore had fewer, uneven folds; when all
+their trials fell in one block, the blocks were formed from the available trials. Here and for the ridge-to-prior refit, the candidates also included an infinite penalty, which keeps
 the previous decoder, so that cross-validation could decline an update.
 \item \textit{Ridge to prior}: a new decoder $(\mathbf{W}, \mathbf{b})$ fitted on the lagged features $\mathbf{H}$ of day
 $j$ by minimizing

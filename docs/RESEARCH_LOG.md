@@ -1627,3 +1627,15 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   typed. Table 9 unstable T7 interval flagged; Table 10 panels in one column order and penalties stated; Note 1, 3, 4, 5
   corrections. Figures: Fig. 1a participant list and span, Fig. 5d row labels, Fig. 6d legend.
 - JNE build: the "Datasets and approach" overview now opens the Methods; structured abstract 290 words.
+
+### 2026-10-17 — T9 reruns merged; full regeneration after the review
+
+- reweight_controls and gain_mechanism rerun for T9 with the fold fix: only the 3 rows with test days 629/728 changed in
+  each file; all other rows identical (difference 0).
+- Environment: at 07:16 an unrelated pip install on this PC uninstalled numpy 2.2.6 from C:\Python311 (pip left its
+  backup `~umpy-2.2.6`) and did not reinstall it. The project venv uses system site packages, so numpy==2.2.6 (the
+  version this project used) was installed into .venv only; the system Python was not touched. Regenerating
+  numbers.tex in the restored venv gave identical values (0 of 1,937 changed) before the T9 merge.
+- `bash scripts/regenerate_paper.sh`: exit 0. 2 of 1,937 generated values changed, none used in the text; benchmark T9
+  rows (Supplementary Table 15) updated. check_ranges 0, refs 58/58 in order, no undefined references, no oversized
+  floats; natcomms main 27 pages, supplement 26, JNE 21.
