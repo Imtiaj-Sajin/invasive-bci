@@ -48,15 +48,15 @@ electrode stability}
 Intracortical brain--computer interfaces (BCIs) record from small populations of neurons and turn their activity into
 commands. They have allowed people with paralysis to move robotic arms and computer cursors\cite{hochberg2006,
 hochberg2012,collinger2013,pandarinath2017}, to type by attempted handwriting\cite{willett2021} and to speak through a
-decoded voice\cite{willett2023,card2024,wairagkar2025}. Recent work describes daily home use over years\cite{card2026}.
+decoded voice\cite{willett2023,card2024,wairagkar2025}. Long-term use over years has been described\cite{simeral2011,card2026}.
 For these devices to become everyday tools, their decoders must stay accurate with little effort from the user.
 
 The recorded signals are not stable. Within a day, signals shift as electrodes move or neurons change their
-firing\cite{perge2013}. Across days, the activity seen by each electrode changes\cite{chestek2011,downey2018,
-bishop2014}, and over months and years, arrays gradually lose the ability to record spikes\cite{barrese2013,
+firing\cite{perge2013}. Across days, the activity seen by each electrode changes\cite{suner2005,chestek2011,
+downey2018,bishop2014}, and over months and years, arrays gradually lose the ability to record spikes\cite{barrese2013,
 sponheim2021,bjanes2025,hahn2026}. Decoders lose accuracy over time\cite{chestek2011,nuyujukian2014,
-temmar2025,wilson2025}, and most systems recalibrate often, which takes time away from the user\cite{jarosiewicz2015,
-brandman2018}. Many methods aim to reduce this cost. Decoders can be trained on data from many
+temmar2025,wilson2025}, and most systems recalibrate often, which takes time away from the user\cite{jarosiewicz2013,
+jarosiewicz2015,brandman2018}. Many methods aim to reduce this cost. Decoders can be trained on data from many
 days\cite{sussillo2016}, updated during use\cite{jarosiewicz2015,orsborn2012,dangi2013,wilson2025}, or given input
 layers learned for each day\cite{willett2021,fan2023}. Neural activity can be aligned to a reference day without new
 labels\cite{degenhart2020,gallego2020,farshchian2019,ma2023,karpowicz2025}, and monitoring scores have been proposed to
@@ -97,7 +97,7 @@ three decoders. The decoder trained on day 355, 478 days earlier, fails until ea
 
 We assembled four public datasets (Fig.~\ref{fig:design}a and Supplementary Table~1). Decoder analyses used
 \val{ind:nword} individuals. Monkey N was recorded over 1,242 days with Utah arrays in motor cortex during a two-finger
-task\cite{temmar2025,nason2021}. Monkeys C and M were recorded over three and 1.5 years during
+task\cite{temmar2025,nason2021,willsey2022}. Monkeys C and M were recorded over three and 1.5 years during
 reaching\cite{gallego2020,perich2018}. BrainGate participants \val{hum:list} contributed \val{hum:nsess:min}--\val{hum:nsess:max}
 closed-loop cursor sessions each, over \val{hum:years:min}--\val{hum:years:max} years (\val{hum:nsess:total} sessions in
 total; Supplementary Table~14)\cite{hahn2026}. Three further participants were excluded by a rule fixed when the first of
@@ -221,7 +221,8 @@ scrambled decoders, so this result fits per-channel change in people but does no
 
 \subsection*{Neural divergence adds little to elapsed time as a monitor}
 
-A monitor that warns when a decoder is failing could make recalibration less frequent. MINDFUL scores instability as
+A monitor that warns when a decoder is failing could make recalibration less frequent, and neural activity can even
+flag single decoding errors as they happen\cite{evenchen2017}. MINDFUL scores instability as
 the divergence between distributions of neural features, or of decoder outputs, on a test day and a reference
 day\cite{pun2024}. Such scores correlate with decoder error, but both grow with time since calibration.
 
@@ -478,7 +479,8 @@ describe changes in the preferred directions of individual features\cite{pun2024
 weights\cite{wilson2025}. In our data, decoders with correctly assigned channels beat scrambled ones, and re-weighting
 tracked each electrode's firing, so some of each channel's tuning pattern survived for months, most clearly in the
 monkeys. In the monkeys, the best alignment within the population subspace also beat per-channel re-weighting, which
-points to activity being remixed across channels. In people the reverse held, which fits per-channel change, although
+points to activity being remixed across channels, as expected if population dynamics stay within a stable
+low-dimensional manifold\cite{gallego2018,gallego2020}. In people the reverse held, which fits per-channel change, although
 a two-dimensional target limits this inference. For label-free methods, this means a better target exists: a method
 that found the alignment the labels reveal would recover much of the loss, but not all of it. Changes in the number or
 proximity of neurons near each electrode would produce such per-channel changes\cite{polikov2005,kozai2015}, but our
@@ -490,7 +492,7 @@ decoding signal quality and tuning stability in the same human data\cite{hahn202
 silence and recovery and a link between electrode changes and decoder corrections.
 
 All analyses were offline. Offline variability can overstate online decay\cite{flint2013}, and in closed loop users
-adapt to their decoder\cite{gilja2012}. Human decoding labels were inferred from the direction from cursor to target,
+adapt to their decoder\cite{gilja2012}. Human decoding labels were inferred from the direction from cursor to target\cite{jarosiewicz2013},
 and the online decoder shaped both the neural activity and the cursor path, so part of the cross-day change may reflect
 the user's control strategy or the task, not only the recordings. Three of the nine BrainGate participants with
 decoding data were excluded: in two the decoders did not work, and in T11 recordings jumped in scale between blocks,
@@ -559,11 +561,13 @@ T5), the decoder's velocity output and the angular error of the cursor.
 For monkey N and the human participants we used spike-band power (human 10~ms bins averaged in pairs). For monkeys C and
 M we used per-electrode spike counts. Each channel was z-scored with the mean and standard deviation of the decoding
 session's training segment, computed without labels (renormalization). The linear decoder was ridge
-regression\cite{hoerl1970} on 8 causal lags (160~ms) of the z-scored features, with an unpenalized intercept. The default
+regression\cite{hoerl1970} on 8 causal lags (160~ms) of the z-scored features, with an unpenalized intercept. Linear
+decoders such as the Kalman filter are widely used for cursor control in people\cite{kim2008,malik2011}. The default
 penalty was $\alpha = 0.1$ for monkey N and the humans, adopted from ref.~\cite{temmar2025}, and $\alpha = 1$ for monkeys C
 and M; the tuned penalty was $\alpha = 10^4$ for the decoder trained on day $i$ and for the reference decoder. Outputs were
 finger position and velocity for monkey N, cursor position and velocity for monkeys C and M, and for the humans the
-intended movement direction, defined as the unit vector from cursor to target during attempted movement. Accuracy was
+intended movement direction, defined as the unit vector from cursor to target during attempted movement, as in the
+calibration of human cursor decoders\cite{kim2008,jarosiewicz2013}. Accuracy was
 the coefficient of determination $R^2$, averaged over outputs and computed on held-out trials of the test session. In
 monkey N the first 300 of 375 trials trained the decoder, as in ref.~\cite{temmar2025}; in the other datasets the first
 80\% of trials did.

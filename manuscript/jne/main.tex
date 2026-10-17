@@ -1,38 +1,45 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass{iopjournal}
 
-\usepackage[margin=20mm]{geometry}
-\usepackage{graphicx}
+% IOP Publishing journal template (iopjournal.cls, 2024/01/31), downloaded from
+% https://publishingsupport.iopscience.iop.org/questions/latex-template/ ; the class file is unchanged.
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
-\usepackage{xcolor}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{textcomp}
 \usepackage{lineno}
 \usepackage[numbers,sort&compress]{natbib}
-\usepackage[hidelinks]{hyperref}
-\usepackage{caption}
-\captionsetup{font=small,labelfont=bf,labelsep=period}
+
+% fill the template's placeholders (header and journal line) without editing the class
+\fancyhead[L]{{\small \sf IOP Publishing}\hspace{5mm}{\it J. Neural Eng.} (submitted manuscript)}
+\fancyhead[R]{M I A Sajin {\it et al}\ }
+\renewcommand{\articletype}[1]{{\vspace*{-8mm}\noindent\Large\sf Journal of Neural Engineering}\par
+  \vspace*{6mm}\noindent{\scriptsize\sf\bfseries\MakeUppercase{#1}}\par\vspace*{2mm}}
 
 \raggedbottom
 \graphicspath{{../../results/figures/v2/}}
 \input{../natcomms/numbers}
 
-\title{Decoder decay and its correction over years in intracortical brain--computer interfaces}
-\author{Md. Imtiaj Alam Sajin$^{1,*}$, Esm E Moula Chowdhury Abha$^{1}$ and Md Wahiduzzaman Suva$^{1}$\\[4pt]
-\small $^{1}$Department of Computer Science, American International University-Bangladesh, Dhaka 1229, Bangladesh\\
-\small $^{*}$Author for correspondence: imtiajsajin@gmail.com\\
-\small ORCID: Sajin 0009-0009-2423-1835; Chowdhury Abha 0009-0008-3776-2283; Suva 0009-0007-6227-7282}
-\date{}
-
 \begin{document}
-\maketitle
+
+\articletype{Paper}
+
+\title{Decoder decay and its correction over years in intracortical brain--computer interfaces}
+
+\author{Md. Imtiaj Alam Sajin$^{1,*}$\orcid{0009-0009-2423-1835}, Esm E Moula Chowdhury
+Abha$^{1}$\orcid{0009-0008-3776-2283} and Md Wahiduzzaman Suva$^{1}$\orcid{0009-0007-6227-7282}}
+
+\affil{$^1$Department of Computer Science, American International University-Bangladesh, Dhaka 1229, Bangladesh}
+
+\affil{$^*$Author to whom any correspondence should be addressed.}
+
+\email{imtiajsajin@gmail.com}
+
+\keywords{brain--computer interface, intracortical recording, Utah array, neural drift, decoder recalibration, electrode stability}
 
 \begin{abstract}
 \input{abstract}
 \end{abstract}
-
-\noindent\textbf{Keywords:} brain--computer interface, intracortical recording, Utah array, neural drift, decoder recalibration, electrode stability
 
 \linenumbers
 
@@ -40,15 +47,15 @@
 Intracortical brain--computer interfaces (BCIs) record from small populations of neurons and turn their activity into
 commands. They have allowed people with paralysis to move robotic arms and computer cursors~\cite{hochberg2006,
 hochberg2012,collinger2013,pandarinath2017}, to type by attempted handwriting~\cite{willett2021} and to speak through a
-decoded voice~\cite{willett2023,card2024,wairagkar2025}. Recent work describes daily home use over years~\cite{card2026}.
+decoded voice~\cite{willett2023,card2024,wairagkar2025}. Long-term use over years has been described~\cite{simeral2011,card2026}.
 For these devices to become everyday tools, their decoders must stay accurate with little effort from the user.
 
 The recorded signals are not stable. Within a day, signals shift as electrodes move or neurons change their
-firing~\cite{perge2013}. Across days, the activity seen by each electrode changes~\cite{chestek2011,downey2018,
-bishop2014}, and over months and years, arrays gradually lose the ability to record spikes~\cite{barrese2013,
+firing~\cite{perge2013}. Across days, the activity seen by each electrode changes~\cite{suner2005,chestek2011,
+downey2018,bishop2014}, and over months and years, arrays gradually lose the ability to record spikes~\cite{barrese2013,
 sponheim2021,bjanes2025,hahn2026}. Decoders lose accuracy over time~\cite{chestek2011,nuyujukian2014,
-temmar2025,wilson2025}, and most systems recalibrate often, which takes time away from the user~\cite{jarosiewicz2015,
-brandman2018}. Many methods aim to reduce this cost. Decoders can be trained on data from many
+temmar2025,wilson2025}, and most systems recalibrate often, which takes time away from the user~\cite{jarosiewicz2013,
+jarosiewicz2015,brandman2018}. Many methods aim to reduce this cost. Decoders can be trained on data from many
 days~\cite{sussillo2016}, updated during use~\cite{jarosiewicz2015,orsborn2012,dangi2013,wilson2025}, or given input
 layers learned for each day~\cite{willett2021,fan2023}. Neural activity can be aligned to a reference day without new
 labels~\cite{degenhart2020,gallego2020,farshchian2019,ma2023,karpowicz2025}, and monitoring scores have been proposed to
@@ -72,7 +79,7 @@ simulator and all derived results.
 
 \begin{figure}[tbp]
 \centering
-\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig1_overview.pdf}}
+\makebox[\textwidth][c]{\includegraphics[width=\textwidth]{fig1_overview.pdf}}
 \caption{\textbf{Recordings change over years, and decoders decay with them.} \textbf{a}, Approximate array sites
 (white) on the precentral gyrus (green) of a standard cortical surface, and a rendered Utah array. \textbf{b}, Spike
 amplitude on each electrode of T5's lateral array, 7.3 years apart. Grey cells had no spikes; outlines mark the
@@ -87,7 +94,7 @@ three decoders. The decoder trained on day 355, 478 days earlier, fails until ea
 \subsection{Overview of the approach}
 We assembled four public datasets (Fig.~\ref{fig:design}a and Supplementary Table~1). Decoder analyses used
 \val{ind:nword} individuals. Monkey N was recorded over 1,242 days with Utah arrays in motor cortex during a two-finger
-task~\cite{temmar2025,nason2021}. Monkeys C and M were recorded over three and 1.5 years during
+task~\cite{temmar2025,nason2021,willsey2022}. Monkeys C and M were recorded over three and 1.5 years during
 reaching~\cite{gallego2020,perich2018}. BrainGate participants \val{hum:list} contributed \val{hum:nsess:min}--\val{hum:nsess:max}
 closed-loop cursor sessions each, over \val{hum:years:min}--\val{hum:years:max} years (\val{hum:nsess:total} sessions in
 total; Supplementary Table~14)~\cite{hahn2026}. Three further participants were excluded by a rule fixed when the first of
@@ -108,7 +115,7 @@ accuracy (coefficient of determination, $R^2$) to that of the reference on the s
 
 \begin{figure}[tbp]
 \centering
-\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig2_design.pdf}}
+\makebox[\textwidth][c]{\includegraphics[width=\textwidth]{fig2_design.pdf}}
 \caption{\textbf{Datasets and the correction ladder.} \textbf{a}, Sessions analyzed, by individual. Each tick is one
 session. Numbers give sessions per analysis. \textbf{b}, The correction ladder. A decoder trained on day $i$ is tested on
 a later day $j$ after increasingly strong corrections. A decoder trained on day $j$ is the reference.}
@@ -168,11 +175,13 @@ T5), the decoder's velocity output and the angular error of the cursor.
 For monkey N and the human participants we used spike-band power (human 10~ms bins averaged in pairs). For monkeys C and
 M we used per-electrode spike counts. Each channel was z-scored with the mean and standard deviation of the decoding
 session's training segment, computed without labels (renormalization). The linear decoder was ridge
-regression~\cite{hoerl1970} on 8 causal lags (160~ms) of the z-scored features, with an unpenalized intercept. The default
+regression~\cite{hoerl1970} on 8 causal lags (160~ms) of the z-scored features, with an unpenalized intercept. Linear
+decoders such as the Kalman filter are widely used for cursor control in people~\cite{kim2008,malik2011}. The default
 penalty was $\alpha = 0.1$ for monkey N and the humans, adopted from ref.~\cite{temmar2025}, and $\alpha = 1$ for monkeys C
 and M; the tuned penalty was $\alpha = 10^4$ for the decoder trained on day $i$ and for the reference decoder. Outputs were
 finger position and velocity for monkey N, cursor position and velocity for monkeys C and M, and for the humans the
-intended movement direction, defined as the unit vector from cursor to target during attempted movement. Accuracy was
+intended movement direction, defined as the unit vector from cursor to target during attempted movement, as in the
+calibration of human cursor decoders~\cite{kim2008,jarosiewicz2013}. Accuracy was
 the coefficient of determination $R^2$, averaged over outputs and computed on held-out trials of the test session. In
 monkey N the first 300 of 375 trials trained the decoder, as in ref.~\cite{temmar2025}; in the other datasets the first
 80\% of trials did.
@@ -463,7 +472,7 @@ days, against \val{C:ownshort:min}--\val{C:ownshort:max} at gaps up to 30 days),
 
 \begin{figure}[tbp]
 \centering
-\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig3_decay.pdf}}
+\makebox[\textwidth][c]{\includegraphics[width=\textwidth]{fig3_decay.pdf}}
 \caption{\textbf{Decoders decay at rates that differ between individuals.} \textbf{a}, Retention of the renormalized fixed
 decoder, the $R^2$ of the old decoder divided by that of the reference decoder, against days since training, for monkeys
 (top, circles) and humans (bottom, squares). Bands show 95\% confidence intervals. \textbf{b}, Retention after exactly one day (filled) and
@@ -531,7 +540,8 @@ scrambled decoders, so this result fits per-channel change in people but does no
 
 \subsection{Neural divergence adds little to elapsed time as a monitor}
 
-A monitor that warns when a decoder is failing could make recalibration less frequent. MINDFUL scores instability as
+A monitor that warns when a decoder is failing could make recalibration less frequent, and neural activity can even
+flag single decoding errors as they happen~\cite{evenchen2017}. MINDFUL scores instability as
 the divergence between distributions of neural features, or of decoder outputs, on a test day and a reference
 day~\cite{pun2024}. Such scores correlate with decoder error, but both grow with time since calibration.
 
@@ -556,7 +566,7 @@ test on more days.
 
 \begin{figure}[tbp]
 \centering
-\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig4_labelfree.pdf}}
+\makebox[\textwidth][c]{\includegraphics[width=\textwidth]{fig4_labelfree.pdf}}
 \caption{\textbf{Label-free corrections and neural monitoring add little.} \textbf{a}, Change in $R^2$ for five label-free
 corrections, relative to renormalization. Points show medians over training sessions; bars show 95\% confidence
 intervals. Values below the axis are printed. \textbf{b}, Offline monitoring in monkey N. Bars show how strongly each
@@ -589,7 +599,7 @@ after correction for the five data budgets (Supplementary Table~10).
 
 \begin{figure}[tbp]
 \centering
-\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig6_recipes.pdf}}
+\makebox[\textwidth][c]{\includegraphics[width=\textwidth]{fig6_recipes.pdf}}
 \caption{\textbf{Simple recipes for recalibration.} \textbf{a}, Decoding $R^2$ in monkey N against the ridge penalty, on the
 training day (lightest) and on later days (darker). The dotted line marks $\alpha = 0.1$. \textbf{b}, Gain from the 1\%
 rule over $\alpha = 0.1$, the smallest penalty tested, for every individual (including monkeys C and M, whose default
@@ -664,7 +674,7 @@ fitted on different days shrank when one scale per channel was allowed, but much
 
 \begin{figure}[tbp]
 \centering
-\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig5_channels.pdf}}
+\makebox[\textwidth][c]{\includegraphics[width=\textwidth]{fig5_channels.pdf}}
 \caption{\textbf{Channel tuning is partly preserved over months.} \textbf{a}, Retention after re-weighting each channel in
 front of the unchanged decoder, for monkeys (top) and humans (bottom). \textbf{b}, Retention after re-weighting the correct decoder (circles and squares) or a
 decoder with scrambled channels (crosses). Upper rows use signed weights; lower rows use non-negative weights. Ticks mark
@@ -711,7 +721,7 @@ for it is weak.
 
 \begin{figure}[tbp]
 \centering
-\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig7_electrodes.pdf}}
+\makebox[\textwidth][c]{\includegraphics[width=\textwidth]{fig7_electrodes.pdf}}
 \caption{\textbf{Brief electrode silences look like fluctuation.} \textbf{a}, Percentage of electrodes with spiking
 activity over years, for 20 human arrays (purple) and two arrays in monkey N (blue). \textbf{b}, Median impedance of each
 array relative to its first sessions. \textbf{c}, Percentage of silenced human electrodes that later recovered, observed
@@ -754,7 +764,7 @@ decoders on simulated futures helped little (Supplementary Table~13).
 
 \begin{figure}[tbp]
 \centering
-\makebox[\textwidth][c]{\includegraphics[width=170mm]{fig8_simulator.pdf}}
+\makebox[\textwidth][c]{\includegraphics[width=\textwidth]{fig8_simulator.pdf}}
 \caption{\textbf{A calibrated simulator for testing new corrections.} \textbf{a}, Calibration on monkey N sessions before
 day 700. Points show real retention; lines show the simulator. \textbf{b}, Prediction error on sessions after day 700,
 for the simulator (dark blue), the median retention measured before day 700 (light blue) and a simulator without drift
@@ -787,7 +797,8 @@ describe changes in the preferred directions of individual features~\cite{pun202
 weights~\cite{wilson2025}. In our data, decoders with correctly assigned channels beat scrambled ones, and re-weighting
 tracked each electrode's firing, so some of each channel's tuning pattern survived for months, most clearly in the
 monkeys. In the monkeys, the best alignment within the population subspace also beat per-channel re-weighting, which
-points to activity being remixed across channels. In people the reverse held, which fits per-channel change, although
+points to activity being remixed across channels, as expected if population dynamics stay within a stable
+low-dimensional manifold~\cite{gallego2018,gallego2020}. In people the reverse held, which fits per-channel change, although
 a two-dimensional target limits this inference. For label-free methods, this means a better target exists: a method
 that found the alignment the labels reveal would recover much of the loss, but not all of it. Changes in the number or
 proximity of neurons near each electrode would produce such per-channel changes~\cite{polikov2005,kozai2015}, but our
@@ -799,7 +810,7 @@ decoding signal quality and tuning stability in the same human data~\cite{hahn20
 silence and recovery and a link between electrode changes and decoder corrections.
 
 All analyses were offline. Offline variability can overstate online decay~\cite{flint2013}, and in closed loop users
-adapt to their decoder~\cite{gilja2012}. Human decoding labels were inferred from the direction from cursor to target,
+adapt to their decoder~\cite{gilja2012}. Human decoding labels were inferred from the direction from cursor to target~\cite{jarosiewicz2013},
 and the online decoder shaped both the neural activity and the cursor path, so part of the cross-day change may reflect
 the user's control strategy or the task, not only the recordings. Three of the nine BrainGate participants with
 decoding data were excluded: in two the decoders did not work, and in T11 recordings jumped in scale between blocks,
@@ -813,30 +824,28 @@ We release our code, derived results, the benchmark and the simulator, with the 
 beat. In these data, keeping implanted decoders working over months depended less on elaborate corrections than on a
 well-regularized decoder, renormalization of each session and brief recalibration with labeled trials.
 
-\section*{Data availability}
-All data analyzed in this study are public. LINK (monkey N) is available from the DANDI Archive at
+\section*{Use of AI tools}
+An AI assistant (Claude, Anthropic) was used to write analysis code, run analyses and draft the text under the
+authors' direction. The authors reviewed the code, analyses and text and take full responsibility for the content.
+
+\ack{We thank the participants of the BrainGate clinical trials and the teams who recorded and released the LINK, DANDI
+000688, BrainGate and MINDFUL datasets.}
+
+\funding{This work received no specific funding.}
+
+\roles{All authors contributed to the study design, analysis, interpretation and writing, and approved the final manuscript.}
+
+\data{All data analyzed in this study are public. LINK (monkey N) is available from the DANDI Archive at
 \url{https://doi.org/10.48324/dandi.001201/0.251023.2336}. The recordings of monkeys C and M are available at
 \url{https://doi.org/10.48324/dandi.000688/0.250122.1735}. The BrainGate yield and decoding data are available from Dryad
 at \url{https://doi.org/10.5061/dryad.x0k6djj1h}. The MINDFUL data are available from Dryad at
 \url{https://doi.org/10.5061/dryad.n2z34tn5s}. All derived results underlying the figures and tables are provided in the
 code repository.
 
-\section*{Code availability}
 All code, including the benchmark (fixed splits, data interface, reference methods and scoring) and the simulator with
 its calibrated parameters, is available at
 \url{https://github.com/Imtiaj-Sajin/invasive-bci} under the MIT license. A versioned archive will be deposited on Zenodo
-upon publication.
-
-\section*{Use of AI tools}
-An AI assistant (Claude, Anthropic) was used to write analysis code, run analyses and draft the text under the
-authors' direction. The authors reviewed the code, analyses and text and take full responsibility for the content.
-
-\section*{Acknowledgements}
-We thank the participants of the BrainGate clinical trials and the teams who recorded and released the LINK, DANDI
-000688, BrainGate and MINDFUL datasets. This work received no specific funding.
-
-\section*{Author contributions}
-All authors contributed to the study design, analysis, interpretation and writing, and approved the final manuscript.
+upon publication.}
 
 \section*{Conflict of interest}
 The authors declare no competing interests.

@@ -1639,3 +1639,18 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
 - `bash scripts/regenerate_paper.sh`: exit 0. 2 of 1,937 generated values changed, none used in the text; benchmark T9
   rows (Supplementary Table 15) updated. check_ranges 0, refs 58/58 in order, no undefined references, no oversized
   floats; natcomms main 27 pages, supplement 26, JNE 21.
+
+### 2026-10-17 — JNE version on the IOP template; added JNE/TNSRE/Nat Commun references
+
+- JNE build (`manuscript/tools/make_jne.py`) now uses IOP Publishing's official class `iopjournal.cls` (2024/01/31,
+  from ioplatextemplate.zip on the IOP publishing-support site; copied unchanged into manuscript/jne with orcid.pdf).
+  Template placeholders (header, journal line) are filled from main.tex; back matter uses the class commands
+  (\ack, \funding, \roles, \data). Figures at IOP text width (153 mm). 19 pages, no undefined references.
+- Owner asked for relevant citations from JNE, IEEE TNSRE and Nature Communications. Eight were added where they support
+  an existing sentence; metadata checked on Crossref (DOIs): Suner 2005 TNSRE 10.1109/tnsre.2005.857687 (signal change
+  across days); Simeral 2011 JNE 10.1088/1741-2560/8/2/025027 (long-term use); Jarosiewicz 2013 JNE
+  10.1088/1741-2560/10/4/046012 (calibration burden; cursor-to-target labels); Kim 2008 JNE 10.1088/1741-2560/5/4/010
+  and Malik 2011 TNSRE 10.1109/tnsre.2010.2092443 (linear/Kalman decoders in people; label definition); Even-Chen 2017
+  JNE 10.1088/1741-2552/aa8dc1 (neural error detection, monitoring); Gallego 2018 Nat Commun 10.1038/s41467-018-06560-z
+  (stable manifold, monkey remixing result); Willsey 2022 Nat Commun 10.1038/s41467-022-34452-w (monkey N finger task).
+  References: 66 (15 JNE, 3 TNSRE, 4 Nat Commun), in citation order.

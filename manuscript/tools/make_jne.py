@@ -1,7 +1,7 @@
 """Build the Journal of Neural Engineering version (manuscript/jne/main.tex) from the master text (natcomms/main.tex).
 
 The master text is the single source. This script reuses its sections verbatim and changes only what JNE needs:
-- article class, numbered sections, numeric references in brackets ordered by first citation (refs.tex rebuilt by
+- IOP Publishing class (iopjournal.cls, in manuscript/jne), numbered sections, numeric references in brackets ordered by first citation (refs.tex rebuilt by
   make_bib.py for the new order);
 - structured abstract from jne/abstract.tex (Objective, Approach, Main results, Significance);
 - section order Introduction, Methods, Results, Discussion (IOP convention), then the declarations.
@@ -19,41 +19,48 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, "..", "natcomms", "main.tex")
 OUT_DIR = os.path.join(HERE, "..", "jne")
 
-PREAMBLE = r"""\documentclass[11pt,a4paper]{article}
+PREAMBLE = r"""\documentclass{iopjournal}
 
-\usepackage[margin=20mm]{geometry}
-\usepackage{graphicx}
+% IOP Publishing journal template (iopjournal.cls, 2024/01/31), downloaded from
+% https://publishingsupport.iopscience.iop.org/questions/latex-template/ ; the class file is unchanged.
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
-\usepackage{xcolor}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{textcomp}
 \usepackage{lineno}
 \usepackage[numbers,sort&compress]{natbib}
-\usepackage[hidelinks]{hyperref}
-\usepackage{caption}
-\captionsetup{font=small,labelfont=bf,labelsep=period}
+
+% fill the template's placeholders (header and journal line) without editing the class
+\fancyhead[L]{{\small \sf IOP Publishing}\hspace{5mm}{\it J. Neural Eng.} (submitted manuscript)}
+\fancyhead[R]{M I A Sajin {\it et al}\ }
+\renewcommand{\articletype}[1]{{\vspace*{-8mm}\noindent\Large\sf Journal of Neural Engineering}\par
+  \vspace*{6mm}\noindent{\scriptsize\sf\bfseries\MakeUppercase{#1}}\par\vspace*{2mm}}
 
 \raggedbottom
 \graphicspath{{../../results/figures/v2/}}
 \input{../natcomms/numbers}
 
-\title{%TITLE%}
-\author{Md. Imtiaj Alam Sajin$^{1,*}$, Esm E Moula Chowdhury Abha$^{1}$ and Md Wahiduzzaman Suva$^{1}$\\[4pt]
-\small $^{1}$Department of Computer Science, American International University-Bangladesh, Dhaka 1229, Bangladesh\\
-\small $^{*}$Author for correspondence: imtiajsajin@gmail.com\\
-\small ORCID: Sajin 0009-0009-2423-1835; Chowdhury Abha 0009-0008-3776-2283; Suva 0009-0007-6227-7282}
-\date{}
-
 \begin{document}
-\maketitle
+
+\articletype{Paper}
+
+\title{%TITLE%}
+
+\author{Md. Imtiaj Alam Sajin$^{1,*}$\orcid{0009-0009-2423-1835}, Esm E Moula Chowdhury
+Abha$^{1}$\orcid{0009-0008-3776-2283} and Md Wahiduzzaman Suva$^{1}$\orcid{0009-0007-6227-7282}}
+
+\affil{$^1$Department of Computer Science, American International University-Bangladesh, Dhaka 1229, Bangladesh}
+
+\affil{$^*$Author to whom any correspondence should be addressed.}
+
+\email{imtiajsajin@gmail.com}
+
+\keywords{%KEYWORDS%}
 
 \begin{abstract}
 \input{abstract}
 \end{abstract}
-
-\noindent\textbf{Keywords:} %KEYWORDS%
 
 \linenumbers
 """
@@ -91,22 +98,25 @@ def main():
     overview, results = results[a + len(ov_start):b].strip("\n"), results[:a] + results[b:]
     methods = "\\subsection*{Overview of the approach}\n" + overview + "\n\n" + methods.lstrip("\n")
 
+    funding = "This work received no specific funding."
+    ack = ack.replace(funding, "").strip()
     parts = [
         PREAMBLE.replace("%TITLE%", title).replace("%KEYWORDS%", keywords),
         "\\section{Introduction}\n" + intro,
         "\\section{Methods}\n" + numbered(methods),
         "\\section{Results}\n" + numbered(results),
         "\\section{Discussion}\n" + discussion,
-        "\\section*{Data availability}\n" + data,
-        "\\section*{Code availability}\n" + code,
         "\\section*{Use of AI tools}\n" + ai,
-        "\\section*{Acknowledgements}\n" + ack,
-        "\\section*{Author contributions}\n" + contrib,
+        "\\ack{" + ack + "}",
+        "\\funding{" + funding + "}",
+        "\\roles{" + contrib + "}",
+        "\\data{" + data + "\n\n" + code + "}",
         "\\section*{Conflict of interest}\n" + compete,
         "\\input{refs}\n\n\\end{document}\n",
     ]
     out = "\n\n".join(p.strip("\n") for p in parts) + "\n"
     out = out.replace("Supplementary Information", "Supplementary Material")
+    out = out.replace("width=170mm", "width=\\textwidth")             # IOP text width is 153 mm
     out = re.sub(r"(?<=[^\s~{(])\\cite\{", "~\\\\cite{", out)      # bracketed numbers need a space before them
     os.makedirs(OUT_DIR, exist_ok=True)
     path = os.path.join(OUT_DIR, "main.tex")

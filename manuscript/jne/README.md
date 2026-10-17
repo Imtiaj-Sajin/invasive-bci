@@ -12,7 +12,9 @@ Source: https://publishingsupport.iopscience.iop.org/journals/journal-of-neural-
 - Papers: "not normally more than 12 000 words (14 journal pages)".
 - Structured abstract with the headings Objective, Approach, Main results, Significance. IOP's general guidance: an
   abstract should not normally exceed 300 words.
-- No required template (free-format submission); numeric references in order of citation.
+- Template optional ("any common variant of TeX is acceptable"); we use IOP's official class iopjournal.cls
+  (2024/01/31, from https://publishingsupport.iopscience.iop.org/questions/latex-template/, unchanged, LPPL 1.3c),
+  with numeric references in order of citation.
 - Data: IOP research data policy; supplementary files allowed.
 - Hybrid journal: publishing under the subscription route is free; optional gold open access APC GBP 2655 /
   USD 3665, with discounts for many lower- and middle-income countries.
