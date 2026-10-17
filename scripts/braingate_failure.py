@@ -9,7 +9,7 @@ Per array (participant x array) we report: span, sessions, yield at start/end, a
 silencing and revival counts, abruptness (kurtosis of log-rate changes between sessions <= 7 days apart, after removing
 session-wide changes), impedance trend, and the edge-vs-interior difference in activity decline (edge = x or y in {0, 9}).
 
-Usage: python scripts/braingate_failure.py [--root D:/ibci-data/braingate] [--out results/braingate_failure]
+Usage: python scripts/braingate_failure.py [--root DATA/braingate] [--out results/braingate_failure]
 """
 import argparse
 import glob
@@ -26,6 +26,9 @@ from scipy.io import loadmat
 sys.path.insert(0, os.path.dirname(__file__))
 from channel_health import runs_below  # noqa: E402
 from failure_stats_xdata import fit_switching  # noqa: E402
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src"))
+from ibci.paths import data_root  # noqa: E402
 
 ALIVE_HZ = 2.0
 
@@ -93,7 +96,7 @@ def summarize_array(g):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--root", default=os.path.join(os.environ.get("IBCI_DATA", "D:/ibci-data"), "braingate"))
+    ap.add_argument("--root", default=os.path.join(data_root("yield"), "braingate"))
     ap.add_argument("--out", default="results/braingate_failure")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)

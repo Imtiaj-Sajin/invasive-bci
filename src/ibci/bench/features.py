@@ -18,6 +18,7 @@ import numpy as np
 from scipy.io import loadmat
 
 from ..anatomy import K_LAT, N_LAGS
+from ..paths import data_root
 from ..data import link
 from ..linear import LagDecoder
 from ..preprocess import ZScore, split_bins
@@ -80,7 +81,7 @@ def sessions_tx(subject, alpha, keys):
     if subject == "N":
         return LazySessions({k: k for k in keys}, lambda key, _: LinkTxSess(key, alpha))
     from replicate_braingate_decoding import BGSess
-    root = os.path.join(os.environ.get("IBCI_DATA", "D:/ibci-data"), "braingate", "decoding", subject)
+    root = os.path.join(data_root(subject), "braingate", "decoding", subject)
     paths = {}
     for f in glob.glob(os.path.join(root, "*_decoding.mat")):
         day = int(re.search(r"_day_(\d+)_", f).group(1))

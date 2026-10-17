@@ -9,11 +9,15 @@ Usage: python scripts/ndt3/channel_rule.py
 """
 import json
 import os
+import sys
 
 import numpy as np
 import pandas as pd
 
-PILOT = os.environ.get("NDT3_PILOT", "H:/ibci-data/ndt3_pilot")
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "src"))
+from ibci.paths import data_root  # noqa: E402
+
+PILOT = os.environ.get("NDT3_PILOT", os.path.join(data_root("ndt3_pilot"), "ndt3_pilot"))
 OUT = os.path.join(os.path.dirname(__file__), "..", "..", "results", "ndt3", "channel_rule.json")
 MIN_ACTIVE, RATE = 0.25, 0.01
 

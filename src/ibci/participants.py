@@ -1,6 +1,7 @@
 """Individuals in the decoder analyses and the pre-specified inclusion rule for BrainGate participants.
 
-Rule (fixed on 2026-10-07, before the results of T7, T8, T10 and T11 were seen; see docs/RESEARCH_LOG.md): a human
+Rule (fixed when the first added participant failed, before the results of T2, T7, T8, T10 and T11 were seen; see
+docs/INCLUSION_RULES.md): a human
 participant enters the decay and correction summaries only if the median R2 of its same-day reference decoder across
 the ladder's session pairs is above MIN_REF_R2. Retention (old decoder R2 / reference R2) is undefined when the
 reference decoder does not work. Excluded participants are reported in the Supplement with their numbers.
@@ -48,7 +49,7 @@ ALL_PAIRS = os.environ.get("IBCI_ALL_PAIRS") == "1"   # sensitivity analysis: ke
 
 
 def valid_pairs(d, *own_cols):
-    """Session pairs whose reference decoder(s) work (R2 > MIN_REF_R2); see docs/decisions/0003.
+    """Session pairs whose reference decoder(s) work (R2 > MIN_REF_R2); see docs/INCLUSION_RULES.md.
     With IBCI_ALL_PAIRS=1 every pair is kept (sensitivity analysis)."""
     if ALL_PAIRS:
         return d

@@ -26,6 +26,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from decay_alpha import GAPS, sessions_for  # noqa: E402
 from replicate_braingate_decoding import channel_info  # noqa: E402
 from ibci.anatomy import LAMS_CF, cv_shrunk, gain_features  # noqa: E402
+from ibci.paths import data_root  # noqa: E402
 
 
 def yield_day(root, p, day):
@@ -66,12 +67,12 @@ def main():
     ap.add_argument("--out", default="results/gain_mechanism")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
-    root = os.path.join(os.environ.get("IBCI_DATA", "D:/ibci-data"), "braingate")
+    root = os.path.join(data_root(args.subject), "braingate")
     # decoder channels are matched to yield electrodes by (array, x, y): T10 decodes only its dPCG array, which is
     # electrodes 96-191 in its yield files (audit 2026-10-13)
     chan = channel_info(sorted(glob.glob(os.path.join(root, "decoding", args.subject, "*_decoding.mat")))[0])
     key = pd.MultiIndex.from_arrays([chan.array, chan.x, chan.y])
-    yroot = os.environ.get("IBCI_YIELD", "D:/ibci-data/braingate")   # folder that contains yield/<P>/
+    yroot = os.path.join(data_root("yield"), "braingate")             # folder that contains yield/<P>/
     lin = pd.read_csv(f"results/replication_bg/{args.subject}_ladder.csv")
     lin = lin[lin.gap_target.isin(GAPS)][["train", "test", "gap_target", "days"]].reset_index(drop=True)
     rng = np.random.default_rng(0)

@@ -11,7 +11,7 @@ and correlated with the window's median AE (within non-excluded trials). We then
 AE beyond elapsed days: partial correlation given days, and leave-one-day-out prediction of AE from days only vs
 days + KL (linear models).
 
-Usage: python scripts/mindful_reanalysis.py [--root D:/ibci-data/mindful/MINDFUL_Data] [--out results/mindful_reanalysis]
+Usage: python scripts/mindful_reanalysis.py [--root DATA/mindful/MINDFUL_Data] [--out results/mindful_reanalysis]
 """
 import argparse
 import glob
@@ -23,6 +23,10 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 from scipy.io import loadmat
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src"))
+from ibci.paths import data_root  # noqa: E402
 
 WIN = 3000  # 60 s of 20 ms bins
 K_PC = 10
@@ -124,7 +128,7 @@ def analyse(pdir, name):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--root", default="D:/ibci-data/mindful/MINDFUL_Data")
+    ap.add_argument("--root", default=os.path.join(data_root("mindful"), "mindful", "MINDFUL_Data"))
     ap.add_argument("--out", default="results/mindful_reanalysis")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)

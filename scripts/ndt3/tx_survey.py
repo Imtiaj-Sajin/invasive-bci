@@ -13,8 +13,6 @@ import pandas as pd
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 from ibci import bench  # noqa: E402
 
-ROOTS = {"T8": "H:/ibci-data", "T9": "G:/ibci-data", "T7": "F:/ibci-data", "T10": "F:/ibci-data"}
-
 
 def same_day_r2(s):
     p, y = s.dec.predict(s.zte), s.y_te
@@ -24,7 +22,6 @@ def same_day_r2(s):
 def main():
     rows = []
     for k in ["N", "T6", "T5", "T9", "T7", "T10", "T8"]:
-        os.environ["IBCI_DATA"] = ROOTS.get(k, "D:/ibci-data")
         m = bench.manifest(k)
         m = m[m.valid]
         idx = np.linspace(0, len(m) - 1, 6).astype(int)

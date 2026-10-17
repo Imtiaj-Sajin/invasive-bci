@@ -16,7 +16,7 @@ later >= 4 Hz for >= 3 consecutive observed sessions; no imputation of missing s
 Edge controls (initially active electrodes only; per-array regression of log-rate slope on edge + initial log rate;
 array-level sign and Wilcoxon tests, so electrodes within an array are not treated as independent).
 
-Usage: python scripts/failure_robustness.py [--root D:/ibci-data/braingate] [--out results/failure_robustness]
+Usage: python scripts/failure_robustness.py [--root DATA/braingate] [--out results/failure_robustness]
 """
 import argparse
 import glob
@@ -27,6 +27,10 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 from scipy.io import loadmat
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src"))
+from ibci.paths import data_root  # noqa: E402
 
 TH = ["-3", "-3.5", "-4", "-4.5", "-5", "-5.5"]
 
@@ -117,7 +121,7 @@ def fixed_uv_rate(g):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--root", default=os.path.join(os.environ.get("IBCI_DATA", "D:/ibci-data"), "braingate"))
+    ap.add_argument("--root", default=os.path.join(data_root("yield"), "braingate"))
     ap.add_argument("--out", default="results/failure_robustness")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)

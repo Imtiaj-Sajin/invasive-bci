@@ -5,8 +5,8 @@
   fig2_design       sessions analyzed per individual and analysis; the correction ladder
   fig3_decay        decay of a renormalized fixed decoder in nine individuals; strict 1-day vs 2-day; tuned penalty
   fig4_labelfree    label-free corrections relative to renormalization; monitoring offline and in closed loop
-  fig5_channels     re-weighting, scrambled-channel controls, gain-electrode link, loss recovered
-  fig6_recipes      ridge penalty trade-off and the 1% rule; recalibration shrunk toward the old decoder
+  fig5_recipes      ridge penalty trade-off and the 1% rule; recalibration shrunk toward the old decoder
+  fig6_channels     re-weighting, scrambled-channel controls, gain-electrode link, loss recovered
   fig7_electrodes   yield and impedance; electrode silence versus a shuffled null; edge effect per array
   fig8_simulator    calibrated simulator: fit, held-out validation against two baselines, implant age
 
@@ -31,6 +31,7 @@ from matplotlib.patches import FancyBboxPatch
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 sys.path.insert(0, os.path.dirname(__file__))
 from ibci import plotting as P  # noqa: E402
+from ibci.paths import data_root  # noqa: E402
 from ibci.participants import complete_budgets, MONKEYS, humans, ladder_path, valid_pairs  # noqa: E402
 from ibci.stats import cluster_bootstrap  # noqa: E402
 
@@ -46,11 +47,8 @@ COL = {k: c for k, _, _, c, _ in IND}
 MK = {k: m for k, _, _, _, m in IND}
 NAME = {k: n for k, n, _, _, _ in IND}
 RET = "retention (R² / fresh R²)"
-DECODING_ROOTS = {"T6": "D:/ibci-data/braingate/decoding/T6", "T5": "D:/ibci-data/braingate/decoding/T5",
-                  "T9": "G:/ibci-data/braingate/decoding/T9", "T7": "F:/ibci-data/braingate/decoding/T7",
-                  "T10": "F:/ibci-data/braingate/decoding/T10", "T8": "H:/ibci-data/braingate/decoding/T8",
-                  "T11": "D:/ibci-data/braingate/decoding/T11", "T2": "F:/ibci-data/braingate/decoding/T2",
-                  "T3": "F:/ibci-data/braingate/decoding/T3"}
+DECODING_ROOTS = {p: os.path.join(data_root(p), "braingate", "decoding", p)
+                  for p in ("T6", "T5", "T9", "T7", "T10", "T8", "T11", "T2", "T3")}
 
 
 def boot_curve(d, num, den="own", gaps=GAPS, n_boot=800):
@@ -97,7 +95,8 @@ def species_curves(axm, axh, series, ylim, ylabel=True, title=None):
 # ------------------------------------------------------------------------------------------------ Figure 1
 EX = dict(participant="T5", array="lateral", wave_days=(40, 2700), electrodes=(33, 16, 12), train_day=355,
           test_day=833, gain=2.0,
-          yield_root="D:/ibci-data/braingate/yield", decoding_root="D:/ibci-data/braingate/decoding",
+          yield_root=os.path.join(data_root("yield"), "braingate", "yield"),
+          decoding_root=os.path.join(data_root("T5"), "braingate", "decoding"),
           cache="results/figures/overview_examples.npz")
 
 
@@ -651,7 +650,7 @@ def fig4c(out):
     ax.grid(axis="y", visible=False)
     P.panel(ax, "d", x=-0.1)
     fig.subplots_adjust(wspace=0.5, left=0.065, right=0.99, bottom=0.17, top=0.9)
-    P.save(fig, os.path.join(out, "fig5_channels"))
+    P.save(fig, os.path.join(out, "fig6_channels"))
 
 
 # ------------------------------------------------------------------------------------------------ Figure 4
@@ -818,7 +817,7 @@ def fig5(out):
     ax.grid(axis="x", visible=False)
     P.panel(ax, "d", x=-0.32)
     fig.subplots_adjust(wspace=0.5, left=0.06, right=0.99, bottom=0.22, top=0.86)
-    P.save(fig, os.path.join(out, "fig6_recipes"))
+    P.save(fig, os.path.join(out, "fig5_recipes"))
 
 
 # ------------------------------------------------------------------------------------------------ Figure 6
@@ -989,7 +988,7 @@ def main():
     ap.add_argument("--out", default="results/figures/v2")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
-    figs = {"fig1": fig1, "fig2": fig_design, "fig3": fig2, "fig4": fig3, "fig5": fig4c, "fig6": fig5,
+    figs = {"fig1": fig1, "fig2": fig_design, "fig3": fig2, "fig4": fig3, "fig5": fig5, "fig6": fig4c,
             "fig7": fig6, "fig8": fig7}
     for k, f in figs.items():
         if args.only is None or k in args.only:
