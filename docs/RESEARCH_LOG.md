@@ -1654,3 +1654,18 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   JNE 10.1088/1741-2552/aa8dc1 (neural error detection, monitoring); Gallego 2018 Nat Commun 10.1038/s41467-018-06560-z
   (stable manifold, monkey remixing result); Willsey 2022 Nat Commun 10.1038/s41467-022-34452-w (monkey N finger task).
   References: 66 (15 JNE, 3 TNSRE, 4 Nat Commun), in citation order.
+
+### 2026-10-17 — Live check of all references; recent literature added
+
+- Every entry in refs.tex was checked against live metadata (Crossref by title, then by DOI for any doubt; DataCite
+  for the four datasets; PubMed for Rubin 2023 pages; official proceedings/arXiv pages for ICML, NeurIPS D&B, arXiv).
+  Errors fixed: wilson2025 (Willett last author) is vol 10 issue 7, 2026 issue (online Dec 2025); data_perich has two
+  registered creators (Perich, Miller), not four; hahn2026 now gives the registered Nat. Med. DOI
+  10.1038/s41591-026-04530-3 (does not resolve yet; still "in the press") and the correct medRxiv title; page ranges added
+  for fan2023, karpowicz2024falcon, ye2025ndt3. All other entries match (false title-search mismatches resolved by DOI).
+- Literature search for 2023-2026 work (agent, verified): added 15 references where they support existing sentences:
+  NDT2 (Ye 2023), POYO (Azabou 2023), POSSM (Ryoo 2025) [foundation models]; Jude 2022, ERDiff (Wang 2023), Rizzoglio
+  2023 (JNE), Safaie 2023 [alignment, conserved dynamics]; Natraj 2025, Stevenson 2011, Driscoll 2022 [drift and
+  stability]; Rubin 2023, Hughes 2021 (JNE) [arrays, BrainGate cohort]; Willsey 2025 [finger BCI]; NLB'21 and Willett et
+  al. Brain-to-Text '24 [benchmarks]. Limitations now name diffusion-based alignment as untested.
+- 81 references (30 from 2023-2026; 64 cited outside Methods), citation order checked; both versions rebuilt.

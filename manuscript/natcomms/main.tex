@@ -47,8 +47,8 @@ electrode stability}
 
 Intracortical brain--computer interfaces (BCIs) record from small populations of neurons and turn their activity into
 commands. They have allowed people with paralysis to move robotic arms and computer cursors\cite{hochberg2006,
-hochberg2012,collinger2013,pandarinath2017}, to type by attempted handwriting\cite{willett2021} and to speak through a
-decoded voice\cite{willett2023,card2024,wairagkar2025}. Long-term use over years has been described\cite{simeral2011,card2026}.
+hochberg2012,collinger2013,pandarinath2017}, to control individual fingers\cite{willsey2025}, to type by attempted
+handwriting\cite{willett2021} and to speak through a decoded voice\cite{willett2023,card2024,wairagkar2025}. Long-term use over years has been described\cite{simeral2011,card2026}.
 For these devices to become everyday tools, their decoders must stay accurate with little effort from the user.
 
 The recorded signals are not stable. Within a day, signals shift as electrodes move or neurons change their
@@ -57,9 +57,11 @@ downey2018,bishop2014}, and over months and years, arrays gradually lose the abi
 sponheim2021,bjanes2025,hahn2026}. Decoders lose accuracy over time\cite{chestek2011,nuyujukian2014,
 temmar2025,wilson2025}, and most systems recalibrate often, which takes time away from the user\cite{jarosiewicz2013,
 jarosiewicz2015,brandman2018}. Many methods aim to reduce this cost. Decoders can be trained on data from many
-days\cite{sussillo2016}, updated during use\cite{jarosiewicz2015,orsborn2012,dangi2013,wilson2025}, or given input
+days\cite{sussillo2016,natraj2025}, updated during use\cite{jarosiewicz2015,orsborn2012,dangi2013,wilson2025}, or given input
 layers learned for each day\cite{willett2021,fan2023}. Neural activity can be aligned to a reference day without new
-labels\cite{degenhart2020,gallego2020,farshchian2019,ma2023,karpowicz2025}, and monitoring scores have been proposed to
+labels\cite{degenhart2020,gallego2020,farshchian2019,ma2023,karpowicz2025,jude2022,wang2023erdiff}, large decoders
+can be pretrained on many recordings\cite{ye2023ndt2,azabou2023poyo,ryoo2025possm,ye2025ndt3}, and monitoring scores
+have been proposed to
 signal when recalibration is needed\cite{pun2024}.
 
 How fast do decoders decay in different individuals, and how much of that decay comes from the decoder itself? Which
@@ -186,7 +188,8 @@ tuned at all. We use $\alpha = 10^4$ for the remaining decoder analyses unless s
 \subsection*{Label-free alignment misses alignments that labels can find}
 
 Several methods realign neural activity to a reference day without labels\cite{degenhart2020,gallego2020,
-farshchian2019,ma2023,karpowicz2025}. Their benefits were usually measured against a fixed decoder or against one whose
+farshchian2019,ma2023,karpowicz2025,jude2022,wang2023erdiff}, and related alignments transfer decoders across
+individuals and even species\cite{safaie2023,rizzoglio2023}. Their benefits were usually measured against a fixed decoder or against one whose
 channel means alone were updated\cite{ma2023,wilson2025}. We compared such corrections with renormalization
 (Fig.~\ref{fig:labelfree}a; differences and $P$ values in Supplementary Table~3).
 
@@ -196,7 +199,8 @@ rotation of the dominant neural subspace\cite{schonemann1966} lowered $R^2$ slig
 better in the monkeys and worse in all \val{hum:nword} participants. Our implementation of the factor-analysis
 stabilizer\cite{degenhart2020} was worse in seven of the nine individuals, did not differ in T7 and was nominally better
 in T5, which was not significant after Holm correction. That method was designed for closed-loop use with a latent
-decoder. Adversarial alignment\cite{farshchian2019,ma2023,karpowicz2025} was not tested. Comparisons against mean-only
+decoder. Adversarial\cite{farshchian2019,ma2023,karpowicz2025} and diffusion-based\cite{wang2023erdiff} alignment
+were not tested. Comparisons against mean-only
 baselines\cite{wilson2025} should also report renormalization.
 
 Why did alignment fail? Either no good alignment existed, or it could not be found without labels. To tell these apart,
@@ -294,7 +298,8 @@ with the shrinkage chosen by cross-validation (grey) or fixed (blue).}
 
 \subsection*{A pretrained foundation decoder still needed labels in a pilot}
 
-Large decoders pretrained on many recordings might be expected to resist drift. We tested NDT3\cite{ye2025ndt3}, a
+Large decoders pretrained on many recordings might be expected to resist
+drift\cite{ye2023ndt2,azabou2023poyo,ryoo2025possm}. We tested NDT3\cite{ye2025ndt3}, a
 transformer pretrained on about 2,000 hours of intracortical motor recordings, in monkey N and in participants T5 and T8, none of
 which were in its pretraining data (Methods). NDT3 and the ridge decoder received the same threshold crossings, on
 \val{ndt3:N:pairs} session pairs per individual. Within a day, NDT3 was about twice as accurate as the ridge decoder in
@@ -375,7 +380,7 @@ Impedance declined over years in both species, whereas array yield changed in bo
 (Fig.~\ref{fig:electrodes}a,b). Yield fell between the first and last three sessions in \val{yield:nfall} of
 \val{yield:n} human arrays (Supplementary Table~11). Impedance fell in 17 of 18 human arrays with measurements (median Spearman $\rho$ with time $-0.92$). In monkey N it fell from a median of
 302~k$\Omega$ in the first year to 171~k$\Omega$ in the fourth ($\rho = -0.88$). Both trends replicate earlier
-reports\cite{barrese2013,sponheim2021,chen2023,bjanes2025,hahn2026}. Spikes also became smaller. On T5's lateral
+reports\cite{barrese2013,sponheim2021,hughes2021,chen2023,bjanes2025,hahn2026}. Spikes also became smaller. On T5's lateral
 array, \val{amp:n} electrodes had spikes both in the first 200 days and after day 2,000. Their median spike amplitude
 fell from \val{amp:early} to \val{amp:late}~$\mu$V (median ratio \val{amp:ratio}, interquartile range \val{amp:iqr}),
 and it was smaller on \val{amp:smaller} of them ($P = \val{amp:p}$, Wilcoxon signed-rank test;
@@ -414,7 +419,8 @@ electrodes, per human array, before (filled) and after (open) adjusting for init
 
 \subsection*{A benchmark and a simulator for testing new corrections}
 
-Methods for stable decoding are hard to compare without a common test bed\cite{karpowicz2024falcon}, and existing
+Methods for stable decoding are hard to compare without a common test bed\cite{pei2021nlb,karpowicz2024falcon,
+willett2024b2t}, and existing
 benchmarks span days to months. We released our session pairs as a benchmark for decoder transfer over years
 (Methods). It fixes \val{bench:npairs} pairs from the \val{ind:nword} individuals at gaps of 1 to 480 days
 (\val{bench:nvalid} with a working reference decoder), defines which data a method may use on the new day, and scores
@@ -476,15 +482,17 @@ compared against these steps.
 Earlier work modeled per-electrode drift as shifts in baseline over weeks\cite{bishop2014,jarosiewicz2015}, and human
 decoders absorb day-to-day changes with input layers learned for each day\cite{willett2021,fan2023}. Other studies
 describe changes in the preferred directions of individual features\cite{pun2024} and rotation of decoder
-weights\cite{wilson2025}. In our data, decoders with correctly assigned channels beat scrambled ones, and re-weighting
+weights\cite{wilson2025}, whereas the tuning of single neurons can look stable once measurement noise is taken into
+account\cite{stevenson2011}. In our data, decoders with correctly assigned channels beat scrambled ones, and re-weighting
 tracked each electrode's firing, so some of each channel's tuning pattern survived for months, most clearly in the
 monkeys. In the monkeys, the best alignment within the population subspace also beat per-channel re-weighting, which
 points to activity being remixed across channels, as expected if population dynamics stay within a stable
-low-dimensional manifold\cite{gallego2018,gallego2020}. In people the reverse held, which fits per-channel change, although
+low-dimensional manifold\cite{gallego2018,gallego2020,safaie2023}. In people the reverse held, which fits per-channel change, although
 a two-dimensional target limits this inference. For label-free methods, this means a better target exists: a method
 that found the alignment the labels reveal would recover much of the loss, but not all of it. Changes in the number or
-proximity of neurons near each electrode would produce such per-channel changes\cite{polikov2005,kozai2015}, but our
-data cannot identify the cause.
+proximity of neurons near each electrode would produce such per-channel changes\cite{polikov2005,kozai2015}, and so
+would representational drift in the neurons themselves\cite{driscoll2022,natraj2025}, but our data cannot identify the
+cause.
 
 Activity near the yield threshold fluctuated strongly between sessions. Yield counts from single sessions are therefore
 noisy, and channels that fall silent for a few sessions are likely to return. Hahn and colleagues analyzed yield,
@@ -498,7 +506,7 @@ the user's control strategy or the task, not only the recordings. Three of the n
 decoding data were excluded: in two the decoders did not work, and in T11 recordings jumped in scale between blocks,
 which session-wise normalization did not handle (Supplementary Note~4). Six participants and three monkeys cannot
 establish population rates, and the datasets differ in task, signal type, array placement and implant age. We did not
-test adversarial alignment. The foundation-decoder comparison was a pilot with one model size, threshold crossings and
+test adversarial or diffusion-based alignment. The foundation-decoder comparison was a pilot with one model size, threshold crossings and
 three individuals, and larger models or other ways of adapting them may do better. The simulator is calibrated to
 feature-level statistics in one monkey and does not model biophysics.
 
@@ -528,7 +536,8 @@ from October 2013 to October 2016, and monkey M had 28 sessions from January 201
 all sorted units on each electrode in 20~ms bins, giving 96 (C) or 192 (M) channels. Cursor position and velocity, which followed the hand, were
 interpolated to bin centers.
 
-\textit{BrainGate participants} (Dryad\cite{data_braingate}; ref.~\cite{hahn2026}). The yield data contain one recording
+\textit{BrainGate participants} (Dryad\cite{data_braingate}; ref.~\cite{hahn2026}). All took part in the BrainGate
+feasibility study\cite{rubin2023}. The yield data contain one recording
 from each of 2,289 research sessions in 14 participants with 20 arrays (A1, S1--S3, T1--T3 and T5--T11). For every
 electrode, they list threshold-crossing rates at several thresholds (with the threshold in microvolts), impedance and
 grid position. Nineteen arrays were in the hand area of motor cortex and one was in the middle frontal gyrus. The
