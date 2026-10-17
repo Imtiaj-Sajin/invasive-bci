@@ -1750,7 +1750,7 @@
      0.513
     ],
     "retention_gains": 0.88,
-    "loss_recovered_by_gains": 0.84
+    "loss_recovered_by_gains": 0.842
    },
    "gap30": {
     "n": 103,
@@ -1769,8 +1769,8 @@
      0.011,
      0.192
     ],
-    "retention_gains": 0.755,
-    "loss_recovered_by_gains": 0.759
+    "retention_gains": 0.763,
+    "loss_recovered_by_gains": 0.762
    },
    "gap480": {
     "n": 51,
