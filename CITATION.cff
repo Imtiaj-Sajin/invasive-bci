@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use this software or its results, please cite it as below."
-title: "ibci-drift: chronic drift and electrode failure in intracortical brain-computer interfaces"
+title: "Decoder decay and its correction over years in intracortical brain-computer interfaces: code, results and benchmark"
 version: 0.1.0
-date-released: 2026-10-06
+date-released: 2026-10-17
 license: MIT
 repository-code: "https://github.com/Imtiaj-Sajin/invasive-bci"
 authors:
@@ -24,6 +24,10 @@ authors:
 keywords:
   - brain-computer interface
   - intracortical recording
-  - Utah array
+  - neural decoder
+  - decoder recalibration
   - neural drift
+  - Utah array
+  - BrainGate
+  - benchmark
   - simulation
