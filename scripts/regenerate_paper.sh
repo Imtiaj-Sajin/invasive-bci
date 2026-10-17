@@ -17,6 +17,8 @@ run scripts/paper_stats.py
 run scripts/bench_from_paper.py                     # benchmark baselines (results/bench)
 run scripts/ndt3/summarize_pilot.py                 # NDT3 pilot summary (results/ndt3/pilot_summary.json)
 run scripts/revision_stats.py
+run scripts/ceiling_summary.py                      # alignment ceiling (results/latent_ceiling/summary.json)
+run scripts/make_v2_figures.py --only fig2          # writes results/figures/overview_sessions.json, read below
 run scripts/make_numbers_tex.py
 run scripts/make_supp_tables.py
 run scripts/make_v2_figures.py

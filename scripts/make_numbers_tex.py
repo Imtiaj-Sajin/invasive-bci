@@ -162,6 +162,9 @@ def main():
     if frames:
         e = pd.concat(frames)
         put("hum:effpairs", str(len(e)))
+        allv = pd.concat([valid_pairs(pd.read_csv(f"results/gain_efficiency/{k}.csv")) for k in HUM
+                          if os.path.exists(f"results/gain_efficiency/{k}.csv")])
+        put("hum:effvalid", str(len(allv)))        # valid pairs before requiring all five budgets
         put("hum:effnone", f2(float((e.L2 / e.own).median())))
         for n in (10, 20, 50, 100, 300):
             for rung in ("L3", "L6p", "L6"):
@@ -373,16 +376,21 @@ def main():
             rw = [cs[k]["reweight_vs_ceiling"] for k in members]
             put(f"{grp}:ceil:rewwins", str(sum(1 for r in rw if r["median_diff"] > 0 and r["P"] is not None and r["P"] < 0.05)))
             put(f"{grp}:ceil:rotwins", str(sum(1 for r in rw if r["median_diff"] < 0 and r["P"] is not None and r["P"] < 0.05)))
-            put(f"{grp}:ceil:rewwinsholm", str(sum(1 for k in holm_sig([(k, pval(cs[k]["reweight_vs_ceiling"]["P"]))
-                                                                          for k in members])
-                                                  if cs[k]["reweight_vs_ceiling"]["median_diff"] > 0)))
-            put(f"{grp}:ceil:rotwinsholm", str(sum(1 for k in holm_sig([(k, pval(cs[k]["reweight_vs_ceiling"]["P"]))
-                                                                          for k in members])
-                                                  if cs[k]["reweight_vs_ceiling"]["median_diff"] < 0)))
+            sig = holm_sig([(k, cs[k]["reweight_vs_ceiling"]["P"]) for k in cs])     # one Holm family: all nine
+            put(f"{grp}:ceil:rewwinsholm", str(sum(1 for k in members if k in sig
+                                                   and cs[k]["reweight_vs_ceiling"]["median_diff"] > 0)))
+            put(f"{grp}:ceil:rotwinsholm", str(sum(1 for k in members if k in sig
+                                                   and cs[k]["reweight_vs_ceiling"]["median_diff"] < 0)))
             put(f"{grp}:ceil:n", str(len(members)))
         lr = [cs[k]["share_long"]["L4_nall"][0] for k in cs if "L4_nall" in cs[k].get("share_long", {})]
+        put("all:ceil:rot:min", pct(min(lr)))
+        put("all:ceil:rot:max", pct(max(lr)))
         put("all:ceil:unrec:min", pct(1 - max(lr)))
         put("all:ceil:unrec:max", pct(1 - min(lr)))
+    if os.path.exists("results/braingate_failure/per_array.csv"):   # yield, first vs last three sessions per array
+        pa = pd.read_csv("results/braingate_failure/per_array.csv")
+        put("yield:nfall", str(int((pa.yield_last3 < pa.yield_first3).sum())))
+        put("yield:n", str(len(pa)))
     for k in IND:      # reference-decoder R2 by gap (tuned penalty, valid pairs): does decoding itself get harder?
         p = f"results/decay_alpha/{k}_alpha10000.csv"
         if os.path.exists(p):
@@ -405,6 +413,12 @@ def main():
                 put(f"het:{tag}:n", f"{het[key]['n_pairs']:,}")
         cp = [het[k]["curves"]["P"] for k in het if isinstance(het[k], dict) and "curves" in het[k]]
         put("het:curves:pmax", pval(max(cp)))
+        for key, tag in (("kruskal_by_gap", "all"), ("kruskal_by_gap_humans", "hum")):   # rank-based check per gap
+            kw = het.get(key, {})
+            if kw:
+                put(f"het:kw:{tag}:pmax7", pval(max(v["P"] for g, v in kw.items() if int(g) >= 7)))
+                if "1" in kw:
+                    put(f"het:kw:{tag}:p1", pval(kw["1"]["P"]))
     nl = load("results/failure_robustness/null_summary.json")
     for k, v in nl.items():
         put(f"null:{k}:obs", pct(v["fraction_obs"]))
@@ -459,6 +473,8 @@ def _pnum(s):
     """Parse a formatted P value back to a float ('3.2\\times10^{-5}' -> 3.2e-5); None if not numeric."""
     if s is None:
         return None
+    if isinstance(s, (int, float, np.floating)):              # raw P values are used as they are (no rounding)
+        return float(s) if np.isfinite(s) else None
     m = re.fullmatch(r"([0-9.]+)\\times10\^\{(-?[0-9]+)\}", str(s))
     if m:
         return float(m.group(1)) * 10 ** int(m.group(2))

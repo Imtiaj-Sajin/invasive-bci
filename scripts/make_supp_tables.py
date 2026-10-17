@@ -35,44 +35,51 @@ def write(path, rows):
 
 def ladder_table(out):
     """Correction ladder at the tuned (primary) penalty, so the supervised rungs use the corrected cross-validation."""
-    rows = []
+    rows, part = [], {"a": [], "b": []}       # a: monkeys, b: humans (one page each)
     for k in ["N", "C", "M"] + humans():
         name = f"Monkey {k}" if k in ("N", "C", "M") else f"Human {k}"
         d = valid_pairs(pd.read_csv(f"results/decay_alpha/{k}_alpha10000.csv"))
         d = d[d.gap_target.isin(GAPS)].assign(ret=lambda x: x.L2 / x.own)
-        rows.append(r"\multicolumn{11}{l}{\textit{" + name + r"}}\\")
+        block = [r"\multicolumn{11}{l}{\textit{" + name + r"}}\\"]
         for g, q in d.groupby("gap_target"):
             est, lo, hi = cluster_bootstrap(q, "ret", n_boot=2000)
             med = q[["own", "L0", "L1", "L2", "L4u", "L4s", "L3_n300", "L6p_n300"]].median()
-            rows.append(" & ".join([str(g), str(len(q))] + [f3(med[c]) for c in med.index]
-                                   + [ci(est, lo, hi)]) + r"\\")
+            block.append(" & ".join([str(g), str(len(q))] + [f3(med[c]) for c in med.index]
+                                    + [ci(est, lo, hi)]) + r"\\")
+        rows += block
+        part["a" if k in ("N", "C", "M") else "b"] += block
     write(os.path.join(out, "tab_ladder.tex"), rows)
+    for p, r in part.items():
+        write(os.path.join(out, f"tab_ladder_{p}.tex"), r)
 
 
 def failure_table(out):
+    """Per-array electrode statistics. The edge columns use initially active electrodes with the array as the unit
+    (results/failure_robustness/edge_arrays.csv), the same values as the main-text test and Fig. 7d."""
     pa = pd.read_csv("results/braingate_failure/per_array.csv").sort_values(["participant", "array"])
+    ea = pd.read_csv("results/failure_robustness/edge_arrays.csv").set_index(["participant", "array"])
+    sgn = lambda v: "--" if pd.isna(v) else f"{v:.2f}".replace("-", "$-$")
     rows = []
     for _, r in pa.iterrows():
+        e = ea.loc[(r["participant"], r["array"])] if (r["participant"], r["array"]) in ea.index else None
         rows.append(" & ".join([
             r["participant"], str(r["array"]).replace("_", " "), str(int(r.sessions)), f"{int(r.span_days):,}",
             f"{r.yield_first3:.0f} / {r.yield_last3:.0f}", f"{1e3 * r.h_off:.1f}", f"{1e3 * r.h_on:.1f}",
             f"{int(r.revived)}/{int(r.silenced)}", f3(r.channel_level_kurtosis).replace(".00", ".0") if pd.isna(r.channel_level_kurtosis) else f"{r.channel_level_kurtosis:.1f}",
             f3(r.impedance_spearman_vs_day),
-            "--" if pd.isna(r.edge_slope) else f"{r.edge_slope - r.interior_slope:.2f}".replace("-", "$-$"),
-            "--" if pd.isna(r.edge_vs_interior_p) else (
-                "$<$0.001" if r.edge_vs_interior_p < 0.001 else f"{r.edge_vs_interior_p:.3f}")]) + r"\\")
+            sgn(e.edge_minus_interior) if e is not None else "--",
+            sgn(e.edge_coef_adj_initial_rate) if e is not None else "--"]) + r"\\")
     n = json.load(open("results/failure_xdata/failure_stats.json"))["N (LINK)"]
-    sl = pd.read_csv("results/channel_health/channel_slopes.csv")      # within-array slopes per channel (LINK)
-    parts = []
-    for arr in ("Lateral", "Medial"):
-        q = sl[sl.array_name == arr]
-        parts.append(f"{q[q.edge].tc_rate_slope.median() - q[~q.edge].tc_rate_slope.median():.2f}".replace("-", "$-$"))
-    edge_txt = " / ".join(parts)
+    h = json.load(open("results/channel_health/summary.json"))          # monkey N: impedance and edge statistics
+    ev = h["edge_vs_interior"]
     rows.append(r"\midrule")
     rows.append(" & ".join(["Monkey N", "both", str(n["n_sessions"]), f"{n['span_days']:,}",
                             f"{100 * n['active_first3_median'] / 96:.0f} / {100 * n['active_last3_median'] / 96:.0f}",
                             f"{1e3 * n['h_off']:.1f}", f"{1e3 * n['h_on']:.1f}", f"{n['revived']}/{n['died']}",
-                            f"{n['channel_level_kurtosis']:.1f}", "$-$0.88", edge_txt, "$<$0.001 / 0.046"]) + r"\\")
+                            f"{n['channel_level_kurtosis']:.1f}",
+                            sgn(h["impedance"]["spearman_logimp_vs_day_median_channel"]),
+                            sgn(ev["slope_logtc_per_year_edge_median"] - ev["slope_logtc_per_year_interior_median"]),
+                            "--"]) + r"\\")
     write(os.path.join(out, "tab_failure.tex"), rows)
 
 
@@ -166,15 +173,22 @@ def mindful_table(out):
 def reg_table(out):
     r = pd.read_csv("results/reg_tradeoff/rule_across_subjects.csv")
     names = {"N (LINK)": "Monkey N", "C": "Monkey C", "M": "Monkey M", **{f"{p} (human)": f"Human {p}" for p in humans()}}
-    rows = []
+    hum = humans()
+    first = {f"Human {p}" for p in hum[:3]}  # pages: a monkeys, b1 first three participants, b2 the rest
+    rows, part = [], {"a": [], "b1": [], "b2": []}
     for _, x in r.iterrows():
         lo, hi = [float(v) for v in x.ci.strip("[]").split(",")]
         la = np.log10(x.alpha_rule)
         atxt = f"$10^{{{int(la)}}}$" if la == int(la) else f"${x.alpha_rule / 10 ** int(la):.0f}\\times10^{{{int(la)}}}$"
-        rows.append(" & ".join([names[x.subject], atxt,
-                                "same day" if x.gap == 0 else str(int(x.gap)), str(int(x.n)), f3(x.base), f3(x.rule),
-                                ci(x.gain, lo, hi, 3), f"{x.frac_pos:.2f}"]) + r"\\")
+        cell = ci(x.gain, lo, hi, 3) if hi - lo < 1 else f"{x.gain:.3f} (interval unstable$^\\dagger$)"
+        row = " & ".join([names[x.subject], atxt, "same day" if x.gap == 0 else str(int(x.gap)), str(int(x.n)),
+                          f3(x.base), f3(x.rule), cell, f"{x.frac_pos:.2f}"]) + r"\\"
+        rows.append(row)
+        nm = names[x.subject]
+        part["a" if nm.startswith("Monkey") else ("b1" if nm in first else "b2")].append(row)
     write(os.path.join(out, "tab_reg.tex"), rows)
+    for p, rr in part.items():
+        write(os.path.join(out, f"tab_reg_{p}.tex"), rr)
 
 
 def lstm_table(out):
@@ -247,7 +261,7 @@ def human_eff_table(out):
         cells = [NAMES[k], str(len(q)), f3((q.L2 / q.own).median())]
         for n in (10, 20, 50, 100, 300):
             vals = []
-            for rung in ("L3", "L6p", "L6"):
+            for rung in ("L6p", "L6", "L3"):           # same order as panel a: ridge to prior / fresh / re-weighting
                 c = f"{rung}_n{n}"
                 vals.append(f"{(q[c] / q.own).median():.2f}" if c in q else "--")
             cells.append(" / ".join(vals).replace("-", "$-$").replace("$-$$-$", "--"))

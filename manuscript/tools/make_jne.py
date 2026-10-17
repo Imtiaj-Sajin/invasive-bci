@@ -84,6 +84,13 @@ def main():
     def numbered(t):
         return t.replace("\\subsection*{", "\\subsection{")
 
+    # Methods come first in JNE: the short overview that defines the terms and cites Fig. 2 opens the Methods
+    ov_start = "\\subsection*{Datasets and approach}"
+    a = results.index(ov_start)
+    b = results.index("\\subsection*{", a + len(ov_start))
+    overview, results = results[a + len(ov_start):b].strip("\n"), results[:a] + results[b:]
+    methods = "\\subsection*{Overview of the approach}\n" + overview + "\n\n" + methods.lstrip("\n")
+
     parts = [
         PREAMBLE.replace("%TITLE%", title).replace("%KEYWORDS%", keywords),
         "\\section{Introduction}\n" + intro,

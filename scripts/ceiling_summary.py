@@ -27,18 +27,27 @@ from ibci.participants import humans, individuals, valid_pairs  # noqa: E402
 BANDS = {"short": (1, 7), "mid": (30, 30), "long": (120, 480), "all": (1, 480)}
 
 
+def _share(l2, own, x):
+    lo = np.median(l2)
+    den = np.median(own) - lo
+    return float((np.median(x) - lo) / den) if den > 0.02 else np.nan
+
+
 def share(d, col):
-    lo = d.L2.median()
-    den = d.own.median() - lo
-    return float((d[col].median() - lo) / den) if den > 0.02 else np.nan
+    return _share(d.L2.to_numpy(), d.own.to_numpy(), d[col].to_numpy())
 
 
 def boot_share(d, col, n_boot=2000, seed=0):
+    """Cluster bootstrap over training sessions (resampling row indices; same draws as resampling the groups)."""
     rng = np.random.default_rng(seed)
     groups = d.train.unique()
-    by = {g: d[d.train == g] for g in groups}
-    est = share(d, col)
-    bs = [share(pd.concat([by[g] for g in rng.choice(groups, len(groups))]), col) for _ in range(n_boot)]
+    rows = {g: np.flatnonzero((d.train == g).to_numpy()) for g in groups}
+    l2, own, x = d.L2.to_numpy(), d.own.to_numpy(), d[col].to_numpy()
+    est = _share(l2, own, x)
+    bs = []
+    for _ in range(n_boot):
+        idx = np.concatenate([rows[g] for g in rng.choice(groups, len(groups))])
+        bs.append(_share(l2[idx], own[idx], x[idx]))
     lo, hi = np.nanpercentile(bs, [2.5, 97.5])
     return [round(est, 3), round(float(lo), 3), round(float(hi), 3)]
 

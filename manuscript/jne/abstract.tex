@@ -8,16 +8,15 @@ re-weighting and refitting with labeled trials. An alignment fitted with labels 
 the dominant neural subspace. Electrode statistics came from 20 arrays in 14 participants.
 
 \noindent\textbf{Main results.} Decay differed widely between individuals (mixed model, $P = \val{het:all:curves:p}$):
-a fixed decoder lost half its accuracy within a day in some and only after \val{T6:thalftuned} days in another. Weak
-regularization exaggerated decay. No label-free alignment we tested improved on per-session normalization, although
-the ceiling recovered \val{hum:ceil:rot:min}--\val{mon:ceil:rot:max}\% of the loss at 120 to 480 days; even the
-ceiling left \val{all:ceil:unrec:min}--\val{all:ceil:unrec:max}\%. In monkeys the ceiling beat channel re-weighting,
+a fixed decoder lost half its accuracy within a day in one participant and only after \val{T6:thalftuned} days in
+another. Weak regularization exaggerated decay. No label-free alignment we tested improved on per-session
+normalization, although the ceiling recovered \val{all:ceil:rot:min}--\val{all:ceil:rot:max}\% of the loss at 120 and
+480 days; even the ceiling left \val{all:ceil:unrec:min}--\val{all:ceil:unrec:max}\%. In monkeys the ceiling beat channel re-weighting,
 pointing to activity remixed across channels; in people re-weighting did better. In people, about 100 labeled trials
-restored most accuracy, and a fresh, strongly regularized decoder used them at least as well as a refit toward the old
-one. In a pilot, a pretrained foundation decoder also needed labels. Most brief electrode silences could not be told
+restored most accuracy. In a pilot, a pretrained foundation decoder also needed labels. Most brief electrode silences could not be told
 apart from a permutation null; month-long silences were real but often reversed.
 
-\noindent\textbf{Significance.} Better label-free alignment is possible but cannot remove the need for labels. Decoder
-longevity should be compared between tuned decoders, label-free methods against per-session normalization, and
-recalibration schedules should be set per person. We release a \val{bench:npairs}-pair benchmark spanning 480 days, a
-calibrated simulator and all code.
+\noindent\textbf{Significance.} Better label-free alignment is possible, but part of the loss lies beyond the best
+linear alignment of the subspace. Decoder longevity should be compared only between tuned decoders, and label-free
+methods against per-session normalization. Recalibration schedules should be set per person. We release a
+\val{bench:npairs}-pair benchmark with gaps of up to 480 days, a calibrated simulator and all code.

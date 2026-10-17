@@ -191,9 +191,20 @@ def cv_pick(fit_fn, err_fn, trial_id, n, grid, k=5):
 
 # ---- fast CV for shrunk least squares (one eigendecomposition per fold, all regularization values) ---------------
 def _fold_blocks(trial_id, n, k):
+    """Contiguous blocks of the trial indices 0..n-1. When a session has fewer than n trials, some blocks are empty and
+    are skipped by the caller. If the available trials fit inside a single block (at most n/k trials), no fold would
+    have training rows; the blocks are then formed from the available trials instead (audit 2026-10-17; before this
+    fix such folds gave NaN errors and the smallest penalty was chosen)."""
     assert n >= 2, "cross-validation needs at least two labelled trials"
-    k = max(2, min(k, n // 2))
-    return [np.isin(trial_id, blk) for blk in np.array_split(np.arange(n), k)]
+    kk = max(2, min(k, n // 2))
+    folds = [np.isin(trial_id, blk) for blk in np.array_split(np.arange(n), kk)]
+    lab = trial_id < n
+    if sum(1 for v in folds if v.any() and (lab & ~v).any()) >= 2:
+        return folds
+    m = min(n, int(np.max(trial_id)) + 1)
+    assert m >= 2, "cross-validation needs at least two labelled trials"
+    kk = max(2, min(k, m // 2))
+    return [np.isin(trial_id, blk) for blk in np.array_split(np.arange(m), kk)]
 
 
 def _with_intercept(F):

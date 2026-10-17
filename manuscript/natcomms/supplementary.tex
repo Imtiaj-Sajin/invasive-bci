@@ -16,6 +16,7 @@
 \makeatother
 \renewcommand{\tablename}{Supplementary Table}
 \renewcommand{\thetable}{\arabic{table}}
+\renewcommand{\arraystretch}{0.86}   % long tables must fit one page each
 
 \begin{document}
 
@@ -28,8 +29,9 @@ intracortical brain--computer interfaces}
 \affil*[1]{\orgdiv{Department of Computer Science}, \orgname{American International University-Bangladesh},
 \orgaddress{\city{Dhaka}, \postcode{1229}, \country{Bangladesh}}}
 
-\abstract{This document contains Supplementary Notes 1--5 and Supplementary Tables 1--16. Every table is generated
-from the released result files by \texttt{scripts/make\_supp\_tables.py}, so its values match the code repository.}
+\abstract{This document contains Supplementary Notes 1--5 and Supplementary Tables 1--18. Tables 2--18 are
+generated from the released result files by \texttt{scripts/make\_supp\_tables.py}, so their values match the code
+repository; Table 1 lists the datasets as described by their sources.}
 
 \maketitle
 
@@ -37,7 +39,8 @@ from the released result files by \texttt{scripts/make\_supp\_tables.py}, so its
 
 Before the main analyses, we asked whether label-free statistics computed on a later day can predict how well a
 renormalized fixed decoder will perform on that day. The pilot used the first 46--61 sessions of monkey N
-(January 2020 to about March 2021) and 283 session pairs at most 60 days apart. Decoders were ridge regressions on 8
+(January 2020 to about March 2021), with session pairs up to more than 180 days apart; the cross-validated prediction
+below used the 283 pairs at most 60 days apart. Decoders were ridge regressions on 8
 lags of spike-band power ($\alpha = 0.1$), trained on the first 300 trials and tested on the rest.
 
 We computed 17 statistics in nine groups that need no labels on the later day:
@@ -64,12 +67,8 @@ the statistics gave 0.067--0.070. When the target was the gain from recalibratio
 0.045 and the statistics gave 0.054. For detecting unexpectedly poor days (residual more than one standard deviation
 below the time trend), every statistic had an area under the receiver operating characteristic curve of 0.50--0.58.
 
-The residual variation was not noise. Split-half reliability of the residuals, computed on alternating pairs of
-trials, was $r = 0.72$, or 0.84 after Spearman--Brown correction. Alternating pairs were needed because center-out
-trials alternate between outward and return targets, which made odd/even single-trial splits negatively correlated.
-Day-to-day performance beyond the time trend is therefore real and reliable, but none of the label-free statistics we
-tried captured it. Abrupt faults on single channels remain detectable by construction, and such faults may still
-justify monitoring.
+None of the label-free statistics we tried captured day-to-day performance beyond the time trend. Abrupt faults on
+single channels remain detectable by construction, and such faults may still justify monitoring.
 
 \section*{Supplementary Note 2: Simulator}
 
@@ -105,8 +104,9 @@ We report analysis choices that we revised after internal review, because each c
 whichever was larger, so the one-day set contains two-day gaps. In participant T6 most ``one-day'' pairs were two-day
 pairs, which changed the apparent overnight retention. We now report one- and two-day pairs separately.
 
-\textit{Decoder regularization confounds decay.} With the small ridge penalties used in the original dataset papers,
-decoders decayed faster than with a tuned penalty, especially in monkey N. Decay is therefore reported for decoders whose penalty
+\textit{Decoder regularization confounds decay.} With the small penalties we first adopted ($\alpha = 0.1$ from the
+monkey N study, $\alpha = 1$ for monkeys C and M), decoders decayed faster than with a tuned penalty, most in monkey N,
+T5 and T7. Decay is therefore reported for decoders whose penalty
 was tuned.
 
 \textit{Label-free alignment was compared with renormalization.} In our ladder, alignment was first applied to
@@ -162,9 +162,9 @@ analysis because the inclusion rule was fixed before its results were seen.
 
 \textit{Session pairs with a failed reference decoder.} Within included individuals, pairs whose reference $R^2$ was at
 most 0.1 were left out (0--18\% of pairs per individual). With all pairs kept, the main conclusions did not change.
-Time to half retention ranged from \val{ap:T8:thalf} days (T8) to \val{ap:T6:thalf} days (T6), compared with
+Time to half retention ranged from \val{ap:T8:thalf} (T8) to \val{ap:T6:thalf} days (T6), compared with
 \val{T8:thalf} to \val{T6:thalf} days with the rule, so the spread between individuals remained wide.
-The largest single change was in T7, whose retention after one day lay close to one half (\val{ap:T7:ret1} with all
+The largest relative change was in T7, whose retention at the first gap (one or two days) lay close to one half (\val{ap:T7:ret1} with all
 pairs, \val{T7:ret1} with the rule), so its time to half retention moved from \val{ap:T7:thalf} days to under one day.
 T6 changed from \val{ap:T6:thalf} to \val{T6:thalf} days, which is small relative to its slow decay, and the other
 individuals changed by less than one day. Full results with all pairs are in
@@ -182,7 +182,12 @@ also differ, beyond the level of each curve, was less clear. For all nine indivi
 $P = \val{het:all:slopes:p}$ (floor 0), $\val{het:fl1:slopes:p}$ (floor $-1$) and $\val{het:abs:slopes:p}$
 (absolute loss). For the participants alone it gave $P = \val{het:hum:slopes:p}$, $\val{het:humfl1:slopes:p}$ and
 $\val{het:humabs:slopes:p}$. The floor at 0 compresses the slopes of participants whose decoders often fail, which
-may explain the weaker result with that outcome. We therefore claim only that the curves differ.
+may explain the weaker result with that outcome. We therefore claim only that the curves differ. The mixed model
+assumes one residual variance for all individuals, which their different scales may violate. As a check without that
+assumption, we took one value per training session (the mean retention of its pairs) at each gap and compared
+individuals with a Kruskal--Wallis test. Individuals differed at every gap of 7 days or more ($P \le
+\val{het:kw:all:pmax7}$; participants alone $P \le \val{het:kw:hum:pmax7}$). After one day the difference was smaller
+($P = \val{het:kw:all:p1}$), and among the participants it was not detectable ($P = \val{het:kw:hum:p1}$).
 
 \section*{Supplementary Note 5: Pretrained foundation decoder}
 
@@ -205,7 +210,8 @@ during evaluation \val{ndt3d:T5:D}. Repeated runs with identical settings differ
 described in Methods: the rate with the higher NDT3 validation $R^2$ on each individual's earliest session (monkey N
 \val{ndt3lr:N:0.0004} with $4 \times 10^{-4}$ versus \val{ndt3lr:N:0.0001}; T5 \val{ndt3lr:T5:0.0004} versus
 \val{ndt3lr:T5:0.0001}; T8, on the array kept by the array rule, \val{ndt3lrrule:T8:0.0001} with $10^{-4}$ versus
-\val{ndt3lrrule:T8:0.0004}). Monkey N and T5 were rerun completely with the chosen rate. In monkey N, the first run
+\val{ndt3lrrule:T8:0.0004}). These differences are smaller than the run-to-run variation, so the chosen rate is itself
+uncertain; this is one reason we report NDT3 as a pilot. Monkey N and T5 were rerun completely with the chosen rate. In monkey N, the first run
 ($10^{-4}$) gave the same pattern: same-day $R^2$ \val{ndt3d:N1e4:sd} and median retention \val{ndt3d:N1e4:n300ret} with
 300 trials.
 
@@ -233,14 +239,14 @@ models, other adaptation schemes or more labeled data may behave differently.
 \begin{landscape}
 \begin{table}[p]
 \caption{\textbf{Datasets.} Session counts are per analysis; some human sessions contribute to more than one analysis.
-SBP, spike-band power; TC, threshold crossings.}
+SBP, spike-band power; TC, threshold crossings. $^a$Recorded on 303 days.}
 \label{tab:data}
-\scriptsize\setlength{\tabcolsep}{3.5pt}
+\scriptsize\setlength{\tabcolsep}{2.2pt}
 \begin{tabular}{@{}llllll@{}}
 \toprule
 Individual & Source & Arrays and site & Signal & Task & Sessions (span) \\
 \midrule
-Monkey N & DANDI 001201 (LINK) & 2 Utah, motor cortex & SBP, TC & finger flexion & 312 on 303 days (3.4 years) \\
+Monkey N & DANDI 001201 (LINK) & 2 Utah, motor cortex & SBP, TC & finger flexion & 312$^a$ (3.4 years) \\
 Monkey C & DANDI 000688 & Utah, motor & sorted spikes & reaching & 68 (3.0 years) \\
 Monkey M & DANDI 000688 & Utah, motor/premotor & sorted spikes & reaching & 28 (1.5 years) \\
 \tabinput{supp/tab_data_humans.tex}
@@ -256,7 +262,8 @@ T11, T5 & Dryad n2z34tn5s (MINDFUL) & motor cortex & SBP (T11), TC (T5) & closed
 \caption{\textbf{Correction ladder by individual and gap (linear decoder, tuned penalty $\alpha = 10^4$).} Median decoding $R^2$ for
 each rung, and median retention of the renormalized fixed decoder with 95\% cluster-bootstrap confidence intervals.
 Each training session contributes at most one pair per gap. Supervised rungs used up to 300 labeled trials.
-Aligned, Procrustes rotation after renormalization; stable aligned, the same estimated from stable channels.}
+Aligned, Procrustes rotation after renormalization; stable aligned, the same estimated from stable channels. Monkeys
+here; the human participants follow on the next page.}
 \label{tab:ladder}
 \scriptsize\setlength{\tabcolsep}{2.8pt}
 \begin{tabular}{@{}rrrrrrrrrrl@{}}
@@ -264,7 +271,7 @@ Aligned, Procrustes rotation after renormalization; stable aligned, the same est
 Gap (days) & Pairs & Reference & None & Mean update & Renorm. & Aligned & Stable aligned & Re-weighted & Ridge to prior &
 Retention [95\% CI] \\
 \midrule
-\tabinput{supp/tab_ladder.tex}
+\tabinput{supp/tab_ladder_a.tex}
 \botrule
 \end{tabular}
 \end{table}
@@ -272,8 +279,24 @@ Retention [95\% CI] \\
 
 \begin{landscape}
 \begin{table}[p]
-\caption{\textbf{Label-free corrections.} Median over training sessions of the paired difference in $R^2$ (each
-training session's pairs at all gaps, 1 to 480 days; pairs with a working reference decoder), with two-sided Wilcoxon
+\addtocounter{table}{-1}
+\caption{\textbf{(continued) Correction ladder, human participants.} Columns as on the previous page.}
+\fontsize{6.6}{7.6}\selectfont\setlength{\tabcolsep}{2.8pt}
+\begin{tabular}{@{}rrrrrrrrrrl@{}}
+\toprule
+Gap (days) & Pairs & Reference & None & Mean update & Renorm. & Aligned & Stable aligned & Re-weighted & Ridge to prior &
+Retention [95\% CI] \\
+\midrule
+\tabinput{supp/tab_ladder_b.tex}
+\botrule
+\end{tabular}
+\end{table}
+\end{landscape}
+
+\begin{landscape}
+\begin{table}[p]
+\caption{\textbf{Label-free corrections.} Median over training sessions of each session's mean paired difference in
+$R^2$ (its pairs at all gaps, 1 to 480 days; pairs with a working reference decoder), with two-sided Wilcoxon
 signed-rank $P$ in parentheses. Mean, mean updating only; rot., Procrustes rotation; stab., factor-analysis stabilizer; FA, factor
 analysis.}
 \label{tab:labelfree}
@@ -394,9 +417,11 @@ Individual & Gap (days) & Global & Per channel & Permuted \\
 \begin{landscape}
 \begin{table}[p]
 \caption{\textbf{Regularization by the 1\% rule.} The rule chose the largest ridge penalty whose median same-day $R^2$
-was within 1\% of the best. Columns give median $R^2$ with $\alpha = 0.1$ and with the chosen $\alpha$, the median
-paired gain with 95\% cluster-bootstrap confidence interval, and the share of training sessions whose mean gain was
-positive.}
+was within 1\% of the best. Columns give median $R^2$ with $\alpha = 0.1$ (the smallest penalty tested, for every
+individual) and with the chosen $\alpha$, the median paired gain with 95\% cluster-bootstrap confidence interval, and the
+share of training sessions whose mean gain was positive. The pair rule is not applied here, because penalties are
+compared on absolute $R^2$. $^\dagger$Interval not shown: a pair whose base decoder failed (for example $R^2$ near
+$-300$) makes the bootstrap interval meaningless. Monkeys here; the human participants follow on the next page.}
 \label{tab:reg}
 \scriptsize\setlength{\tabcolsep}{3.5pt}
 \begin{tabular}{@{}llrrrrlr@{}}
@@ -404,7 +429,7 @@ positive.}
 Individual & Chosen $\alpha$ & Gap (days) & Pairs & $R^2$, $\alpha = 0.1$ & $R^2$, rule & Gain [95\% CI] &
 Share positive \\
 \midrule
-\tabinput{supp/tab_reg.tex}
+\tabinput{supp/tab_reg_a.tex}
 \botrule
 \end{tabular}
 \end{table}
@@ -412,15 +437,48 @@ Share positive \\
 
 \begin{landscape}
 \begin{table}[p]
-\caption{\textbf{Recalibration with few labeled trials.} \textbf{a}, Monkey N (86 pairs): median retention without
-labels and, for each number of labeled trials, ridge to prior / fresh decoder / re-weighting (regularization by
-cross-validation). \textbf{b}, Human participants (30 training sessions each, all gaps): re-weighting / ridge to prior /
-fresh decoder. \textbf{c}, Harmful recalibrations in monkey N (more than 0.01 $R^2$ below the renormalized fixed
-decoder) with the shrinkage chosen by cross-validation or fixed at the value best on other training sessions, with
+\addtocounter{table}{-1}
+\caption{\textbf{(continued) Regularization by the 1\% rule, human participants.} Columns as on the previous page.}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}llrrrrlr@{}}
+\toprule
+Individual & Chosen $\alpha$ & Gap (days) & Pairs & $R^2$, $\alpha = 0.1$ & $R^2$, rule & Gain [95\% CI] &
+Share positive \\
+\midrule
+\tabinput{supp/tab_reg_b1.tex}
+\botrule
+\end{tabular}
+\end{table}
+\end{landscape}
+
+\begin{landscape}
+\begin{table}[p]
+\addtocounter{table}{-1}
+\caption{\textbf{(continued) Regularization by the 1\% rule, human participants.} Columns as on the first page.}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}llrrrrlr@{}}
+\toprule
+Individual & Chosen $\alpha$ & Gap (days) & Pairs & $R^2$, $\alpha = 0.1$ & $R^2$, rule & Gain [95\% CI] &
+Share positive \\
+\midrule
+\tabinput{supp/tab_reg_b2.tex}
+\botrule
+\end{tabular}
+\end{table}
+\end{landscape}
+
+\begin{landscape}
+\begin{table}[p]
+\caption{\textbf{Recalibration with few labeled trials.} \textbf{a}, Monkey N (86 pairs, default penalty
+$\alpha = 0.1$): median retention without labels and, for each number of labeled trials, ridge to prior / fresh
+decoder / re-weighting (regularization by cross-validation). \textbf{b}, Human participants (tuned penalty; 30
+training sessions each, all gaps; only pairs whose later day had at least 300 labeled training trials, so that every
+budget uses the same pairs): ridge to prior / fresh decoder / re-weighting, as in a. \textbf{c}, Harmful recalibrations in
+monkey N (default penalty; more than 0.01 $R^2$ below the renormalized fixed decoder) with the shrinkage chosen by cross-validation or fixed at the value best on other training sessions, with
 $P$ from a two-sided Wilcoxon signed-rank test over training sessions (share of each session's pairs made worse) and
 Holm-adjusted over the five budgets, and median retention for both and for the best value in hindsight.}
 \label{tab:recal}
-\scriptsize\setlength{\tabcolsep}{3.5pt}
+\fontsize{6.6}{7.6}\selectfont\setlength{\tabcolsep}{3.5pt}
 \textbf{a}\\[2pt]
 \begin{tabular}{@{}rrrlllll@{}}
 \toprule
@@ -462,8 +520,11 @@ shuffled silent episodes in parentheses). \textbf{b}, Per array: yield is the pe
 2~Hz (median of the first / last three sessions); $h_{\mathrm{off}}$ and $h_{\mathrm{on}}$ are switching rates per
 1,000 days; Rev./sil., recovered and silenced initially active electrodes; Kurt., excess kurtosis of
 session-to-session changes in log rate after removing session-wide changes; Imp.\ $\rho$, Spearman correlation of
-the array median impedance with day; Edge $-$ int., median edge minus median interior slope of log rate per year, with
-the one-sided Mann--Whitney $P$ (electrodes treated as independent; see main text for array-level tests).}
+the array median impedance with day (monkey N: median over channels of log impedance with day); Edge $-$ int., median
+edge minus median interior slope of log rate per year among initially active electrodes, and Adjusted, the same after
+adjusting for each electrode's initial rate (the values tested in the main text with the array as the unit, and shown
+in Fig.~7d; arrays with fewer than 10 initially active electrodes, --). Monkey N's edge value pools both arrays and
+all electrodes.}
 \label{tab:electrodes}
 \scriptsize\setlength{\tabcolsep}{3.5pt}
 \textbf{a}\\[2pt]
@@ -474,13 +535,19 @@ Definition & Silent episodes & Recovered & Recovered (\%) & Shuffled (\%) \\
 \tabinput{supp/tab_revival.tex}
 \botrule
 \end{tabular}
+\end{table}
+\end{landscape}
 
-\vspace{6pt}
+\begin{landscape}
+\begin{table}[p]
+\addtocounter{table}{-1}
+\caption{\textbf{(continued) Electrode statistics.} Panel b, as described on the previous page.}
+\scriptsize\setlength{\tabcolsep}{3.5pt}
 \textbf{b}\\[2pt]
 \begin{tabular}{@{}llrrrrrrrrrr@{}}
 \toprule
 Part. & Array & Sess. & Span (d) & Yield (\%) & $h_{\mathrm{off}}$ & $h_{\mathrm{on}}$ & Rev./sil. & Kurt. &
-Imp. $\rho$ & Edge $-$ int. & $P$ \\
+Imp. $\rho$ & Edge $-$ int. & Adjusted \\
 \midrule
 \tabinput{supp/tab_failure.tex}
 \botrule
@@ -503,22 +570,23 @@ Parameter & Unit & Early & Late \\
 \end{tabular}
 \end{table}
 
+\begin{landscape}
 \begin{table}[p]
 \caption{\textbf{Training on simulated futures.} Median $R^2$ on real later sessions of monkey N for ridge decoders
 trained on sessions after day 700 (simulator calibrated before day 700). Base, $\alpha = 0.1$; stronger ridge,
 $\alpha = 10^4$; perturbation, random channel dropout and gain noise; simulator, eight simulated futures; simulator and
 ridge, both; several days, data from the three previous sessions; reference, decoder trained on the test day.}
 \label{tab:augment}
-\scriptsize\setlength{\tabcolsep}{3.5pt}
+\scriptsize\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}rrrrrrrrr@{}}
 \toprule
-Gap (days) & Pairs & Base & Stronger ridge & Perturbation & Simulator & Simulator and ridge & Several days &
-Reference \\
+Gap (d) & Pairs & Base & Stronger ridge & Perturb. & Simulator & Sim.\ + ridge & Several days & Reference \\
 \midrule
 \tabinput{supp/tab_augment.tex}
 \botrule
 \end{tabular}
 \end{table}
+\end{landscape}
 
 \begin{table}[p]
 \caption{\textbf{BrainGate decoding participants and the inclusion rule.} Arrays (channels), sessions and span of the
@@ -527,10 +595,10 @@ the reference decoder across session pairs (linear decoder, default penalty). Pa
 correction analyses when this median exceeded 0.1 (Methods). For T2, neither block-wise normalization nor threshold
 crossings raised same-day $R^2$ above about 0.1 except on its earliest session.}
 \label{tab:decoding}
-\small
+\footnotesize\setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}lccccccc@{}}
 \toprule
-Participant & Arrays (channels) & Sessions & Span (years) & Trials per session & Movement (s) & Reference $R^2$ & Included \\
+Participant & Arrays (ch.) & Sessions & Span (yr) & Trials/session & Movement (s) & Ref.\ $R^2$ & Included \\
 \midrule
 \tabinput{supp/tab_decoding.tex}
 \botrule
@@ -554,6 +622,7 @@ Individual & Pairs & 1 d & 30 d & 480 d & 1 d & 30 d & 480 d & 1 d & 30 d & 480 
 \end{tabular}
 \end{table}
 
+\begin{landscape}
 \begin{table}[p]
 \caption{\textbf{Pretrained foundation decoder (NDT3) against the ridge decoder.} Both decoders received threshold
 crossings on the same 12 session pairs per individual (gaps of 1 to 480 days). Each cell gives the median $R^2$ of NDT3 /
@@ -563,7 +632,7 @@ of the new day versus the ridge decoder refit toward its previous weights. Self-
 continued training with its neural prediction loss only. T8's nearly silent first array was left out of NDT3's input by a
 rule written after a diagnostic on T8 and before its pairs were run (Methods); the ridge decoder used all channels.}
 \label{tab:ndt3}
-\footnotesize
+\scriptsize\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}lrlllll@{}}
 \toprule
 Individual & Pairs & Same day & No update & 50 trials & 300 trials & Self-supervised \\
@@ -572,9 +641,10 @@ Individual & Pairs & Same day & No update & 50 trials & 300 trials & Self-superv
 \botrule
 \end{tabular}
 \end{table}
+\end{landscape}
 
 \begin{table}[p]
-\caption{\textbf{Decay summary.} Retention of the renormalized fixed decoder after exactly one day (median, 95\%
+\caption{\textbf{Decay summary.} Retention of the renormalized fixed decoder (default penalty) after exactly one day (median, 95\%
 confidence interval and number of one-day pairs; shown when there were at least three) and days until median retention
 fell to one half, with the default and the tuned ridge penalty. Intervals are from a cluster bootstrap over training
 sessions (2,000 resamples). $<$1, below one half at the first tested gap. Pairs, valid pairs with the default penalty.}
@@ -596,7 +666,8 @@ label-free Procrustes rotation of the dominant 16-dimensional subspace, the best
 all labeled training trials of the later day (ceiling), and re-weighting of each channel fitted on the same trials
 (tuned penalty). Last column: median over training sessions of the paired difference in $R^2$, re-weighting minus
 ceiling, over all gaps, with two-sided Wilcoxon signed-rank $P$; positive values mean per-channel re-weighting
-recovered more than any subspace alignment can.}
+recovered more than the best linear alignment of the subspace. Pairs: all gaps; the shares use gaps of 120 and 480
+days.}
 \label{tab:ceiling}
 \footnotesize
 \begin{tabular}{@{}lrllll@{}}

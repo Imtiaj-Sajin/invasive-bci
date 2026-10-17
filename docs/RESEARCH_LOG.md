@@ -1596,3 +1596,34 @@ half-life below the first gap, Holm-corrected counts, McNemar clustering, text) 
   Structured abstract in manuscript/jne/abstract.tex (296 words; JNE headings). Added to regenerate_paper.sh.
   Compiles to 20 pages, no undefined references. Supplementary material: the master supplement.
 - Figure 4a labels changed from "rescaling" to "renormalization" (terminology fix).
+
+### 2026-10-17 — Full review of code, outputs, both manuscript versions and figures (three parallel reviewers)
+
+- Code bug (confirmed): `cv_shrunk` built CV folds from trial indices 0..n-1 even when fewer trials existed. When the
+  later day had at most n/k = 60 training trials (only T9 days 629 and 728; 13 pairs, 9 valid), the only fold with
+  validation trials had no training rows, every CV error was NaN, and the smallest penalty was chosen. Fixed in
+  `ibci.anatomy._fold_blocks` (folds from the available trials only in that degenerate case, so all other pairs are
+  unchanged). `python scripts/patch_short_sessions.py` recomputed exactly those rows in replication_bg/T9_ladder.csv,
+  decay_alpha/T9_alpha10000.csv and latent_ceiling/T9.csv (9 rows changed in each; all other rows identical to 4e-15).
+  The ceiling's all-trials columns were never affected. reweight_controls and gain_mechanism (random permutations in
+  pair order) rerun in full for T9. Sessions with 61-299 trials keep fewer, uneven folds; Methods to say so.
+- Correction to the 2026-10-17 ceiling entry: training trials per later session are not "~230-300". Monkey N always
+  has 300 by construction (so 'nall' equals the 300 budget there); human medians are larger (e.g. T5 455, T8 574).
+- Pipeline: regenerate_paper.sh now runs ceiling_summary.py and writes the session overview (fig2) before
+  make_numbers_tex.py reads it. ceiling_summary bootstrap rewritten with index resampling (20 s instead of >10 min;
+  identical intervals).
+- Statistics: one Holm family over all nine for the ceiling tests; raw P values used in Holm (no rounding). Mixed model
+  checked with a variance-free test (Kruskal-Wallis per gap, one value per training session): individuals differ at
+  every gap >= 7 d (participants P <= 2e-5); after one day the participants do not differ (P = 0.19). Reported.
+- Text fixes from the review (all checked against data): "within a day in some" -> one participant (tuned decoder);
+  refit toward the old decoder is better at 10-20 trials, fresh decoder from 50 trials; data-efficiency subset
+  disclosed (245 of 467 valid pairs with >= 300 trials); yield fell in only 10 of 20 human arrays (claim corrected);
+  ceiling described as an estimate for linear subspace alignment, not a strict bound; T3 rescue claim limited to T2;
+  T10 reference decoder fell slightly; 768-1,536 features; four participants with >= 3 one-day pairs; 1% rule choice
+  history; NDT3 same-day values clarified; unreproducible "split-half reliability 0.84" removed (no script computes it).
+- Supplement: Tables 2, 9 and 11 were cut off at the page bottom (T10, T8 rows missing in Table 2); split onto
+  continued pages. Tables 13, 14, 16 too wide; fixed (landscape / spacing). Table 11b edge columns now from
+  edge_arrays.csv (initially active electrodes, as tested in the text); monkey N values read from results instead of
+  typed. Table 9 unstable T7 interval flagged; Table 10 panels in one column order and penalties stated; Note 1, 3, 4, 5
+  corrections. Figures: Fig. 1a participant list and span, Fig. 5d row labels, Fig. 6d legend.
+- JNE build: the "Datasets and approach" overview now opens the Methods; structured abstract 290 words.
