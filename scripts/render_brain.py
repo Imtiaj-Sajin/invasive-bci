@@ -16,6 +16,11 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 from nilearn import datasets, plotting, surface  # noqa: E402
 from scipy import ndimage  # noqa: E402
+import sys
+import os
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src"))
+from ibci.paths import data_root  # noqa: E402
 
 SITES = (np.array([-36.0, -22.0, 64.0]), np.array([-44.0, -14.0, 54.0]))
 COLOR = "#4a3aa7"
@@ -24,7 +29,7 @@ COLOR = "#4a3aa7"
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="results/figures/v2/brain_render.png")
-    ap.add_argument("--data", default="G:/nilearn_data")
+    ap.add_argument("--data", default=os.path.join(data_root("atlas"), "nilearn_data"))
     ap.add_argument("--elev", type=float, default=28.0)
     ap.add_argument("--azim", type=float, default=180.0)
     args = ap.parse_args()

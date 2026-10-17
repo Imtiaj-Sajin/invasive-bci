@@ -8,7 +8,7 @@ Train = first 80% of go periods, test = the rest. Same decoder (ridge, 8 lags of
 ladder as for the monkeys (ibci.anatomy.ladder), with daily renormalization; all sessions of a participant are one
 'style', and pairs are chosen at target gaps.
 
-Usage: python scripts/replicate_braingate_decoding.py --participant T6 [--root D:/ibci-data/braingate] [--out results/replication_bg]
+Usage: python scripts/replicate_braingate_decoding.py --participant T6 [--root DATA/braingate] [--out results/replication_bg]
 """
 import argparse
 import glob
@@ -24,6 +24,7 @@ from scipy.io import loadmat
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from ibci.anatomy import K_LAT, N_LAGS, ladder  # noqa: E402
+from ibci.paths import data_root  # noqa: E402
 from ibci.linear import LagDecoder  # noqa: E402
 from ibci.preprocess import ZScore  # noqa: E402
 
@@ -127,7 +128,7 @@ def session_loader(stubs, maxsize=16):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--participant", required=True)
-    ap.add_argument("--root", default=os.path.join(os.environ.get("IBCI_DATA", "D:/ibci-data"), "braingate"))
+    ap.add_argument("--root", default=None, help="folder with decoding/<participant>/ (default: from ibci.paths)")
     ap.add_argument("--gaps", type=int, nargs="+", default=[1, 7, 30, 120, 480])
     ap.add_argument("--out", default="results/replication_bg")
     ap.add_argument("--resume", action="store_true", help="continue an interrupted run from its CSV")
@@ -137,6 +138,7 @@ def main():
         sys.exit("IBCI_BLOCKNORM=1 must write to its own --out (e.g. results/replication_bg_blocknorm), "
                  "not over the main ladders")
     os.makedirs(args.out, exist_ok=True)
+    args.root = args.root or os.path.join(data_root(args.participant), "braingate")
     files = sorted(glob.glob(os.path.join(args.root, "decoding", args.participant, "*_decoding.mat")),
                    key=lambda p: int(re.search(r"_day_(\d+)_", p).group(1)))
     sessions = []

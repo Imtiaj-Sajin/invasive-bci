@@ -1,4 +1,4 @@
 """Research code for chronic intracortical BCI reliability studies."""
-import os
+from .paths import data_root
 
-DATA_ROOT = os.environ.get("IBCI_DATA", "D:/ibci-data")
+DATA_ROOT = data_root()      # see ibci/paths.py

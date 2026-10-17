@@ -4,13 +4,17 @@ Temmar et al., "LINK: Long-term Intracortical Neural activity and Kinematics", N
 Files are saved as <root>/link/<session>.nwb. Already-complete files are skipped, so the script can be re-run.
 
 Usage:
-    python scripts/download_link.py [--root D:/ibci-data] [--workers 4]
+    python scripts/download_link.py [--root DATA] [--workers 4]
 """
 import argparse
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src"))
+from ibci.paths import data_root  # noqa: E402
 
 ASSETS_URL = "https://api.dandiarchive.org/api/dandisets/001201/versions/draft/assets/?page_size=400"
 DOWNLOAD_URL = "https://api.dandiarchive.org/api/assets/{}/download/"
@@ -35,7 +39,7 @@ def fetch(asset, out_dir):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--root", default=os.environ.get("IBCI_DATA", "D:/ibci-data"))
+    ap.add_argument("--root", default=data_root())
     ap.add_argument("--workers", type=int, default=4)
     args = ap.parse_args()
 

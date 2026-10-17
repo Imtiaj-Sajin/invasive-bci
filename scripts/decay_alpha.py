@@ -20,6 +20,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 sys.path.insert(0, os.path.dirname(__file__))
 import ibci.anatomy as anatomy_mod  # noqa: E402
 from ibci.anatomy import ladder  # noqa: E402
+from ibci.paths import data_root  # noqa: E402
 
 GAPS = [1, 7, 30, 120, 480]
 LADDER = {"N": "results/anatomy/ladder.csv", "C": "results/replication/C_ladder.csv",
@@ -43,7 +44,7 @@ def sessions_for(subject, alpha, keys):
                 out[s.key] = PerichSess(s, x, day0, alpha)
         return out
     from replicate_braingate_decoding import BGSess, load_session
-    root = os.path.join(os.environ.get("IBCI_DATA", "D:/ibci-data"), "braingate", "decoding", subject)
+    root = os.path.join(data_root(subject), "braingate", "decoding", subject)
     paths = {}
     for f in glob.glob(os.path.join(root, "*_decoding.mat")):
         day = int(re.search(r"_day_(\d+)_", f).group(1))

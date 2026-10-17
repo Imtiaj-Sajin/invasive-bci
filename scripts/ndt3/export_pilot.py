@@ -3,13 +3,13 @@
 Pair selection (fixed before any NDT3 run, decision 0005): for each pilot individual, the valid manifest pairs of the
 training sessions that have pairs at >= 4 of the 5 gaps; of those sessions, 3 evenly spaced in time; all their pairs.
 
-Output (H:/ibci-data/ndt3_pilot by default):
+Output (DATA/ndt3_pilot by default):
   <subject>/<session>.npz   x_tr (T, C) int16 crossings, y_tr (T, D), trial_tr (T,), x_te, y_te  (paper's split)
   pairs.csv                 subject, train, test, gap_target, days and the R2 of the linear reference methods on
                             threshold crossings (ridge, 8 lags, penalty 1e4): reference (same-day), none, renorm,
                             procrustes, reweight / prior_refit / retrain with 50 and 300 labelled trials.
 
-Usage: python scripts/ndt3/export_pilot.py [--subjects N T5 T8] [--n-train 3] [--out H:/ibci-data/ndt3_pilot]
+Usage: python scripts/ndt3/export_pilot.py [--subjects N T5 T8] [--n-train 3] [--out DATA/ndt3_pilot]
 """
 import argparse
 import os
@@ -21,8 +21,7 @@ import pandas as pd
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 from ibci import bench  # noqa: E402
 from ibci.bench import baselines as B  # noqa: E402
-
-ROOTS = {"T8": "H:/ibci-data", "T9": "G:/ibci-data", "T7": "F:/ibci-data", "T10": "F:/ibci-data"}
+from ibci.paths import data_root  # noqa: E402
 BUDGETS = (50, 300)
 
 
@@ -50,11 +49,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--subjects", nargs="+", default=["N", "T5", "T8"])
     ap.add_argument("--n-train", type=int, default=3)
-    ap.add_argument("--out", default="H:/ibci-data/ndt3_pilot")
+    ap.add_argument("--out", default=os.path.join(data_root("ndt3_pilot"), "ndt3_pilot"))
     args = ap.parse_args()
     rows = []
     for k in args.subjects:
-        os.environ["IBCI_DATA"] = ROOTS.get(k, "D:/ibci-data")
         pairs = pick_pairs(k, args.n_train)
         os.makedirs(os.path.join(args.out, k), exist_ok=True)
         sess = bench._sessions(k, set(pairs.train) | set(pairs.test), "tx")

@@ -22,8 +22,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from ibci import bench  # noqa: E402
 from ibci.bench import baselines as B  # noqa: E402
 
-DATA_ROOTS = {"T8": "H:/ibci-data", "T9": "G:/ibci-data", "T7": "F:/ibci-data", "T10": "F:/ibci-data"}
-
 
 def run(subject, name, fn, budgets, out_dir, resume):
     path = os.path.join(out_dir, name, f"{subject}.csv")
@@ -78,7 +76,8 @@ def main():
             else:
                 todo[m] = (B.SUPERVISED[m], args.budgets or [n for n in bench.BUDGETS if n > 0])
     for k in args.subjects:
-        os.environ["IBCI_DATA"] = args.data_root or DATA_ROOTS.get(k, "D:/ibci-data")
+        if args.data_root:                     # otherwise ibci.paths.data_root decides per participant
+            os.environ["IBCI_DATA"] = args.data_root
         for name, (fn, budgets) in todo.items():
             print(run(k, name, fn, budgets, args.out, args.resume), flush=True)
 

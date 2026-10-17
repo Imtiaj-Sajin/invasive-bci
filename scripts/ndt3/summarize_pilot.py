@@ -1,7 +1,7 @@
 """Summarize the NDT3 pilot against the linear decoder on the same threshold-crossing pairs.
 
 Inputs: results/ndt3/pilot/<subject><tag>.csv (final runs: N and T5 at the selected learning rate, T8 with the array
-rule) and H:/ibci-data/ndt3_pilot/pairs.csv (linear reference methods on the same pairs, all channels).
+rule) and DATA/ndt3_pilot/pairs.csv (linear reference methods on the same pairs, all channels).
 Output: results/ndt3/pilot_summary.json, used by make_numbers_tex.py and make_supp_tables.py.
 
 Comparisons (medians over pairs; retention = R2 / the model's own same-day R2 on the test day):

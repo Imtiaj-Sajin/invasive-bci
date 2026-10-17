@@ -14,6 +14,10 @@ import os
 
 import numpy as np
 import pyvista as pv
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src"))
+from ibci.paths import data_root  # noqa: E402
 
 SITES = (np.array([-36.0, -22.0, 64.0]), np.array([-44.0, -14.0, 54.0]))
 TISSUE_LIGHT, TISSUE_DARK = np.array([236, 196, 160]) / 255, np.array([170, 112, 78]) / 255
@@ -39,9 +43,10 @@ def _array_plate(center, normal, size=4.0, n=10, lift=1.2):
     return plate, bumps
 
 
-def render_brain(out, subjects_dir="G:/mne_data/subjects", size=(2400, 1800)):
+def render_brain(out, subjects_dir=None, size=(2400, 1800)):
     """fsaverage pial surface with the precentral gyrus (Desikan-Killiany atlas, FreeSurfer aparc) coloured and two
     array footprints on its crown near the hand-knob coordinates. Writes the image and the sites' pixel positions."""
+    subjects_dir = subjects_dir or os.path.join(data_root("atlas"), "mne_data", "subjects")
     import json
 
     import nibabel as nib

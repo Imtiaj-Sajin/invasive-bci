@@ -13,13 +13,18 @@ import re
 import numpy as np
 from scipy.io import loadmat
 from scipy.stats import wilcoxon
+import sys
+import os
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src"))
+from ibci.paths import data_root  # noqa: E402
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--participant", default="T5")
     ap.add_argument("--array", default="lateral")
-    ap.add_argument("--root", default="D:/ibci-data/braingate/yield")
+    ap.add_argument("--root", default=os.path.join(data_root("yield"), "braingate", "yield"))
     ap.add_argument("--early", type=int, default=200)
     ap.add_argument("--late", type=int, default=2000)
     ap.add_argument("--out", default="results/amplitude_T5.json")

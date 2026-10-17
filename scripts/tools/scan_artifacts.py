@@ -19,8 +19,9 @@ import pandas as pd
 sys.path[:0] = [os.path.join(os.path.dirname(__file__), "..", "..", "src"), os.path.join(os.path.dirname(__file__), "..")]
 from replicate_braingate_decoding import TRAIN_FRAC, load_session  # noqa: E402
 
-ROOTS = {"T6": "D:/ibci-data", "T5": "D:/ibci-data", "T9": "G:/ibci-data", "T7": "F:/ibci-data", "T10": "F:/ibci-data",
-         "T8": "H:/ibci-data", "T11": "D:/ibci-data", "T2": "F:/ibci-data", "T3": "F:/ibci-data"}
+from ibci.paths import data_root  # noqa: E402
+
+ROOTS = {p: data_root(p) for p in ("T6", "T5", "T9", "T7", "T10", "T8", "T11", "T2", "T3")}
 
 
 def main():

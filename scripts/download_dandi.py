@@ -3,13 +3,17 @@
 Already-complete files are skipped, so the script can be re-run after an interruption.
 
 Usage:
-    python scripts/download_dandi.py --dandiset 000688 --subjects C M --dest perich [--root D:/ibci-data] [--workers 4]
+    python scripts/download_dandi.py --dandiset 000688 --subjects C M --dest perich [--root DATA] [--workers 4]
 """
 import argparse
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src"))
+from ibci.paths import data_root  # noqa: E402
 
 API = "https://api.dandiarchive.org/api"
 
@@ -46,7 +50,7 @@ def main():
     ap.add_argument("--dandiset", required=True)
     ap.add_argument("--subjects", nargs="*", default=None, help="keep assets under sub-<S>/ for these S")
     ap.add_argument("--dest", required=True)
-    ap.add_argument("--root", default=os.environ.get("IBCI_DATA", "D:/ibci-data"))
+    ap.add_argument("--root", default=data_root())
     ap.add_argument("--workers", type=int, default=4)
     args = ap.parse_args()
 

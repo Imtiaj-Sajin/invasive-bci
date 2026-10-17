@@ -16,6 +16,7 @@ import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from ibci.anatomy import N_LAGS, SessCache, SessMeta, r2  # noqa: E402
+from ibci.paths import data_root  # noqa: E402
 from ibci.data import link  # noqa: E402
 from ibci.linear import lagged, ridge  # noqa: E402
 
@@ -41,7 +42,7 @@ def main():
         import glob
         import re
         from replicate_braingate_decoding import BGSess, load_session
-        root = os.path.join(os.environ.get("IBCI_DATA", "D:/ibci-data"), "braingate", "decoding", args.subject)
+        root = os.path.join(data_root(args.subject), "braingate", "decoding", args.subject)
         files = sorted(glob.glob(os.path.join(root, "*_decoding.mat")), key=lambda p: int(re.search(r"_day_(\d+)_", p).group(1)))
         meta = []
         for f in files:

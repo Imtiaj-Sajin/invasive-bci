@@ -2,7 +2,7 @@
 
 Pairs: those of the paper's ladders at the five main gaps (one per training session and gap; see select_pairs in
 scripts/drift_anatomy.py). ref_r2: R2 of the same-day reference decoder at the tuned penalty (results/decay_alpha);
-valid: ref_r2 > 0.1 (docs/decisions/0003).
+valid: ref_r2 > 0.1 (docs/INCLUSION_RULES.md).
 
 Usage: python scripts/bench_manifest.py [--ref-dir results/decay_alpha] [--out benchmark/manifests]
 """

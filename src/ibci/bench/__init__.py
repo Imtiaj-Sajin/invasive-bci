@@ -13,7 +13,7 @@ reference is a same-day decoder trained on all labelled day-j training trials (r
 
 Splits are fixed in benchmark/manifests/<subject>.csv: one pair per training session and target gap (1, 7, 30, 120,
 480 days; the closest later session within 25% of the gap). A pair counts in the summary only if its reference R2 is
-above 0.1 (``valid``; docs/decisions/0003). Features are spike-band power in 20 ms bins; outputs are finger position and
+above 0.1 (``valid``; docs/INCLUSION_RULES.md). Features are spike-band power in 20 ms bins; outputs are finger position and
 velocity (monkey N), hand velocity (monkeys C and M) or the unit cursor-to-target direction (BrainGate participants).
 
 Usage::
