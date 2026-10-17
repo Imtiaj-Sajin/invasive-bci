@@ -1,12 +1,34 @@
 {
-  "title": "ibci-drift: chronic drift and electrode failure in intracortical brain-computer interfaces",
+  "title": "Decoder decay and its correction over years in intracortical brain-computer interfaces: code, results and benchmark",
   "upload_type": "software",
-  "description": "Analysis code and a calibrated feature-level simulator of chronic drift and electrode failure in intracortical brain-computer interfaces, built from public long-term recordings in monkeys and humans.",
+  "description": "Code, derived results and a year-scale benchmark for measuring how intracortical brain-computer interface decoders lose accuracy over days to years and which corrections recover it, applied to public long-term recordings from three monkeys and BrainGate participants. Includes a calibrated simulator of chronic drift and electrode failure.",
   "creators": [
-    { "name": "Sajin, Md. Imtiaj Alam", "affiliation": "American International University-Bangladesh", "orcid": "0009-0009-2423-1835" },
-    { "name": "Chowdhury Abha, Esm E Moula", "affiliation": "American International University-Bangladesh", "orcid": "0009-0008-3776-2283" },
-    { "name": "Suva, Md Wahiduzzaman", "affiliation": "American International University-Bangladesh", "orcid": "0009-0007-6227-7282" }
+    {
+      "name": "Sajin, Md. Imtiaj Alam",
+      "affiliation": "American International University-Bangladesh",
+      "orcid": "0009-0009-2423-1835"
+    },
+    {
+      "name": "Chowdhury Abha, Esm E Moula",
+      "affiliation": "American International University-Bangladesh",
+      "orcid": "0009-0008-3776-2283"
+    },
+    {
+      "name": "Suva, Md Wahiduzzaman",
+      "affiliation": "American International University-Bangladesh",
+      "orcid": "0009-0007-6227-7282"
+    }
   ],
   "license": "MIT",
-  "keywords": ["brain-computer interface", "intracortical", "Utah array", "neural drift", "simulation"]
+  "keywords": [
+    "brain-computer interface",
+    "intracortical recording",
+    "neural decoder",
+    "decoder recalibration",
+    "neural drift",
+    "Utah array",
+    "BrainGate",
+    "benchmark",
+    "simulation"
+  ]
 }

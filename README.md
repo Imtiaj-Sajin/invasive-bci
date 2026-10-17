@@ -1,101 +1,107 @@
-![Figure 1](results/figures/v2/fig1_overview.png)
+# Decoder decay and its correction over years in intracortical brain–computer interfaces
 
+![Overview](results/figures/v2/fig1_overview.png)
 
-# Anatomy of chronic neural drift in intracortical BCIs
+Code, results and a benchmark for measuring how **intracortical brain–computer interface (iBCI) decoders lose accuracy
+over days to years**, and which corrections recover it. One pipeline is applied to public long-term recordings from
+**three monkeys and six BrainGate participants** (decoders) and **20 Utah arrays in 14 people** (electrodes), with gaps
+of 1 to 480 days between training and test sessions.
 
-What changes in chronic Utah-array recordings over days to years, which of those changes break BCI decoders, and a
-**data-calibrated simulator** of drift and electrode failure for building decoders that survive it.
+**Keywords:** intracortical brain–computer interface, neural decoder, decoder drift, decoder recalibration,
+nonstationarity, neural population alignment, Utah array, motor cortex, BrainGate, long-term neural recordings,
+benchmark, neural data simulator.
 
-**Status:** research in progress (started 2026-10-05).
+## Main findings
 
-- Topic and rationale: [docs/decisions/0002](docs/decisions/0002-pivot-chronic-drift-anatomy-and-simulator.md),
-  which supersedes [0001](docs/decisions/0001-research-topic.md).
-- Paper plan: [docs/paper/OUTLINE.md](docs/paper/OUTLINE.md).
-- Everything done and found, with dates: [docs/RESEARCH_LOG.md](docs/RESEARCH_LOG.md).
+- **Decay differs widely between individuals.** A fixed decoder lost half its accuracy within a day in one participant
+  and only after about 200 days in another (mixed model, P = 1e-28).
+- **Weak regularization exaggerates decay.** Tuning the ridge penalty on training-day data alone slows measured decay.
+- **Label-free alignment adds little beyond per-session normalization**, although an alignment fitted with labels
+  shows that better alignments exist (42–85% of the long-gap loss recoverable). Even that ceiling leaves 15–58% of the
+  loss, which needs new labels.
+- **About 100 labeled trials (a few minutes) restore most accuracy in people.**
+- **Most brief electrode silences look like session-to-session fluctuation;** month-long silences are real and often
+  reverse.
 
-## Findings so far
+## What is in this repository
 
-Details, numbers, caveats and corrections are in [docs/RESEARCH_LOG.md](docs/RESEARCH_LOG.md).
+| Path | Contents |
+| --- | --- |
+| `src/ibci/` | Python package: data loaders, decoders and corrections (`anatomy.py`), statistics, the drift simulator (`sim.py`), the benchmark API (`bench/`) and data paths (`paths.py`). |
+| `scripts/` | One script per analysis; `scripts/reproduce.py` runs them all in order. |
+| `benchmark/` | Year-scale decoder-transfer benchmark: 1,824 fixed session pairs in 9 individuals, task definition, rules and baselines. See [benchmark/README.md](benchmark/README.md). |
+| `results/` | All derived results (tables, JSON summaries, run logs and figures), including earlier and superseded runs in `results/archive/`. See [results/README.md](results/README.md). |
+| `docs/` | [REPRODUCE.md](docs/REPRODUCE.md) (step-by-step guide) and [SIMULATOR.md](docs/SIMULATOR.md) (drift simulator). |
+| `examples/` | A short example of the simulator on a real session. |
+| `tests/` | Unit tests. |
 
-- **Decoder decay under daily renormalization is fast and broadly conserved.** Three monkeys, two labs, two tasks and two feature types
-  (LINK monkey N; DANDI 000688 Chewie and Mihili) give a similar pattern:
-  - about 25% of own-day R² lost after 1 day and about half after a week;
-  - close to nothing left by about 4 months.
-- **Label-free fixes don't recover the loss.** Procrustes and stable-channel subspace alignment never beat simple
-  renormalization. Label-free statistics also cannot predict a decoder's day-to-day performance beyond elapsed time,
-  even though that variation is reliable (split-half 0.84).
-- **Per-channel gain changes are a minor part of drift.** Re-learning 96 channel gains recovers about 15–50% of the loss.
-  A free 96×96 input remap is *not* an anatomical test: it can represent any new decoder. That claim was withdrawn
-  on 2026-10-06.
-- **Recalibration recipe:**
-  - Use ridge shrunk toward the previous decoder, including its intercept, with the shrinkage strength *borrowed from past sessions*.
-  - About 100 labelled trials (about 3 minutes) recover 80–90% of own-day R², and harmful recalibrations at 10–20 trials drop from about 10% to about 1%.
-  - With 10–50 trials, re-learning only the decoder's 32 most-used channels is slightly better still.
-- **LSTM vs ridge (matched pairs):** the LSTM is more accurate (+0.13 R²) and modestly more drift-robust in relative terms.
-- **Electrode failure process** (3.4 years of LINK; replicated in Chewie, Mihili and human T5):
-  - Impedance falls about 45% (302 → 171 kΩ) and active channels halve.
-  - Most channel losses are **transient** (alive/silent switching).
-  - Abrupt single-electrode changes are common.
-  - Spiking declines faster at **array edges** in both arrays, while spike-band power declines uniformly.
-- **Simulator** (in progress): a feature-level model of drift and electrode failure. It is calibrated so that its oracle
-  ladder matches the real one, with time-split validation.
+## How to reproduce
 
-## Repository map
+The full guide, with data sizes, run times and the script behind every figure and table, is in
+**[docs/REPRODUCE.md](docs/REPRODUCE.md)**. In short:
 
-- [CLAUDE.md](CLAUDE.md): orientation for AI agents and contributors (conventions, compute environment, commit rules).
-- [docs/knowledge/](docs/knowledge/): source-backed notes on the field, ML methods, electrodes, datasets and existing code.
-- `src/ibci/`: the library.
-  - `data/` holds loaders for LINK, DANDI 000688 and FALCON H2.
-  - `linear.py`: decoders.
-  - `anatomy.py`: the oracle ladder.
-  - `sim.py`: the simulator.
-  - `stats.py` and `plotting.py`: statistics and figure style.
-- `scripts/`: entry points. `scripts/run_all.sh` lists the full pipeline in order.
-- `results/`: small result tables and figures. `tests/`: unit tests (`python -m pytest tests -q`).
-- `manuscript/`: the paper.
-  - `natcomms/`: Nature Communications version (Springer Nature `sn-jnl` template); `main.tex`, `supplementary.tex`,
-    compiled PDFs, `numbers.tex` (every quoted number, generated by `scripts/make_numbers_tex.py`) and `supp/*.tex`
-    (generated by `scripts/make_supp_tables.py`). `archive/` keeps earlier drafts.
-  - `jne/`: Journal of Neural Engineering version (longer format, more display items); see its README.
-  - `tools/`: shared `make_bib.py` (references in citation order from verified metadata), `check_style.py`.
-  - Rebuild: `python scripts/make_numbers_tex.py && python manuscript/tools/make_bib.py && cd manuscript/natcomms
-    && pdflatex main && pdflatex main`.
+### 1. Install
 
-## Install
+Python 3.11; the exact package versions are pinned in `requirements.txt`.
 
 ```bash
 git clone https://github.com/Imtiaj-Sajin/invasive-bci.git
 cd invasive-bci
-pip install -e ".[data,dev]"          # add ",gpu" for the GPU-based corrections (PyTorch)
-python -m pytest tests -q
+./reproduce.sh setup          # Windows: reproduce.bat setup
 ```
 
-## Quick start: simulate chronic drift on a real session
+### 2. Get the data
 
-```python
-import numpy as np
-from ibci import sim
-from ibci.anatomy import Sess
-from ibci.data import link
+All datasets are public. The downloads total roughly 100 GB, most of it the BrainGate decoding archives, which
+are converted to much smaller files.
 
-p = sim.load_preset("early")            # calibrated on implant days < 700 ("late" for days >= 700)
-base = Sess("2020-03-10_CO")            # a LINK session (download with scripts/download_link.py)
-dist = link.chebyshev_distance(link.electrode_layout())
-drift = sim.sample_drift(base.ztr, 30, p, dist, np.random.default_rng(0), alive=base.alive)
-future = sim.apply_drift(base.zte, drift, np.random.default_rng(1))   # the session 30 days later
+```bash
+./reproduce.sh data           # downloads the DANDI datasets and prints the two manual Dryad steps
 ```
 
-More detail: [docs/SIMULATOR.md](docs/SIMULATOR.md) and `examples/simulate_drift.py`. The full analysis pipeline is
-listed in `scripts/run_all.sh`.
+By default the data go to `data/` inside the repository. To use another folder, set the environment variable
+`IBCI_DATA`, or list one folder per dataset in `data_roots.json` (see `src/ibci/paths.py`).
+
+### 3. Run the analyses and rebuild the results
+
+```bash
+./reproduce.sh ladders        # correction ladders for every individual
+./reproduce.sh analyses       # tuned decoders, alignment ceiling, controls, recalibration
+./reproduce.sh electrodes     # electrode statistics and monitoring
+./reproduce.sh simulator      # simulator calibration and validation
+./reproduce.sh summaries      # statistics, benchmark baselines and all figures
+./reproduce.sh check          # tests and benchmark reproduction check
+```
+
+`./reproduce.sh all` runs every stage in order; `./reproduce.sh --list` shows each command first. Each stage can be
+run on its own, and `--skip-existing` resumes after an interruption. The results already in `results/` let you rebuild
+all summaries and figures with `./reproduce.sh summaries` without downloading any data.
+
+## Benchmark
+
+The benchmark asks how well a decoder trained on one day works on a later day, given 0 to 300 labeled trials from the
+new day. Splits, metrics, reference methods and baseline scores are in [benchmark/README.md](benchmark/README.md);
+`python scripts/bench_run.py --plugin your_module:your_method` scores a new method.
+
+## Simulator
+
+`ibci.sim` turns a real session into a simulated session days to years later, with parameters calibrated on monkey N.
+See [docs/SIMULATOR.md](docs/SIMULATOR.md) and `examples/simulate_drift.py`.
+
+## Data sources
+
+Please cite the original datasets when you use them:
+
+- **LINK** (monkey N), DANDI Archive 001201, CC-BY-4.0: Temmar et al., *Adv. Neural Inf. Process. Syst.* 38 (2025).
+- **Long-term reaching recordings** (monkeys C and M), DANDI Archive 000688, CC-BY-4.0: Perich and Miller.
+- **BrainGate yield and decoding data**, Dryad doi:10.5061/dryad.x0k6djj1h, CC0: Hahn et al., *Nat. Med.* (2026).
+- **MINDFUL closed-loop data**, Dryad doi:10.5061/dryad.n2z34tn5s, CC0: Pun et al., *Commun. Biol.* 7, 1363 (2024).
 
 ## Citation
 
-See [CITATION.cff](CITATION.cff). Licence: MIT.
+If you use this code, the benchmark or the results, please cite the repository ([CITATION.cff](CITATION.cff)). The
+article describing the study is under review; the reference will be added here.
 
-## Data (please cite the original papers)
+## Licence
 
-- **LINK**, DANDI 001201 (CC-BY-4.0): Temmar et al., NeurIPS 2025 Datasets & Benchmarks.
-- **DANDI 000688**: Perich/Miller long-term monkey reaching (Chewie, Mihili).
-- **FALCON H2**, DANDI 000950: Karpowicz et al., NeurIPS 2024 Datasets & Benchmarks (human T5).
-- **BrainGate 20-year release**, Dryad doi:10.5061/dryad.x0k6djj1h: Hahn et al., *Nat. Med.* (2026) (yield data for 20 arrays in 14 participants; closed-loop decoding sessions).
-- **MINDFUL**, Dryad doi:10.5061/dryad.n2z34tn5s: Pun et al., *Commun. Biol.* 7, 1363 (2024).
+MIT. See [LICENSE](LICENSE).

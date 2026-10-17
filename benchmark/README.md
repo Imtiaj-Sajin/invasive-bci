@@ -51,17 +51,18 @@ the closest later session of the same task within 25% of the gap; 1-day pairs ma
 
 Features are 20 ms bins of spike-band power (monkey N and the BrainGate participants) or of spike counts summed over
 the sorted units of each electrode (monkeys C and M; the release has no spike-band power). Three other BrainGate participants (T2, T3, T11) fail the reference rule
-and are left out; see `docs/decisions/0003-inclusion-rules-for-decoder-pairs.md`.
+and are left out; see [docs/INCLUSION_RULES.md](../docs/INCLUSION_RULES.md).
 
 ## Getting the data
 
 | Data | Source | Licence | Download |
 | --- | --- | --- | --- |
-| Monkey N | LINK, DANDI [001201](https://dandiarchive.org/dandiset/001201) | CC-BY-4.0 | `python scripts/download_link.py --root D:/ibci-data` |
-| Monkeys C and M | Perich and Miller, DANDI [000688](https://dandiarchive.org/dandiset/000688) | CC-BY-4.0 | `python scripts/download_dandi.py --dandiset 000688 --subjects C M --dest perich --root D:/ibci-data` |
-| BrainGate T5, T6, T7, T8, T9, T10 | Hahn et al. 2026, Dryad [10.5061/dryad.x0k6djj1h](https://doi.org/10.5061/dryad.x0k6djj1h) | CC0 | Download `decoding_<P>.tar.gz` in a browser (Dryad blocks automated downloads), then `python scripts/tools/compact_braingate_decoding.py decoding_<P>.tar.gz D:/ibci-data/braingate/decoding/<P>` |
+| Monkey N | LINK, DANDI [001201](https://dandiarchive.org/dandiset/001201) | CC-BY-4.0 | `python scripts/download_link.py` |
+| Monkeys C and M | Perich and Miller, DANDI [000688](https://dandiarchive.org/dandiset/000688) | CC-BY-4.0 | `python scripts/download_dandi.py --dandiset 000688 --subjects C M --dest perich` |
+| BrainGate T5, T6, T7, T8, T9, T10 | Hahn et al. 2026, Dryad [10.5061/dryad.x0k6djj1h](https://doi.org/10.5061/dryad.x0k6djj1h) | CC0 | Download `decoding_<P>.tar.gz` in a browser (Dryad blocks automated downloads), then `python scripts/tools/compact_braingate_decoding.py decoding_<P>.tar.gz <data>/braingate/decoding/<P>` |
 
-Set `IBCI_DATA` to the data folder (default `D:/ibci-data`).
+Data go to `data/` in the repository unless `IBCI_DATA` or `data_roots.json` says otherwise (see
+[docs/REPRODUCE.md](../docs/REPRODUCE.md)).
 
 ## Using it
 
