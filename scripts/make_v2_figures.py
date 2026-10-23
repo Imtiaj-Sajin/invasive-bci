@@ -329,7 +329,7 @@ def fig1(out):
     ux.axis("off")
     fig.text(0.3 + us / 2, 0.735, "Utah array\n96 electrodes,\n400 µm apart\n(rendering)", ha="center", va="top",
              fontsize=fs(4.6), color=P.INK2, linespacing=1.2)
-    tip = sites.mean(0)
+    tip = sites[np.argmin(sites[:, 1])]              # callout from the upper array (smaller image row)
     for ang in (150, 210):
         t = np.radians(ang)
         ux.add_artist(ConnectionPatch(xyA=tuple(tip), coordsA=ax.transData,
