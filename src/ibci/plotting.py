@@ -71,6 +71,8 @@ def day_axis(ax, ticks=(1, 3, 7, 30, 120, 480)):
 
 MM = 1 / 25.4  # inches per millimetre
 SINGLE_COL, DOUBLE_COL = 88 * MM, 180 * MM  # Nature figure widths
+IOP_COL = 150 * MM  # IOP Publishing double-column figure width (J. Neural Eng.)
+PANEL_FS = 8        # panel-letter size; the IOP figures use 10
 
 
 def setup_nature():
@@ -85,6 +87,17 @@ def setup_nature():
     })
 
 
-def panel(ax, letter, x=-0.18, y=1.04):
+def setup_iop():
+    """IOP Publishing figure style: drawn at the printed width (150 mm), text 6.5-8 pt at final size."""
+    setup_nature()
+    mpl.rcParams.update({
+        "font.size": 7.5, "axes.titlesize": 8, "axes.labelsize": 7.5, "xtick.labelsize": 7, "ytick.labelsize": 7,
+        "legend.fontsize": 6.5, "legend.title_fontsize": 7, "lines.markersize": 3.5, "xtick.major.size": 2.5,
+        "ytick.major.size": 2.5,
+    })
+
+
+def panel(ax, letter, x=-0.18, y=1.04, fontsize=None):
     """Lowercase bold panel letter in the Nature style."""
-    ax.text(x, y, letter, transform=ax.transAxes, fontsize=8, fontweight="bold", va="bottom", ha="left", color=INK)
+    ax.text(x, y, letter, transform=ax.transAxes, fontsize=fontsize or PANEL_FS, fontweight="bold", va="bottom",
+            ha="left", color=INK)

@@ -1,4 +1,4 @@
-"""Manuscript v2 figures (Nature Communications style: 180 mm wide, Arial 5-7 pt).
+"""Manuscript figures for J. Neural Eng. (IOP style: drawn at the printed width of 150 mm, Arial 6-8 pt).
 
   fig1_overview     real examples: array sites on the fsaverage surface (scripts/render_brain.py), T5 waveforms 7.3
                     years apart, closed-loop cursor paths and decoder reconstructions (old, re-weighted, same-day)
@@ -47,6 +47,17 @@ COL = {k: c for k, _, _, c, _ in IND}
 MK = {k: m for k, _, _, _, m in IND}
 NAME = {k: n for k, n, _, _, _ in IND}
 RET = "retention (R² / fresh R²)"
+FIGW = P.IOP_COL                      # drawn at the printed width, so font sizes are final sizes
+P.PANEL_FS = 10
+
+
+def fs(x):
+    """Font size for the IOP layout from the old Nature-layout value (min 6 pt at the printed size)."""
+    return max(6.0, round(1.3 * x, 1))
+
+
+def setup():
+    P.setup_iop()
 DECODING_ROOTS = {p: os.path.join(data_root(p), "braingate", "decoding", p)
                   for p in ("T6", "T5", "T9", "T7", "T10", "T8", "T11", "T2", "T3")}
 
@@ -81,10 +92,10 @@ def species_curves(axm, axh, series, ylim, ylabel=True, title=None):
         ref_lines(ax)
         P.day_axis(ax, GAPS)
         ax.set_ylim(ylim[0] - (0.45 if len(group) > 3 else 0), ylim[1])   # room for the legend below the curves
-        ax.legend(loc="lower left", frameon=False, ncol=3 if len(group) > 3 else 1, fontsize=4.4, handlelength=1.2,
-                  columnspacing=0.6, title=lab, title_fontsize=4.8)
+        ax.legend(loc="lower left", frameon=False, ncol=3 if len(group) > 3 else 1, fontsize=fs(4.4), handlelength=1.2,
+                  columnspacing=0.6, title=lab, title_fontsize=fs(4.8))
         if ylabel:
-            ax.set_ylabel(RET, fontsize=5.2)
+            ax.set_ylabel(RET, fontsize=fs(5.2))
     axm.set_xlabel("")
     axm.tick_params(labelbottom=False)
     axh.set_xlabel("days since decoder training")
@@ -226,7 +237,7 @@ def _amp_map(ax, grid, xy, wf, title, norm, cmap, mark=(), ylabel=True):
     if ylabel:
         ax.set_ylabel("mm", labelpad=0)
     ax.grid(False)
-    ax.set_title(f"{title}: {len(wf)} of {len(grid)} with spikes", fontsize=5.6, pad=3)
+    ax.set_title(f"{title}\n{len(wf)} of {len(grid)} with spikes", fontsize=fs(4.8), pad=3, linespacing=1.15)
 
 
 TARGET_COLORS = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7", "#e34948"]
@@ -254,7 +265,7 @@ def _paths(ax, paths, targets, all_targets, title, ylabel=False):
     if ylabel:
         ax.set_ylabel("y (task units)", labelpad=1)
     ax.grid(False)
-    ax.set_title(title, fontsize=6, pad=3, linespacing=1.2, fontweight="bold")
+    ax.set_title(title, fontsize=fs(4.8), pad=3, linespacing=1.2, fontweight="bold")
 
 
 def _trimmed(path, offsets=False):
@@ -277,35 +288,36 @@ def _icon(fig, rect, path, color):
 
 def fig1(out):
     import matplotlib as mpl
-    P.setup_nature()
+    setup()
     ex = overview_examples()
-    fig = plt.figure(figsize=(P.DOUBLE_COL, 6.3))
-    H = 6.3
+    W, H = FIGW, 7.0
+    fig = plt.figure(figsize=(W, H))
 
     def lab(x, y, t):
-        fig.text(x, y, t, fontsize=8, fontweight="bold", va="top")
+        fig.text(x, y, t, fontsize=fs(8), fontweight="bold", va="top")
 
     # a: rendered cortical surface (FreeSurfer fsaverage, precentral gyrus from the aparc atlas), array sites and a
     # rendering of one Utah array
     from matplotlib.patches import Circle, ConnectionPatch
     lab(0.005, 0.995, "a")
-    fig.text(0.215, 0.99, "Intracortical arrays in motor cortex", ha="center", va="top", fontsize=6.5,
+    fig.text(0.04, 0.99, "Intracortical arrays in motor cortex", ha="left", va="top", fontsize=fs(6.5),
              fontweight="bold")
-    _icon(fig, [0.035, 0.902, 0.02, 0.06], "results/figures/assets/human_phylopic_b8c16fc6.png", P.INK2)
-    fig.text(0.06, 0.94, "People with paralysis\nT5–T10 (decoders)\n14 people (electrodes)", va="center", fontsize=5.2,
+    _icon(fig, [0.04, 0.917, 0.016, 0.045], "results/figures/assets/human_phylopic_b8c16fc6.png", P.INK2)
+    fig.text(0.062, 0.94, "People with paralysis\n6 (decoders), 14 (electrodes)", va="center", fontsize=fs(4.8),
              color=P.INK, linespacing=1.25)
-    _icon(fig, [0.19, 0.912, 0.04, 0.036], "results/figures/assets/macaque_phylopic_63169c26.png", P.INK2)
-    fig.text(0.235, 0.94, "Monkeys\nN, C, M", va="center", fontsize=5.2, color=P.INK, linespacing=1.25)
-    fig.text(0.215, 0.888, "0.9–7.3 years of recordings each", ha="center", va="center", fontsize=5.2,
+    _icon(fig, [0.305, 0.925, 0.034, 0.03], "results/figures/assets/macaque_phylopic_63169c26.png", P.INK2)
+    fig.text(0.345, 0.94, "Monkeys\nN, C, M", va="center", fontsize=fs(4.8), color=P.INK, linespacing=1.25)
+    fig.text(0.04, 0.897, "0.9–7.3 years of recordings each", ha="left", va="center", fontsize=fs(4.8),
              color=P.INK2)
-    ax = fig.add_axes([0.0, 0.60, 0.31, 0.275])
+    ax = fig.add_axes([0.0, 0.625, 0.29, 0.255])
     brain, r0, c0 = _trimmed("results/figures/v2/brain_3d.png", offsets=True)
     ax.imshow(brain)
     ax.axis("off")
     sites = np.array(json.load(open("results/figures/v2/brain_3d_sites.json"))["sites_px"]) - [c0, r0]
     ax.text(0.5, -0.015, "precentral gyrus (green), array sites (white)", transform=ax.transAxes, ha="center",
-            va="top", fontsize=4.8, color=P.INK2)
-    ux = fig.add_axes([0.305, 0.705, 0.11, 0.124])                       # square in inches
+            va="top", fontsize=fs(4.6), color=P.INK2)
+    us = 0.115                                                           # inset width; height keeps it square
+    ux = fig.add_axes([0.3, 0.745, us, us * W / H])
     ring = Circle((0.5, 0.5), 0.5, transform=ux.transAxes, fc="white", ec=P.NEUTRAL, lw=0.7, clip_on=False)
     ux.add_patch(ring)
     utah = _trimmed("results/figures/v2/utah_3d.png")
@@ -315,8 +327,8 @@ def fig1(out):
     ux.set_xlim(0, 1)
     ux.set_ylim(0, 1)
     ux.axis("off")
-    fig.text(0.36, 0.695, "Utah array: 96 electrodes,\n400 µm apart (rendering)", ha="center", va="top", fontsize=4.8,
-             color=P.INK2, linespacing=1.25)
+    fig.text(0.3 + us / 2, 0.735, "Utah array\n96 electrodes,\n400 µm apart\n(rendering)", ha="center", va="top",
+             fontsize=fs(4.6), color=P.INK2, linespacing=1.2)
     tip = sites.mean(0)
     for ang in (150, 210):
         t = np.radians(ang)
@@ -330,26 +342,26 @@ def fig1(out):
     norm = mpl.colors.Normalize(20, 120)
     ecol = dict(zip(EX["electrodes"], ["#eb6834", "#1baf7a", "#2a78d6"]))
     mark = [(ex["wfe_pos"][i], c) for i, c in ecol.items()]
-    lab(0.44, 0.995, "b")
-    fig.text(0.715, 0.99, f"Spike amplitude on each electrode, {EX['participant']} lateral array", ha="center",
-             va="top", fontsize=6.5, fontweight="bold")
+    lab(0.46, 0.995, "b")
+    fig.text(0.5, 0.99, f"Spike amplitude on each electrode,\n{EX['participant']} lateral array", ha="left",
+             va="top", fontsize=fs(6.5), fontweight="bold", linespacing=1.15)
     for k, (d, ttl) in enumerate([(d0, f"Day {d0}"), (d1, f"Day {d1:,}")]):
-        bx = fig.add_axes([0.47 + k * 0.22, 0.655, 0.2, 0.27])
+        bx = fig.add_axes([0.5 + k * 0.215, 0.665, 0.195, 0.23])
         _amp_map(bx, ex[f"grid{d}"], ex[f"xy{d}"], ex[f"wf{d}"], ttl, norm, amp_cmap, mark, ylabel=k == 0)
-    cax = fig.add_axes([0.925, 0.69, 0.012, 0.2])
+    cax = fig.add_axes([0.935, 0.69, 0.012, 0.18])
     cb = fig.colorbar(mpl.cm.ScalarMappable(norm, amp_cmap), cax=cax, ticks=[20, 70, 120])
     cb.set_label("peak-to-peak (µV)", labelpad=2)
     cb.outline.set_visible(False)
 
     # c: waveforms of three electrodes in every session, coloured by time since implant
     lab(0.005, 0.585, "c")
-    fig.text(0.29, 0.58, "Mean spike waveform in every session, three electrodes", ha="center", va="top",
-             fontsize=6.5, fontweight="bold")
+    fig.text(0.04, 0.58, "Mean spike waveform in every session, three electrodes", ha="left", va="top",
+             fontsize=fs(6.5), fontweight="bold")
     tcmap = mpl.colormaps["viridis"]
     tnorm = mpl.colors.Normalize(0, 7.5)
     t_ms = np.arange(32) / 15.0
     for k, (i, c) in enumerate(ecol.items()):
-        cx = fig.add_axes([0.06 + k * 0.165, 0.37, 0.14, 0.17])
+        cx = fig.add_axes([0.08 + k * 0.165, 0.375, 0.14, 0.135])
         days, W = ex["wfe"][i]
         for dd, w in zip(days, W):
             cx.plot(t_ms, w, color=tcmap(tnorm(dd / 365.25)), lw=0.5, alpha=0.55)
@@ -363,15 +375,16 @@ def fig1(out):
         cx.grid(False)
         for sp in ("left", "bottom"):
             cx.spines[sp].set_color(P.INK2)
-        cx.set_title(f"electrode {i + 1} ({len(days)} sessions)", fontsize=5.4, pad=2, color=c, fontweight="bold")
-    cax = fig.add_axes([0.555, 0.39, 0.009, 0.13])
+        cx.set_title(f"electrode {i + 1}\n{len(days)} sessions", fontsize=fs(4.8), pad=2, color=c, fontweight="bold",
+                     linespacing=1.15)
+    cax = fig.add_axes([0.575, 0.39, 0.009, 0.11])
     cb = fig.colorbar(mpl.cm.ScalarMappable(tnorm, tcmap), cax=cax, ticks=[0, 2, 4, 6])
     cb.set_label("years", labelpad=2)
     cb.outline.set_visible(False)
 
     # d: threshold-crossing rate of every electrode in every session
-    lab(0.63, 0.585, "d")
-    hx = fig.add_axes([0.70, 0.37, 0.2, 0.18])
+    lab(0.66, 0.585, "d")
+    hx = fig.add_axes([0.73, 0.375, 0.19, 0.15])
     days, fr = ex["fr_days"], ex["fr"]
     edges = np.arange(days.min(), days.max() + 31, 30)
     binned = np.full((fr.shape[0], len(edges) - 1), np.nan)
@@ -387,7 +400,8 @@ def fig1(out):
     hx.set_ylabel("electrode (sorted)", labelpad=1)
     hx.set_yticks([1, 96], ["1", "96"])
     hx.grid(False)
-    hx.set_title(f"Threshold crossings, {len(days)} sessions", fontsize=6, pad=3, fontweight="bold")
+    hx.set_title(f"Threshold crossings\n{len(days)} sessions", fontsize=fs(5.4), pad=8, fontweight="bold",
+                 loc="left", linespacing=1.15)
     cb = fig.colorbar(im, ax=hx, fraction=0.08, pad=0.03, ticks=[-1, 0, 1, 2])
     cb.ax.set_yticklabels(["0.1", "1", "10", "100"])
     cb.set_label("rate (Hz)", labelpad=1)
@@ -402,14 +416,14 @@ def fig1(out):
 
     pan = [("cursor", "Recorded cursor\n(closed loop, day %d)" % EX["test_day"]),
            ("own", "Same-day decoder\n$R^2$ = " + fmt(r["own"])),
-           ("fixed", "Decoder from %d days earlier\n$R^2$ = " % gap + fmt(r["fixed"])),
-           ("reweight", "Same decoder, re-weighted\n$R^2$ = " + fmt(r["reweight"]))]
-    lab(0.005, 0.27, "e")
-    lab(0.255, 0.27, "f")
-    fig.text(0.62, 0.268, "Offline reconstruction of the same movements from neural activity", ha="center",
-             va="top", fontsize=6.5, fontweight="bold")
+           ("fixed", "Decoder from day %d\n$R^2$ = " % EX["train_day"] + fmt(r["fixed"])),
+           ("reweight", "Re-weighted (day %d)\n$R^2$ = " % EX["train_day"] + fmt(r["reweight"]))]
+    lab(0.005, 0.285, "e")
+    lab(0.27, 0.285, "f")
+    fig.text(0.3, 0.282, "Offline reconstruction from neural activity", ha="left", va="top", fontsize=fs(6.5),
+             fontweight="bold")
     for k, (key, ttl) in enumerate(pan):
-        cx = fig.add_axes([0.055 + k * 0.237, 0.04, 0.2, 0.18])
+        cx = fig.add_axes([0.075 + k * 0.232, 0.04, 0.19, 0.165])
         _paths(cx, ex["paths"][key], ex["targets"], ex["all_targets"], ttl, ylabel=k == 0)
     P.save(fig, os.path.join(out, "fig1_overview"))
 
@@ -422,8 +436,8 @@ def fig_design(out):
         if days:
             sess[f"human {p} decoding"] = days
     json.dump(sess, open("results/figures/overview_sessions.json", "w"))
-    P.setup_nature()
-    fig = plt.figure(figsize=(P.DOUBLE_COL, 2.7))
+    setup()
+    fig = plt.figure(figsize=(FIGW, 2.7))
 
     # b: sessions over time
     groups = [("Decoders", ["monkey N (LINK)", "monkey C (000688)", "monkey M (000688)"]
@@ -446,12 +460,12 @@ def fig_design(out):
             y -= 1
         y -= 0.8
     bx.set_yticks([r[0] for r in rows])
-    bx.set_yticklabels([r[1] for r in rows], fontsize=4.4)
+    bx.set_yticklabels([r[1] for r in rows], fontsize=fs(4.4))
     bx.set_xlabel("years since first session")
     bx.grid(axis="y", visible=False)
     bx.set_ylim(y + 0.3, 1)
     bx.legend([Line2D([], [], color=c, lw=1.2) for c in colors.values()], list(colors), loc="lower right",
-              title="analysis (sessions)", title_fontsize=5, fontsize=5)
+              title="analysis (sessions)", title_fontsize=fs(5), fontsize=fs(5))
     P.panel(bx, "a", x=-0.15, y=1.0)
 
     # c: correction ladder
@@ -459,7 +473,7 @@ def fig_design(out):
     cx.set_xlim(0, 1)
     cx.set_ylim(0, 1)
     cx.axis("off")
-    cx.text(0, 0.98, "Decoder from day i, tested on a later day j", fontsize=5.8, va="top")
+    cx.text(0, 0.98, "Decoder from day i, tested on a later day j", fontsize=fs(5.8), va="top")
     rungs = [("No correction", "none", P.NEUTRAL), ("Renormalize channels", "no labels", P.BLUE_ORDINAL[2]),
              ("Align neural activity", "no labels", P.BLUE_ORDINAL[3]),
              ("Re-weight channels", "labels", P.BLUE_ORDINAL[5]),
@@ -469,10 +483,10 @@ def fig_design(out):
         yy = 0.83 - k * 0.135
         cx.add_patch(FancyBboxPatch((0.02, yy - 0.047), 0.64, 0.094, boxstyle="round,pad=0.008,rounding_size=0.015",
                                     fc=c, ec="none", alpha=0.9 if k else 0.5))
-        cx.text(0.05, yy, name, fontsize=5.4, va="center", color="white" if 1 <= k <= 5 else P.INK)
-        cx.text(0.70, yy, req, fontsize=5, va="center", color=P.INK2)
+        cx.text(0.05, yy, name, fontsize=fs(5.4), va="center", color="white" if 1 <= k <= 5 else P.INK)
+        cx.text(0.70, yy, req, fontsize=fs(5), va="center", color=P.INK2)
     cx.annotate("", xy=(0.95, 0.12), xytext=(0.95, 0.86), arrowprops=dict(arrowstyle="-|>", lw=0.6, color=P.INK2))
-    cx.text(0.975, 0.49, "stronger correction", rotation=90, fontsize=5, va="center", ha="left", color=P.INK2)
+    cx.text(0.975, 0.49, "stronger correction", rotation=90, fontsize=fs(5), va="center", ha="left", color=P.INK2)
     P.panel(cx, "b", x=-0.04, y=1.0)
     P.save(fig, os.path.join(out, "fig2_design"))
 
@@ -480,14 +494,17 @@ def fig_design(out):
 
 
 def fig2(out):
-    P.setup_nature()
+    setup()
     L = ladders()
-    fig = plt.figure(figsize=(P.DOUBLE_COL, 3.1))
-    gs = fig.add_gridspec(2, 4, width_ratios=[1.45, 0.8, 0.8, 1.45], hspace=0.12)
-    axes = [None, fig.add_subplot(gs[:, 1]), fig.add_subplot(gs[:, 2]), None]
-    am, ah = fig.add_subplot(gs[0, 0]), fig.add_subplot(gs[1, 0])
+    fig = plt.figure(figsize=(FIGW, 6.6))
+    outer = fig.add_gridspec(2, 1, height_ratios=[2.0, 1.45], hspace=0.28, left=0.1, right=0.98, top=0.96,
+                             bottom=0.07)
+    top = outer[0].subgridspec(2, 2, hspace=0.1, wspace=0.28)
+    bot = outer[1].subgridspec(1, 2, wspace=0.28)
+    axes = [None, fig.add_subplot(bot[0]), fig.add_subplot(bot[1]), None]
+    am, ah = fig.add_subplot(top[0, 0]), fig.add_subplot(top[1, 0])
     species_curves(am, ah, {k: boot_curve(L[k], "L2") for k in L}, (-0.7, 1.1), title="Renormalized fixed decoder")
-    P.panel(am, "a", x=-0.26)
+    P.panel(am, "a", x=-0.2)
 
     ax = axes[1]
     for i, k in enumerate(L):
@@ -498,7 +515,7 @@ def fig2(out):
                 est, lo, hi = cluster_bootstrap(q, "r", n_boot=1500)
                 ax.plot([lo, hi], [i + off] * 2, color=COL[k], lw=0.8)
                 ax.plot(est, i + off, MK[k], color=COL[k], ms=3, mfc=COL[k] if filled else "white", mew=0.8)
-                ax.text(1.03, i + off, f"{len(q)}", fontsize=4.2, va="center", color=P.INK2,
+                ax.text(1.03, i + off, f"{len(q)}", fontsize=fs(4.2), va="center", color=P.INK2,
                         transform=ax.get_yaxis_transform())
     ax.set_yticks(range(len(L)))
     ax.set_yticklabels([NAME[k] for k in L])
@@ -506,9 +523,9 @@ def fig2(out):
     ax.set_xlim(-0.1, 1.05)
     ax.axvline(1, color=P.INK2, ls=":", lw=0.6)
     ax.set_xlabel("retention")
-    ax.set_title("After 1 day (filled), 2 (open)", loc="left", fontsize=6)
+    ax.set_title("After 1 day (filled) and 2 days (open)", loc="left", fontsize=fs(6))
     ax.grid(axis="y", visible=False)
-    P.panel(ax, "b", x=-0.62)
+    P.panel(ax, "b", x=-0.36)
 
     ax = axes[2]
     summ = json.load(open("results/v2_summary.json"))
@@ -536,19 +553,18 @@ def fig2(out):
     ax.set_xticklabels(["<1", "3", "10", "30", "100", "300"])
     ax.minorticks_off()
     ax.set_yticks(range(len(L)))
-    ax.set_yticklabels([])
+    ax.set_yticklabels(list(L))                     # short names; rows in the same order as panel b
     ax.invert_yaxis()
     ax.set_xlabel("days to half retention")
-    ax.set_title("Default (open) → tuned", loc="left", fontsize=6)
+    ax.set_title("Default penalty (open) → tuned (filled)", loc="left", fontsize=fs(6))
     ax.grid(axis="y", visible=False)
-    P.panel(ax, "c", x=-0.1)
+    P.panel(ax, "c", x=-0.16)
 
-    tm, th = fig.add_subplot(gs[0, 3]), fig.add_subplot(gs[1, 3])
+    tm, th = fig.add_subplot(top[0, 1]), fig.add_subplot(top[1, 1])
     tuned = {k: boot_curve(valid_pairs(pd.read_csv(tp)), "L2") for k in L
              if os.path.exists(tp := f"results/decay_alpha/{k}_alpha10000.csv")}
     species_curves(tm, th, tuned, (-0.7, 1.1), ylabel=False, title="Same, with the tuned ridge penalty")
     P.panel(tm, "d", x=-0.12)
-    fig.subplots_adjust(wspace=0.5, left=0.065, right=0.99, bottom=0.13, top=0.9)
     P.save(fig, os.path.join(out, "fig3_decay"))
 
 
@@ -565,15 +581,17 @@ def tuned_ladders():
 
 def fig4c(out):
     """Corrections work best when channels keep their identity (figure 4 of the manuscript)."""
-    P.setup_nature()
+    setup()
     L = tuned_ladders()
-    fig = plt.figure(figsize=(P.DOUBLE_COL, 3.0))
-    gs = fig.add_gridspec(2, 4, width_ratios=[1.3, 1.1, 0.9, 1.0], hspace=0.12)
-    axes = [None, fig.add_subplot(gs[:, 1]), fig.add_subplot(gs[:, 2]), fig.add_subplot(gs[:, 3])]
-    am, ah = fig.add_subplot(gs[0, 0]), fig.add_subplot(gs[1, 0])
+    fig = plt.figure(figsize=(FIGW, 6.4))
+    outer = fig.add_gridspec(2, 2, height_ratios=[1.25, 1.0], hspace=0.42, wspace=0.42, left=0.1, right=0.98,
+                             top=0.96, bottom=0.1)
+    left = outer[0, 0].subgridspec(2, 1, hspace=0.1)
+    axes = [None, fig.add_subplot(outer[0, 1]), fig.add_subplot(outer[1, 0]), fig.add_subplot(outer[1, 1])]
+    am, ah = fig.add_subplot(left[0]), fig.add_subplot(left[1])
     species_curves(am, ah, {k: boot_curve(L[k], "L3_n300") for k in L}, (-0.1, 1.1),
                    title="After re-weighting each channel")
-    P.panel(am, "a", x=-0.25)
+    P.panel(am, "a", x=-0.22)
 
     ax = axes[1]   # correct versus scrambled channel assignment
     for i, k in enumerate(L):
@@ -596,15 +614,15 @@ def fig4c(out):
     ax.axvline(0, color=P.INK2, lw=0.4)
     ax.set_xlim(-0.35, 1.05)
     ax.set_xlabel(RET)
-    ax.set_title("Correct vs scrambled channels", loc="left", fontsize=6)
+    ax.set_title("Correct vs scrambled channels", loc="left", fontsize=fs(6))
     ax.legend([Line2D([], [], marker="o", color=P.INK2, ls="", ms=3), Line2D([], [], marker="o", color=P.INK2, ls="",
                                                                               ms=3, mfc="white"),
                Line2D([], [], marker="x", color=P.INK2, ls="", ms=3), Line2D([], [], marker="|", color=P.INK2, ls="",
                                                                              ms=6)],
               ["signed weights", "non-negative", "scrambled", "no labels"], loc="upper center", frameon=False,
-              fontsize=4.2, handletextpad=0.2, ncol=4, columnspacing=0.6, bbox_to_anchor=(0.5, -0.2))
+              fontsize=fs(4.2), handletextpad=0.2, ncol=2, columnspacing=0.8, bbox_to_anchor=(0.4, -0.13))
     ax.grid(axis="y", visible=False)
-    P.panel(ax, "b", x=-0.45)
+    P.panel(ax, "b", x=-0.36)
 
     ax = axes[2]   # fitted weights track electrode firing-rate changes (humans)
     hum = [k for k in humans() if os.path.exists(f"results/gain_mechanism/{k}.csv")]
@@ -622,12 +640,12 @@ def fig4c(out):
     ax.set_xticks(range(len(hum)))
     ax.set_xticklabels(hum)
     ax.set_ylabel("Spearman ρ, weight vs\nfiring-rate change")
-    ax.set_title("Weights track electrodes", loc="left", fontsize=6)
+    ax.set_title("Weights track electrodes", loc="left", fontsize=fs(6))
     ax.legend([Line2D([], [], marker="s", color=P.INK2, ls="", ms=2.5), Line2D([], [], marker=".", color=P.NEUTRAL,
                                                                                 ls="", ms=3)],
-              ["observed", "channels shuffled"], loc="upper left", frameon=False, fontsize=4.2)
+              ["observed", "channels shuffled"], loc="lower right", frameon=False, fontsize=fs(4.2))
     ax.grid(axis="x", visible=False)
-    P.panel(ax, "c", x=-0.42)
+    P.panel(ax, "c", x=-0.22)
 
     ax = axes[3]   # share of loss recovered: linear vs network
     for i, k in enumerate(L):
@@ -646,17 +664,20 @@ def fig4c(out):
     ax.invert_yaxis()
     ax.set_xlim(-0.1, 1.15)
     ax.set_xlabel("share of loss recovered")
-    ax.set_title("Linear (filled), network (open)", loc="left", fontsize=6)
+    ax.set_title("Linear (filled), network (open)", loc="left", fontsize=fs(6))
     ax.grid(axis="y", visible=False)
-    P.panel(ax, "d", x=-0.1)
-    fig.subplots_adjust(wspace=0.5, left=0.065, right=0.99, bottom=0.17, top=0.9)
+    P.panel(ax, "d", x=-0.2)
     P.save(fig, os.path.join(out, "fig6_channels"))
 
 
 # ------------------------------------------------------------------------------------------------ Figure 4
 def fig3(out):
-    P.setup_nature()
-    fig, axes = plt.subplots(1, 3, figsize=(P.DOUBLE_COL, 2.1), gridspec_kw={"width_ratios": [1.6, 0.9, 0.9]})
+    setup()
+    fig = plt.figure(figsize=(FIGW, 5.4))
+    outer = fig.add_gridspec(2, 1, height_ratios=[1.0, 1.05], hspace=0.55, left=0.09, right=0.98, top=0.95,
+                             bottom=0.09)
+    bot = outer[1].subgridspec(1, 3, wspace=0.6, width_ratios=[0.9, 0.8, 1.2])
+    axes = [fig.add_subplot(outer[0]), fig.add_subplot(bot[0]), fig.add_subplot(bot[1]), fig.add_subplot(bot[2])]
     ax = axes[0]
     methods = [("mean_only", "align", "update means only"), ("mean_plus_align", "align", "means + rotation"),
                ("renorm_plus_align", "align", "renormalize\n+ rotation"), ("coral", "lfp", "full covariance (CORAL)"),
@@ -675,7 +696,7 @@ def fig3(out):
             x = m_i + (j - (len(IND) - 1) / 2) * 0.11
             ylo, yhi = -0.3, 0.1
             if est < ylo:   # off-scale: arrow at the bottom with the value
-                ax.annotate(f"{est:.1f}", xy=(x, ylo + 0.005), xytext=(x, ylo + 0.045), fontsize=3.6, ha="center",
+                ax.annotate(f"{est:.1f}", xy=(x, ylo + 0.005), xytext=(x, ylo + 0.045), fontsize=fs(3.6), ha="center",
                             va="bottom", rotation=90, color=COL[k],
                             arrowprops=dict(arrowstyle="-|>", lw=0.5, color=COL[k], shrinkA=0, shrinkB=0))
                 continue
@@ -685,14 +706,14 @@ def fig3(out):
     ax.set_ylim(-0.3, 0.19)                         # band above 0.1 holds the legend
     ax.set_yticks([-0.3, -0.2, -0.1, 0, 0.1])
     ax.set_xticks(xs)
-    ax.set_xticklabels([m[2].replace(" + ", "\n+ ").replace(" (CORAL)", "\n(CORAL)")
-                        .replace("factor-analysis ", "factor-analysis\n") for m in methods], fontsize=4.8)
-    ax.set_ylabel("R² change vs renormalization")
+    ax.set_xticklabels([m[2].replace("renormalize\n+ rotation", "renormalize + rotation")
+                        .replace("factor-analysis ", "factor-analysis\n") for m in methods], fontsize=fs(4.8))
+    ax.set_ylabel("R² change vs\nrenormalization")
     ax.set_title("Label-free corrections (all gaps)", loc="left")
-    ax.legend(loc="upper center", frameon=False, ncol=5, fontsize=4.2, handletextpad=0.2, columnspacing=0.8,
+    ax.legend(loc="upper center", frameon=False, ncol=9, fontsize=fs(4.2), handletextpad=0.1, columnspacing=0.7,
               borderaxespad=0.2)
     ax.grid(axis="x", visible=False)
-    P.panel(ax, "a", x=-0.12)
+    P.panel(ax, "a", x=-0.08)
 
     ax = axes[1]
     t = json.load(open("results/mindful_test/summary.json"))
@@ -703,15 +724,15 @@ def fig3(out):
     ax.bar(x - 0.18, raw, 0.34, color=P.BLUE_ORDINAL[2], label="raw")
     ax.bar(x + 0.18, par, 0.34, color=P.BLUE_ORDINAL[7], label="given elapsed days")
     ax.axhline(abs(t["spearman_r2_logdays"]), color=P.INK2, ls="--", lw=0.7)
-    ax.text(2.4, abs(t["spearman_r2_logdays"]) + 0.015, "elapsed days", fontsize=4.6, ha="right", color=P.INK2)
+    ax.text(2.4, abs(t["spearman_r2_logdays"]) + 0.015, "elapsed days", fontsize=fs(4.6), ha="right", color=P.INK2)
     ax.set_xticks(x)
     ax.set_xticklabels(labs)
-    ax.set_ylim(0, 0.75)
+    ax.set_ylim(0, 0.95)
     ax.set_ylabel("|Spearman ρ| with decoder R²")
-    ax.set_title("Divergence, offline (monkey N)", loc="left", fontsize=6)
-    ax.legend(loc="upper left", frameon=False, fontsize=4.6, bbox_to_anchor=(0, 0.93))
+    ax.set_title("Monitoring, offline (N)", loc="left", fontsize=fs(6))
+    ax.legend(loc="upper left", frameon=False, fontsize=fs(4.6), bbox_to_anchor=(0, 1.02))
     ax.grid(axis="x", visible=False)
-    P.panel(ax, "b", x=-0.3)
+    P.panel(ax, "b", x=-0.42)
 
     ax = axes[2]
     s = json.load(open("results/mindful_reanalysis/summary.json"))
@@ -722,19 +743,46 @@ def fig3(out):
         ax.bar(x + (i - 1) * 0.26, [r["lodo_mae"][kk] for r in s], 0.24, color=c, label=lab)
     ax.set_xticks(x)
     ax.set_xticklabels([r["participant"] for r in s])
-    ax.set_ylabel("prediction error of angular error (°)")
-    ax.set_title("Divergence, closed loop", loc="left", fontsize=6)
-    ax.legend(loc="upper left", frameon=False, fontsize=4.6)
+    ax.set_ylabel("error predicting angular error (°)")
+    ax.set_title("Closed loop", loc="left", fontsize=fs(6))
+    ax.set_ylim(0, 52)
+    ax.legend(loc="upper left", frameon=False, fontsize=fs(4.6), ncol=1)
     ax.grid(axis="x", visible=False)
-    P.panel(ax, "c", x=-0.3)
-    fig.subplots_adjust(wspace=0.42, left=0.06, right=0.99, bottom=0.2, top=0.86)
+    P.panel(ax, "c", x=-0.42)
+
+    ax = axes[3]   # share of the long-gap loss recovered: label-free rotation, alignment ceiling, re-weighting
+    c = json.load(open("results/latent_ceiling/summary.json"))
+    keys = [k for k, _, _, _, _ in IND if k in c]
+    rows = [("L4u", "label-free rotation", P.NEUTRAL, "x"), ("L4_nall", "alignment ceiling", P.CAT[0], "D"),
+            ("L3_nall", "re-weighting", P.CAT[1], "o")]
+    for i, k in enumerate(keys):
+        for j, (rk, _, col, mk) in enumerate(rows):
+            est, lo, hi = (100 * v for v in c[k]["share_long"][rk])
+            y = i + (j - 1) * 0.22
+            ax.plot([lo, hi], [y, y], color=col, lw=0.8)
+            ax.plot(est, y, mk, color=col, ms=3.2 if mk != "x" else 3.6, mew=0.9)
+    ax.axvline(0, color=P.INK2, lw=0.5)
+    ax.axvline(100, color=P.INK2, lw=0.5, ls=":")
+    ax.set_yticks(range(len(keys)))
+    ax.set_yticklabels(keys)
+    ax.invert_yaxis()
+    ax.set_xlim(-45, 105)
+    ax.set_xticks([0, 50, 100])
+    ax.set_xlabel("loss recovered at 120–480 days (%)")
+    ax.set_title("Alignment ceiling", loc="left", fontsize=fs(6))
+    ax.legend([Line2D([], [], marker=mk, color=col, ls="", ms=3.4, mew=0.9) for _, _, col, mk in rows],
+              [name for _, name, _, _ in rows], loc="upper center", bbox_to_anchor=(0.45, -0.2), ncol=1,
+              frameon=False, fontsize=fs(4.6), handletextpad=0.2)
+    ax.grid(axis="y", visible=False)
+    P.panel(ax, "d", x=-0.22)
     P.save(fig, os.path.join(out, "fig4_labelfree"))
 
 
 # ------------------------------------------------------------------------------------------------ Figure 5
 def fig5(out):
-    P.setup_nature()
-    fig, axes = plt.subplots(1, 4, figsize=(P.DOUBLE_COL, 2.0), gridspec_kw={"width_ratios": [1.1, 1.2, 1.0, 0.9]})
+    setup()
+    fig, axes = plt.subplots(2, 2, figsize=(FIGW, 4.9))
+    axes = axes.ravel()
     ax = axes[0]
     d = pd.read_csv("results/reg_tradeoff/tradeoff.csv")
     med = d.groupby(["gap_target", "alpha"]).r2.median().unstack(0)
@@ -746,7 +794,8 @@ def fig5(out):
     ax.set_xlabel("ridge penalty α")
     ax.set_ylabel("decoding R² (median)")
     ax.set_title("Monkey N", loc="left")
-    ax.legend(loc="lower left", frameon=False, fontsize=4.2, ncol=2)
+    ax.set_ylim(-0.27, 0.33)                       # band below the curves holds the legend
+    ax.legend(loc="lower left", frameon=False, fontsize=fs(4.2), ncol=3, columnspacing=0.8, handlelength=1.4)
     P.panel(ax, "a", x=-0.3)
     ax = axes[1]
     t = pd.read_csv("results/reg_tradeoff/rule_across_subjects.csv")
@@ -774,7 +823,7 @@ def fig5(out):
     ax.set_xlabel("days since decoder training")
     ax.set_ylabel("R² gain over α = 0.1")
     ax.set_title("Tuned penalty (1% rule)", loc="left")
-    ax.legend(loc="upper center", frameon=False, fontsize=4.0, ncol=3, handletextpad=0.2, columnspacing=0.6,
+    ax.legend(loc="upper center", frameon=False, fontsize=fs(4.0), ncol=3, handletextpad=0.2, columnspacing=0.6,
               borderaxespad=0.2)
     P.panel(ax, "b", x=-0.25)
     ax = axes[2]
@@ -789,7 +838,7 @@ def fig5(out):
                                           "_r", n_boot=800) for n in ns])
         line_ci(ax, ns, est, c, name)
     ax.axhline(float((e.L2 / e.own).median()), color=P.NEUTRAL, ls=":", lw=0.7)
-    ax.text(40, float((e.L2 / e.own).median()) - 0.07, "no labels", fontsize=4.4, color=P.INK2, ha="center")
+    ax.text(40, float((e.L2 / e.own).median()) - 0.07, "no labels", fontsize=fs(4.4), color=P.INK2, ha="center")
     ax.set_xscale("log")
     ax.set_xticks(ns)
     ax.set_xticklabels([str(n) for n in ns])
@@ -799,7 +848,7 @@ def fig5(out):
     ax.set_ylabel(RET)
     words = {3: "Three", 4: "Four", 5: "Five", 6: "Six", 7: "Seven", 8: "Eight", 9: "Nine"}
     ax.set_title(f"{words.get(e.subject.nunique(), e.subject.nunique())} humans, all gaps", loc="left")
-    ax.legend(loc="upper left", frameon=False, fontsize=4.4)
+    ax.legend(loc="upper left", frameon=False, fontsize=fs(4.4))
     P.panel(ax, "c", x=-0.3)
     ax = axes[3]
     p = pd.read_csv("results/recal_policy/policies.csv")
@@ -813,36 +862,54 @@ def fig5(out):
     ax.set_ylabel("worse than no recalibration (%)")
     ax.set_title("Harmful recalibrations", loc="left")
     ax.set_ylim(0, max(rates.max().max() * 1.45, 1))   # head room above the bars for the legend
-    ax.legend(loc="upper right", frameon=False, fontsize=4.4)
+    ax.legend(loc="upper right", frameon=False, fontsize=fs(4.4))
     ax.grid(axis="x", visible=False)
-    P.panel(ax, "d", x=-0.32)
-    fig.subplots_adjust(wspace=0.5, left=0.06, right=0.99, bottom=0.22, top=0.86)
+    P.panel(ax, "d", x=-0.2)
+    for ax in axes[:3]:                             # panel letters aligned in the 2 x 2 layout
+        for t in ax.texts:
+            if t.get_text() in ("a", "b", "c"):
+                t.set_x(-0.2)
+    fig.subplots_adjust(wspace=0.32, hspace=0.55, left=0.09, right=0.98, bottom=0.1, top=0.94)
     P.save(fig, os.path.join(out, "fig5_recipes"))
 
 
 # ------------------------------------------------------------------------------------------------ Figure 6
 def fig6(out):
-    P.setup_nature()
+    setup()
     bg = pd.read_csv("results/braingate_failure/electrode_session.csv")
     ln = pd.read_csv("results/channel_health/channel_day.csv")
     ln_daily = ln.groupby(["day", "ch"]).agg(rate=("tc_rate", "mean"), imp=("imp", "mean")).reset_index()
     lay = ln.drop_duplicates("ch").set_index("ch")[["array_name", "row", "col"]]
     H, M = "#4a3aa7", "#2a78d6"
-    fig, axes = plt.subplots(1, 4, figsize=(P.DOUBLE_COL, 2.2), gridspec_kw={"width_ratios": [1.1, 1.1, 1.0, 1.1]})
+    fig, axes = plt.subplots(2, 2, figsize=(FIGW, 5.2))
+    axes = axes.ravel()
     ax = axes[0]
+    curves = []                                     # yield of each human array, smoothed, on a 60-day grid
+    grid = np.arange(0, 7.5 * 365.25, 60)
     for _, g in bg.groupby(["participant", "array"]):
         y = g.groupby("day").rate.apply(lambda r: (r >= 2).mean() * 100)
         if len(y) >= 5:
-            ax.plot(y.index / 365.25, y.rolling(5, min_periods=1, center=True).median(), color=H, lw=0.5, alpha=0.55)
+            ys = y.rolling(5, min_periods=1, center=True).median()
+            ax.plot(y.index / 365.25, ys, color=H, lw=0.4, alpha=0.18)
+            curves.append(np.where((grid >= y.index.min()) & (grid <= y.index.max()),
+                                   np.interp(grid, y.index, ys), np.nan))
+    curves = np.array(curves)
+    n_on = np.sum(np.isfinite(curves), axis=0)
+    keep = n_on >= 5                                # summary only where at least five arrays have data
+    q25, q50, q75 = (np.nanpercentile(curves[:, keep], q, axis=0) for q in (25, 50, 75))
+    ax.fill_between(grid[keep] / 365.25, q25, q75, color=H, alpha=0.25, lw=0)
+    ax.plot(grid[keep] / 365.25, q50, color=H, lw=1.6)
     for _, g in ln_daily.merge(lay, left_on="ch", right_index=True).groupby("array_name"):
         y = g.groupby("day").rate.apply(lambda r: (r >= 2).mean() * 100)
         ax.plot((y.index + 30) / 365.25, y.rolling(5, min_periods=1, center=True).median(), color=M, lw=1)
     ax.set_xlabel("years since implant")
     ax.set_ylabel("electrodes with spiking (%)")
     ax.set_title("Array yield", loc="left")
-    ax.legend([Line2D([], [], color=H, lw=1), Line2D([], [], color=M, lw=1)], ["humans, 20 arrays", "monkey N"],
+    ax.legend([Line2D([], [], color=H, lw=1.6), Line2D([], [], color=H, lw=0.4, alpha=0.5),
+               Line2D([], [], color=M, lw=1)],
+              ["humans, median and middle half", "single human arrays (20)", "monkey N, two arrays"],
               loc="upper right", frameon=False)
-    P.panel(ax, "a", x=-0.25)
+    P.panel(ax, "a", x=-0.2)
     ax = axes[1]
     for _, g in bg.groupby(["participant", "array"]):
         m = g[(g.impedance > 0) & (g.impedance < 4000)].groupby("day").impedance.median()
@@ -859,7 +926,7 @@ def fig6(out):
     ax.set_xlabel("years since implant")
     ax.set_ylabel("impedance relative to start")
     ax.set_title("Impedance", loc="left")
-    P.panel(ax, "b", x=-0.25)
+    P.panel(ax, "b", x=-0.2)
     ax = axes[2]
     r = json.load(open("results/failure_robustness/summary.json"))["revival"]
     groups = [("base", "shuffle_null", "≥3\nsessions"), ("fixed_uv", "shuffle_fixed_uv", "fixed\nµV"),
@@ -875,18 +942,18 @@ def fig6(out):
     ax.bar(x + 0.18, nul, 0.34, color=P.NEUTRAL, label="shuffled (200×, 95% range)")
     ax.errorbar(x + 0.18, nul, yerr=err, fmt="none", ecolor=P.INK2, elinewidth=0.6, capsize=1.2)
     for xi, (a, b, _) in zip(x, groups):
-        ax.text(xi - 0.18, obs[xi] + 1.5, f"{r[a]['silenced']}", fontsize=3.8, ha="center", va="bottom",
+        ax.text(xi - 0.18, obs[xi] + 1.5, f"{r[a]['silenced']}", fontsize=fs(3.8), ha="center", va="bottom",
                 rotation=90, color=P.INK2)
     ax.set_xticks(x)
-    ax.set_xticklabels([g[2] for g in groups], fontsize=4.6)
+    ax.set_xticklabels([g[2] for g in groups], fontsize=fs(4.6))
     ax.set_ylim(0, 125)
     ax.set_yticks([0, 20, 40, 60, 80, 100])
     ax.set_xlabel("silence definition")
     ax.set_ylabel("silenced electrodes that recover (%)")
     ax.set_title("Silence then recovery", loc="left")
-    ax.legend(loc="upper right", frameon=False, fontsize=4.2)
+    ax.legend(loc="upper right", frameon=False, fontsize=fs(4.2), ncol=2)
     ax.grid(axis="x", visible=False)
-    P.panel(ax, "c", x=-0.3)
+    P.panel(ax, "c", x=-0.2)
     ax = axes[3]
     ea = pd.read_csv("results/failure_robustness/edge_arrays.csv").sort_values("edge_minus_interior")
     lab = (ea.participant + " " + ea.array.replace({"single": ""}).str.slice(0, 3)).tolist()
@@ -896,14 +963,14 @@ def fig6(out):
             label="adjusted for initial rate")
     ax.axvline(0, color=P.INK2, lw=0.5)
     ax.set_yticks(y)
-    ax.set_yticklabels(lab, fontsize=4.4)
+    ax.set_yticklabels(lab, fontsize=fs(4.4))
     ax.set_xlabel("difference in decline\n(log rate per year)")
     e = json.load(open("results/failure_robustness/summary.json"))["edge"]["edge_minus_interior"]
     ax.set_title(f"Edge vs interior ({e['negative']}/{e['n_arrays']} faster)", loc="left")
-    ax.legend(loc="lower right", frameon=False, fontsize=4.2)
+    ax.legend(loc="lower right", frameon=False, fontsize=fs(4.2))
     ax.grid(axis="y", visible=False)
-    P.panel(ax, "d", x=-0.42)
-    fig.subplots_adjust(wspace=0.62, left=0.06, right=0.99, bottom=0.22, top=0.87)
+    P.panel(ax, "d", x=-0.3)
+    fig.subplots_adjust(wspace=0.4, hspace=0.5, left=0.09, right=0.98, bottom=0.11, top=0.94)
     P.save(fig, os.path.join(out, "fig7_electrodes"))
 
 
@@ -927,8 +994,8 @@ def early_curve_baseline():
 
 
 def fig7(out):
-    P.setup_nature()
-    fig, axes = plt.subplots(1, 3, figsize=(P.DOUBLE_COL, 2.0), gridspec_kw={"width_ratios": [1.2, 1.2, 1.1]})
+    setup()
+    fig, axes = plt.subplots(1, 3, figsize=(FIGW, 2.8), gridspec_kw={"width_ratios": [1.1, 1.0, 1.3]})
     e = json.load(open("results/sim_calib_split/calibration.json"))
     late = json.load(open("results/sim_calib_late/calibration.json"))
     gaps = [g for g in ["1", "7", "30", "120", "480"] if g in e["sim_fresh_seed"]]
@@ -941,29 +1008,30 @@ def fig7(out):
     P.day_axis(ax, gx)
     ax.set_xlabel("days since decoder training")
     ax.set_ylabel(RET)
-    ax.set_title("Calibration, monkey N (< 700 days)", loc="left", pad=12)
-    ax.legend(loc="lower left", frameon=False, fontsize=4.6)
-    P.panel(ax, "a", x=-0.22)
+    ax.set_ylim(-0.8, 1.08)                        # band below the curves holds the legend
+    ax.set_title("Calibration (< 700 days)", loc="left", pad=12)
+    ax.legend(loc="lower left", frameon=False, fontsize=fs(4.6), handlelength=1.4, borderaxespad=0.2)
+    P.panel(ax, "a", x=-0.3)
     ax = axes[1]
     v = pd.read_csv("results/sim_validation/validation.csv")
     s = v.groupby(["group", "kind"]).abs_err.median().unstack()
     base = early_curve_baseline()
-    groups = [("targeted", "fitted rungs"), ("untargeted", "unfitted rungs"), ("efficiency", "unfitted data\nbudgets")]
+    groups = [("targeted", "fitted\nrungs"), ("untargeted", "unfitted\nrungs"), ("efficiency", "data\nbudgets")]
     x = np.arange(len(groups))
     ax.bar(x - 0.27, [s.loc[g, "sim"] for g, _ in groups], 0.25, color=P.CAT[0], label="calibrated simulator")
     if base is not None:
         ax.bar(x, [base.get(g, np.nan) for g, _ in groups], 0.25, color=P.BLUE_ORDINAL[2], label="early-years curve")
     ax.bar(x + 0.27, [s.loc[g, "nodrift"] for g, _ in groups], 0.25, color=P.NEUTRAL, label="no drift")
     ax.set_xticks(x)
-    ax.set_xticklabels([lab for _, lab in groups], fontsize=4.8)
+    ax.set_xticklabels([lab for _, lab in groups], fontsize=fs(4.8))
     ax.set_ylabel("median absolute error (retention)")
     ax.set_ylim(0, 0.5)
-    ax.set_title("Held-out years (≥ 700 days)", loc="left", pad=12)
-    ax.legend(loc="upper left", frameon=False, fontsize=4.4)
+    ax.set_title("Held-out years", loc="left", pad=12)
+    ax.legend(loc="upper left", frameon=False, fontsize=fs(4.4))
     ax.grid(axis="x", visible=False)
-    P.panel(ax, "b", x=-0.22)
+    P.panel(ax, "b", x=-0.3)
     ax = axes[2]
-    keys = [("s_mix0", "session\nmixing"), ("s_mix", "slow\nmixing"), ("rho0", "initial\nturnover ×10"),
+    keys = [("s_mix0", "session\nmixing"), ("s_mix", "slow\nmixing"), ("rho0", "turnover\n×10"),
             ("tau_rho", "turnover\ntime (yr)")]
     ev = [e["params"]["s_mix0"], e["params"]["s_mix"], e["params"]["rho0"] * 10, e["params"]["tau_rho"] / 365.25]
     lv = [late["params"]["s_mix0"], late["params"]["s_mix"], late["params"]["rho0"] * 10, late["params"]["tau_rho"] / 365.25]
@@ -971,14 +1039,14 @@ def fig7(out):
     ax.bar(x - 0.18, ev, 0.34, color=P.BLUE_ORDINAL[2], label="early (< 700 d)")
     ax.bar(x + 0.18, lv, 0.34, color=P.BLUE_ORDINAL[7], label="late (≥ 700 d)")
     ax.set_xticks(x)
-    ax.set_xticklabels([lab for _, lab in keys], fontsize=4.8)
+    ax.set_xticklabels([lab for _, lab in keys], fontsize=fs(4.6))
     ax.set_ylabel("fitted value")
-    ax.set_title("Parameters by implant age", loc="left", pad=12)
-    ax.legend(loc="upper left", frameon=False, fontsize=4.6)
-    ax.set_ylim(0, 1.75)
+    ax.set_title("Parameters by age", loc="left", pad=12)
+    ax.legend(loc="upper left", frameon=False, fontsize=fs(4.6))
+    ax.set_ylim(0, 1.95)
     ax.grid(axis="x", visible=False)
-    P.panel(ax, "c", x=-0.2)
-    fig.subplots_adjust(wspace=0.38, left=0.07, right=0.99, bottom=0.22, top=0.86)
+    P.panel(ax, "c", x=-0.3)
+    fig.subplots_adjust(wspace=0.5, left=0.09, right=0.98, bottom=0.2, top=0.86)
     P.save(fig, os.path.join(out, "fig8_simulator"))
 
 
