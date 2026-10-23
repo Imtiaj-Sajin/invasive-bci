@@ -1,5 +1,7 @@
 # Decoder decay and its correction over years in intracortical brain–computer interfaces
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23592822.svg)](https://doi.org/10.5281/zenodo.23592822)
+
 ![Overview](results/figures/v2/fig1_overview.png)
 
 Code, results and a benchmark for measuring how **intracortical brain–computer interface (iBCI) decoders lose accuracy
@@ -99,7 +101,11 @@ Please cite the original datasets when you use them:
 
 ## Citation
 
-If you use this code, the benchmark or the results, please cite the repository ([CITATION.cff](CITATION.cff)). The
+If you use this code, the benchmark or the results, please cite the archived software: Sajin, M. I. A., Chowdhury
+Abha, E. E. M. & Suva, M. W. *Decoder decay and its correction over years in intracortical brain–computer interfaces:
+code, results and benchmark*. Zenodo, [doi:10.5281/zenodo.23592822](https://doi.org/10.5281/zenodo.23592822) (all
+versions; version 1.0.0, used in the article, is
+[doi:10.5281/zenodo.23592823](https://doi.org/10.5281/zenodo.23592823)). See also [CITATION.cff](CITATION.cff). The
 article describing the study is under review; the reference will be added here.
 
 ## Licence
