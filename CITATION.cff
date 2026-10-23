@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use this software or its results, please cite it as below."
 title: "Decoder decay and its correction over years in intracortical brain-computer interfaces: code, results and benchmark"
-version: 0.1.0
-date-released: 2026-10-17
+version: 1.0.0
+date-released: 2026-10-23
 license: MIT
 repository-code: "https://github.com/Imtiaj-Sajin/invasive-bci"
 authors:
